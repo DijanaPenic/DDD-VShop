@@ -1,4 +1,5 @@
 ﻿using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
 
 namespace VShop.Services.Basket.Domain.AggregateModels.Basket
@@ -10,7 +11,11 @@ namespace VShop.Services.Basket.Domain.AggregateModels.Basket
                 @event switch
                 {
                     BasketCreatedDomainEvent e =>
-                        With(state, s => s.CustomerId = new CustomerId(e.CustomerId)),
+                        With(state, s =>
+                        {
+                            s.CustomerId = new EntityId(e.CustomerId);
+                            s.Status = BasketStatus.New;
+                        }),
                     _ => this
                 }, 
                 s => s.Version++
@@ -19,9 +24,9 @@ namespace VShop.Services.Basket.Domain.AggregateModels.Basket
         protected override bool EnsureValidState(BasketState newState)
             => true;
 
-        public CustomerId CustomerId { get; private set; }
+        public EntityId CustomerId { get; private set; }
 
-        public BasketStatus Status { get; }
+        public BasketStatus Status { get; private set; }
         
         public enum BasketStatus { New, PendingCheckout, Closed }
     }

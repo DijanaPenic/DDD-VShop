@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure;
-
-namespace VShop.Services.Basket.Domain.AggregateModels.Basket
+namespace VShop.SharedKernel.Infrastructure.Domain
 {
-    public class CustomerId : ValueObject
+    public class EntityId : ValueObject
     {
-        internal CustomerId(Guid value)
-        {
-            Value = value;
-        }
-
-        public static CustomerId FromGuid(Guid value)
+        public EntityId(Guid value)
         {
             if (value == default) // TODO - check sequential Guid
                 throw new ArgumentNullException(nameof(value), "The Id cannot be empty.");
 
-            return new CustomerId(value);
+            Value = value;
         }
 
         public Guid Value { get; }
         
-        public static implicit operator Guid(CustomerId self) => self.Value;
+        public static implicit operator Guid(EntityId self) => self.Value;
 
         public override string ToString() => Value.ToString();
         
