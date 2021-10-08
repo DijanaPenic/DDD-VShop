@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>VShop.Services.Basket.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Services.Basket.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+</Project>
