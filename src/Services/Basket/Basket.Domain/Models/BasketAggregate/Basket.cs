@@ -1,7 +1,9 @@
-﻿using VShop.Services.Basket.Domain.Events;
+﻿using System;
+
+using VShop.Services.Basket.Domain.Events;
 using VShop.SharedKernel.Infrastructure.Domain;
 
-namespace VShop.Services.Basket.Domain.AggregateModels.Basket
+namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public static class Basket
     {
@@ -10,6 +12,7 @@ namespace VShop.Services.Basket.Domain.AggregateModels.Basket
             (
                 new BasketCreatedDomainEvent
                 {
+                    Id = Guid.NewGuid(), // TODO - sequential guid
                     CustomerId = customerId
                 }
             );

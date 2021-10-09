@@ -6,4 +6,9 @@
         <RootNamespace>VShop.Services.Basket.Infrastructure</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\EventSourcing\EventSourcing.csproj" />
+      <ProjectReference Include="..\Basket.Domain\Basket.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

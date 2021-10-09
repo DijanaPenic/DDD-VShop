@@ -1,10 +1,12 @@
 ﻿using System;
+
 using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.Services.Basket.Domain.Events
 {
     public record BasketCreatedDomainEvent : IDomainEvent
     {
+        public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public BasketItem[] Items { get; set; }
         

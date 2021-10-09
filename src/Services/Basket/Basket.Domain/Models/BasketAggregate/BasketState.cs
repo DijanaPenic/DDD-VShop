@@ -2,7 +2,7 @@
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
 
-namespace VShop.Services.Basket.Domain.AggregateModels.Basket
+namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketState : AggregateState<BasketState>
     {
@@ -13,6 +13,7 @@ namespace VShop.Services.Basket.Domain.AggregateModels.Basket
                     BasketCreatedDomainEvent e =>
                         With(state, s =>
                         {
+                            s.Id = e.Id;
                             s.CustomerId = new EntityId(e.CustomerId);
                             s.Status = BasketStatus.New;
                         }),

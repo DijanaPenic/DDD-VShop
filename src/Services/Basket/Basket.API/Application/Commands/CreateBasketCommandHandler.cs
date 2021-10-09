@@ -2,18 +2,28 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.EventStore;
+using VShop.SharedKernel.Infrastructure.Domain;
+using VShop.Services.Basket.Domain.Models.BasketAggregate;
+
 namespace VShop.Services.Basket.API.Application.Commands
 {
-   
     public class CreateBasketCommandHandler : IRequestHandler<CreateBasketCommand, bool>
     {
-        public CreateBasketCommandHandler()
+        private readonly IAggregateStore _aggregateStore;
+        
+        public CreateBasketCommandHandler(IAggregateStore aggregateStore)
         {
+            _aggregateStore = aggregateStore;
         }
         
-        public Task<bool> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
         {
-            return Task.FromResult(true);
+            BasketState.Result basket = Domain.Models.BasketAggregate.Basket.Create(new EntityId(command.CustomerId));
+                
+            await _aggregateStore.CreateAsync(basket);
+            
+            return true;
         }
     }
 }
