@@ -6,4 +6,19 @@
         <RootNamespace>VShop.SharedKernel.EventStore</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\EventSourcing\EventSourcing.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DeepCloner" Version="0.10.2" />
+      <PackageReference Include="EventStore.Client" Version="21.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Hosting.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\5.0.7\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

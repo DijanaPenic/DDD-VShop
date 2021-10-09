@@ -6,4 +6,8 @@
         <RootNamespace>VShop.SharedKernel.EventSourcing</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="DeepCloner" Version="0.10.2" />
+    </ItemGroup>
+
 </Project>

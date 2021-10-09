@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Force.DeepCloner;
 
-using EventSourcing.Exceptions;
+using VShop.SharedKernel.EventSourcing.Exceptions;
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    public abstract class AggregateState<T> : IAggregateState<T> where T : class, new()
+    public abstract class AggregateState<T> : IAggregateState<T> 
+        where T : class, new()
     {
-
         public long Version { get; protected set; }
 
         public Guid Id { get; protected set; }
@@ -28,13 +29,13 @@ namespace VShop.SharedKernel.EventSourcing
 
         protected abstract bool EnsureValidState(T newState);
 
-        T Apply(T state, object @event)
+        private T Apply(T state, object @event)
         {
-            T newState = null; //state.DeepClone(); // TODO - record
+            T newState = state.DeepClone();
             newState = When(newState, @event);
 
             if (!EnsureValidState(newState))
-                throw new InvalidEntityState(this, "Post-checks failed");
+                throw new InvalidEntityState(this, "Post-checks failed.");
 
             return newState;
         }

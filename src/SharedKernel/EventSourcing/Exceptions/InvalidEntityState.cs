@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EventSourcing.Exceptions
+namespace VShop.SharedKernel.EventSourcing.Exceptions
 {
-    class InvalidEntityState : Exception
+    internal class InvalidEntityState : Exception
     {
         public InvalidEntityState(object entity, string message)
             : base(
