@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Autofac.Extensions.DependencyInjection;
 
 namespace VShop.Services.Basket.API
 {
@@ -18,6 +14,14 @@ namespace VShop.Services.Basket.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    IHostEnvironment env = context.HostingEnvironment;
+                
+                    config.AddJsonFile("appsettings.json", true, true);
+                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+                })
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
