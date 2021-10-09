@@ -1,0 +1,29 @@
+version: '3.5'
+
+services:
+
+  eventstore:
+    container_name: vshop-container-eventstore
+    image: eventstore/eventstore
+    ports:
+        - 2113:2113
+        - 1113:1113
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+
+  postgres:
+    container_name: vshop-container-postgres
+    image: postgres
+    ports:
+    - 5400:5432
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: vshopdb
+      POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
