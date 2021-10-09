@@ -16,5 +16,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     CustomerId = customerId
                 }
             );
+
+        public static BasketState.Result AddItem(BasketItemState item)
+        {
+        
+
+            return default;
+        }
     }
 }

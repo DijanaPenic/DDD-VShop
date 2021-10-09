@@ -1,4 +1,6 @@
-﻿using VShop.SharedKernel.EventSourcing;
+﻿using System.Collections.Generic;
+
+using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
 
@@ -28,6 +30,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public EntityId CustomerId { get; private set; }
 
         public BasketStatus Status { get; private set; }
+        
+        public IList<BasketItemState>  Items { get; private set; }
         
         public enum BasketStatus { New, PendingCheckout, Closed }
     }

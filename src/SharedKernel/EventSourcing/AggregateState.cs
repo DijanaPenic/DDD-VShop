@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.EventSourcing
         
         public string StreamName => GetStreamName(Id);
         
-        public string GetStreamName(Guid id) => $"{typeof(T).Name}-{id:N}";
+        public string GetStreamName(Guid id) => $"{typeof(T).Name}-{id:N}"; // TODO - potentially trim "State"
         
         public abstract T When(T state, object @event);
 
