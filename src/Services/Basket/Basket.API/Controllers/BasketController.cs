@@ -1,5 +1,5 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,9 @@ using VShop.Services.Basket.API.Application.Commands;
 namespace VShop.Services.Basket.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/basket")]
+    // TODO - change query parameters to snake case
+    // TODO - resolve enum by value
     public class BasketController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,6 +31,7 @@ namespace VShop.Services.Basket.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        // TODO - need better error/response handling
         public async Task<IActionResult> UpdateBasketAsync([FromBody] CreateBasketCommand basket)
         {
             bool result = await _mediator.Send(basket);   

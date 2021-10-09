@@ -13,7 +13,7 @@ namespace VShop.Services.Basket.API.Application.Commands
     {
         public CreateBasketCommandValidator()
         {
-            RuleFor(cb => cb.CustomerId).NotEmpty();
+            RuleFor(c => c.CustomerId).NotEmpty();
         }
     }
 }
