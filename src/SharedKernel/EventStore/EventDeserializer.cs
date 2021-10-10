@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using EventStore.ClientAPI;
 using Newtonsoft.Json;
+using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
 

@@ -10,4 +10,8 @@
       <PackageReference Include="DeepCloner" Version="0.10.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

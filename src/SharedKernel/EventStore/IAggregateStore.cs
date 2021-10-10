@@ -1,19 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
     public interface IAggregateStore
     {
-        Task UpdateAsync<T>(long version, AggregateState<T>.Result update)
-            where T : class, IAggregateState<T>, new();
-        
-        Task CreateAsync<T>(AggregateState<T>.Result create)
-            where T : class, IAggregateState<T>, new();
+        Task SaveAsync<T>(T aggregate)
+            where T : AggregateRoot;
 
-        Task<T> LoadAsync<T>(Guid id)
-            where T : IAggregateState<T>, new();
+        Task<bool> ExistsAsync<T>(EntityId aggregateId)
+            where T : AggregateRoot;
+
+        Task<T> LoadAsync<T>(EntityId aggregateId)
+            where T : AggregateRoot;
     }
 }

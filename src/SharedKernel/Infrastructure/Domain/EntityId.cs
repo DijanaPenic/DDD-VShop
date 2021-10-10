@@ -5,6 +5,8 @@ namespace VShop.SharedKernel.Infrastructure.Domain
 {
     public class EntityId : ValueObject
     {
+        public Guid Value { get; }
+        
         // TODO - check if I can make constructor private and add a method for Guid value.
         public EntityId(Guid value)
         {
@@ -14,8 +16,6 @@ namespace VShop.SharedKernel.Infrastructure.Domain
             Value = value;
         }
 
-        public Guid Value { get; }
-        
         public static implicit operator Guid(EntityId self) => self.Value;
 
         public override string ToString() => Value.ToString();

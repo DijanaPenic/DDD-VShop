@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
@@ -13,26 +14,37 @@ namespace VShop.SharedKernel.EventStore
         private readonly IEventStoreConnection _connection;
 
         public AggregateStore(IEventStoreConnection connection) => _connection = connection;
-
-        public Task UpdateAsync<T>(long version, AggregateState<T>.Result update)
-            where T : class, IAggregateState<T>, new()
-            => _connection.AppendEvents(update.State.StreamName, version, update.Events.ToArray());
         
-        public Task CreateAsync<T>(AggregateState<T>.Result create)
-            where T : class, IAggregateState<T>, new()
-            => _connection.AppendEvents(create.State.StreamName, -1, create.Events.ToArray()); // -1 version -> the stream should not exist when appending.
+        public async Task SaveAsync<T>(T aggregate) 
+            where T : AggregateRoot
+        {
+            if (aggregate == null)
+                throw new ArgumentNullException(nameof(aggregate));
 
-        public Task<T> LoadAsync<T>(Guid id) 
-            where T : IAggregateState<T>, new()
-            => LoadAsync<T>(id, (aggregateState, @event) => aggregateState.When(aggregateState, @event));
+            string streamName = GetStreamName<T>(aggregate.Id);
+            object[] events = aggregate.GetChanges().ToArray();
 
-        private async Task<T> LoadAsync<T>(Guid id, Func<T, object, T> when)
-            where T : IAggregateState<T>, new()
+            await _connection.AppendEvents(streamName, aggregate.Version, events);
+
+            aggregate.ClearChanges();
+        }
+        
+        public async Task<bool> ExistsAsync<T>(EntityId aggregateId)
+            where T : AggregateRoot
+        {
+            string streamName = GetStreamName<T>(aggregateId);
+            EventReadResult result = await _connection.ReadEventAsync(streamName, 1, false);
+            
+            return result.Status != EventReadStatus.NoStream;
+        }
+        
+        public async Task<T> LoadAsync<T>(EntityId aggregateId)
+            where T : AggregateRoot
         {
             const int maxSliceSize = 4096;
-
-            T aggregateState = new T();
-            string streamName = aggregateState.GetStreamName(id);
+            
+            T aggregate = (T)Activator.CreateInstance(typeof(T), true); 
+            string streamName = GetStreamName<T>(aggregateId);
 
             long position = 0L;
             bool endOfStream;
@@ -53,9 +65,14 @@ namespace VShop.SharedKernel.EventStore
 
                 events.AddRange(slice.Events.Select(resolvedEvent => resolvedEvent.Deserialize()));
             } while (!endOfStream);
+            
+            aggregate?.Load(events);
 
-            return events.Aggregate(aggregateState, when);
+            return aggregate;
         }
 
+        private static string GetStreamName<T>(EntityId aggregateId)
+            where T : AggregateRoot
+            => $"{typeof(T).Name}-{aggregateId}";
     }
 }

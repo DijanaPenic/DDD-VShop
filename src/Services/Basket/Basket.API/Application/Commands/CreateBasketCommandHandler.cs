@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.Infrastructure.Domain;
-using VShop.Services.Basket.Domain.Models.BasketAggregate;
 
 namespace VShop.Services.Basket.API.Application.Commands
 {
@@ -19,9 +18,8 @@ namespace VShop.Services.Basket.API.Application.Commands
         
         public async Task<bool> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
         {
-            BasketState.Result basket = Domain.Models.BasketAggregate.Basket.Create(new EntityId(command.CustomerId));
-                
-            await _aggregateStore.CreateAsync(basket);
+            Domain.Models.BasketAggregate.Basket basket = Domain.Models.BasketAggregate.Basket.Create(new EntityId(command.CustomerId));
+            await _aggregateStore.SaveAsync(basket);
             
             return true;
         }
