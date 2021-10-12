@@ -13,6 +13,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             public const decimal MaxQuantityPerProduct = 10;
         }
         
+        public EntityId BasketId { get; private set; }
+        
         public EntityId ProductId { get; private set; }
         
         public ProductQuantity Quantity { get; private set; }
@@ -32,6 +34,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new BasketItemQuantityIncreasedDomainEvent
                 {
+                    BasketId = BasketId,
                     ProductId = ProductId,
                     Quantity = value
                 }
@@ -47,6 +50,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new BasketItemQuantityDecreasedDomainEvent
                 {
+                    BasketId = BasketId,
                     ProductId = ProductId,
                     Quantity = value
                 }
@@ -58,6 +62,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             switch (@event)
             {
                 case ProductAddedToBasketDomainEvent e:
+                    BasketId = new EntityId(e.BasketId);
                     ProductId = new EntityId(e.ProductId);
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);

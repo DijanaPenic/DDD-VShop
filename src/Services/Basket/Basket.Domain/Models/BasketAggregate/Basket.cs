@@ -45,7 +45,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new BasketCreatedDomainEvent
                 {
-                    Id = Guid.NewGuid(), // TODO - sequential guid
+                    BasketId = Guid.NewGuid(), // TODO - sequential guid
                     CustomerId = customerId,
                     Discount = discount
                 }
@@ -57,16 +57,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public void AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
-            if (basketItem != null)
-            {
-                if (!unitPrice.Equals(basketItem.UnitPrice))
-                    throw new Exception($"Basket contains product but with different unit price: {basketItem.UnitPrice}");
-            }
             
+            if (basketItem != null && !unitPrice.Equals(basketItem.UnitPrice))
+                throw new Exception($"Basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
+
             Apply
             (
                 new ProductAddedToBasketDomainEvent
                 {
+                    BasketId = Id,
                     ProductId = productId,
                     Quantity = quantity,
                     UnitPrice = unitPrice
@@ -87,6 +86,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new ProductRemovedFromBasketDomainEvent
                 {
+                    BasketId = Id,
                     ProductId = productId
                 }
             );
@@ -138,7 +138,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 
             Apply
             (
-                new BasketCheckoutRequestedDomainEvent { }
+                new BasketCheckoutRequestedDomainEvent
+                {
+                    BasketId = Id
+                }
             );
         }
         
@@ -149,7 +152,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             
             Apply
             (
-                new BasketDeletionRequestedDomainEvent { }
+                new BasketDeletionRequestedDomainEvent
+                {
+                    BasketId = Id
+                }
             );
         }
 
@@ -162,6 +168,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 (
                     new DeliveryCostChangedDomainEvent
                     {
+                        BasketId = Id,
                         DeliveryCost = newDeliveryCost
                     }
                 );
@@ -177,7 +184,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             switch (@event)
             {
                 case BasketCreatedDomainEvent e:
-                    Id = new EntityId(e.Id);
+                    Id = new EntityId(e.BasketId);
 
                     BasketCustomer basketCustomer = new(Apply);
                     ApplyToEntity(basketCustomer, e);

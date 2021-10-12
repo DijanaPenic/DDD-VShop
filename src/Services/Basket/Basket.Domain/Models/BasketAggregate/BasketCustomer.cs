@@ -9,11 +9,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
+        public EntityId BasketId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
-        public Address DeliveryAddress { get; set; }
+        public Address DeliveryAddress { get; private set; }
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
 
@@ -23,6 +24,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new ContactInformationSetDomainEvent
                 {
+                    BasketId = BasketId,
                     FirstName = fullName.FirstName,
                     MiddleName = fullName.MiddleName,
                     LastName = fullName.LastName,
@@ -39,6 +41,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new DeliveryAddressSetDomainEvent
                 {
+                    BasketId = BasketId,
                     City = deliveryAddress.City,
                     CountryCode = deliveryAddress.CountryCode,
                     PostalCode = deliveryAddress.PostalCode,
@@ -53,6 +56,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             switch (@event)
             {
                 case BasketCreatedDomainEvent e:
+                    BasketId = new EntityId(e.BasketId);
                     Id = new EntityId(e.CustomerId);
                     break;
                 case ContactInformationSetDomainEvent e:

@@ -1,8 +1,11 @@
-﻿using VShop.SharedKernel.Infrastructure.Domain;
+﻿using System;
+
+using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.Services.Basket.Domain.Events
 {
     public class BasketCheckoutRequestedDomainEvent : IDomainEvent
     {
+        public Guid BasketId { get; set; }
     }
 }

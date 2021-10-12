@@ -7,6 +7,7 @@ namespace VShop.Services.Basket.Domain.Events
 {
     public record DeliveryAddressSetDomainEvent : IDomainEvent
     {
+        public Guid BasketId { get; set; }
         public string City { get; set; }
         public string CountryCode { get; set; }
         public string PostalCode { get; set; }
