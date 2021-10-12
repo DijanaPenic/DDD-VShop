@@ -1,22 +1,17 @@
 ﻿using System;
 
 using VShop.SharedKernel.Infrastructure.Domain;
+using VShop.Services.Basket.Domain.Models.CustomerAggregate;
 
 namespace VShop.Services.Basket.Domain.Events
 {
-    public record BasketCreatedDomainEvent : IDomainEvent
+    public record ContactInformationSetDomainEvent : IDomainEvent
     {
         public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
-        public BasketItem[] BasketItems { get; set; }
-        public int Discount { get; set; }
-        
-        public class BasketItem
-        {
-            public Guid ProductId { get; set; }
-            public string Quantity { get; set; }
-            public decimal UnitPrice { get; set; }
-            public int Discount { get; set; }
-        }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string MiddleName { get; set; }
+        public string Email { get; set; }
+        public BasketCustomer.GenderType Gender { get; set; }
     }
 }

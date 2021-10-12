@@ -5,15 +5,14 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
-    public interface IAggregateStore
+    public interface IAggregateStore<TA, TKey>
+        where TKey : ValueObject
+        where TA : AggregateRoot<TKey>
     {
-        Task SaveAsync<T>(T aggregate)
-            where T : AggregateRoot;
-
-        Task<bool> ExistsAsync<T>(EntityId aggregateId)
-            where T : AggregateRoot;
-
-        Task<T> LoadAsync<T>(EntityId aggregateId)
-            where T : AggregateRoot;
+        Task SaveAsync(TA aggregate);
+        
+        Task<bool> ExistsAsync(TKey aggregateId);
+        
+        Task<TA> LoadAsync(TKey aggregateId);
     }
 }

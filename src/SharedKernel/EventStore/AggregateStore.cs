@@ -9,19 +9,20 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
-    public class AggregateStore : IAggregateStore
+    public class AggregateStore<TA, TKey> : IAggregateStore<TA, TKey>
+        where TKey : ValueObject
+        where TA : AggregateRoot<TKey>
     {
         private readonly IEventStoreConnection _connection;
 
         public AggregateStore(IEventStoreConnection connection) => _connection = connection;
         
-        public async Task SaveAsync<T>(T aggregate) 
-            where T : AggregateRoot
+        public async Task SaveAsync(TA aggregate)
         {
             if (aggregate == null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            string streamName = GetStreamName<T>(aggregate.Id);
+            string streamName = GetStreamName(aggregate.Id);
             object[] events = aggregate.GetChanges().ToArray();
 
             await _connection.AppendEvents(streamName, aggregate.Version, events);
@@ -29,22 +30,20 @@ namespace VShop.SharedKernel.EventStore
             aggregate.ClearChanges();
         }
         
-        public async Task<bool> ExistsAsync<T>(EntityId aggregateId)
-            where T : AggregateRoot
+        public async Task<bool> ExistsAsync(TKey aggregateId)
         {
-            string streamName = GetStreamName<T>(aggregateId);
+            string streamName = GetStreamName(aggregateId);
             EventReadResult result = await _connection.ReadEventAsync(streamName, 1, false);
             
             return result.Status != EventReadStatus.NoStream;
         }
         
-        public async Task<T> LoadAsync<T>(EntityId aggregateId)
-            where T : AggregateRoot
+        public async Task<TA> LoadAsync(TKey aggregateId)
         {
             const int maxSliceSize = 4096;
             
-            T aggregate = (T)Activator.CreateInstance(typeof(T), true); 
-            string streamName = GetStreamName<T>(aggregateId);
+            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true); 
+            string streamName = GetStreamName(aggregateId);
 
             long position = 0L;
             bool endOfStream;
@@ -71,8 +70,7 @@ namespace VShop.SharedKernel.EventStore
             return aggregate;
         }
 
-        private static string GetStreamName<T>(EntityId aggregateId)
-            where T : AggregateRoot
-            => $"{typeof(T).Name}-{aggregateId}";
+        private static string GetStreamName(TKey aggregateId)
+            => $"{typeof(TA).Name}-{aggregateId}";
     }
 }

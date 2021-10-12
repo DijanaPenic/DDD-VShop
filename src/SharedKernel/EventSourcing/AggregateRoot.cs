@@ -5,11 +5,12 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    public abstract class AggregateRoot
+    public abstract class AggregateRoot<TKey>
+        where TKey : ValueObject
     {
         private readonly IList<object> _changes = new List<object>();
 
-        public EntityId Id { get; protected set; }
+        public TKey Id { get; protected set; }
 
         public int Version { get; private set; } = -1;
 

@@ -1,12 +1,12 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
+using VShop.Services.Basket.Domain.Models.Shared;
 
 namespace VShop.Services.Basket.Domain.Models.CustomerAggregate
 {
-    public class BasketCustomer : AggregateRoot
+    public class BasketCustomer : Entity<EntityId>
     {
         // TODO - add needed value objects
         public string FirstName { get; private set; }
@@ -15,16 +15,14 @@ namespace VShop.Services.Basket.Domain.Models.CustomerAggregate
         public string Email { get; private set; }
         public GenderType Gender { get; private set; }
         
-        
-        public static BasketCustomer Create(EntityId customerId, string firstName, string lastName, string middleName, string email, GenderType gender)
+        public BasketCustomer(Action<object> applier) : base(applier) { }
+
+        public void SetContactInformation(string firstName, string lastName, string middleName, string email, GenderType gender)
         {
-            BasketCustomer customer = new();
-            
-            customer.Apply
+            Apply
             (
                 new ContactInformationSetDomainEvent
                 {
-                    Id = customerId,
                     FirstName = firstName,
                     LastName = lastName,
                     MiddleName = middleName,
@@ -32,14 +30,17 @@ namespace VShop.Services.Basket.Domain.Models.CustomerAggregate
                     Gender = gender
                 }
             );
-
-            return customer;
         }
         
+        // TODO - need to add 
+
         protected override void When(object @event)
         {
             switch (@event)
             {
+                case BasketCreatedDomainEvent e:
+                    Id = new EntityId(e.CustomerId);
+                    break;
                 case ContactInformationSetDomainEvent e:
                     FirstName = e.FirstName;
                     LastName = e.LastName;

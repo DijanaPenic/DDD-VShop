@@ -4,11 +4,12 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    public abstract class Entity : IInternalEventHandler
+    public abstract class Entity<TId> : IInternalEventHandler
+        where TId : ValueObject
     {
         private readonly Action<object> _applier;
         
-        public EntityId Id { get; protected set; }
+        public TId Id { get; protected set; }
 
         protected Entity(Action<object> applier) => _applier = applier;
 

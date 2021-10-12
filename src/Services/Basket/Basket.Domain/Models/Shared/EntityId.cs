@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VShop.SharedKernel.Infrastructure.Domain
+using VShop.SharedKernel.Infrastructure.Domain;
+
+namespace VShop.Services.Basket.Domain.Models.Shared
 {
     public class EntityId : ValueObject
     {
         public Guid Value { get; }
         
-        // TODO - check if I can make constructor private and add a method for Guid value.
-        public EntityId(Guid value)
+        internal EntityId(Guid value) => Value = value;
+        
+        public static EntityId Create(Guid value)
         {
             if (value == default) // TODO - check sequential Guid
                 throw new ArgumentNullException(nameof(value), "The entity Id cannot be empty."); // TODO - use custom assert class
 
-            Value = value;
+            return new EntityId(value);
         }
 
         public static implicit operator Guid(EntityId self) => self.Value;

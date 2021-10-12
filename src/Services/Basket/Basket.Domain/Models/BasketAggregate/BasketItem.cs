@@ -1,12 +1,12 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
+using VShop.Services.Basket.Domain.Models.Shared;
 
 namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
-    public class BasketItem : Entity
+    public class BasketItem : Entity<EntityId>
     {
         private const int MaxQuantityPerProduct = 10;
         

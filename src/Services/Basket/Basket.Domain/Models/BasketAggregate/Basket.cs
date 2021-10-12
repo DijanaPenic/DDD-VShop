@@ -3,16 +3,17 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.Basket.Domain.Events;
+using VShop.Services.Basket.Domain.Models.Shared;
+using VShop.Services.Basket.Domain.Models.CustomerAggregate;
 
 namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
-    public class Basket : AggregateRoot
+    public class Basket : AggregateRoot<EntityId>
     {
         private const decimal MinBasketAmountForCheckout = 100m;
 
-        public EntityId CustomerId { get; private set; }
+        public BasketCustomer BasketCustomer { get; private set; }
 
         public BasketStatus Status { get; private set; }
         
@@ -106,19 +107,25 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 basketItem.DecreaseQuantity(value);          
             }
         }
-
+        
         private BasketItem FindBasketItem(EntityId productId)
             => BasketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
         protected override void When(object @event)
         {
             BasketItem basketItem;
+            BasketCustomer basketCustomer;
             
             switch (@event)
             {
                 case BasketCreatedDomainEvent e:
                     Id = new EntityId(e.Id);
-                    CustomerId = new EntityId(e.CustomerId);
+
+                    basketCustomer = new BasketCustomer(Apply);
+                    ApplyToEntity(basketCustomer, e);
+                    BasketCustomer = basketCustomer;
+                    
+
                     Discount = e.Discount;
                     Status = BasketStatus.New;
                     _basketItems = new List<BasketItem>();
