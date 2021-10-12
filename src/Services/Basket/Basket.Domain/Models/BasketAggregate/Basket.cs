@@ -21,6 +21,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public BasketCustomer BasketCustomer { get; private set; }
 
         public BasketStatus Status { get; private set; }
+
+        public string PromoCode { get; private set; } // TODO - missing promo code implementation
+
+        public DateTime ConfirmedAt { get; private set; }
         
         private List<BasketItem> _basketItems;
         public IReadOnlyCollection<BasketItem> BasketItems => _basketItems;
@@ -34,6 +38,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
 
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
+        
 
         public static Basket Create(EntityId customerId, int customerDiscount)
         {
@@ -145,7 +150,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new BasketCheckoutRequestedDomainEvent
                 {
-                    BasketId = Id
+                    BasketId = Id,
+                    ConfirmedAt = DateTime.UtcNow
                 }
             );
         }
@@ -215,8 +221,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 case DeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
                     break;
-                case BasketCheckoutRequestedDomainEvent _:
+                case BasketCheckoutRequestedDomainEvent e:
                     Status = BasketStatus.PendingCheckout;
+                    ConfirmedAt = e.ConfirmedAt;
                     break;
                 case BasketDeletionRequestedDomainEvent _:
                     Status = BasketStatus.Closed;
