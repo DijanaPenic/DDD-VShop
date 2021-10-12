@@ -1,10 +1,11 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Domain.Models.Shared;
 
-namespace VShop.Services.Basket.Domain.Models.CustomerAggregate
+namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
@@ -50,7 +51,5 @@ namespace VShop.Services.Basket.Domain.Models.CustomerAggregate
                     break;
             }
         }
-        
-        public enum GenderType { Female, Male, Other }
     }
 }

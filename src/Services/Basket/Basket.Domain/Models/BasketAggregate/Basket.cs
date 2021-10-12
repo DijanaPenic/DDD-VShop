@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using VShop.SharedKernel.EventSourcing;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Domain.Models.Shared;
-using VShop.Services.Basket.Domain.Models.CustomerAggregate;
 
 namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 
 using VShop.SharedKernel.Infrastructure.Domain;
-using VShop.Services.Basket.Domain.Models.CustomerAggregate;
+using VShop.SharedKernel.Infrastructure.Domain.Enums;
 
 namespace VShop.Services.Basket.Domain.Events
 {
@@ -12,6 +12,6 @@ namespace VShop.Services.Basket.Domain.Events
         public string LastName { get; set; }
         public string MiddleName { get; set; }
         public string Email { get; set; }
-        public BasketCustomer.GenderType Gender { get; set; }
+        public GenderType Gender { get; set; }
     }
 }
