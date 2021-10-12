@@ -128,15 +128,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public void RequestCheckout()
         {
-            if(Status != BasketStatus.New)
+            if(Status != BasketStatus.Fulfilled)
                 throw new InvalidOperationException($"Cannot proceed with checkout. Basket Status: {Status}.");
 
             if(_basketItems.Count == 0)
-                throw new InvalidOperationException($"Cannot proceed with checkout. At least one product must be added in basket.");
+                throw new InvalidOperationException($"Cannot proceed with checkout. At least one product must be added in the basket.");
 
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
                 throw new InvalidOperationException($"Cannot proceed with checkout. Minimum basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
-                
+
             Apply
             (
                 new BasketCheckoutRequestedDomainEvent
@@ -206,6 +206,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     basketItem = FindBasketItem(new EntityId(e.ProductId));
                     _basketItems.Remove(basketItem);
                     break;
+                case DeliveryAddressSetDomainEvent e:
+                    Status = BasketStatus.Fulfilled;
+                    break;
                 case DeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
                     break;
@@ -217,7 +220,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     break;
             }
         }
-        
-        public enum BasketStatus { New, PendingCheckout, Closed }
+
+        public enum BasketStatus
+        {
+            New,
+            Fulfilled,       // customer has provided needed contact information and can proceed with payment
+            PendingCheckout, // ready to pay
+            Closed
+        }
     }
 }

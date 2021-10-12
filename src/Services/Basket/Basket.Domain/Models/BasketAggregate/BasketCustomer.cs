@@ -9,6 +9,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
+        // TODO - need to resolve basket customer identity
         public EntityId BasketId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
