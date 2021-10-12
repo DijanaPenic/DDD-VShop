@@ -9,11 +9,11 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
-        // TODO - add needed value objects
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
+        public Address DeliveryAddress { get; set; }
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
 
@@ -32,8 +32,21 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 }
             );
         }
-        
-        // TODO - need to add 
+
+        public void SetDeliveryAddress(Address deliveryAddress)
+        {
+            Apply
+            (
+                new DeliveryAddressSetDomainEvent
+                {
+                    City = deliveryAddress.City,
+                    CountryCode = deliveryAddress.CountryCode,
+                    PostalCode = deliveryAddress.PostalCode,
+                    StateProvince = deliveryAddress.StateProvince,
+                    StreetAddress = deliveryAddress.StreetAddress,
+                }
+            );
+        }
 
         protected override void When(object @event)
         {
@@ -47,6 +60,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     EmailAddress = new EmailAddress(e.EmailAddress);
                     PhoneNumber = new PhoneNumber(e.PhoneNumber);
                     Gender = e.Gender;
+                    break;
+                case DeliveryAddressSetDomainEvent e:
+                    DeliveryAddress = new Address(e.City, e.CountryCode, e.PostalCode, e.StateProvince, e.StreetAddress);
                     break;
             }
         }
