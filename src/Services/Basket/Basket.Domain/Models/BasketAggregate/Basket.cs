@@ -25,19 +25,17 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         private List<BasketItem> _basketItems;
         public IReadOnlyCollection<BasketItem> BasketItems => _basketItems;
 
-        public int Discount { get; private set; }
-
         public Price DeliveryCost { get; private set; }
 
         public Price ProductsCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
         
-        public Price TotalDeduction => ProductsCostWithoutDiscount * (Discount / 100.00m) ;
+        public Price TotalDeduction => ProductsCostWithoutDiscount * (BasketCustomer.Discount / 100.00m);
         
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
 
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
 
-        public static Basket Create(EntityId customerId, int discount)
+        public static Basket Create(EntityId customerId, int customerDiscount)
         {
             Basket basket = new();
             
@@ -47,7 +45,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 {
                     BasketId = Guid.NewGuid(), // TODO - sequential guid
                     CustomerId = customerId,
-                    Discount = discount
+                    CustomerDiscount = customerDiscount
                 }
             );
 
@@ -56,10 +54,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public void AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
+            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
+                throw new InvalidOperationException($"Adding product for the cart in '{Status}' status is not allowed.");
+            
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
             
             if (basketItem != null && !unitPrice.Equals(basketItem.UnitPrice))
-                throw new Exception($"Basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
+                throw new Exception($"Product's quantity cannot be adjusted - basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
 
             Apply
             (
@@ -78,10 +79,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void RemoveProduct(EntityId productId)
         {
+            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
+                throw new InvalidOperationException($"Removing product from the cart in '{Status}' status is not allowed.");
+            
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException("Requested product item cannot be found.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
             
             Apply
             (
@@ -100,7 +104,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException("Requested product item cannot be found.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
 
             basketItem.IncreaseProductQuantity(value);
             
@@ -112,7 +116,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException("Requested product item cannot be found.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
 
             if (basketItem.Quantity - value <= 0)
             {
@@ -129,13 +133,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public void RequestCheckout()
         {
             if(Status != BasketStatus.Fulfilled)
-                throw new InvalidOperationException($"Cannot proceed with checkout. Basket Status: {Status}.");
+                throw new InvalidOperationException($"Requesting checkout is not allowed. Basket Status: '{Status}'.");
 
             if(_basketItems.Count == 0)
-                throw new InvalidOperationException($"Cannot proceed with checkout. At least one product must be added in the basket.");
+                throw new InvalidOperationException($"Requesting checkout is not allowed. At least one product must be added in the basket.");
 
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
-                throw new InvalidOperationException($"Cannot proceed with checkout. Minimum basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
+                throw new InvalidOperationException($"Requesting checkout is not allowed. Minimum required basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
 
             Apply
             (
@@ -149,7 +153,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public void RequestDelete()
         {
             if (Status == BasketStatus.Closed)
-                throw new InvalidOperationException($"Cannot proceed with delete request. Basket is already deleted.");
+                throw new InvalidOperationException($"Cannot proceed with the delete request. Basket is already deleted/closed.");
             
             Apply
             (
@@ -191,8 +195,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     ApplyToEntity(basketCustomer, e);
                     BasketCustomer = basketCustomer;
                     
-
-                    Discount = e.Discount;
+                    
                     DeliveryCost = new Price(0);
                     Status = BasketStatus.New;
                     _basketItems = new List<BasketItem>();

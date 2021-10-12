@@ -9,13 +9,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
-        // TODO - need to resolve basket customer identity
+        // TODO - need to resolve basket customer identity. Not sure if I'm handling it correctly.
         public EntityId BasketId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
+        
+        public int Discount { get; private set; }
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
 
@@ -58,6 +60,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             {
                 case BasketCreatedDomainEvent e:
                     BasketId = new EntityId(e.BasketId);
+                    Discount = e.CustomerDiscount;
                     Id = new EntityId(e.CustomerId);
                     break;
                 case ContactInformationSetDomainEvent e:
