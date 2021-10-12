@@ -29,13 +29,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public Price DeliveryCost { get; private set; }
 
-        public Price ProductCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
+        public Price ProductsCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
         
-        public Price TotalDeduction => ProductCostWithoutDiscount * (Discount / 100.00m) ;
+        public Price TotalDeduction => ProductsCostWithoutDiscount * (Discount / 100.00m) ;
         
-        public Price ProductCostWithDiscount => ProductCostWithoutDiscount - TotalDeduction;
+        public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
 
-        public Price FinalAmount => ProductCostWithDiscount + DeliveryCost;
+        public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
 
         public static Basket Create(EntityId customerId, int discount)
         {
@@ -125,9 +125,37 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             RecalculateDeliveryCost();
         }
 
+        public void RequestCheckout()
+        {
+            if(Status != BasketStatus.New)
+                throw new InvalidOperationException($"Cannot proceed with checkout. Basket Status: {Status}.");
+
+            if(_basketItems.Count == 0)
+                throw new InvalidOperationException($"Cannot proceed with checkout. At least one product must be added in basket.");
+
+            if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
+                throw new InvalidOperationException($"Cannot proceed with checkout. Minimum basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
+                
+            Apply
+            (
+                new BasketCheckoutRequestedDomainEvent { }
+            );
+        }
+        
+        public void RequestDelete()
+        {
+            if (Status == BasketStatus.Closed)
+                throw new InvalidOperationException($"Cannot proceed with delete request. Basket is already deleted.");
+            
+            Apply
+            (
+                new BasketDeletionRequestedDomainEvent { }
+            );
+        }
+
         private void RecalculateDeliveryCost()
         {
-            decimal newDeliveryCost = (ProductCostWithDiscount >= Settings.MinBasketAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
+            decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinBasketAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
             
             if (newDeliveryCost != DeliveryCost)
                 Apply
@@ -138,21 +166,20 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     }
                 );
         }
-        
+
         private BasketItem FindBasketItem(EntityId productId)
             => BasketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
         protected override void When(object @event)
         {
             BasketItem basketItem;
-            BasketCustomer basketCustomer;
             
             switch (@event)
             {
                 case BasketCreatedDomainEvent e:
                     Id = new EntityId(e.Id);
 
-                    basketCustomer = new BasketCustomer(Apply);
+                    BasketCustomer basketCustomer = new(Apply);
                     ApplyToEntity(basketCustomer, e);
                     BasketCustomer = basketCustomer;
                     
@@ -173,6 +200,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     break;
                 case DeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
+                    break;
+                case BasketCheckoutRequestedDomainEvent _:
+                    Status = BasketStatus.PendingCheckout;
+                    break;
+                case BasketDeletionRequestedDomainEvent _:
+                    Status = BasketStatus.Closed;
                     break;
             }
         }

@@ -8,8 +8,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketItem : Entity<EntityId>
     {
-        // TODO - need to implement the checkout checks
-        private const int MaxQuantityPerProduct = 10;
+        public static class Settings
+        {
+            public const decimal MaxQuantityPerProduct = 10;
+        }
         
         public EntityId ProductId { get; private set; }
         
@@ -23,8 +25,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void IncreaseProductQuantity(ProductQuantity value)
         {
-            if (Quantity + value > MaxQuantityPerProduct)
-                throw new Exception($"Maximum allowed quantity per single product is {MaxQuantityPerProduct}.");
+            if (Quantity + value > Settings.MaxQuantityPerProduct)
+                throw new Exception($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
             
             Apply
             (
