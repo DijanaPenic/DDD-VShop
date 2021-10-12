@@ -8,6 +8,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketItem : Entity<EntityId>
     {
+        // TODO - need to implement the checkout checks
         private const int MaxQuantityPerProduct = 10;
         
         public EntityId ProductId { get; private set; }

@@ -10,7 +10,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class Basket : AggregateRoot<EntityId>
     {
-        private const decimal MinBasketAmountForCheckout = 100m;
+        public static class Settings
+        {
+            public const decimal MinBasketAmountForCheckout = 100m;
+            public const decimal DefaultDeliveryCost = 20m;
+            public const decimal MinBasketAmountForFreeDelivery = 500m;
+            public const int SalesTax = 25; // TODO - include receipt calculation
+        }
 
         public BasketCustomer BasketCustomer { get; private set; }
 
@@ -21,11 +27,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public int Discount { get; private set; }
 
-        public decimal TotalAmountWithoutDiscount => _basketItems.Sum(bi => bi.TotalAmount);
+        public Price DeliveryCost { get; private set; }
+
+        public Price ProductCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
         
-        public decimal TotalDeduction => (Discount / 100.00m) * TotalAmountWithoutDiscount;
+        public Price TotalDeduction => ProductCostWithoutDiscount * (Discount / 100.00m) ;
         
-        public decimal FinalAmount => TotalAmountWithoutDiscount - TotalDeduction;
+        public Price ProductCostWithDiscount => ProductCostWithoutDiscount - TotalDeduction;
+
+        public Price FinalAmount => ProductCostWithDiscount + DeliveryCost;
 
         public static Basket Create(EntityId customerId, int discount)
         {
@@ -62,6 +72,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     UnitPrice = unitPrice
                 }
             );
+
+            RecalculateDeliveryCost();
         }
         
         public void RemoveProduct(EntityId productId)
@@ -78,6 +90,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     ProductId = productId
                 }
             );
+            
+            RecalculateDeliveryCost();
         }
         
         public void IncreaseProductQuantity(EntityId productId, ProductQuantity value)
@@ -88,6 +102,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 throw new InvalidOperationException("Requested product item cannot be found.");
 
             basketItem.IncreaseProductQuantity(value);
+            
+            RecalculateDeliveryCost();
         }
         
         public void DecreaseProductQuantity(EntityId productId, ProductQuantity value)
@@ -105,6 +121,22 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             {
                 basketItem.DecreaseProductQuantity(value);          
             }
+            
+            RecalculateDeliveryCost();
+        }
+
+        private void RecalculateDeliveryCost()
+        {
+            decimal newDeliveryCost = (ProductCostWithDiscount >= Settings.MinBasketAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
+            
+            if (newDeliveryCost != DeliveryCost)
+                Apply
+                (
+                    new DeliveryCostChangedDomainEvent
+                    {
+                        DeliveryCost = newDeliveryCost
+                    }
+                );
         }
         
         private BasketItem FindBasketItem(EntityId productId)
@@ -126,6 +158,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     
 
                     Discount = e.Discount;
+                    DeliveryCost = new Price(0);
                     Status = BasketStatus.New;
                     _basketItems = new List<BasketItem>();
                     break;
@@ -137,6 +170,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 case ProductRemovedFromBasketDomainEvent e:
                     basketItem = FindBasketItem(new EntityId(e.ProductId));
                     _basketItems.Remove(basketItem);
+                    break;
+                case DeliveryCostChangedDomainEvent e:
+                    DeliveryCost = new Price(e.DeliveryCost);
                     break;
             }
         }

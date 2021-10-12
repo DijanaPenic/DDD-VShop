@@ -13,8 +13,8 @@ namespace VShop.Services.Basket.Domain.Models.Shared
 
         public static Price Create(decimal value)
         {
-            if (value <= 0)
-                throw new ArgumentNullException(nameof(value), "Price must be larger than 0.");
+            if (value < 0)
+                throw new ArgumentNullException(nameof(value), "Price must be larger than 0 or equal to 0.");
 
             return new Price(value);
         }
@@ -27,9 +27,14 @@ namespace VShop.Services.Basket.Domain.Models.Shared
         
         public static Price operator -(Price self, Price decrement)
             => new(self.Value - decrement.Value);
-        
-        public static Price operator *(Price self, int multiplier)
+
+        public static Price operator *(Price self, decimal multiplier)
             => new(self.Value * multiplier);
+        
+        public void Deconstruct(out decimal value)
+        {
+            value = Value;
+        }
 
         public override string ToString()
             => Value.ToString();
