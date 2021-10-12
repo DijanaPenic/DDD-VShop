@@ -12,15 +12,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public EntityId ProductId { get; private set; }
         
-        public Quantity Quantity { get; private set; }
+        public ProductQuantity Quantity { get; private set; }
         
-        public decimal UnitPrice { get; private set; }
+        public Price UnitPrice { get; private set; }
 
-        public decimal TotalAmount => UnitPrice * Quantity;
+        public Price TotalAmount => UnitPrice * Quantity;
 
         public BasketItem(Action<object> applier) : base(applier) { }
         
-        public void IncreaseQuantity(Quantity value)
+        public void IncreaseProductQuantity(ProductQuantity value)
         {
             if (Quantity + value > MaxQuantityPerProduct)
                 throw new Exception($"Maximum allowed quantity per single product is {MaxQuantityPerProduct}.");
@@ -35,7 +35,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             );
         }
         
-        public void DecreaseQuantity(Quantity value)
+        public void DecreaseProductQuantity(ProductQuantity value)
         {
             if (Quantity - value <= 0)
                 throw new Exception($"Cannot decrease quantity by {value}.");
@@ -56,14 +56,14 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             {
                 case ProductAddedToBasketDomainEvent e:
                     ProductId = new EntityId(e.ProductId);
-                    Quantity = new Quantity(e.Quantity);
-                    UnitPrice = e.UnitPrice;
+                    Quantity = new ProductQuantity(e.Quantity);
+                    UnitPrice = new Price(e.UnitPrice);
                     break;
                 case BasketItemQuantityIncreasedDomainEvent e:
-                    Quantity += new Quantity(e.Quantity);
+                    Quantity += new ProductQuantity(e.Quantity);
                     break;
                 case BasketItemQuantityDecreasedDomainEvent e:
-                    Quantity -= new Quantity(e.Quantity);
+                    Quantity -= new ProductQuantity(e.Quantity);
                     break;
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Domain;
 
-namespace VShop.Services.Basket.Domain.Models.BasketAggregate
+namespace VShop.Services.Basket.Domain.Models.Shared
 {
     public class EmailAddress : ValueObject
     {

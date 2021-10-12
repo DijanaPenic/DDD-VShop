@@ -44,12 +44,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             return basket;
         }
 
-        public void AddProduct(EntityId productId, Quantity quantity, decimal unitPrice)
+        public void AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
             if (basketItem != null)
             {
-                if (unitPrice != basketItem.UnitPrice)
+                if (!unitPrice.Equals(basketItem.UnitPrice))
                     throw new Exception($"Basket contains product but with different unit price: {basketItem.UnitPrice}");
             }
             
@@ -80,17 +80,17 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             );
         }
         
-        public void IncreaseProductQuantity(EntityId productId, Quantity value)
+        public void IncreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
                 throw new InvalidOperationException("Requested product item cannot be found.");
 
-            basketItem.IncreaseQuantity(value);
+            basketItem.IncreaseProductQuantity(value);
         }
         
-        public void DecreaseProductQuantity(EntityId productId, Quantity value)
+        public void DecreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             BasketItem basketItem = FindBasketItem(productId);
 
@@ -103,7 +103,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             }
             else
             {
-                basketItem.DecreaseQuantity(value);          
+                basketItem.DecreaseProductQuantity(value);          
             }
         }
         
