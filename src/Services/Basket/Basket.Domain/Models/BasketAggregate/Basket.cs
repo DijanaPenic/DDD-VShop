@@ -66,6 +66,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 new ProductAddedToBasketDomainEvent
                 {
                     BasketId = Id,
+                    BasketItemId = Guid.NewGuid(),
                     ProductId = productId,
                     Quantity = quantity,
                     UnitPrice = unitPrice

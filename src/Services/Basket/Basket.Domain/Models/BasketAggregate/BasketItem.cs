@@ -62,6 +62,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             switch (@event)
             {
                 case ProductAddedToBasketDomainEvent e:
+                    Id = new EntityId(e.BasketItemId);
                     BasketId = new EntityId(e.BasketId);
                     ProductId = new EntityId(e.ProductId);
                     Quantity = new ProductQuantity(e.Quantity);
