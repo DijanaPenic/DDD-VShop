@@ -10,24 +10,24 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
     public class BasketCustomer : Entity<EntityId>
     {
         // TODO - add needed value objects
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
-        public string MiddleName { get; private set; }
-        public string Email { get; private set; }
+        public FullName FullName { get; private set; }
+        public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
+        public PhoneNumber PhoneNumber { get; private set; }
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
 
-        public void SetContactInformation(string firstName, string lastName, string middleName, string email, GenderType gender)
+        public void SetContactInformation(FullName fullName, EmailAddress emailAddress, PhoneNumber phoneNumber, GenderType gender)
         {
             Apply
             (
                 new ContactInformationSetDomainEvent
                 {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    MiddleName = middleName,
-                    Email = email,
+                    FirstName = fullName.FirstName,
+                    MiddleName = fullName.MiddleName,
+                    LastName = fullName.LastName,
+                    EmailAddress = emailAddress,
+                    PhoneNumber = phoneNumber,
                     Gender = gender
                 }
             );
@@ -43,10 +43,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Id = new EntityId(e.CustomerId);
                     break;
                 case ContactInformationSetDomainEvent e:
-                    FirstName = e.FirstName;
-                    LastName = e.LastName;
-                    MiddleName = e.MiddleName;
-                    Email = e.Email;
+                    FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
+                    EmailAddress = new EmailAddress(e.EmailAddress);
+                    PhoneNumber = new PhoneNumber(e.PhoneNumber);
                     Gender = e.Gender;
                     break;
             }
