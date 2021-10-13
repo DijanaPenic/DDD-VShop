@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace VShop.Services.Basket.API.Infrastructure.Extensions
 {
-    //TODO - potentially move to DI directory
+    //TODO - potentially move to DI directory. Right now code is located in general Extensions directory.
     public static class FluentValidationExtensions
     {
         public static void AddFluentValidationServices(this IServiceCollection services)

@@ -43,7 +43,7 @@ namespace VShop.Services.Basket.API
                 "Basket.API" // TODO - change name.
             );
             services.AddSingleton(esConnection);
-            services.AddSingleton(typeof(IEventStoreDbRepository<,>), typeof(EventStoreDbRepository<,>));
+            services.AddSingleton(typeof(IEventStoreRepository<,>), typeof(EventStoreRepository<,>));
             services.AddSingleton<IHostedService, EventStoreService>();
             EventMappings.MapEventTypes();
             
