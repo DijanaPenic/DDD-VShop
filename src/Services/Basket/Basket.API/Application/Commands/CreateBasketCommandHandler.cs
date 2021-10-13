@@ -9,11 +9,11 @@ namespace VShop.Services.Basket.API.Application.Commands
 {
     public class CreateBasketCommandHandler : IRequestHandler<CreateBasketCommand, bool>
     {
-        private readonly IEventStoreDbRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketStore;
+        private readonly IEventStoreRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
         
-        public CreateBasketCommandHandler(IEventStoreDbRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketStore)
+        public CreateBasketCommandHandler(IEventStoreRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
         {
-            _basketStore = basketStore;
+            _basketRepository = basketRepository;
         }
         
         public async Task<bool> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
@@ -21,10 +21,20 @@ namespace VShop.Services.Basket.API.Application.Commands
             Domain.Models.BasketAggregate.Basket basket = Domain.Models.BasketAggregate.Basket.Create
             (
                 EntityId.Create(command.CustomerId), 
-                command.Discount
+                command.CustomerDiscount
             );
+
+            foreach (BasketItem basketItem in command.BasketItems)
+            {
+                basket.AddProduct
+                (
+                    EntityId.Create(basketItem.ProductId), 
+                    ProductQuantity.Create(basketItem.Quantity), 
+                    Price.Create(basketItem.UnitPrice)
+                );
+            }
             
-            await _basketStore.SaveAsync(basket);
+            await _basketRepository.SaveAsync(basket);
 
             return true;
         }
