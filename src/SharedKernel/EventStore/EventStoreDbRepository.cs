@@ -9,13 +9,13 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
-    public class AggregateStore<TA, TKey> : IAggregateStore<TA, TKey>
+    public class EventStoreDbRepository<TA, TKey> : IEventStoreDbRepository<TA, TKey>
         where TKey : ValueObject
         where TA : AggregateRoot<TKey>
     {
         private readonly IEventStoreConnection _connection;
 
-        public AggregateStore(IEventStoreConnection connection) => _connection = connection;
+        public EventStoreDbRepository(IEventStoreConnection connection) => _connection = connection;
         
         public async Task SaveAsync(TA aggregate)
         {
