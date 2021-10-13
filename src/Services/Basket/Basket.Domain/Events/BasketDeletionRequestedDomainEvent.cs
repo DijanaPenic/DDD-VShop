@@ -6,6 +6,6 @@ namespace VShop.Services.Basket.Domain.Events
 {
     public class BasketDeletionRequestedDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; set; }
+        public Guid BasketId { get; init; }
     }
 }

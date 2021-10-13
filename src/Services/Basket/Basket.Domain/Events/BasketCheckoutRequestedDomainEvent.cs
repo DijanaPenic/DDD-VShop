@@ -6,7 +6,7 @@ namespace VShop.Services.Basket.Domain.Events
 {
     public class BasketCheckoutRequestedDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; set; }
-        public DateTime ConfirmedAt { get; set; }
+        public Guid BasketId { get; init; }
+        public DateTime ConfirmedAt { get; init; }
     }
 }

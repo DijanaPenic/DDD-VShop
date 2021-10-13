@@ -6,18 +6,18 @@ namespace VShop.Services.Basket.Domain.Events
 {
     public record BasketCreatedDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; set; }
-        public Guid CustomerId { get; set; }
-        public BasketItem[] BasketItems { get; set; }
-        public int CustomerDiscount { get; set; }
+        public Guid BasketId { get; init; }
+        public Guid CustomerId { get; init; }
+        public BasketItem[] BasketItems { get; init; }
+        public int CustomerDiscount { get; init; }
         
         // TODO - check if this needs to be removed
         public class BasketItem
         {
-            public Guid ProductId { get; set; }
-            public string Quantity { get; set; }
-            public decimal UnitPrice { get; set; }
-            public int Discount { get; set; }
+            public Guid ProductId { get; init; }
+            public string Quantity { get; init; }
+            public decimal UnitPrice { get; init; }
+            public int Discount { get; init; }
         }
     }
 }
