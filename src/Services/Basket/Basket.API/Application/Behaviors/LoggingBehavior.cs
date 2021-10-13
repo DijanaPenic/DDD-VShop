@@ -13,7 +13,7 @@ namespace VShop.Services.Basket.API.Application.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            string requestTypeName = request.GetType().FullName;
+            string requestTypeName = request.GetType().Name;
             
             _logger.LogInformation("----- Handling command {CommandName} ({@Command})", requestTypeName, request);
             
