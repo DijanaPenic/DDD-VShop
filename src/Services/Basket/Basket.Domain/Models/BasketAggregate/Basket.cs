@@ -39,6 +39,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
         
+        public bool IsBasketEmpty => _basketItems.Count == 0;
+        
+        public int TotalItemsCount() => _basketItems.Count;
 
         public static Basket Create(EntityId customerId, int customerDiscount)
         {
@@ -63,22 +66,29 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 throw new InvalidOperationException($"Adding product for the cart in '{Status}' status is not allowed.");
             
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+
+            if (basketItem == null)
+            {
+                Apply
+                (
+                    new ProductAddedToBasketDomainEvent
+                    {
+                        BasketId = Id,
+                        BasketItemId = Guid.NewGuid(),
+                        ProductId = productId,
+                        Quantity = quantity,
+                        UnitPrice = unitPrice
+                    }
+                );
+            }
+            else
+            {
+                if (!unitPrice.Equals(basketItem.UnitPrice))
+                    throw new Exception($"Product's quantity cannot be adjusted - basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
+
+                basketItem.IncreaseProductQuantity(quantity);
+            }
             
-            if (basketItem != null && !unitPrice.Equals(basketItem.UnitPrice))
-                throw new Exception($"Product's quantity cannot be adjusted - basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
-
-            Apply
-            (
-                new ProductAddedToBasketDomainEvent
-                {
-                    BasketId = Id,
-                    BasketItemId = Guid.NewGuid(),
-                    ProductId = productId,
-                    Quantity = quantity,
-                    UnitPrice = unitPrice
-                }
-            );
-
             RecalculateDeliveryCost();
         }
         
@@ -106,6 +116,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void IncreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
+            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
+                throw new InvalidOperationException($"Updating product for the cart in '{Status}' status is not allowed.");
+            
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
@@ -118,6 +131,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void DecreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
+            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
+                throw new InvalidOperationException($"Updating product for the cart in '{Status}' status is not allowed.");
+             
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
@@ -138,13 +154,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public void RequestCheckout()
         {
             if(Status != BasketStatus.Fulfilled)
-                throw new InvalidOperationException($"Requesting checkout is not allowed. Basket Status: '{Status}'.");
+                throw new InvalidOperationException($"Checkout is not allowed. Basket Status: '{Status}'.");
 
-            if(_basketItems.Count == 0)
-                throw new InvalidOperationException($"Requesting checkout is not allowed. At least one product must be added in the basket.");
+            if(IsBasketEmpty)
+                throw new InvalidOperationException($"Checkout is not allowed. At least one product must be added in the basket.");
 
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
-                throw new InvalidOperationException($"Requesting checkout is not allowed. Minimum required basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
+                throw new InvalidOperationException($"Checkout is not allowed. Minimum required basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
 
             Apply
             (
@@ -234,8 +250,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public enum BasketStatus
         {
             New,
-            Fulfilled,       // customer has provided needed contact information and can proceed with payment
-            PendingCheckout, // ready to pay
+            Fulfilled,              // customer has provided needed contact information and can proceed checkout
+            PendingCheckout,        // ready to pay (once inventory is checked)
             Closed
         }
     }

@@ -70,6 +70,7 @@ namespace VShop.SharedKernel.EventStore
             return aggregate;
         }
 
+        // TODO - should I add BC prefix to stream name?
         private static string GetStreamName(TKey aggregateId)
             => $"{typeof(TA).Name}-{aggregateId}";
     }
