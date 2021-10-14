@@ -6,7 +6,7 @@ using VShop.Services.Basket.API.Application.Behaviors;
 
 namespace VShop.Services.Basket.API.Infrastructure.AutofacModules
 {
-    public class MediatorModule : Autofac.Module
+    public class MediatorModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
