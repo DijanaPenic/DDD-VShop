@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Helpers;
 
 namespace VShop.SharedKernel.EventStore
 {
@@ -26,7 +26,7 @@ namespace VShop.SharedKernel.EventStore
                     @event =>
                         new EventData
                         (
-                            Guid.NewGuid(), // TODO - sequential guid
+                            GuidHelper.NewSequentialGuid(),
                             EventTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),

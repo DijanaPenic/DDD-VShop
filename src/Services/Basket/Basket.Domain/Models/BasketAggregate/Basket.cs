@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Domain.Models.Shared;
@@ -35,7 +36,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new BasketCreatedDomainEvent
                 {
-                    BasketId = Guid.NewGuid(), // TODO - sequential guid
+                    BasketId = GuidHelper.NewSequentialGuid(),
                     CustomerId = customerId,
                     CustomerDiscount = customerDiscount
                 }
@@ -58,7 +59,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     new ProductAddedToBasketDomainEvent
                     {
                         BasketId = Id,
-                        BasketItemId = Guid.NewGuid(),
+                        BasketItemId = GuidHelper.NewSequentialGuid(),
                         ProductId = productId,
                         Quantity = quantity,
                         UnitPrice = unitPrice
