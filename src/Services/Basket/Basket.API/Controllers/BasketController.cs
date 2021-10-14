@@ -37,7 +37,7 @@ namespace VShop.Services.Basket.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         // TODO - need better error/response handling
-        public async Task<IActionResult> UpdateBasketAsync([FromBody]BasketDto basket)
+        public async Task<IActionResult> CreateBasketAsync([FromBody]BasketDto basket)
         {
             CreateBasketCommand basketCommand = _mapper.Map<CreateBasketCommand>(basket);
             
