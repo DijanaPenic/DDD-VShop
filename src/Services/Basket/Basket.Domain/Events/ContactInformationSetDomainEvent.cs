@@ -7,7 +7,7 @@ namespace VShop.Services.Basket.Domain.Events
 {
     public record ContactInformationSetDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; init; }
+        public Guid BasketCustomerId { get; init; }
         public string FirstName { get; init; }
         public string MiddleName { get; init; }
         public string LastName { get; init; }

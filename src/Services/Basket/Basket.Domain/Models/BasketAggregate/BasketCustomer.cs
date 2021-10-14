@@ -9,8 +9,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
-        // TODO - need to resolve basket customer identity. Not sure if I'm handling it correctly.
-        public EntityId BasketId { get; private set; }
+        public EntityId CustomerId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
@@ -27,7 +26,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new ContactInformationSetDomainEvent
                 {
-                    BasketId = BasketId,
+                    BasketCustomerId = Id,
                     FirstName = fullName.FirstName,
                     MiddleName = fullName.MiddleName,
                     LastName = fullName.LastName,
@@ -44,7 +43,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new DeliveryAddressSetDomainEvent
                 {
-                    BasketId = BasketId,
+                    BasketCustomerId = Id,
                     City = deliveryAddress.City,
                     CountryCode = deliveryAddress.CountryCode,
                     PostalCode = deliveryAddress.PostalCode,
@@ -59,9 +58,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             switch (@event)
             {
                 case BasketCreatedDomainEvent e:
-                    BasketId = new EntityId(e.BasketId);
+                    CustomerId = new EntityId(e.CustomerId);
                     Discount = e.CustomerDiscount;
-                    Id = new EntityId(e.CustomerId);
+                    Id = new EntityId(e.BasketId);
                     break;
                 case ContactInformationSetDomainEvent e:
                     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
