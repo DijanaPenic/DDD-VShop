@@ -24,7 +24,7 @@ namespace VShop.Services.Basket.API.Application.Commands
                 command.CustomerDiscount
             );
 
-            foreach (BasketItem basketItem in command.BasketItems)
+            foreach (CreateBasketCommand.BasketItem basketItem in command.BasketItems)
             {
                 basket.AddProduct
                 (

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using VShop.SharedKernel.EventStore;
 using VShop.Services.Basket.Infrastructure;
 using VShop.Services.Basket.API.Infrastructure.Extensions;
+using VShop.Services.Basket.API.Infrastructure.Automapper;
 using VShop.Services.Basket.API.Infrastructure.AutofacModules;
 
 namespace VShop.Services.Basket.API
@@ -31,6 +32,7 @@ namespace VShop.Services.Basket.API
         {
             services.AddControllers();
             services.AddFluentValidationServices();
+            services.AddAutoMapper(typeof(BasketAutomapperProfile));
             
             //services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Basket.API", Version = "v1"}); });
             

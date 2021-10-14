@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using VShop.Services.Basket.API.Application.Models;
 using VShop.Services.Basket.API.Application.Commands;
 
 namespace VShop.Services.Basket.API.Controllers
@@ -16,15 +18,18 @@ namespace VShop.Services.Basket.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<BasketController> _logger;
+        private readonly IMapper _mapper;
         
         public BasketController
         (
             IMediator mediator,
-            ILogger<BasketController> logger
+            ILogger<BasketController> logger,
+            IMapper mapper
         )
         {
             _mediator = mediator;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -32,9 +37,11 @@ namespace VShop.Services.Basket.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         // TODO - need better error/response handling
-        public async Task<IActionResult> UpdateBasketAsync([FromBody] CreateBasketCommand basket)
+        public async Task<IActionResult> UpdateBasketAsync([FromBody]BasketDto basket)
         {
-            bool result = await _mediator.Send(basket);   
+            CreateBasketCommand basketCommand = _mapper.Map<CreateBasketCommand>(basket);
+            
+            bool result = await _mediator.Send(basketCommand);   
             if (!result)
             {
                 return BadRequest();
