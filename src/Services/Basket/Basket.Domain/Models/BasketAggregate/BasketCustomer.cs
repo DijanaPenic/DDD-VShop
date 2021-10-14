@@ -9,13 +9,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class BasketCustomer : Entity<EntityId>
     {
+        private bool _isClosedForUpdates;
+        
         public EntityId CustomerId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
-        
+
         public int Discount { get; private set; }
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
@@ -28,6 +30,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             GenderType gender
         )
         {
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException(@"Updating contact information for the basket is not allowed. 
+                                                            The basket has been closed for updates.");
+            
             Apply
             (
                 new ContactInformationSetDomainEvent
@@ -45,6 +51,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public void SetDeliveryAddress(Address deliveryAddress)
         {
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException(@"Updating delivery address for the basket is not allowed. 
+                                                            The basket has been closed for updates.");
+            
             Apply
             (
                 new DeliveryAddressSetDomainEvent
@@ -83,6 +93,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                         e.StateProvince, 
                         e.StreetAddress
                     );
+                    break;
+                case BasketCheckoutRequestedDomainEvent _:
+                    _isClosedForUpdates = true;
                     break;
             }
         }

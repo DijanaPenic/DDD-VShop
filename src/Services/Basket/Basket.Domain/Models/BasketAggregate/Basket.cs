@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Domain.Models.Shared;
 
@@ -10,37 +11,20 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {
     public class Basket : AggregateRoot<EntityId>
     {
-        public static class Settings
-        {
-            public const decimal MinBasketAmountForCheckout = 100m;
-            public const decimal DefaultDeliveryCost = 20m;
-            public const decimal MinBasketAmountForFreeDelivery = 500m;
-            public const int SalesTax = 25; // TODO - include receipt calculation
-        }
-
-        public BasketCustomer BasketCustomer { get; private set; }
-
-        public BasketStatus Status { get; private set; }
-
-        public string PromoCode { get; private set; } // TODO - missing promo code implementation
-
-        public DateTime ConfirmedAt { get; private set; }
-        
+        private bool _isClosedForUpdates;
         private List<BasketItem> _basketItems;
+        
+        public BasketCustomer BasketCustomer { get; private set; }
+        public BasketStatus Status { get; private set; }
+        public string PromoCode { get; private set; } // TODO - missing promo code implementation
+        public DateTime ConfirmedAt { get; private set; }
         public IReadOnlyCollection<BasketItem> BasketItems => _basketItems;
-
         public Price DeliveryCost { get; private set; }
-
         public Price ProductsCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
-        
         public Price TotalDeduction => ProductsCostWithoutDiscount * (BasketCustomer.Discount / 100.00m);
-        
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
-
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
-        
         public bool IsBasketEmpty => _basketItems.Count == 0;
-        
         public int TotalItemsCount() => _basketItems.Count;
 
         public static Basket Create(EntityId customerId, int customerDiscount)
@@ -62,8 +46,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public void AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
-            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
-                throw new InvalidOperationException($"Adding product for the cart in '{Status}' status is not allowed.");
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException($"Adding product for the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
@@ -84,7 +68,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             else
             {
                 if (!unitPrice.Equals(basketItem.UnitPrice))
-                    throw new Exception($"Product's quantity cannot be adjusted - basket already contains the requested product but with different unit price: {basketItem.UnitPrice}");
+                    throw new Exception(@$"Product's quantity cannot be increased - basket already contains the 
+                                                requested product but with different unit price: {basketItem.UnitPrice}");
 
                 basketItem.IncreaseProductQuantity(quantity);
             }
@@ -94,13 +79,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void RemoveProduct(EntityId productId)
         {
-            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
-                throw new InvalidOperationException($"Removing product from the cart in '{Status}' status is not allowed.");
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException($"Removing product from the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
             
             Apply
             (
@@ -116,13 +101,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void IncreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
-            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
-                throw new InvalidOperationException($"Updating product for the cart in '{Status}' status is not allowed.");
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException($"Updating product for the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
 
             basketItem.IncreaseProductQuantity(value);
             
@@ -131,13 +116,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public void DecreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
-            if(Status != BasketStatus.Fulfilled && Status != BasketStatus.New)
-                throw new InvalidOperationException($"Updating product for the cart in '{Status}' status is not allowed.");
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException($"Updating product for the basket in '{Status}' status is not allowed.");
              
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in cart.");
+                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
 
             if (basketItem.Quantity - value <= 0)
             {
@@ -150,6 +135,20 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             
             RecalculateDeliveryCost();
         }
+        
+        public void SetContactInformation
+        (
+            FullName fullName, 
+            EmailAddress emailAddress, 
+            PhoneNumber phoneNumber, 
+            GenderType gender
+        )
+        {
+            if(_isClosedForUpdates)
+                throw new InvalidOperationException($"Updating contact information for the basket in '{Status}' status is not allowed.");
+            
+            BasketCustomer.SetContactInformation(fullName, emailAddress, phoneNumber, gender);
+        }
 
         public void RequestCheckout()
         {
@@ -160,7 +159,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 throw new InvalidOperationException($"Checkout is not allowed. At least one product must be added in the basket.");
 
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
-                throw new InvalidOperationException($"Checkout is not allowed. Minimum required basket amount for checkout is ${Settings.MinBasketAmountForCheckout}.");
+                throw new InvalidOperationException(@$"Checkout is not allowed. Minimum required basket amount 
+                                                            for checkout is ${Settings.MinBasketAmountForCheckout}.");
 
             Apply
             (
@@ -213,13 +213,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 case BasketCreatedDomainEvent e:
                     Id = new EntityId(e.BasketId);
 
+                    // one-to-one relationship
                     BasketCustomer basketCustomer = new(Apply);
                     ApplyToEntity(basketCustomer, e);
                     BasketCustomer = basketCustomer;
                     
-                    
                     DeliveryCost = new Price(Settings.DefaultDeliveryCost);
                     Status = BasketStatus.New;
+                    
+                    // one-to-many relationship
                     _basketItems = new List<BasketItem>();
                     break;
                 case ProductAddedToBasketDomainEvent e:
@@ -231,7 +233,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     basketItem = FindBasketItem(new EntityId(e.ProductId));
                     _basketItems.Remove(basketItem);
                     break;
-                case DeliveryAddressSetDomainEvent e:
+                case DeliveryAddressSetDomainEvent _:
                     Status = BasketStatus.Fulfilled;
                     break;
                 case DeliveryCostChangedDomainEvent e:
@@ -240,6 +242,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 case BasketCheckoutRequestedDomainEvent e:
                     Status = BasketStatus.PendingCheckout;
                     ConfirmedAt = e.ConfirmedAt;
+                    _isClosedForUpdates = true;
                     break;
                 case BasketDeletionRequestedDomainEvent _:
                     Status = BasketStatus.Closed;
@@ -250,9 +253,17 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public enum BasketStatus
         {
             New,
-            Fulfilled,              // customer has provided needed contact information and can proceed checkout
-            PendingCheckout,        // ready to pay (once inventory is checked)
-            Closed
+            Fulfilled,              // Customer has provided needed contact information and is allowed to proceed with checkout.
+            PendingCheckout,        // Checkout has been requested. The next step: payment.
+            Closed                  // Basket has been deleted (soft delete).
+        }
+        
+        public static class Settings
+        {
+            public const decimal MinBasketAmountForCheckout = 100m;
+            public const decimal DefaultDeliveryCost = 20m;
+            public const decimal MinBasketAmountForFreeDelivery = 500m;
+            public const int SalesTax = 25; // TODO - include receipt calculation
         }
     }
 }
