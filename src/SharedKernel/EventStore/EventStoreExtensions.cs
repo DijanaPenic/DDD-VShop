@@ -27,7 +27,7 @@ namespace VShop.SharedKernel.EventStore
                         new EventData
                         (
                             Guid.NewGuid(), // TODO - sequential guid
-                            TypeMapper.GetTypeName(@event.GetType()),
+                            EventTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),
                             null // TODO - check if metadata can be null

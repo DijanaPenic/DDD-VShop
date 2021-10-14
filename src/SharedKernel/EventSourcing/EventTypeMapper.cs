@@ -3,14 +3,12 @@ using System.Collections.Generic;
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    // TODO - this will be needed for versioning. Right now, I don't support event versions.
-    // Also, need to find better way to handle different event maps.
-    public static class TypeMapper
+    public static class EventTypeMapper
     {
         private static readonly Dictionary<Type, string> NamesByType = new();
         private static readonly Dictionary<string, Type> TypesByName = new();
 
-        public static void Map(Type type, string name = null)
+        private static void Map(Type type, string name = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 name = type.FullName;
@@ -22,13 +20,13 @@ namespace VShop.SharedKernel.EventSourcing
             NamesByType[type] = name;
         }
 
-        public static bool TryGetType(string name, out Type type) => TypesByName.TryGetValue(name, out type);
+        private static bool TryGetType(string name, out Type type) => TypesByName.TryGetValue(name, out type);
 
-        public static bool TryGetTypeName(Type type, out string name) => NamesByType.TryGetValue(type, out name);
+        private static bool TryGetTypeName(Type type, out string name) => NamesByType.TryGetValue(type, out name);
 
         public static void Map<T>(string name) => Map(typeof(T), name);
 
-        public static string GetTypeName(Type type)
+        public static string ToName(Type type)
         {
             if (!TryGetTypeName(type, out string name))
                 throw new Exception($"Failed to find name mapped with '{type}'."); 
@@ -36,7 +34,7 @@ namespace VShop.SharedKernel.EventSourcing
             return name;
         }
 
-        public static Type GetType(string name)
+        public static Type ToType(string name)
         {
             if (!TryGetType(name, out Type type))
                 throw new Exception($"Failed to find type mapped with '{name}'.");

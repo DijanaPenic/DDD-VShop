@@ -1,6 +1,6 @@
 ﻿using VShop.Services.Basket.Domain.Events;
 
-using static VShop.SharedKernel.EventSourcing.TypeMapper;
+using static VShop.SharedKernel.EventSourcing.EventTypeMapper;
 
 namespace VShop.Services.Basket.Infrastructure
 {
@@ -8,7 +8,6 @@ namespace VShop.Services.Basket.Infrastructure
     {
         public static void MapEventTypes()
         {
-            // TODO - check if I can omit this code
             Map<BasketCreatedDomainEvent>("BasketCreated");
             Map<BasketCheckoutRequestedDomainEvent>("BasketCheckoutRequested");
             Map<BasketDeletionRequestedDomainEvent>("BasketDeletionRequested");
