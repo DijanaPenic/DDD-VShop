@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 
-using VShop.Services.Basket.API.Application.Commands;
 using VShop.Services.Basket.API.Application.Models;
+using VShop.Services.Basket.API.Application.Commands;
+using VShop.Services.Basket.API.Application.Commands.Shared;
 
 namespace VShop.Services.Basket.API.Infrastructure.Automapper
 {
@@ -9,8 +10,8 @@ namespace VShop.Services.Basket.API.Infrastructure.Automapper
     {
         public BasketAutomapperProfile()
         {
-            CreateMap<BasketDto, CreateBasketCommand>();
-            CreateMap<BasketItemDto, CreateBasketCommand.BasketItem>();
+            CreateMap<BasketPostDto, CreateBasketCommand>();
+            CreateMap<BasketItemPostDto, BasketItemDto>();
         }
     }
 }
