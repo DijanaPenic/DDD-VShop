@@ -20,7 +20,13 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public BasketCustomer(Action<object> applier) : base(applier) { }
 
-        public void SetContactInformation(FullName fullName, EmailAddress emailAddress, PhoneNumber phoneNumber, GenderType gender)
+        public void SetContactInformation
+        (
+            FullName fullName, 
+            EmailAddress emailAddress, 
+            PhoneNumber phoneNumber, 
+            GenderType gender
+        )
         {
             Apply
             (
@@ -69,7 +75,14 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Gender = e.Gender;
                     break;
                 case DeliveryAddressSetDomainEvent e:
-                    DeliveryAddress = new Address(e.City, e.CountryCode, e.PostalCode, e.StateProvince, e.StreetAddress);
+                    DeliveryAddress = new Address
+                    (
+                        e.City, 
+                        e.CountryCode, 
+                        e.PostalCode,
+                        e.StateProvince, 
+                        e.StreetAddress
+                    );
                     break;
             }
         }
