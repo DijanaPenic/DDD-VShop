@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.Services.Basket.Domain.Events
 {
-    public class BasketDeletionRequestedDomainEvent : IDomainEvent
+    public record BasketDeletionRequestedDomainEvent : IDomainEvent
     {
         public Guid BasketId { get; init; }
     }
