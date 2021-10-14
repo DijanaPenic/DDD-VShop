@@ -218,7 +218,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     BasketCustomer = basketCustomer;
                     
                     
-                    DeliveryCost = new Price(0);
+                    DeliveryCost = new Price(Settings.DefaultDeliveryCost);
                     Status = BasketStatus.New;
                     _basketItems = new List<BasketItem>();
                     break;
