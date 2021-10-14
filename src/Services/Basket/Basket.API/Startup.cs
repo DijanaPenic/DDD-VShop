@@ -34,7 +34,7 @@ namespace VShop.Services.Basket.API
             services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(BasketAutomapperProfile));
             
-            //services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Basket.API", Version = "v1"}); });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Basket.API", Version = "v1"}); });
             
             // Configure event store
             // TODO - move to extension class
@@ -65,10 +65,8 @@ namespace VShop.Services.Basket.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                
-                // TODO - uncomment swagger (later)
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1"));
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1"));
             }
 
             app.UseHttpsRedirection();
