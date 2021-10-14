@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentValidation;
-using VShop.Services.Basket.API.Application.Commands.Shared;
 
 namespace VShop.Services.Basket.API.Application.Models
 {
