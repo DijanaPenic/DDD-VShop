@@ -30,7 +30,7 @@ namespace VShop.SharedKernel.EventStore
                             EventTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),
-                            null // TODO - check if metadata can be null
+                            null
                         )
                 )
                 .ToArray();
