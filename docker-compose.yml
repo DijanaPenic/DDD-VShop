@@ -15,3 +15,13 @@ services:
     ports:
       - "1113:1113"
       - "2113:2113"
+      
+  postgres.db:
+    image: postgres
+    ports: 
+      - 5432:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_Basket
+      POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC

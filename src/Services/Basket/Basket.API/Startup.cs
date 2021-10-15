@@ -31,7 +31,8 @@ namespace VShop.Services.Basket.API
             services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(BasketAutomapperProfile));
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Basket.API", Version = "v1"}); });
-            services.AddEventStoreServices(Configuration.GetConnectionString("EventStore"));
+            services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
+            services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             
             // TODO - missing DI for Postgres database and domain handlers
         }
@@ -54,11 +55,8 @@ namespace VShop.Services.Basket.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

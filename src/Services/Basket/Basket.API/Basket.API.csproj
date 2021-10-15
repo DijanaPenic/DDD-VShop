@@ -15,6 +15,10 @@
         <PackageReference Include="FluentValidation" Version="10.3.3" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.3" />
         <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     </ItemGroup>
 
@@ -23,6 +27,10 @@
       <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\Basket.Domain\Basket.Domain.csproj" />
       <ProjectReference Include="..\Basket.Infrastructure\Basket.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\Migrations" />
     </ItemGroup>
 
 </Project>
