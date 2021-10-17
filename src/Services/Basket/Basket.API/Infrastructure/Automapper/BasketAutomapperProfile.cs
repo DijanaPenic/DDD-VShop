@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using VShop.Services.Basket.API.Application.Models;
+using VShop.Services.Basket.API.Models;
 using VShop.Services.Basket.API.Application.Commands;
 using VShop.Services.Basket.API.Application.Commands.Shared;
 

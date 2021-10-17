@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace VShop.Services.Basket.API.Application.Models
+namespace VShop.Services.Basket.API.Models
 {
     public record BasketPostDto
     {

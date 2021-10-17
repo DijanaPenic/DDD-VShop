@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using VShop.Services.Basket.API.Application.Models;
+using VShop.Services.Basket.API.Models;
 using VShop.Services.Basket.API.Application.Commands;
 
 namespace VShop.Services.Basket.API.Controllers
