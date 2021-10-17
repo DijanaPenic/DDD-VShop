@@ -10,9 +10,9 @@ namespace VShop.Services.Basket.API.Application.Commands
 {
     public class AddBasketItemCommandHandler : IRequestHandler<AddBasketItemCommand, bool>
     {
-        private readonly IEventStoreRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
+        private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
         
-        public AddBasketItemCommandHandler(IEventStoreRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
+        public AddBasketItemCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
         {
             _basketRepository = basketRepository;
         }

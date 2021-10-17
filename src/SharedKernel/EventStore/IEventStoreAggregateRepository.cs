@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {
-    public interface IEventStoreRepository<TA, TKey>
+    public interface IEventStoreAggregateRepository<TA, TKey>
         where TKey : ValueObject
         where TA : AggregateRoot<TKey>
     {

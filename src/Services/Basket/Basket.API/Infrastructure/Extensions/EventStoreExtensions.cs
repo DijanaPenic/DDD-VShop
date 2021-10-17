@@ -18,7 +18,7 @@ namespace VShop.Services.Basket.API.Infrastructure.Extensions
                 "Basket.API"
             );
             services.AddSingleton(esConnection);
-            services.AddSingleton(typeof(IEventStoreRepository<,>), typeof(EventStoreRepository<,>));
+            services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton<IHostedService, EventStoreService>();
             
             EventMappings.MapEventTypes();
