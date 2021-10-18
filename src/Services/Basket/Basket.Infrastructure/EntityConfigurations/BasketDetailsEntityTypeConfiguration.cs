@@ -14,7 +14,6 @@ namespace VShop.Services.Basket.Infrastructure.EntityConfigurations
             builder.HasKey(b => b.Id);
             builder.Property(b => b.CustomerId).IsRequired();
             builder.Property(b => b.Status).IsRequired();
-            builder.Property(b => b.Version).IsRequired();
         }
     }
 }

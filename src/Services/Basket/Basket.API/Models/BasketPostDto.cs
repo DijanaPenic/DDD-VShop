@@ -3,6 +3,7 @@ using FluentValidation;
 
 namespace VShop.Services.Basket.API.Models
 {
+    // TODO - change naming convention for API requests
     public record BasketPostDto
     {
         public Guid CustomerId { get; init; }
