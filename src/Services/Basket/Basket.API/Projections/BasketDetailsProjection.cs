@@ -62,7 +62,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, DeliveryAddressSetDomainEvent @event)
         {
-            BasketDetails basket = await dbContext.Baskets.FirstOrDefaultAsync(b => b.Id == @event.BasketCustomerId);
+            BasketDetails basket = await dbContext.Baskets.FirstOrDefaultAsync(b => b.Id == @event.BasketId);
             basket.Status = BasketStatus.Fulfilled;
             
             dbContext.Baskets.Update(basket);

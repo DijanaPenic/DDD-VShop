@@ -38,7 +38,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new ContactInformationSetDomainEvent
                 {
-                    BasketCustomerId = Id,
+                    BasketId = Id,
                     FirstName = fullName.FirstName,
                     MiddleName = fullName.MiddleName,
                     LastName = fullName.LastName,
@@ -59,7 +59,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             (
                 new DeliveryAddressSetDomainEvent
                 {
-                    BasketCustomerId = Id,
+                    BasketId = Id,
                     City = deliveryAddress.City,
                     CountryCode = deliveryAddress.CountryCode,
                     PostalCode = deliveryAddress.PostalCode,
