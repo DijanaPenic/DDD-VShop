@@ -1,3 +1,4 @@
+using Serilog;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -55,6 +56,7 @@ namespace VShop.Services.Basket.API
             }
 
             app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

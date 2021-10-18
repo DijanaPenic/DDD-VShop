@@ -18,19 +18,15 @@ namespace VShop.Services.Basket.API.Controllers
     public class BasketController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<BasketController> _logger;
 
         public BasketController
         (
             IMediator mediator,
-            ILogger<BasketController> logger,
             IMapper mapper
         )
         {
             _mediator = mediator;
-            _logger = logger;
             _mapper = mapper;
-
         }
 
         private readonly IMapper _mapper;

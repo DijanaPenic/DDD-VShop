@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
+using Serilog.Events;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+
+using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore
 {
     public class EventStoreSubscriptionManager
     {
-        // TODO - enable logging
-        //static readonly ILog Log = LogProvider.GetCurrentClassLogger();
-
         private readonly IEventStoreCheckpointRepository _esCheckpointRepository;
         private readonly IEventStoreConnection _esConnection;
         private readonly ISubscription[] _subscriptionHandlers;
         private readonly string _esSubscriptionName;
         private EventStoreAllCatchUpSubscription _esSubscription;
+        
+        private static readonly ILogger Logger = Log.ForContext<EventStoreSubscriptionManager>();
 
         public EventStoreSubscriptionManager
         (
@@ -38,15 +41,15 @@ namespace VShop.SharedKernel.EventStore
             (
                 2000, 
                 500,
-                false, //Log.IsDebugEnabled(),
-                false, 
+                Logger.IsEnabled(LogEventLevel.Debug),
+            false, 
                 _esSubscriptionName
             );
 
-            //Log.Debug("Starting the projection manager...");
+            Logger.Debug("Starting the projection manager...");
 
             long? position = await _esCheckpointRepository.GetCheckpointAsync();
-            //Log.Debug("Retrieved the checkpoint: {checkpoint}", position);
+            Logger.Debug("Retrieved the checkpoint: {Checkpoint}", position);
 
             _esSubscription = _esConnection.SubscribeToAllFrom
             (
@@ -54,7 +57,7 @@ namespace VShop.SharedKernel.EventStore
                 settings,
                 EventAppearedAsync
             );
-            //Log.Debug("Subscribed to $all stream");
+            Logger.Debug("Subscribed to $all stream");
 
             Position? GetPosition() => position.HasValue
                 ? new Position(position.Value, position.Value)
@@ -70,7 +73,7 @@ namespace VShop.SharedKernel.EventStore
 
             object @event = resolvedEvent.Deserialize();
 
-            //Log.Debug("Projecting event {event}", @event.ToString());
+            Logger.Debug("Projecting event {Event}", @event.ToString());
 
             try
             {
@@ -79,12 +82,12 @@ namespace VShop.SharedKernel.EventStore
             }
             catch (Exception e)
             {
-                // Log.Error
-                // (
-                //     e,
-                //     "Error occured when projecting the event {event}",
-                //     @event
-                // );
+                Logger.Error
+                (
+                    e,
+                    "Error occured when projecting the event {Event}",
+                    @event
+                );
                 throw;
             }
         }

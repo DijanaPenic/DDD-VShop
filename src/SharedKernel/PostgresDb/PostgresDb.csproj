@@ -10,4 +10,8 @@
       <ProjectReference Include="..\EventSourcing\EventSourcing.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.10.0" />
+    </ItemGroup>
+
 </Project>
