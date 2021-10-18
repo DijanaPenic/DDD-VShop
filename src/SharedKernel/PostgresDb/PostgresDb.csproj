@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>VShop.SharedKernel.PostgresDb</AssemblyName>
+        <RootNamespace>VShop.SharedKernel.PostgresDb</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EventSourcing\EventSourcing.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -33,8 +33,8 @@ namespace VShop.Services.Basket.API
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Basket.API", Version = "v1"}); });
             services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
-            
-            // TODO - missing DI for Postgres database and domain handlers
+
+            // TODO - missing DI for domain handlers
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

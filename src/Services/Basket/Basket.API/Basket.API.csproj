@@ -25,6 +25,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\EventStore\EventStore.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\PostgresDb\PostgresDb.csproj" />
       <ProjectReference Include="..\Basket.Domain\Basket.Domain.csproj" />
       <ProjectReference Include="..\Basket.Infrastructure\Basket.Infrastructure.csproj" />
     </ItemGroup>

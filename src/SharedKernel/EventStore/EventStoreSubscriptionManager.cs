@@ -23,7 +23,8 @@ namespace VShop.SharedKernel.EventStore
             IEventStoreConnection esConnection,
             IEventStoreCheckpointRepository esCheckpointRepository,
             string esSubscriptionName,
-            params ISubscription[] subscriptionHandlers)
+            params ISubscription[] subscriptionHandlers
+        )
         {
             _esConnection = esConnection;
             _esCheckpointRepository = esCheckpointRepository;
@@ -73,7 +74,7 @@ namespace VShop.SharedKernel.EventStore
 
             try
             {
-                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.Project(@event)));
+                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(@event)));
                 await _esCheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
             }
             catch (Exception e)

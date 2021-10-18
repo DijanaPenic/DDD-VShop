@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore", "SharedKernel\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "SharedKernel\Infrastructure\Infrastructure.csproj", "{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgresDb", "SharedKernel\PostgresDb\PostgresDb.csproj", "{A0E178B3-14A0-4E12-9FCD-62D139519990}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,7 @@ Global
 		{EFB30A70-73BC-4B52-BF95-AB170FE0F877} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{0CE2FD71-39B8-498E-8F8C-08F4C5B343F0} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{6196DF60-B0C1-41DD-AD70-58BB3A43D72F} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
+		{A0E178B3-14A0-4E12-9FCD-62D139519990} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -60,5 +63,9 @@ Global
 		{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0E178B3-14A0-4E12-9FCD-62D139519990}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E178B3-14A0-4E12-9FCD-62D139519990}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0E178B3-14A0-4E12-9FCD-62D139519990}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0E178B3-14A0-4E12-9FCD-62D139519990}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
