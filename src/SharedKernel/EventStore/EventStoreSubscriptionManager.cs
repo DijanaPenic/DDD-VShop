@@ -80,11 +80,11 @@ namespace VShop.SharedKernel.EventStore
                 await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(@event)));
                 await _esCheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 Logger.Error
                 (
-                    e,
+                    ex,
                     "Error occured when projecting the event {Event}",
                     @event
                 );

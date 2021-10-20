@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.Services.Basket.Infrastructure;
+using VShop.Services.Basket.API.Application.Queries;
 
 namespace VShop.Services.Basket.API.Infrastructure.Extensions
 {
@@ -16,6 +17,8 @@ namespace VShop.Services.Basket.API.Infrastructure.Extensions
                 optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name)
             )
             .UseSnakeCaseNamingConvention());
+
+            services.AddTransient<IBasketQueryService, BasketQueryService>();
         }
     }
 }

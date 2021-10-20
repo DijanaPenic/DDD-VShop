@@ -136,20 +136,6 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             
             RecalculateDeliveryCost();
         }
-        
-        public void SetContactInformation
-        (
-            FullName fullName, 
-            EmailAddress emailAddress, 
-            PhoneNumber phoneNumber, 
-            GenderType gender
-        )
-        {
-            if(_isClosedForUpdates)
-                throw new InvalidOperationException($"Updating contact information for the basket in '{Status}' status is not allowed.");
-            
-            BasketCustomer.SetContactInformation(fullName, emailAddress, phoneNumber, gender);
-        }
 
         public void RequestCheckout()
         {

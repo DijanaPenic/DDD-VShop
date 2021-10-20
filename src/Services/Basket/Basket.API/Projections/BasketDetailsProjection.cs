@@ -54,7 +54,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, ProductRemovedFromBasketDomainEvent @event)
         {
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.FirstOrDefaultAsync(bi => 
+            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
                 bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
             
             dbContext.BasketItems.Remove(basketItem);
@@ -62,7 +62,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, DeliveryAddressSetDomainEvent @event)
         {
-            BasketDetails basket = await dbContext.Baskets.FirstOrDefaultAsync(b => b.Id == @event.BasketId);
+            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
             basket.Status = BasketStatus.Fulfilled;
             
             dbContext.Baskets.Update(basket);
@@ -70,7 +70,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, BasketCheckoutRequestedDomainEvent @event)
         {
-            BasketDetails basket = await dbContext.Baskets.FirstOrDefaultAsync(b => b.Id == @event.BasketId);
+            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
             basket.Status = BasketStatus.PendingCheckout;
             
             dbContext.Baskets.Update(basket);
@@ -78,7 +78,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, BasketDeletionRequestedDomainEvent @event)
         {
-            BasketDetails basket = await dbContext.Baskets.FirstOrDefaultAsync(b => b.Id == @event.BasketId);
+            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
             basket.Status = BasketStatus.Closed;
             
             dbContext.Baskets.Update(basket);
@@ -86,7 +86,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, BasketItemQuantityIncreasedDomainEvent @event)
         {                    
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.FirstOrDefaultAsync(bi => 
+            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
                 bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
             basketItem.Quantity += @event.Quantity;
             
@@ -95,7 +95,7 @@ namespace VShop.Services.Basket.API.Projections
         
         private static async Task HandleAsync(BasketContext dbContext, BasketItemQuantityDecreasedDomainEvent @event)
         {
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.FirstOrDefaultAsync(bi => 
+            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
                 bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
             basketItem.Quantity -= @event.Quantity;
             

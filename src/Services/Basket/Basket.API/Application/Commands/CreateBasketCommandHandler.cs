@@ -19,8 +19,6 @@ namespace VShop.Services.Basket.API.Application.Commands
         
         public async Task<bool> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
         {
-            // TODO - need to check if there is already active basket for the cardholder
-            
             Domain.Models.BasketAggregate.Basket basket = Domain.Models.BasketAggregate.Basket.Create
             (
                 EntityId.Create(command.CustomerId), 

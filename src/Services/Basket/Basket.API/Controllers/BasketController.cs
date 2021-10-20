@@ -4,43 +4,118 @@ using System.Threading.Tasks;
 using MediatR;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 using VShop.Services.Basket.API.Models;
+using VShop.Services.Basket.API.Application.Queries;
 using VShop.Services.Basket.API.Application.Commands;
+using VShop.Services.Basket.Infrastructure.Entities;
 
 namespace VShop.Services.Basket.API.Controllers
 {
     [ApiController]
-    [Route("api/basket")]
+    [Route("api/baskets")]
     // TODO - change query parameters to snake case
     // TODO - resolve enum by value
+    // TODO - need better error/response handling
     public class BasketController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+        private readonly IBasketQueryService _queryService;
 
         public BasketController
         (
             IMediator mediator,
-            IMapper mapper
+            IMapper mapper,
+            IBasketQueryService queryService
         )
         {
             _mediator = mediator;
             _mapper = mapper;
+            _queryService = queryService;
         }
-
-        private readonly IMapper _mapper;
+        
+        [HttpGet]
+        [ProducesResponseType(typeof(BasketDetails), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetBasketAsync([FromQuery]Guid customerId)
+        {
+            BasketDetails basket = await _queryService.GetActiveBasketByCustomerIdAsync(customerId);
+            if (basket == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(basket);
+        }
 
         [HttpPost]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // TODO - need better error/response handling
-        public async Task<IActionResult> CreateBasketAsync([FromBody]BasketPostDto basket)
+        public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
         {
-            CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(basket);
+            CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
             
-            bool result = await _mediator.Send(command);   
+            bool result = await _mediator.Send(command);
+            if (!result)
+            {
+                return BadRequest();
+            }
+
+            return Ok(); // TODO - need to return created basket
+        }
+        
+        [HttpDelete]
+        [Route("{basketId:guid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public Task<IActionResult> DeleteBasketAsync([FromRoute]Guid basketId)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPut]
+        [Route("{basketId:guid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public Task<IActionResult> CheckoutBasketAsync([FromRoute]Guid basketId)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPost]
+        [Route("{basketId:guid}/products")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddProductAsync([FromRoute]Guid basketId, [FromBody]AddBasketProductRequest request)
+        {
+            AddBasketProductCommand command = _mapper.Map<AddBasketProductCommand>(request);
+            command.BasketId = basketId;
+            
+            bool result = await _mediator.Send(command);
+            if (!result)
+            {
+                return BadRequest();
+            }
+
+            return Ok(); // TODO - need to return created basket item
+        }
+        
+        [HttpDelete]
+        [Route("{basketId:guid}/products/{productId:guid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RemoveProductAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
+        {
+            RemoveBasketProductCommand command = new()
+            {
+                BasketId = basketId,
+                ProductId = productId
+            };
+            
+            bool result = await _mediator.Send(command);
             if (!result)
             {
                 return BadRequest();
@@ -49,23 +124,40 @@ namespace VShop.Services.Basket.API.Controllers
             return Ok();
         }
         
-        [HttpPost]
-        [Route("{customerId:guid}")]
-        [Consumes("application/json")]
+        [HttpPut]
+        [Route("{basketId:guid}/products/{productId:guid}/actions/increase")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddBasketItemAsync([FromRoute]Guid customerId, [FromBody]BasketItemPostDto basketItem)
+        public Task<IActionResult> IncreaseProductQuantityAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
         {
-            AddBasketItemCommand command = _mapper.Map<AddBasketItemCommand>(basketItem);
-            command.CustomerId = customerId;
-            
-            bool result = await _mediator.Send(command);   
-            if (!result)
-            {
-                return BadRequest();
-            }
-
-            return Ok();
+            throw new NotImplementedException();
+        }
+        
+        [HttpPut]
+        [Route("{basketId:guid}/products/{productId:guid}/actions/decrease")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public Task<IActionResult> DecreaseProductQuantityAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPut]
+        [Route("{basketId:guid}/customer/contact-information")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public Task<IActionResult> SetContactInformationAsync([FromRoute]Guid basketId)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPut]
+        [Route("{basketId:guid}/customer/delivery-address")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public Task<IActionResult> SetDeliveryAddressAsync([FromRoute]Guid basketId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
