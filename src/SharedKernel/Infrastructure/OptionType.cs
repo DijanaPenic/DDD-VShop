@@ -8,7 +8,14 @@ namespace VShop.SharedKernel.Infrastructure
     {
         private Option(OneOf<TResult, None> value) : base(value) { }
 
-        public static implicit operator Option<TResult>(TResult value) => new Option<TResult>((value is null) ? new None() : value);
-        public static implicit operator Option<TResult>(None value) => new Option<TResult>(value);
+        public static implicit operator Option<TResult>(TResult value) => new((value is null) ? new None() : value);
+        public static implicit operator Option<TResult>(None value) => new(value);
+
+        public (bool isResult, TResult result) TryGetResult() =>
+            Match
+            (
+                result => (true, result),
+                none => (false, default)
+            );
     }
 }

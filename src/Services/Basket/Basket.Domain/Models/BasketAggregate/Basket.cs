@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-
+using OneOf.Types;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Helpers;
@@ -45,10 +46,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             return basket;
         }
 
-        public void AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
+        public Option<ApplicationError> AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
-                throw new InvalidOperationException($"Adding product for the basket in '{Status}' status is not allowed.");
+                return new ApplicationError($"Adding product for the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
@@ -69,13 +70,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             else
             {
                 if (!unitPrice.Equals(basketItem.UnitPrice))
-                    throw new Exception(@$"Product's quantity cannot be increased - basket already contains the 
+                    return new ApplicationError(@$"Product's quantity cannot be increased - basket already contains the 
                                                 requested product but with different unit price: {basketItem.UnitPrice}");
 
                 basketItem.IncreaseProductQuantity(quantity);
             }
             
             RecalculateDeliveryCost();
+
+            return ApplicationError.None;
         }
         
         public void RemoveProduct(EntityId productId)

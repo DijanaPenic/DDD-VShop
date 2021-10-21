@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OneOf;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,6 +10,7 @@ using VShop.Services.Basket.API.Models;
 using VShop.Services.Basket.API.Application.Queries;
 using VShop.Services.Basket.API.Application.Commands;
 using VShop.Services.Basket.Infrastructure.Entities;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.Services.Basket.API.Controllers
 {
@@ -16,7 +18,6 @@ namespace VShop.Services.Basket.API.Controllers
     [Route("api/baskets")]
     // TODO - change query parameters to snake case
     // TODO - resolve enum by value
-    // TODO - need better error/response handling
     public class BasketController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -56,14 +57,13 @@ namespace VShop.Services.Basket.API.Controllers
         public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
         {
             CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
+            OneOf<Domain.Models.BasketAggregate.Basket, ApplicationError> result = await _mediator.Send(command);
             
-            bool result = await _mediator.Send(command);
-            if (!result)
-            {
-                return BadRequest();
-            }
-
-            return Ok(); // TODO - need to return created basket
+            return result.Match<IActionResult>
+            (
+                Ok,
+                error => BadRequest(error.Message)
+            );
         }
         
         [HttpDelete]
