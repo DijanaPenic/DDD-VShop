@@ -13,7 +13,6 @@ namespace VShop.Services.Basket.API.Projections
 {
     public static class BasketDetailsProjection
     {
-        // Date created and updated in save method
         public static Func<Task> ProjectAsync(BasketContext dbContext, IDomainEvent eventData)
             => eventData switch
             {
