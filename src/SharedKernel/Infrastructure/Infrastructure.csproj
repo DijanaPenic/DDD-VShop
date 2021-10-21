@@ -13,6 +13,7 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.11" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+      <PackageReference Include="OneOf" Version="3.0.201" />
     </ItemGroup>
 
 </Project>
