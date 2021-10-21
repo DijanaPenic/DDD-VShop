@@ -1,6 +1,7 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.Domain.Events;
@@ -20,7 +21,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public int Discount { get; private set; }
         
-        public BasketCustomer(Action<object> applier) : base(applier) { }
+        public BasketCustomer(Action<IDomainEvent> applier) : base(applier) { }
 
         public void SetContactInformation
         (
@@ -67,7 +68,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             );
         }
 
-        protected override void When(object @event)
+        protected override void When(IDomainEvent @event)
         {
             switch (@event)
             {

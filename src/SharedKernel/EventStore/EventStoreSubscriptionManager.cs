@@ -6,6 +6,7 @@ using Serilog.Events;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 
 using ILogger = Serilog.ILogger;
 
@@ -71,7 +72,7 @@ namespace VShop.SharedKernel.EventStore
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
-            object eventData = resolvedEvent.DeserializeData();
+            IDomainEvent eventData = resolvedEvent.DeserializeData();
             EventMetadata eventMetadata = resolvedEvent.DeserializeMetadata();
 
             Logger.Debug("EventStore subscription manager > identified event: {EventData}", eventData);

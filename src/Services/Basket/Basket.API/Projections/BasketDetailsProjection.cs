@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.EventSourcing;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Infrastructure;
 using VShop.Services.Basket.Infrastructure.Entities;
+using VShop.SharedKernel.Infrastructure.Domain;
 
 using static VShop.Services.Basket.Domain.Models.BasketAggregate.Basket;
 
@@ -14,7 +14,7 @@ namespace VShop.Services.Basket.API.Projections
     public static class BasketDetailsProjection
     {
         // Date created and updated in save method
-        public static Func<Task> ProjectAsync(BasketContext dbContext, object eventData)
+        public static Func<Task> ProjectAsync(BasketContext dbContext, IDomainEvent eventData)
             => eventData switch
             {
                 BasketCreatedDomainEvent e => () =>

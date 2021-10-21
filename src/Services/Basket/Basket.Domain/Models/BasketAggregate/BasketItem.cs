@@ -1,6 +1,7 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.Domain.Events;
 
@@ -23,7 +24,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public Price TotalAmount => UnitPrice * Quantity;
 
-        public BasketItem(Action<object> applier) : base(applier) { }
+        public BasketItem(Action<IDomainEvent> applier) : base(applier) { }
         
         public void IncreaseProductQuantity(ProductQuantity value)
         {
@@ -57,7 +58,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             );
         }
         
-        protected override void When(object @event)
+        protected override void When(IDomainEvent @event)
         {
             switch (@event)
             {

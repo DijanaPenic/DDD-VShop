@@ -3,8 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.Services.Basket.Domain.Events;
 
 namespace VShop.Services.Basket.Domain.Models.BasketAggregate
@@ -190,7 +191,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         private BasketItem FindBasketItem(EntityId productId)
             => BasketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
-        protected override void When(object @event)
+        protected override void When(IDomainEvent @event)
         {
             BasketItem basketItem;
             

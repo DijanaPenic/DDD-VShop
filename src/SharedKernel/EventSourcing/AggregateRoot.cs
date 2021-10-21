@@ -8,33 +8,33 @@ namespace VShop.SharedKernel.EventSourcing
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject
     {
-        private readonly IList<object> _changes = new List<object>();
+        private readonly IList<IDomainEvent> _changes = new List<IDomainEvent>();
 
         public TKey Id { get; protected set; }
 
         public int Version { get; private set; } = -1;
 
-        protected abstract void When(object @event);
+        protected abstract void When(IDomainEvent @event);
 
-        protected void Apply(object @event)
+        protected void Apply(IDomainEvent @event)
         {
             When(@event);
             _changes.Add(@event);
         }
         
-        public void Load(IEnumerable<object> history)
+        public void Load(IEnumerable<IDomainEvent> history)
         {
-            foreach (object @event in history)
+            foreach (IDomainEvent @event in history)
             {
                 When(@event);
                 Version++;
             }
         }
         
-        public IEnumerable<object> GetChanges() => _changes.AsEnumerable();
+        public IEnumerable<IDomainEvent> GetChanges() => _changes.AsEnumerable();
         
         public void ClearChanges() => _changes.Clear();
 
-        protected void ApplyToEntity(IInternalEventHandler entity, object @event) => entity?.Handle(@event);
+        protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity?.Handle(@event);
     }
 }

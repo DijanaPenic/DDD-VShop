@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MediatR;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
@@ -14,8 +15,13 @@ namespace VShop.SharedKernel.EventStore
         where TA : AggregateRoot<TKey>
     {
         private readonly IEventStoreConnection _connection;
+        private readonly IMediator _mediator;
 
-        public EventStoreAggregateRepository(IEventStoreConnection connection) => _connection = connection;
+        public EventStoreAggregateRepository(IEventStoreConnection connection, IMediator mediator)
+        {
+            _connection = connection;
+            _mediator = mediator;
+        }
         
         public async Task SaveAsync(TA aggregate)
         {
@@ -23,11 +29,14 @@ namespace VShop.SharedKernel.EventStore
                 throw new ArgumentNullException(nameof(aggregate));
 
             string streamName = GetStreamName(aggregate.Id);
-            object[] events = aggregate.GetChanges().ToArray();
+            IDomainEvent[] events = aggregate.GetChanges().ToArray();
 
             await _connection.AppendEvents(streamName, aggregate.Version, events);
 
             aggregate.ClearChanges();
+            
+            foreach (IDomainEvent @event in events)
+                await _mediator.Publish(@event);
         }
         
         public async Task<bool> ExistsAsync(TKey aggregateId)
@@ -47,7 +56,7 @@ namespace VShop.SharedKernel.EventStore
 
             long position = 0L;
             bool endOfStream;
-            List<object> events = new();
+            List<IDomainEvent> events = new();
 
             do
             {

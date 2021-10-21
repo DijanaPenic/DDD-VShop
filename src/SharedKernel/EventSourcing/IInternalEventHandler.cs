@@ -1,7 +1,9 @@
-﻿namespace VShop.SharedKernel.EventSourcing
+﻿using VShop.SharedKernel.Infrastructure.Domain;
+
+namespace VShop.SharedKernel.EventSourcing
 {
     public interface IInternalEventHandler
     {
-        void Handle(object @event); 
+        void Handle(IDomainEvent @event); 
     }
 }

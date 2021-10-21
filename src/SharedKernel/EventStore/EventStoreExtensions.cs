@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Helpers;
 
 namespace VShop.SharedKernel.EventStore
@@ -17,7 +18,7 @@ namespace VShop.SharedKernel.EventStore
             this IEventStoreConnection connection,
             string streamName,
             long version,
-            params object[] events
+            params IDomainEvent[] events
         )
         {
             if (events == null || !events.Any()) return Task.CompletedTask;
