@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.SharedKernel.EventSourcing;
 using VShop.Services.Basket.Domain.Events;
 using VShop.Services.Basket.Infrastructure;
 using VShop.Services.Basket.Infrastructure.Entities;
@@ -12,94 +13,79 @@ namespace VShop.Services.Basket.API.Projections
 {
     public static class BasketDetailsProjection
     {
-        public static Func<Task> ProjectAsync(BasketContext dbContext, object @event)
-            => @event switch
+        // Date created and updated in save method
+        public static Func<Task> ProjectAsync(BasketContext dbContext, object eventData)
+            => eventData switch
             {
-                BasketCreatedDomainEvent e => () => HandleAsync(dbContext, e),
-                ProductAddedToBasketDomainEvent e => () => HandleAsync(dbContext, e),
-                ProductRemovedFromBasketDomainEvent e => () => HandleAsync(dbContext, e),
-                DeliveryAddressSetDomainEvent e => () => HandleAsync(dbContext, e),
-                BasketCheckoutRequestedDomainEvent e => () => HandleAsync(dbContext, e),
-                BasketDeletionRequestedDomainEvent e => () => HandleAsync(dbContext, e),
-                BasketItemQuantityIncreasedDomainEvent e => () => HandleAsync(dbContext, e),
-                BasketItemQuantityDecreasedDomainEvent e => () => HandleAsync(dbContext, e),
+                BasketCreatedDomainEvent e => () =>
+                {
+                    dbContext.Baskets.Add(new BasketDetails()
+                    {
+                        Id = e.BasketId,
+                        Status = BasketStatus.New,
+                        CustomerId = e.CustomerId
+                    });
+            
+                    return Task.CompletedTask;
+                },
+                ProductAddedToBasketDomainEvent e => () =>
+                {
+                    dbContext.BasketItems.Add(new BasketDetailsProductItem()
+                    {
+                        Id = e.BasketItemId,
+                        Quantity = e.Quantity,
+                        ProductId = e.ProductId,
+                        UnitPrice = e.UnitPrice,
+                        BasketDetailsId = e.BasketId
+                    });
+            
+                    return Task.CompletedTask;
+                },
+                ProductRemovedFromBasketDomainEvent e => async() =>
+                {
+                    BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
+                        bi.ProductId == e.ProductId && bi.BasketDetailsId == e.BasketId);
+                    
+                    dbContext.BasketItems.Remove(basketItem);
+                },
+                DeliveryAddressSetDomainEvent e => async() =>
+                {
+                    BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == e.BasketId);
+                    basket.Status = BasketStatus.Fulfilled;
+            
+                    dbContext.Baskets.Update(basket);
+                },
+                BasketCheckoutRequestedDomainEvent e => async() =>
+                {
+                    BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == e.BasketId);
+                    basket.Status = BasketStatus.PendingCheckout;
+            
+                    dbContext.Baskets.Update(basket);
+                },
+                BasketDeletionRequestedDomainEvent e => async() =>
+                {
+                    BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == e.BasketId);
+                    basket.Status = BasketStatus.Closed;
+            
+                    dbContext.Baskets.Update(basket);
+                },
+                BasketItemQuantityIncreasedDomainEvent e => async() =>
+                {
+                    BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
+                        bi.ProductId == e.ProductId && bi.BasketDetailsId == e.BasketId);
+                    basketItem.Quantity += e.Quantity;
+            
+                    dbContext.BasketItems.Update(basketItem);
+                },
+                BasketItemQuantityDecreasedDomainEvent e => async() =>
+                {
+                    BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
+                        bi.ProductId == e.ProductId && bi.BasketDetailsId == e.BasketId);
+                    basketItem.Quantity -= e.Quantity;
+            
+                    dbContext.BasketItems.Update(basketItem);
+                },
                 _ => null
             };
-
-        private static Task HandleAsync(BasketContext dbContext, BasketCreatedDomainEvent @event)
-        {
-            dbContext.Baskets.Add(new BasketDetails()
-            {
-                Id = @event.BasketId,
-                Status = BasketStatus.New,
-                CustomerId = @event.CustomerId
-            });
-            
-            return Task.CompletedTask;
-        }
-        
-        private static Task HandleAsync(BasketContext dbContext, ProductAddedToBasketDomainEvent @event)
-        {
-            dbContext.BasketItems.Add(new BasketDetailsProductItem()
-            {
-                Id = @event.BasketItemId,
-                Quantity = @event.Quantity,
-                ProductId = @event.ProductId,
-                UnitPrice = @event.UnitPrice,
-                BasketDetailsId = @event.BasketId
-            });
-            
-            return Task.CompletedTask;
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, ProductRemovedFromBasketDomainEvent @event)
-        {
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
-                bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
-            
-            dbContext.BasketItems.Remove(basketItem);
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, DeliveryAddressSetDomainEvent @event)
-        {
-            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
-            basket.Status = BasketStatus.Fulfilled;
-            
-            dbContext.Baskets.Update(basket);
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, BasketCheckoutRequestedDomainEvent @event)
-        {
-            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
-            basket.Status = BasketStatus.PendingCheckout;
-            
-            dbContext.Baskets.Update(basket);
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, BasketDeletionRequestedDomainEvent @event)
-        {
-            BasketDetails basket = await dbContext.Baskets.SingleAsync(b => b.Id == @event.BasketId);
-            basket.Status = BasketStatus.Closed;
-            
-            dbContext.Baskets.Update(basket);
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, BasketItemQuantityIncreasedDomainEvent @event)
-        {                    
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
-                bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
-            basketItem.Quantity += @event.Quantity;
-            
-            dbContext.BasketItems.Update(basketItem);
-        }
-        
-        private static async Task HandleAsync(BasketContext dbContext, BasketItemQuantityDecreasedDomainEvent @event)
-        {
-            BasketDetailsProductItem basketItem = await dbContext.BasketItems.SingleAsync(bi => 
-                bi.ProductId == @event.ProductId && bi.BasketDetailsId == @event.BasketId);
-            basketItem.Quantity -= @event.Quantity;
-            
-            dbContext.BasketItems.Update(basketItem);
-        }
     }
 }

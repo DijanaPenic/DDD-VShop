@@ -30,10 +30,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             GenderType gender
         )
         {
-            if(_isClosedForUpdates)
+            if (_isClosedForUpdates)
                 throw new InvalidOperationException(@"Updating contact information for the basket is not allowed. 
                                                             The basket has been closed for updates.");
-            
             Apply
             (
                 new ContactInformationSetDomainEvent
@@ -54,7 +53,6 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(_isClosedForUpdates)
                 throw new InvalidOperationException(@"Updating delivery address for the basket is not allowed. 
                                                             The basket has been closed for updates.");
-            
             Apply
             (
                 new DeliveryAddressSetDomainEvent
