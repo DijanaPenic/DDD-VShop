@@ -15,6 +15,8 @@ namespace VShop.Services.Basket.Infrastructure.EntityConfigurations
             builder.Property(bi => bi.ProductId).IsRequired();
             builder.Property(bi => bi.Quantity).IsRequired();
             builder.Property(bi => bi.UnitPrice).IsRequired();
+            builder.Property(bi => bi.DateCreatedUtc).IsRequired();
+            builder.Property(bi => bi.DateUpdatedUtc).IsRequired();
             
             builder.HasOne(bi => bi.BasketDetails)
                    .WithMany(b => b.ProductItems)

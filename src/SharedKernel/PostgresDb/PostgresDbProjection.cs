@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Serilog;
-using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.EventSourcing;
 
@@ -10,7 +9,7 @@ using ILogger = Serilog.ILogger;
 namespace VShop.SharedKernel.PostgresDb
 {
     public class PostgresDbProjection<T> : ISubscription 
-        where T : DbContext
+        where T : ApplicationDbContextBase
     {
         private readonly T _dbContext;
         private readonly Projector _projector;
@@ -27,22 +26,22 @@ namespace VShop.SharedKernel.PostgresDb
             _projector = projector;
         }
 
-        public async Task ProjectAsync(object @event)
+        public async Task ProjectAsync(object eventData, EventMetadata eventMetadata)
         {
-            Func<Task> handler = _projector(_dbContext, @event);
+            Func<Task> handler = _projector(_dbContext, eventData);
             
             if (handler == null) return;
             
-            Logger.Debug("Projecting {Event}", @event);
+            Logger.Debug("Projecting {EventData}", eventData);
 
             await handler();
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(eventMetadata.EffectiveTime);
         }
         
-        public delegate Func<Task >Projector
+        public delegate Func<Task> Projector
         (
             T dbContext,
-            object @event
+            object eventData
         );
     }
 }

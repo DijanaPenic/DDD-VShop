@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+using VShop.SharedKernel.PostgresDb;
 using VShop.Services.Basket.Infrastructure.Entities;
 using VShop.Services.Basket.Infrastructure.EntityConfigurations;
 
 namespace VShop.Services.Basket.Infrastructure
 {
-    public class BasketContext : DbContext
+    public class BasketContext : ApplicationDbContextBase
     {
         public const string DefaultSchema = "basket";
 

@@ -71,13 +71,14 @@ namespace VShop.SharedKernel.EventStore
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
-            object @event = resolvedEvent.Deserialize();
+            object eventData = resolvedEvent.DeserializeData();
+            EventMetadata eventMetadata = resolvedEvent.DeserializeMetadata();
 
-            Logger.Debug("Projecting event {Event}", @event.ToString());
+            Logger.Debug("EventStore subscription manager > identified event: {EventData}", eventData);
 
             try
             {
-                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(@event)));
+                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(eventData, eventMetadata)));
                 await _esCheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
             }
             catch (Exception ex)
@@ -85,8 +86,8 @@ namespace VShop.SharedKernel.EventStore
                 Logger.Error
                 (
                     ex,
-                    "Error occured when projecting the event {Event}",
-                    @event
+                    "Error occured while projecting the event {EventData}",
+                    eventData
                 );
                 throw;
             }

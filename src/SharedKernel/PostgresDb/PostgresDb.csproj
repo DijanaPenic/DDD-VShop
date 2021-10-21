@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\EventSourcing\EventSourcing.csproj" />
+      <ProjectReference Include="..\EventStore\EventStore.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -62,7 +62,7 @@ namespace VShop.SharedKernel.EventStore
                 position = slice.NextEventNumber;
                 endOfStream = slice.IsEndOfStream;
 
-                events.AddRange(slice.Events.Select(resolvedEvent => resolvedEvent.Deserialize()));
+                events.AddRange(slice.Events.Select(resolvedEvent => resolvedEvent.DeserializeData()));
             } while (!endOfStream);
             
             aggregate?.Load(events);

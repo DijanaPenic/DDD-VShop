@@ -1,8 +1,10 @@
 ﻿using System;
 
+using VShop.SharedKernel.PostgresDb;
+
 namespace VShop.Services.Basket.Infrastructure.Entities
 {
-    public class BasketDetailsProductItem
+    public class BasketDetailsProductItem : DbBaseEntity
     {
         public Guid Id { get; set; }
         public Guid BasketDetailsId { get; set; }

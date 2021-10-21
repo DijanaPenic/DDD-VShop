@@ -30,7 +30,7 @@ namespace VShop.SharedKernel.EventStore
             StreamEventsSlice slice = await _esConnection.ReadStreamEventsBackwardAsync(_esSubscriptionName, -1, 1, false);
             ResolvedEvent eventData = slice.Events.FirstOrDefault();
 
-            if (!eventData.Equals(default(ResolvedEvent))) return eventData.Deserialize<Checkpoint>()?.Position;
+            if (!eventData.Equals(default(ResolvedEvent))) return eventData.DeserializeData<Checkpoint>()?.Position;
             
             await StoreCheckpointAsync(AllCheckpoint.AllStart?.CommitPosition);
             await SetStreamMaxCountAsync();

@@ -4,6 +4,6 @@ namespace VShop.SharedKernel.EventSourcing
 {
     public interface ISubscription
     {
-        Task ProjectAsync(object @event); 
+        Task ProjectAsync(object @event, EventMetadata eventMetadata);
     }
 }

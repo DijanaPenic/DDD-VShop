@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -21,6 +22,8 @@ namespace VShop.SharedKernel.EventStore
         {
             if (events == null || !events.Any()) return Task.CompletedTask;
 
+            EventMetadata eventMetadata = new() { EffectiveTime = DateTime.UtcNow };
+
             EventData[] preparedEvents = events
                 .Select(
                     @event =>
@@ -30,7 +33,7 @@ namespace VShop.SharedKernel.EventStore
                             EventTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),
-                            null
+                            Serialize(eventMetadata)
                         )
                 )
                 .ToArray();
