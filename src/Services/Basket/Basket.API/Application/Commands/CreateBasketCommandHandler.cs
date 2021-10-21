@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventStore;
-using VShop.Services.Basket.Domain.Models.Shared;
+using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.API.Application.Commands.Shared;
 
 namespace VShop.Services.Basket.API.Application.Commands

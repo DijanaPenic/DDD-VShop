@@ -2,8 +2,8 @@
 
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure.Domain.Enums;
+using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.Domain.Events;
-using VShop.Services.Basket.Domain.Models.Shared;
 
 namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 {

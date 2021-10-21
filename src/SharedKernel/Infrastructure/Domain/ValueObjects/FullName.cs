@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
-using VShop.SharedKernel.Infrastructure.Domain;
-
-namespace VShop.Services.Basket.Domain.Models.Shared
+[assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
+namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
 {
     public class FullName : ValueObject
     {
