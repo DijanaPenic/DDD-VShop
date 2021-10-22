@@ -59,17 +59,8 @@ namespace VShop.Services.Basket.API.Controllers
         {
             CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
             OneOf<Domain.Models.BasketAggregate.Basket, ApplicationError> result = await _mediator.Send(command);
-            
-            return result.Match
-            (
-                Created,
-                error => error.Match
-                (
-                    validationError => BadRequest(validationError.Message),
-                    systemError => InternalServerError(systemError.Message),
-                    notFoundError => NotFound(notFoundError.Message)
-                )
-            );
+
+            return HandleResult(result, Created);
         }
         
         [HttpDelete]
