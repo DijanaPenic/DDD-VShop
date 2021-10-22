@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static Price Create(decimal value)
         {
             if (value < 0)
-                throw new ArgumentNullException(nameof(value), "Price must be larger than 0 or equal to 0.");
+                throw new ValidationException("Price must be larger than 0 or equal to 0.");
 
             return new Price(value);
         }

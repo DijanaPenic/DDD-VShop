@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static ProductQuantity Create(int value)
         {
             if (value <= 0)
-                throw new ArgumentNullException(nameof(value), "Quantity value must be larger than 0.");
+                throw new ValidationException("Quantity value must be larger than 0.");
 
             return new ProductQuantity(value);
         }

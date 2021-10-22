@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static PhoneNumber Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new Exception("The phone number is required.");
+                throw new ValidationException("The phone number is required.");
             // TODO - implement other email checks
             
             return new PhoneNumber(value);

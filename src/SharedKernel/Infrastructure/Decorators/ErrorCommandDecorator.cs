@@ -1,5 +1,6 @@
 ﻿using OneOf;
 using System;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 using Serilog;
 using Newtonsoft.Json;
@@ -25,8 +26,12 @@ namespace VShop.SharedKernel.Infrastructure.Decorators
             try
             {
                 OneOf<TResponse, ApplicationError> response = await next();
-                
+
                 return response;
+            }
+            catch (ValidationException ex)
+            {
+                return ValidationError.Create(ex.Message);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static EmailAddress Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new Exception("The email address is required.");
+                throw new ValidationException("The email address is required.");
             // TODO - implement other email checks
             
             return new EmailAddress(value);

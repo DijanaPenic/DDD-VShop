@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -14,7 +15,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static EntityId Create(Guid value)
         {
             if (value == default) // TODO - check sequential Guid
-                throw new ArgumentNullException(nameof(value), "The entity Id cannot be empty."); // TODO - use custom assert class
+                throw new ValidationException("The entity Id cannot be empty."); // TODO - use custom assert class
 
             return new EntityId(value);
         }

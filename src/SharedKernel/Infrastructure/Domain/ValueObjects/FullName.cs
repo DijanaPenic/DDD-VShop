@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
@@ -21,9 +21,9 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         public static FullName Create(string firstName, string middleName, string lastName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
-                throw new Exception("First name cannot be empty.");
+                throw new ValidationException("First name cannot be empty.");
             if (string.IsNullOrWhiteSpace(lastName))
-                throw new Exception("Last name cannot be empty.");
+                throw new ValidationException("Last name cannot be empty.");
             
             return new FullName(firstName, middleName, lastName);
         }
