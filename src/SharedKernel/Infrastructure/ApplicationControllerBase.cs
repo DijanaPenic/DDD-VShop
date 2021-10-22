@@ -1,4 +1,5 @@
 ﻿using OneOf;
+using OneOf.Types;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -14,18 +15,43 @@ namespace VShop.SharedKernel.Infrastructure
         
         protected IActionResult Created(object value) 
             => StatusCode(StatusCodes.Status201Created, value);
+        
+        protected IActionResult Created() 
+            => StatusCode(StatusCodes.Status201Created);
 
-        protected IActionResult HandleResult<TResult>(OneOf<TResult, ApplicationError> result, Func<TResult, IActionResult> success)
+        protected IActionResult HandleObjectResult<TResult>
+        (
+            OneOf<Success<TResult>, ApplicationError> result,
+            Func<TResult, IActionResult> handleSuccess
+        )
         {
             return result.Match
             (
-                success,
-                error => error.Match
-                (
-                    validationError => BadRequest(validationError.Message),
-                    systemError => InternalServerError(systemError.Message),
-                    notFoundError => NotFound(notFoundError.Message)
-                )
+                data => handleSuccess(data.Value),
+                HandleError
+            );
+        }
+        
+        protected IActionResult HandleResult<TResult>
+        (
+            OneOf<TResult, ApplicationError> result,
+            Func<IActionResult> handleSuccess
+        )
+        {
+            return result.Match
+            (
+                _ => handleSuccess(),
+                HandleError
+            );
+        }
+
+        private IActionResult HandleError(ApplicationError error)
+        {
+            return error.Match
+            (
+                validationError => BadRequest(validationError.Message),
+                systemError => InternalServerError(systemError.Message),
+                notFoundError => NotFound(notFoundError.Message)
             );
         }
     }

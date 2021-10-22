@@ -1,4 +1,5 @@
 ﻿using OneOf;
+using OneOf.Types;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ using VShop.Services.Basket.API.Application.Commands.Shared;
 
 namespace VShop.Services.Basket.API.Application.Commands
 {
-    public class CreateBasketCommandHandler : ICommandHandler<CreateBasketCommand, Domain.Models.BasketAggregate.Basket>
+    public class CreateBasketCommandHandler : ICommandHandler<CreateBasketCommand, Success<Domain.Models.BasketAggregate.Basket>>
     {
         private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
         
@@ -20,7 +21,7 @@ namespace VShop.Services.Basket.API.Application.Commands
             _basketRepository = basketRepository;
         }
         
-        public async Task<OneOf<Domain.Models.BasketAggregate.Basket, ApplicationError>> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
+        public async Task<OneOf<Success<Domain.Models.BasketAggregate.Basket>, ApplicationError>> Handle(CreateBasketCommand command, CancellationToken cancellationToken)
         {
             Domain.Models.BasketAggregate.Basket basket = Domain.Models.BasketAggregate.Basket.Create
             (
@@ -42,7 +43,7 @@ namespace VShop.Services.Basket.API.Application.Commands
             
             await _basketRepository.SaveAsync(basket);
 
-            return basket;
+            return new Success<Domain.Models.BasketAggregate.Basket>(basket);
         }
     }
 }

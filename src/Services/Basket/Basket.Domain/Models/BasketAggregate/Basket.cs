@@ -82,15 +82,15 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             return Option<ApplicationError>.None;
         }
         
-        public void RemoveProduct(EntityId productId)
+        public Option<ApplicationError> RemoveProduct(EntityId productId)
         {
             if(_isClosedForUpdates)
-                throw new InvalidOperationException($"Removing product from the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Removing product from the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
+                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
             
             Apply
             (
@@ -102,32 +102,36 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             );
             
             RecalculateDeliveryCost();
+            
+            return Option<ApplicationError>.None;
         }
         
-        public void IncreaseProductQuantity(EntityId productId, ProductQuantity value)
+        public Option<ApplicationError> IncreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             if(_isClosedForUpdates)
-                throw new InvalidOperationException($"Updating product for the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
             
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
+                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
 
             basketItem.IncreaseProductQuantity(value);
             
             RecalculateDeliveryCost();
+            
+            return Option<ApplicationError>.None;
         }
         
-        public void DecreaseProductQuantity(EntityId productId, ProductQuantity value)
+        public Option<ApplicationError> DecreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             if(_isClosedForUpdates)
-                throw new InvalidOperationException($"Updating product for the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
              
             BasketItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
-                throw new InvalidOperationException($"Product with id `{productId}` was not found in basket.");
+                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
 
             if (basketItem.Quantity - value <= 0)
             {
@@ -139,18 +143,20 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             }
             
             RecalculateDeliveryCost();
+            
+            return Option<ApplicationError>.None;
         }
 
-        public void RequestCheckout()
+        public Option<ApplicationError> RequestCheckout()
         {
             if(Status != BasketStatus.Fulfilled)
-                throw new InvalidOperationException($"Checkout is not allowed. Basket Status: '{Status}'.");
+                return ValidationError.Create($"Checkout is not allowed. Basket Status: '{Status}'.");
 
             if(IsBasketEmpty)
-                throw new InvalidOperationException($"Checkout is not allowed. At least one product must be added in the basket.");
+                return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the basket.");
 
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
-                throw new InvalidOperationException(@$"Checkout is not allowed. Minimum required basket amount 
+                return ValidationError.Create(@$"Checkout is not allowed. Minimum required basket amount 
                                                             for checkout is ${Settings.MinBasketAmountForCheckout}.");
             Apply
             (
@@ -160,12 +166,14 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     ConfirmedAt = DateTime.UtcNow
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
         
-        public void RequestDelete()
+        public Option<ApplicationError> RequestDelete()
         {
             if (Status == BasketStatus.Closed)
-                throw new InvalidOperationException($"Cannot proceed with the delete request. Basket is already deleted/closed.");
+                return ValidationError.Create($"Cannot proceed with the delete request. Basket is already deleted/closed.");
             
             Apply
             (
@@ -174,6 +182,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     BasketId = Id
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
 
         private void RecalculateDeliveryCost()

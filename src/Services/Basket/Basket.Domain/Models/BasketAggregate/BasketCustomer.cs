@@ -1,6 +1,8 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
@@ -23,7 +25,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         
         public BasketCustomer(Action<IDomainEvent> applier) : base(applier) { }
 
-        public void SetContactInformation
+        public Option<ApplicationError> SetContactInformation
         (
             FullName fullName, 
             EmailAddress emailAddress, 
@@ -32,7 +34,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         )
         {
             if (_isClosedForUpdates)
-                throw new InvalidOperationException(@"Updating contact information for the basket is not allowed. 
+                return ValidationError.Create(@"Updating contact information for the basket is not allowed. 
                                                             The basket has been closed for updates.");
             Apply
             (
@@ -47,12 +49,14 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Gender = gender
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
 
-        public void SetDeliveryAddress(Address deliveryAddress)
+        public Option<ApplicationError> SetDeliveryAddress(Address deliveryAddress)
         {
             if(_isClosedForUpdates)
-                throw new InvalidOperationException(@"Updating delivery address for the basket is not allowed. 
+                return ValidationError.Create(@"Updating delivery address for the basket is not allowed. 
                                                             The basket has been closed for updates.");
             Apply
             (
@@ -66,6 +70,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     StreetAddress = deliveryAddress.StreetAddress,
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
 
         protected override void When(IDomainEvent @event)

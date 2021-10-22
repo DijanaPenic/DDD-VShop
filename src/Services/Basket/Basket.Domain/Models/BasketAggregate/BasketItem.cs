@@ -1,6 +1,8 @@
 ﻿using System;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.Domain.Events;
@@ -26,10 +28,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public BasketItem(Action<IDomainEvent> applier) : base(applier) { }
         
-        public void IncreaseProductQuantity(ProductQuantity value)
+        public Option<ApplicationError> IncreaseProductQuantity(ProductQuantity value)
         {
             if (Quantity + value > Settings.MaxQuantityPerProduct)
-                throw new Exception($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
+                return ValidationError.Create($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
             
             Apply
             (
@@ -40,12 +42,14 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Quantity = value
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
         
-        public void DecreaseProductQuantity(ProductQuantity value)
+        public Option<ApplicationError> DecreaseProductQuantity(ProductQuantity value)
         {
             if (Quantity - value <= 0)
-                throw new Exception($"Cannot decrease quantity by {value}.");
+                return ValidationError.Create($"Cannot decrease quantity by {value}.");
             
             Apply
             (
@@ -56,6 +60,8 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Quantity = value
                 }
             );
+            
+            return Option<ApplicationError>.None;
         }
         
         protected override void When(IDomainEvent @event)

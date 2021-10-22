@@ -1,4 +1,5 @@
 ﻿using OneOf;
+using OneOf.Types;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -58,9 +59,10 @@ namespace VShop.Services.Basket.API.Controllers
         public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
         {
             CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
-            OneOf<Domain.Models.BasketAggregate.Basket, ApplicationError> result = await _mediator.Send(command);
+            
+            OneOf<Success<Domain.Models.BasketAggregate.Basket>, ApplicationError> result = await _mediator.Send(command);
 
-            return HandleResult(result, Created);
+            return HandleObjectResult(result, Created);
         }
         
         [HttpDelete]
@@ -91,13 +93,9 @@ namespace VShop.Services.Basket.API.Controllers
             AddBasketProductCommand command = _mapper.Map<AddBasketProductCommand>(request);
             command.BasketId = basketId;
             
-            bool result = await _mediator.Send(command);
-            if (!result)
-            {
-                return BadRequest();
-            }
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
 
-            return Ok(); // TODO - need to return created basket item
+            return HandleResult(result, Created);
         }
         
         [HttpDelete]
@@ -112,13 +110,9 @@ namespace VShop.Services.Basket.API.Controllers
                 ProductId = productId
             };
             
-            bool result = await _mediator.Send(command);
-            if (!result)
-            {
-                return BadRequest();
-            }
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
 
-            return Ok();
+            return HandleResult(result, NoContent);
         }
         
         [HttpPut]
