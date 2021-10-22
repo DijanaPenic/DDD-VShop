@@ -39,8 +39,8 @@ namespace VShop.Services.Basket.API.Controllers
         }
         
         [HttpGet]
-        [ProducesResponseType(typeof(BasketDetails), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(BasketDetails), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetBasketAsync([FromQuery]Guid customerId)
         {
             BasketDetails basket = await _queryService.GetActiveBasketByCustomerIdAsync(customerId);
@@ -54,8 +54,9 @@ namespace VShop.Services.Basket.API.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(Domain.Models.BasketAggregate.Basket), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Domain.Models.BasketAggregate.Basket), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
         {
             CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
@@ -67,8 +68,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpDelete]
         [Route("{basketId:guid}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> DeleteBasketAsync([FromRoute]Guid basketId)
         {
             throw new NotImplementedException();
@@ -76,8 +75,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpPut]
         [Route("{basketId:guid}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> CheckoutBasketAsync([FromRoute]Guid basketId)
         {
             throw new NotImplementedException();
@@ -86,8 +83,6 @@ namespace VShop.Services.Basket.API.Controllers
         [HttpPost]
         [Route("{basketId:guid}/products")]
         [Consumes("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddProductAsync([FromRoute]Guid basketId, [FromBody]AddBasketProductRequest request)
         {
             AddBasketProductCommand command = _mapper.Map<AddBasketProductCommand>(request);
@@ -100,8 +95,10 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpDelete]
         [Route("{basketId:guid}/products/{productId:guid}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveProductAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
         {
             RemoveBasketProductCommand command = new()
@@ -117,8 +114,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpPut]
         [Route("{basketId:guid}/products/{productId:guid}/actions/increase")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> IncreaseProductQuantityAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
         {
             throw new NotImplementedException();
@@ -126,8 +121,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpPut]
         [Route("{basketId:guid}/products/{productId:guid}/actions/decrease")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> DecreaseProductQuantityAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
         {
             throw new NotImplementedException();
@@ -135,8 +128,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpPut]
         [Route("{basketId:guid}/customer/contact-information")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> SetContactInformationAsync([FromRoute]Guid basketId)
         {
             throw new NotImplementedException();
@@ -144,8 +135,6 @@ namespace VShop.Services.Basket.API.Controllers
         
         [HttpPut]
         [Route("{basketId:guid}/customer/delivery-address")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public Task<IActionResult> SetDeliveryAddressAsync([FromRoute]Guid basketId)
         {
             throw new NotImplementedException();
