@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
-[assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
+[assembly: InternalsVisibleTo("VShop.Services.ShoppingCarts.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
 {
     public class EmailAddress : ValueObject

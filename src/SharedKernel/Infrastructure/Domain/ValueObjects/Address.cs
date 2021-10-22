@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("VShop.Services.Basket.Domain")]
+[assembly: InternalsVisibleTo("VShop.Services.ShoppingCarts.Domain")]
 namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
 {
     public class Address : ValueObject
