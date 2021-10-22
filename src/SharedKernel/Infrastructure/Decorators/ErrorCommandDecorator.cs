@@ -1,6 +1,8 @@
 ﻿using OneOf;
 using System;
 using MediatR;
+using Serilog;
+using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +13,8 @@ namespace VShop.SharedKernel.Infrastructure.Decorators
 {
     public class ErrorCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
     {
+        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
+        
         public async Task<OneOf<TResponse, ApplicationError>> Handle
         (
             TRequest request,
@@ -26,9 +30,9 @@ namespace VShop.SharedKernel.Infrastructure.Decorators
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.Error(ex, "Unhandled error has occurred");
 
-                return InternalServerError.Create(ex.InnerException?.Message);
+                return InternalServerError.Create(JsonConvert.SerializeObject(ex));
             }
         }
     }

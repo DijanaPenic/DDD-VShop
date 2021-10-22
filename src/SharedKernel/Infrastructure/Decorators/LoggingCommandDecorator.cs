@@ -22,11 +22,11 @@ namespace VShop.SharedKernel.Infrastructure.Decorators
         {
             string requestTypeName = request.GetType().Name;
             
-            Logger.Information("----- Handling command {CommandName} ({@Command})", requestTypeName, request);
+            Logger.Information("Handling command {CommandName} ({@Command})", requestTypeName, request);
             
             OneOf<TResponse, ApplicationError> response = await next();
             
-            Logger.Information("----- Command {CommandName} handled - response: {@Response}", requestTypeName, response);
+            Logger.Information("Command {CommandName} handled - response: {@Response}", requestTypeName, response);
 
             return response;
         }
