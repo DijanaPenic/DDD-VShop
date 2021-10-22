@@ -8,20 +8,20 @@ using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.Services.Basket.Domain.Events;
+using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.Basket.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
 {
-    public class Basket : AggregateRoot<EntityId>
+    public class ShoppingCart : AggregateRoot<EntityId>
     {
         private bool _isClosedForUpdates;
-        private List<BasketItem> _basketItems;
+        private List<ShoppingCartItem> _basketItems;
         
-        public BasketCustomer BasketCustomer { get; private set; }
+        public ShoppingCartCustomer BasketCustomer { get; private set; }
         public BasketStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
         public DateTime ConfirmedAt { get; private set; }
-        public IReadOnlyCollection<BasketItem> BasketItems => _basketItems;
+        public IReadOnlyCollection<ShoppingCartItem> BasketItems => _basketItems;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
         public Price TotalDeduction => ProductsCostWithoutDiscount * (BasketCustomer.Discount / 100.00m);
@@ -30,9 +30,9 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
         public bool IsBasketEmpty => _basketItems.Count == 0;
         public int TotalItemsCount() => _basketItems.Count;
 
-        public static Basket Create(EntityId customerId, int customerDiscount)
+        public static ShoppingCart Create(EntityId customerId, int customerDiscount)
         {
-            Basket basket = new();
+            ShoppingCart basket = new();
             
             basket.Apply
             (
@@ -52,7 +52,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Adding product for the basket in '{Status}' status is not allowed.");
 
-            BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+            ShoppingCartItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
             if (basketItem == null)
             {
@@ -87,7 +87,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Removing product from the basket in '{Status}' status is not allowed.");
             
-            BasketItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
@@ -111,7 +111,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
             
-            BasketItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
@@ -128,7 +128,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
              
-            BasketItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem basketItem = FindBasketItem(productId);
 
             if (basketItem == null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
@@ -201,12 +201,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                 );
         }
 
-        private BasketItem FindBasketItem(EntityId productId)
+        private ShoppingCartItem FindBasketItem(EntityId productId)
             => BasketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
         protected override void When(IDomainEvent @event)
         {
-            BasketItem basketItem;
+            ShoppingCartItem basketItem;
             
             switch (@event)
             {
@@ -214,7 +214,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Id = new EntityId(e.BasketId);
 
                     // one-to-one relationship
-                    BasketCustomer basketCustomer = new(Apply);
+                    ShoppingCartCustomer basketCustomer = new(Apply);
                     ApplyToEntity(basketCustomer, e);
                     BasketCustomer = basketCustomer;
                     
@@ -222,10 +222,10 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
                     Status = BasketStatus.New;
                     
                     // one-to-many relationship
-                    _basketItems = new List<BasketItem>();
+                    _basketItems = new List<ShoppingCartItem>();
                     break;
                 case ProductAddedToBasketDomainEvent e:
-                    basketItem = new BasketItem(Apply);
+                    basketItem = new ShoppingCartItem(Apply);
                     ApplyToEntity(basketItem, e);
                     _basketItems.Add(basketItem);
                     break;

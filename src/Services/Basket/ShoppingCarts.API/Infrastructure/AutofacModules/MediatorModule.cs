@@ -21,7 +21,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.AutofacModules
             });
 
             // Register command handlers
-            builder.RegisterAssemblyTypes(typeof(CreateBasketCommand).Assembly)
+            builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommand).Assembly)
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // TODO - Register domain event handlers

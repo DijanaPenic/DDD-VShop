@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.PostgresDb;
 
-using static VShop.Services.Basket.Domain.Models.BasketAggregate.Basket;
+using static VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate.ShoppingCart;
 
 namespace VShop.Services.Basket.Infrastructure.Entities
 {

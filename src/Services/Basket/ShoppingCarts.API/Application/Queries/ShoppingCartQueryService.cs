@@ -9,11 +9,11 @@ using static VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate.Basket;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Queries
 {
-    public class BasketQueryService : IBasketQueryService 
+    public class ShoppingCartQueryService : IShoppingCartQueryService 
     {
         private readonly BasketContext _dbContext;
         
-        public BasketQueryService(BasketContext dbContext)
+        public ShoppingCartQueryService(BasketContext dbContext)
         {
             _dbContext = dbContext;
         }

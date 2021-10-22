@@ -3,18 +3,16 @@ using FluentValidation;
 
 namespace VShop.Services.ShoppingCarts.API.Models
 {
-    public record AddBasketProductRequest
+    public record IncreaseShoppingCartProductQuantityRequest
     {
         public Guid ProductId { get; init; }
-        public decimal UnitPrice { get; init; }
         public int Quantity { get; init; }
     }
     
-    public class AddBasketProductRequestValidator : AbstractValidator<AddBasketProductRequest> {
-        public AddBasketProductRequestValidator() 
+    public class IncreaseShoppingCartProductQuantityRequestValidator : AbstractValidator<IncreaseShoppingCartProductQuantityRequest> {
+        public IncreaseShoppingCartProductQuantityRequestValidator() 
         {
             RuleFor(bi => bi.ProductId).NotEmpty();
-            RuleFor(bi => bi.UnitPrice).GreaterThan(0);
             RuleFor(bi => bi.Quantity).GreaterThan(0);
         }
     }

@@ -5,11 +5,11 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
-using VShop.Services.Basket.Domain.Events;
+using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.Basket.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
 {
-    public class BasketItem : Entity<EntityId>
+    public class ShoppingCartItem : Entity<EntityId>
     {
         public static class Settings
         {
@@ -26,7 +26,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public Price TotalAmount => UnitPrice * Quantity;
 
-        public BasketItem(Action<IDomainEvent> applier) : base(applier) { }
+        public ShoppingCartItem(Action<IDomainEvent> applier) : base(applier) { }
         
         public Option<ApplicationError> IncreaseProductQuantity(ProductQuantity value)
         {

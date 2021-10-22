@@ -18,7 +18,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
             )
             .UseSnakeCaseNamingConvention());
 
-            services.AddTransient<IBasketQueryService, BasketQueryService>();
+            services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
         }
     }
 }

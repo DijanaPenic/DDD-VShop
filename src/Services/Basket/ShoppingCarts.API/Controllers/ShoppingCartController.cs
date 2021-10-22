@@ -17,20 +17,20 @@ using VShop.SharedKernel.Infrastructure.Errors;
 namespace VShop.Services.ShoppingCarts.API.Controllers
 {
     [ApiController]
-    [Route("api/baskets")]
+    [Route("api/shopping-carts")]
     // TODO - change query parameters to snake case
     // TODO - resolve enum by value
-    public class BasketController : ApplicationControllerBase
+    public class ShoppingCartController : ApplicationControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly IBasketQueryService _queryService;
+        private readonly IShoppingCartQueryService _queryService;
 
-        public BasketController
+        public ShoppingCartController
         (
             IMediator mediator,
             IMapper mapper,
-            IBasketQueryService queryService
+            IShoppingCartQueryService queryService
         )
         {
             _mediator = mediator;
@@ -57,9 +57,9 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Domain.Models.BasketAggregate.Basket), (int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
+        public async Task<IActionResult> CreateBasketAsync([FromBody]CreateShoppingCartRequest request)
         {
-            CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
+            CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
             OneOf<Success<Domain.Models.BasketAggregate.Basket>, ApplicationError> result = await _mediator.Send(command);
 
@@ -83,9 +83,9 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [HttpPost]
         [Route("{basketId:guid}/products")]
         [Consumes("application/json")]
-        public async Task<IActionResult> AddProductAsync([FromRoute]Guid basketId, [FromBody]AddBasketProductRequest request)
+        public async Task<IActionResult> AddProductAsync([FromRoute]Guid basketId, [FromBody]AddShoppingCartProductRequest request)
         {
-            AddBasketProductCommand command = _mapper.Map<AddBasketProductCommand>(request);
+            AddShoppingCartProductCommand command = _mapper.Map<AddShoppingCartProductCommand>(request);
             command.BasketId = basketId;
             
             OneOf<Success, ApplicationError> result = await _mediator.Send(command);
@@ -101,7 +101,7 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveProductAsync([FromRoute]Guid basketId, [FromRoute]Guid productId)
         {
-            RemoveBasketProductCommand command = new()
+            RemoveShoppingCartProductCommand command = new()
             {
                 BasketId = basketId,
                 ProductId = productId

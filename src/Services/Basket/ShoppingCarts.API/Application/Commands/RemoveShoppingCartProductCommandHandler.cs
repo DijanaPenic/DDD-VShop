@@ -11,16 +11,16 @@ using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public class RemoveBasketProductCommandHandler : ICommandHandler<RemoveBasketProductCommand, Success>
+    public class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand, Success>
     {
         private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
         
-        public RemoveBasketProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
+        public RemoveShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
         {
             _basketRepository = basketRepository;
         }
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(RemoveBasketProductCommand command, CancellationToken cancellationToken)
+        public async Task<OneOf<Success, ApplicationError>> Handle(RemoveShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
             Domain.Models.BasketAggregate.Basket basket = await _basketRepository.LoadAsync(EntityId.Create(command.BasketId));
             if (basket is null) return NotFoundError.Create("Basket not found.");

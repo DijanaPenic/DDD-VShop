@@ -6,7 +6,7 @@ using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public record CreateBasketCommand : ICommand<Success<Domain.Models.BasketAggregate.Basket>>
+    public record CreateShoppingCartCommand : ICommand<Success<Domain.Models.BasketAggregate.Basket>>
     {
         public Guid CustomerId { get; set; }
         public int CustomerDiscount { get; set; }

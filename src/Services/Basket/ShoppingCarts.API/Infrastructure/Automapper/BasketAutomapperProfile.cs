@@ -10,8 +10,8 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Automapper
     {
         public BasketAutomapperProfile()
         {
-            CreateMap<CreateBasketRequest, CreateBasketCommand>();
-            CreateMap<AddBasketProductRequest, BasketItemDto>();
+            CreateMap<CreateShoppingCartRequest, CreateShoppingCartCommand>();
+            CreateMap<AddShoppingCartProductRequest, BasketItemDto>();
         }
     }
 }

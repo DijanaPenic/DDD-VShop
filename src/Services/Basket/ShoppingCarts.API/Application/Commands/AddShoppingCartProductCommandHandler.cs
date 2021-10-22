@@ -11,16 +11,16 @@ using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public class AddBasketProductCommandHandler : ICommandHandler<AddBasketProductCommand, Success>
+    public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand, Success>
     {
         private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
         
-        public AddBasketProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
+        public AddShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
         {
             _basketRepository = basketRepository;
         }
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(AddBasketProductCommand command, CancellationToken cancellationToken)
+        public async Task<OneOf<Success, ApplicationError>> Handle(AddShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
             Domain.Models.BasketAggregate.Basket basket = await _basketRepository.LoadAsync(EntityId.Create(command.BasketId));
 

@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{3E419930-4E41-43FF-91B9-ABEAFB6A742F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Basket", "Basket", "{AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShoppingCarts", "ShoppingCarts", "{AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ordering", "Ordering", "{CF71D41D-C558-46D8-AF8C-1E90022A365D}"
 EndProject

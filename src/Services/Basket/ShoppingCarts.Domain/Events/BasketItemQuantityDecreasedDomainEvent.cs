@@ -2,7 +2,7 @@
 
 using VShop.SharedKernel.Infrastructure.Domain;
 
-namespace VShop.Services.Basket.Domain.Events
+namespace VShop.Services.ShoppingCarts.Domain.Events
 {
     public record BasketItemQuantityDecreasedDomainEvent : IDomainEvent
     {

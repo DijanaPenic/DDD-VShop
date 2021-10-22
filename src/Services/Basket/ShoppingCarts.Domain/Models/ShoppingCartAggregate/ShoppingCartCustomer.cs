@@ -6,11 +6,11 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
-using VShop.Services.Basket.Domain.Events;
+using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.Basket.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
 {
-    public class BasketCustomer : Entity<EntityId>
+    public class ShoppingCartCustomer : Entity<EntityId>
     {
         private bool _isClosedForUpdates;
         
@@ -23,7 +23,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
         public int Discount { get; private set; }
         
-        public BasketCustomer(Action<IDomainEvent> applier) : base(applier) { }
+        public ShoppingCartCustomer(Action<IDomainEvent> applier) : base(applier) { }
 
         public Option<ApplicationError> SetContactInformation
         (
