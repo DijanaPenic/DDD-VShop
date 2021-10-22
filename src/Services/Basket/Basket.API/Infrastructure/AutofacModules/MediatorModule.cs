@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using MediatR; // TODO - review all MediatR references
+using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Decorators;
 using VShop.Services.Basket.API.Application.Commands;

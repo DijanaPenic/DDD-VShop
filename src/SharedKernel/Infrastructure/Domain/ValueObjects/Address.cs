@@ -43,7 +43,7 @@ namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
         {
             // TODO - implement validation
             
-            return new(city, countryCode, postalCode, stateProvince, streetAddress);
+            return new Address(city, countryCode, postalCode, stateProvince, streetAddress);
         }
         
         public override string ToString()

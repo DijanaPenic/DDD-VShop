@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\EventSourcing\EventSourcing.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
