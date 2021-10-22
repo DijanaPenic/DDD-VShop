@@ -10,6 +10,7 @@ using VShop.Services.Basket.API.Models;
 using VShop.Services.Basket.API.Application.Queries;
 using VShop.Services.Basket.API.Application.Commands;
 using VShop.Services.Basket.Infrastructure.Entities;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.Services.Basket.API.Controllers
@@ -18,7 +19,7 @@ namespace VShop.Services.Basket.API.Controllers
     [Route("api/baskets")]
     // TODO - change query parameters to snake case
     // TODO - resolve enum by value
-    public class BasketController : ControllerBase
+    public class BasketController : ApplicationControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
@@ -61,11 +62,11 @@ namespace VShop.Services.Basket.API.Controllers
             
             return result.Match
             (
-                Ok,
-                error => error.Match<IActionResult>
+                Ok, // TODO - check if I can use Created response
+                error => error.Match
                 (
                     validationError => BadRequest(validationError.Message),
-                    systemError => NotFound(systemError.Message),
+                    systemError => InternalServerError(systemError.Message),
                     notFoundError => NotFound(notFoundError.Message)
                 )
             );
