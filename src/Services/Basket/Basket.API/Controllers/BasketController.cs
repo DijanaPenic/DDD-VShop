@@ -10,7 +10,7 @@ using VShop.Services.Basket.API.Models;
 using VShop.Services.Basket.API.Application.Queries;
 using VShop.Services.Basket.API.Application.Commands;
 using VShop.Services.Basket.Infrastructure.Entities;
-using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.Services.Basket.API.Controllers
 {
@@ -52,17 +52,22 @@ namespace VShop.Services.Basket.API.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Domain.Models.BasketAggregate.Basket), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateBasketAsync([FromBody]CreateBasketRequest request)
         {
             CreateBasketCommand command = _mapper.Map<CreateBasketCommand>(request);
             OneOf<Domain.Models.BasketAggregate.Basket, ApplicationError> result = await _mediator.Send(command);
             
-            return result.Match<IActionResult>
+            return result.Match
             (
                 Ok,
-                error => BadRequest(error.Message)
+                error => error.Match<IActionResult>
+                (
+                    validationError => BadRequest(validationError.Message),
+                    systemError => NotFound(systemError.Message),
+                    notFoundError => NotFound(notFoundError.Message)
+                )
             );
         }
         

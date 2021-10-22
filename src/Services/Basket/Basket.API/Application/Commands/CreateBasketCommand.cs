@@ -1,6 +1,6 @@
 ﻿using System;
 
-using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.Services.Basket.API.Application.Commands.Shared;
 
 namespace VShop.Services.Basket.API.Application.Commands

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using OneOf.Types;
+
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.Services.Basket.Domain.Events;
 
@@ -45,12 +46,12 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
 
             return basket;
         }
-
+        
         public Option<ApplicationError> AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
-                return new ApplicationError($"Adding product for the basket in '{Status}' status is not allowed.");
-            
+                return ValidationError.Create($"Adding product for the basket in '{Status}' status is not allowed.");
+
             BasketItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
             if (basketItem == null)
@@ -70,7 +71,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             else
             {
                 if (!unitPrice.Equals(basketItem.UnitPrice))
-                    return new ApplicationError(@$"Product's quantity cannot be increased - basket already contains the 
+                    return ValidationError.Create(@$"Product's quantity cannot be increased - basket already contains the 
                                                 requested product but with different unit price: {basketItem.UnitPrice}");
 
                 basketItem.IncreaseProductQuantity(quantity);
@@ -78,7 +79,7 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             
             RecalculateDeliveryCost();
 
-            return ApplicationError.None;
+            return Option<ApplicationError>.None;
         }
         
         public void RemoveProduct(EntityId productId)
@@ -151,7 +152,6 @@ namespace VShop.Services.Basket.Domain.Models.BasketAggregate
             if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
                 throw new InvalidOperationException(@$"Checkout is not allowed. Minimum required basket amount 
                                                             for checkout is ${Settings.MinBasketAmountForCheckout}.");
-
             Apply
             (
                 new BasketCheckoutRequestedDomainEvent

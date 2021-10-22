@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.Basket.API.Application.Commands.Shared;
 
@@ -30,13 +32,12 @@ namespace VShop.Services.Basket.API.Application.Commands
             {
                 Option<ApplicationError> errorResult = basket.AddProduct
                 (
-                    EntityId.Create(basketItem.ProductId), 
-                    ProductQuantity.Create(basketItem.Quantity), 
+                    EntityId.Create(basketItem.ProductId),
+                    ProductQuantity.Create(basketItem.Quantity),
                     Price.Create(basketItem.UnitPrice)
                 );
 
-                (bool isError, ApplicationError error) = errorResult.TryGetResult();
-                if (isError) return error;
+                if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
             await _basketRepository.SaveAsync(basket);
