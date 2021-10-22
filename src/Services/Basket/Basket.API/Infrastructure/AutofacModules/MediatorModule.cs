@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using MediatR;
 
+using VShop.SharedKernel.Infrastructure.Decorators;
 using VShop.Services.Basket.API.Application.Commands;
-using VShop.Services.Basket.API.Application.Behaviors;
 
 namespace VShop.Services.Basket.API.Infrastructure.AutofacModules
 {
@@ -26,7 +26,8 @@ namespace VShop.Services.Basket.API.Infrastructure.AutofacModules
 
             // TODO - Register domain event handlers
 
-            builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
         }
     }
 }
