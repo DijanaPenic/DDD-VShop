@@ -62,7 +62,7 @@ namespace VShop.Services.Basket.API.Controllers
             
             return result.Match
             (
-                Ok, // TODO - check if I can use Created response
+                Created,
                 error => error.Match
                 (
                     validationError => BadRequest(validationError.Message),

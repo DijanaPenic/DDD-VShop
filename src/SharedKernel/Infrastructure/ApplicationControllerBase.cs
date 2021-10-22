@@ -7,5 +7,8 @@ namespace VShop.SharedKernel.Infrastructure
     {
         protected IActionResult InternalServerError(string message) 
             => StatusCode(StatusCodes.Status500InternalServerError, message);
+        
+        protected IActionResult Created(object value) 
+            => StatusCode(StatusCodes.Status201Created, value);
     }
 }
