@@ -8,7 +8,7 @@ using VShop.Services.ShoppingCarts.Infrastructure;
 
 namespace VShop.Services.ShoppingCarts.API.Infrastructure.Migrations
 {
-    [DbContext(typeof(BasketContext))]
+    [DbContext(typeof(ShoppingCartContext))]
     partial class BasketContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

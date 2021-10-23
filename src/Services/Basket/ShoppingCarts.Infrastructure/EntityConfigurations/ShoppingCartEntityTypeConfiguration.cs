@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.Services.Basket.Infrastructure.Entities;
+using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
-namespace VShop.Services.Basket.Infrastructure.EntityConfigurations
+namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
 {
-    internal class BasketDetailsEntityTypeConfiguration: IEntityTypeConfiguration<BasketDetails>
+    internal class ShoppingCartEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCart>
     {
-        public void Configure(EntityTypeBuilder<BasketDetails> builder)
+        public void Configure(EntityTypeBuilder<ShoppingCart> builder)
         {
-            builder.ToTable("basket_details", BasketContext.DefaultSchema);
+            builder.ToTable("shopping_cart_details", ShoppingCartContext.DefaultSchema);
             
             builder.HasKey(b => b.Id);
             builder.Property(b => b.CustomerId).IsRequired();

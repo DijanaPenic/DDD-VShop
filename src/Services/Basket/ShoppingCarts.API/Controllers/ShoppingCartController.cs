@@ -40,10 +40,10 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(BasketDetails), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetBasketAsync([FromQuery]Guid customerId)
         {
-            BasketDetails basket = await _queryService.GetActiveBasketByCustomerIdAsync(customerId);
+            ShoppingCart basket = await _queryService.GetActiveBasketByCustomerIdAsync(customerId);
             if (basket == null)
             {
                 return NotFound();
@@ -56,12 +56,12 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(Domain.Models.BasketAggregate.Basket), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Domain.Models.ShoppingCartAggregate.ShoppingCart), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateBasketAsync([FromBody]CreateShoppingCartRequest request)
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
-            OneOf<Success<Domain.Models.BasketAggregate.Basket>, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>, ApplicationError> result = await _mediator.Send(command);
 
             return HandleObjectResult(result, Created);
         }

@@ -10,7 +10,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
     {
         public static void AddPostgresServices(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<BasketContext>(options => options.UseNpgsql
+            services.AddDbContext<ShoppingCartContext>(options => options.UseNpgsql
             (
                 connectionString,
                 // Target project needs to match migrations assembly

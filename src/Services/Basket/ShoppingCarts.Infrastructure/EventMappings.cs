@@ -1,23 +1,23 @@
-﻿using VShop.Services.Basket.Domain.Events;
+﻿using VShop.Services.ShoppingCarts.Domain.Events;
 
 using static VShop.SharedKernel.EventSourcing.EventTypeMapper;
 
-namespace VShop.Services.Basket.Infrastructure
+namespace VShop.Services.ShoppingCarts.Infrastructure
 {
     public static class EventMappings
     {
         public static void MapEventTypes()
         {
-            Map<BasketCreatedDomainEvent>("BasketCreated");
-            Map<BasketCheckoutRequestedDomainEvent>("BasketCheckoutRequested");
-            Map<BasketDeletionRequestedDomainEvent>("BasketDeletionRequested");
-            Map<BasketItemQuantityDecreasedDomainEvent>("BasketItemQuantityDecreased");
-            Map<BasketItemQuantityIncreasedDomainEvent>("BasketItemQuantityIncreased");
+            Map<ShoppingCartCreatedDomainEvent>("ShoppingCartCreated");
+            Map<ShoppingCartCheckoutRequestedDomainEvent>("ShoppingCartCheckoutRequested");
+            Map<ShoppingCartDeletionRequestedDomainEvent>("ShoppingCartDeletionRequested");
+            Map<ShoppingCartItemQuantityDecreasedDomainEvent>("ShoppingCartItemQuantityDecreased");
+            Map<ShoppingCartItemQuantityIncreasedDomainEvent>("ShoppingCartItemQuantityIncreased");
             Map<ContactInformationSetDomainEvent>("ContactInformationSet");
             Map<DeliveryAddressSetDomainEvent>("DeliveryAddressSet");
             Map<DeliveryCostChangedDomainEvent>("DeliveryCostChanged");
-            Map<ProductAddedToBasketDomainEvent>("ProductAddedToBasket");
-            Map<ProductRemovedFromBasketDomainEvent>("ProductRemovedFromBasket");
+            Map<ProductAddedToShoppingCartDomainEvent>("ProductAddedToShoppingCart");
+            Map<ProductRemovedFromShoppingCartDomainEvent>("ProductRemovedFromShoppingCart");
         }
     }
 }

@@ -10,58 +10,58 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
 {
     public class ShoppingCart : AggregateRoot<EntityId>
     {
         private bool _isClosedForUpdates;
-        private List<ShoppingCartItem> _basketItems;
+        private List<ShoppingCartItem> _shoppingCartItems;
         
-        public ShoppingCartCustomer BasketCustomer { get; private set; }
-        public BasketStatus Status { get; private set; }
+        public ShoppingCartCustomer ShoppingCartCustomer { get; private set; }
+        public ShoppingCartStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
         public DateTime ConfirmedAt { get; private set; }
-        public IReadOnlyCollection<ShoppingCartItem> BasketItems => _basketItems;
+        public IReadOnlyCollection<ShoppingCartItem> ShoppingCartItems => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
-        public Price ProductsCostWithoutDiscount => new(_basketItems.Sum(bi => bi.TotalAmount));
-        public Price TotalDeduction => ProductsCostWithoutDiscount * (BasketCustomer.Discount / 100.00m);
+        public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(bi => bi.TotalAmount));
+        public Price TotalDeduction => ProductsCostWithoutDiscount * (ShoppingCartCustomer.Discount / 100.00m);
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
-        public bool IsBasketEmpty => _basketItems.Count == 0;
-        public int TotalItemsCount() => _basketItems.Count;
+        public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
+        public int TotalItemsCount() => _shoppingCartItems.Count;
 
         public static ShoppingCart Create(EntityId customerId, int customerDiscount)
         {
-            ShoppingCart basket = new();
+            ShoppingCart shoppingCart = new();
             
-            basket.Apply
+            shoppingCart.Apply
             (
-                new BasketCreatedDomainEvent
+                new ShoppingCartCreatedDomainEvent
                 {
-                    BasketId = GuidHelper.NewSequentialGuid(),
+                    ShoppingCartId = GuidHelper.NewSequentialGuid(),
                     CustomerId = customerId,
                     CustomerDiscount = customerDiscount
                 }
             );
 
-            return basket;
+            return shoppingCart;
         }
         
         public Option<ApplicationError> AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Adding product for the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Adding product for the shopping cart in '{Status}' status is not allowed.");
 
-            ShoppingCartItem basketItem = _basketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
-            if (basketItem == null)
+            if (shoppingCartItem == null)
             {
                 Apply
                 (
-                    new ProductAddedToBasketDomainEvent
+                    new ProductAddedToShoppingCartDomainEvent
                     {
-                        BasketId = Id,
-                        BasketItemId = GuidHelper.NewSequentialGuid(),
+                        ShoppingCartId = Id,
+                        ShoppingCartItemId = GuidHelper.NewSequentialGuid(),
                         ProductId = productId,
                         Quantity = quantity,
                         UnitPrice = unitPrice
@@ -70,11 +70,11 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
             }
             else
             {
-                if (!unitPrice.Equals(basketItem.UnitPrice))
-                    return ValidationError.Create(@$"Product's quantity cannot be increased - basket already contains the 
-                                                requested product but with different unit price: {basketItem.UnitPrice}");
+                if (!unitPrice.Equals(shoppingCartItem.UnitPrice))
+                    return ValidationError.Create(@$"Product's quantity cannot be increased - shopping cart already contains the 
+                                                requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
-                basketItem.IncreaseProductQuantity(quantity);
+                shoppingCartItem.IncreaseProductQuantity(quantity);
             }
             
             RecalculateDeliveryCost();
@@ -85,18 +85,18 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         public Option<ApplicationError> RemoveProduct(EntityId productId)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Removing product from the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Removing product from the shopping cart in '{Status}' status is not allowed.");
             
-            ShoppingCartItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
 
-            if (basketItem == null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
+            if (shoppingCartItem == null)
+                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
             
             Apply
             (
-                new ProductRemovedFromBasketDomainEvent
+                new ProductRemovedFromShoppingCartDomainEvent
                 {
-                    BasketId = Id,
+                    ShoppingCartId = Id,
                     ProductId = productId
                 }
             );
@@ -109,14 +109,14 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         public Option<ApplicationError> IncreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Updating product for the shopping cart in '{Status}' status is not allowed.");
             
-            ShoppingCartItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
 
-            if (basketItem == null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
+            if (shoppingCartItem == null)
+                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
 
-            basketItem.IncreaseProductQuantity(value);
+            shoppingCartItem.IncreaseProductQuantity(value);
             
             RecalculateDeliveryCost();
             
@@ -126,20 +126,20 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         public Option<ApplicationError> DecreaseProductQuantity(EntityId productId, ProductQuantity value)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Updating product for the basket in '{Status}' status is not allowed.");
+                return ValidationError.Create($"Updating product for the shopping cart in '{Status}' status is not allowed.");
              
-            ShoppingCartItem basketItem = FindBasketItem(productId);
+            ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
 
-            if (basketItem == null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in basket.");
+            if (shoppingCartItem == null)
+                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
 
-            if (basketItem.Quantity - value <= 0)
+            if (shoppingCartItem.Quantity - value <= 0)
             {
                 RemoveProduct(productId);
             }
             else
             {
-                basketItem.DecreaseProductQuantity(value);          
+                shoppingCartItem.DecreaseProductQuantity(value);          
             }
             
             RecalculateDeliveryCost();
@@ -149,20 +149,20 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
 
         public Option<ApplicationError> RequestCheckout()
         {
-            if(Status != BasketStatus.Fulfilled)
-                return ValidationError.Create($"Checkout is not allowed. Basket Status: '{Status}'.");
+            if(Status != ShoppingCartStatus.Fulfilled)
+                return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
-            if(IsBasketEmpty)
-                return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the basket.");
+            if(IsShoppingCartEmpty)
+                return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the shopping cart.");
 
-            if(ProductsCostWithDiscount < Settings.MinBasketAmountForCheckout)
-                return ValidationError.Create(@$"Checkout is not allowed. Minimum required basket amount 
-                                                            for checkout is ${Settings.MinBasketAmountForCheckout}.");
+            if(ProductsCostWithDiscount < Settings.MinShoppingCartAmountForCheckout)
+                return ValidationError.Create(@$"Checkout is not allowed. Minimum required shopping cart amount 
+                                                            for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
             Apply
             (
-                new BasketCheckoutRequestedDomainEvent
+                new ShoppingCartCheckoutRequestedDomainEvent
                 {
-                    BasketId = Id,
+                    ShoppingCartId = Id,
                     ConfirmedAt = DateTime.UtcNow
                 }
             );
@@ -172,14 +172,14 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         
         public Option<ApplicationError> RequestDelete()
         {
-            if (Status == BasketStatus.Closed)
-                return ValidationError.Create($"Cannot proceed with the delete request. Basket is already deleted/closed.");
+            if (Status == ShoppingCartStatus.Closed)
+                return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
             Apply
             (
-                new BasketDeletionRequestedDomainEvent
+                new ShoppingCartDeletionRequestedDomainEvent
                 {
-                    BasketId = Id
+                    ShoppingCartId = Id
                 }
             );
             
@@ -188,81 +188,81 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
 
         private void RecalculateDeliveryCost()
         {
-            decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinBasketAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
+            decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
             
             if (newDeliveryCost != DeliveryCost)
                 Apply
                 (
                     new DeliveryCostChangedDomainEvent
                     {
-                        BasketId = Id,
+                        ShoppingCartId = Id,
                         DeliveryCost = newDeliveryCost
                     }
                 );
         }
 
-        private ShoppingCartItem FindBasketItem(EntityId productId)
-            => BasketItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+        private ShoppingCartItem FindShoppingCartItem(EntityId productId)
+            => ShoppingCartItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
 
         protected override void When(IDomainEvent @event)
         {
-            ShoppingCartItem basketItem;
+            ShoppingCartItem shoppingCartItem;
             
             switch (@event)
             {
-                case BasketCreatedDomainEvent e:
-                    Id = new EntityId(e.BasketId);
+                case ShoppingCartCreatedDomainEvent e:
+                    Id = new EntityId(e.ShoppingCartId);
 
                     // one-to-one relationship
-                    ShoppingCartCustomer basketCustomer = new(Apply);
-                    ApplyToEntity(basketCustomer, e);
-                    BasketCustomer = basketCustomer;
+                    ShoppingCartCustomer shoppingCartCustomer = new(Apply);
+                    ApplyToEntity(shoppingCartCustomer, e);
+                    ShoppingCartCustomer = shoppingCartCustomer;
                     
                     DeliveryCost = new Price(Settings.DefaultDeliveryCost);
-                    Status = BasketStatus.New;
+                    Status = ShoppingCartStatus.New;
                     
                     // one-to-many relationship
-                    _basketItems = new List<ShoppingCartItem>();
+                    _shoppingCartItems = new List<ShoppingCartItem>();
                     break;
-                case ProductAddedToBasketDomainEvent e:
-                    basketItem = new ShoppingCartItem(Apply);
-                    ApplyToEntity(basketItem, e);
-                    _basketItems.Add(basketItem);
+                case ProductAddedToShoppingCartDomainEvent e:
+                    shoppingCartItem = new ShoppingCartItem(Apply);
+                    ApplyToEntity(shoppingCartItem, e);
+                    _shoppingCartItems.Add(shoppingCartItem);
                     break;
-                case ProductRemovedFromBasketDomainEvent e:
-                    basketItem = FindBasketItem(new EntityId(e.ProductId));
-                    _basketItems.Remove(basketItem);
+                case ProductRemovedFromShoppingCartDomainEvent e:
+                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                    _shoppingCartItems.Remove(shoppingCartItem);
                     break;
                 case DeliveryAddressSetDomainEvent _:
-                    Status = BasketStatus.Fulfilled;
+                    Status = ShoppingCartStatus.Fulfilled;
                     break;
                 case DeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
                     break;
-                case BasketCheckoutRequestedDomainEvent e:
-                    Status = BasketStatus.PendingCheckout;
+                case ShoppingCartCheckoutRequestedDomainEvent e:
+                    Status = ShoppingCartStatus.PendingCheckout;
                     ConfirmedAt = e.ConfirmedAt;
                     _isClosedForUpdates = true;
                     break;
-                case BasketDeletionRequestedDomainEvent _:
-                    Status = BasketStatus.Closed;
+                case ShoppingCartDeletionRequestedDomainEvent _:
+                    Status = ShoppingCartStatus.Closed;
                     break;
             }
         }
 
-        public enum BasketStatus
+        public enum ShoppingCartStatus
         {
             New,
             Fulfilled,              // Customer has provided needed contact information and is allowed to proceed with checkout.
             PendingCheckout,        // Checkout has been requested. The next step: payment.
-            Closed                  // Basket has been deleted (soft delete).
+            Closed                  // Shopping cart has been deleted (soft delete).
         }
         
         public static class Settings
         {
-            public const decimal MinBasketAmountForCheckout = 100m;
+            public const decimal MinShoppingCartAmountForCheckout = 100m;
             public const decimal DefaultDeliveryCost = 20m;
-            public const decimal MinBasketAmountForFreeDelivery = 500m;
+            public const decimal MinShoppingCartAmountForFreeDelivery = 500m;
             public const int SalesTax = 25; // TODO - include receipt calculation
         }
     }

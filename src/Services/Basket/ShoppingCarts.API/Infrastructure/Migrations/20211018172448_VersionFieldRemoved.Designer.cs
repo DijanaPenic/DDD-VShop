@@ -9,7 +9,7 @@ using VShop.Services.ShoppingCarts.Infrastructure;
 
 namespace VShop.Services.ShoppingCarts.API.Infrastructure.Migrations
 {
-    [DbContext(typeof(BasketContext))]
+    [DbContext(typeof(ShoppingCartContext))]
     [Migration("20211018172448_VersionFieldRemoved")]
     partial class VersionFieldRemoved
     {

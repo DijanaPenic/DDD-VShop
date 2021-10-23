@@ -12,18 +12,18 @@ using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<Domain.Models.BasketAggregate.Basket>>
+    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
+        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _basketRepository;
         
-        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
+        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> basketRepository)
         {
             _basketRepository = basketRepository;
         }
         
-        public async Task<OneOf<Success<Domain.Models.BasketAggregate.Basket>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
+        public async Task<OneOf<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.BasketAggregate.Basket basket = Domain.Models.BasketAggregate.Basket.Create
+            Domain.Models.ShoppingCartAggregate.ShoppingCart basket = Domain.Models.ShoppingCartAggregate.ShoppingCart.Create
             (
                 EntityId.Create(command.CustomerId),
                 command.CustomerDiscount
@@ -43,7 +43,7 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
             
             await _basketRepository.SaveAsync(basket);
 
-            return new Success<Domain.Models.BasketAggregate.Basket>(basket);
+            return new Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>(basket);
         }
     }
 }

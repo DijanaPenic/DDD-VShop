@@ -4,9 +4,9 @@ using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.Services.ShoppingCarts.Domain.Events
 {
-    public record ProductRemovedFromBasketDomainEvent : IDomainEvent
+    public record ProductRemovedFromShoppingCartDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; init; }
+        public Guid ShoppingCartId { get; init; }
         public Guid ProductId { get; init; }
     }
 }

@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
 {
     public class ShoppingCartItem : Entity<EntityId>
     {
@@ -16,7 +16,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
             public const decimal MaxQuantityPerProduct = 10;
         }
         
-        public EntityId BasketId { get; private set; }
+        public EntityId ShoppingCartId { get; private set; }
         
         public EntityId ProductId { get; private set; }
         
@@ -35,9 +35,9 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
             
             Apply
             (
-                new BasketItemQuantityIncreasedDomainEvent
+                new ShoppingCartItemQuantityIncreasedDomainEvent
                 {
-                    BasketId = BasketId,
+                    ShoppingCartId = ShoppingCartId,
                     ProductId = ProductId,
                     Quantity = value
                 }
@@ -53,9 +53,9 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
             
             Apply
             (
-                new BasketItemQuantityDecreasedDomainEvent
+                new ShoppingCartItemQuantityDecreasedDomainEvent
                 {
-                    BasketId = BasketId,
+                    ShoppingCartId = ShoppingCartId,
                     ProductId = ProductId,
                     Quantity = value
                 }
@@ -68,17 +68,17 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         {
             switch (@event)
             {
-                case ProductAddedToBasketDomainEvent e:
-                    Id = new EntityId(e.BasketItemId);
-                    BasketId = new EntityId(e.BasketId);
+                case ProductAddedToShoppingCartDomainEvent e:
+                    Id = new EntityId(e.ShoppingCartItemId);
+                    ShoppingCartId = new EntityId(e.ShoppingCartId);
                     ProductId = new EntityId(e.ProductId);
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
                     break;
-                case BasketItemQuantityIncreasedDomainEvent e:
+                case ShoppingCartItemQuantityIncreasedDomainEvent e:
                     Quantity += new ProductQuantity(e.Quantity);
                     break;
-                case BasketItemQuantityDecreasedDomainEvent e:
+                case ShoppingCartItemQuantityDecreasedDomainEvent e:
                     Quantity -= new ProductQuantity(e.Quantity);
                     break;
             }

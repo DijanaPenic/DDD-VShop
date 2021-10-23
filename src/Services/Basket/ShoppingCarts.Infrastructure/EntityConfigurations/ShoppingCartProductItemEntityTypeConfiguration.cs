@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.Services.Basket.Infrastructure.Entities;
+using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
-namespace VShop.Services.Basket.Infrastructure.EntityConfigurations
+namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
 {
-    internal class BasketDetailsProductItemEntityTypeConfiguration: IEntityTypeConfiguration<BasketDetailsProductItem>
+    internal class ShoppingCartProductItemEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartItem>
     {
-        public void Configure(EntityTypeBuilder<BasketDetailsProductItem> builder)
+        public void Configure(EntityTypeBuilder<ShoppingCartItem> builder)
         {
-            builder.ToTable("basket_details_product_item", BasketContext.DefaultSchema);
+            builder.ToTable("shopping_cart_details_product_item", ShoppingCartContext.DefaultSchema);
             
             builder.HasKey(bi => bi.Id);
             builder.Property(bi => bi.ProductId).IsRequired();
@@ -18,9 +18,9 @@ namespace VShop.Services.Basket.Infrastructure.EntityConfigurations
             builder.Property(bi => bi.DateCreatedUtc).IsRequired();
             builder.Property(bi => bi.DateUpdatedUtc).IsRequired();
             
-            builder.HasOne(bi => bi.BasketDetails)
-                   .WithMany(b => b.ProductItems)
-                   .HasForeignKey(bi => bi.BasketDetailsId)
+            builder.HasOne(bi => bi.ShoppingCart)
+                   .WithMany(b => b.Items)
+                   .HasForeignKey(bi => bi.ShoppingCartId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Cascade);
         }

@@ -7,7 +7,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Events
 {
     public record ContactInformationSetDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; init; }
+        public Guid ShoppingCartId { get; init; }
         public string FirstName { get; init; }
         public string MiddleName { get; init; }
         public string LastName { get; init; }

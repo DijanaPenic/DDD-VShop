@@ -17,15 +17,14 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
             (
                 connectionString,
                 ConnectionSettings.Create().KeepReconnecting().DisableTls(),
-                "ShoppingCarts.API"
- ShoppingCarts.API       );
+                "ShoppingCarts.API");
             services.AddSingleton(esConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton<IHostedService, EventStoreService>();
             
             services.AddSingleton(provider =>
             {
-                BasketContext dbContext = provider.GetRequiredService<BasketContext>();
+                ShoppingCartContext dbContext = provider.GetRequiredService<ShoppingCartContext>();
                 const string esSubscriptionName = "subscriptionReadModels";
                 
                 return new EventStoreSubscriptionManager
@@ -33,7 +32,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
                     esConnection,
                     new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
                     esSubscriptionName,
-                    new PostgresDbProjection<BasketContext>(dbContext, BasketDetailsProjection.ProjectAsync)
+                    new PostgresDbProjection<ShoppingCartContext>(dbContext, ShoppingCartDetailsProjection.ProjectAsync)
                 );
             });
             

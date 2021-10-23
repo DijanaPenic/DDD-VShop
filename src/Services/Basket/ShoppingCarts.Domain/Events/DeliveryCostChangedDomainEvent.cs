@@ -6,7 +6,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Events
 {
     public record DeliveryCostChangedDomainEvent : IDomainEvent
     {
-        public Guid BasketId { get; init; }
+        public Guid ShoppingCartId { get; init; }
         public decimal DeliveryCost { get; init; }
     }
 }

@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Domain.Enums;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.ShoppingCarts.Domain.Events;
 
-namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
+namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
 {
     public class ShoppingCartCustomer : Entity<EntityId>
     {
@@ -34,13 +34,13 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         )
         {
             if (_isClosedForUpdates)
-                return ValidationError.Create(@"Updating contact information for the basket is not allowed. 
-                                                            The basket has been closed for updates.");
+                return ValidationError.Create(@"Updating contact information for the shopping cart is not allowed. 
+                                                            The shopping cart has been closed for updates.");
             Apply
             (
                 new ContactInformationSetDomainEvent
                 {
-                    BasketId = Id,
+                    ShoppingCartId = Id,
                     FirstName = fullName.FirstName,
                     MiddleName = fullName.MiddleName,
                     LastName = fullName.LastName,
@@ -56,13 +56,13 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         public Option<ApplicationError> SetDeliveryAddress(Address deliveryAddress)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create(@"Updating delivery address for the basket is not allowed. 
-                                                            The basket has been closed for updates.");
+                return ValidationError.Create(@"Updating delivery address for the shopping cart is not allowed. 
+                                                            The shopping cart has been closed for updates.");
             Apply
             (
                 new DeliveryAddressSetDomainEvent
                 {
-                    BasketId = Id,
+                    ShoppingCartId = Id,
                     City = deliveryAddress.City,
                     CountryCode = deliveryAddress.CountryCode,
                     PostalCode = deliveryAddress.PostalCode,
@@ -78,10 +78,10 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
         {
             switch (@event)
             {
-                case BasketCreatedDomainEvent e:
+                case ShoppingCartCreatedDomainEvent e:
                     CustomerId = new EntityId(e.CustomerId);
                     Discount = e.CustomerDiscount;
-                    Id = new EntityId(e.BasketId);
+                    Id = new EntityId(e.ShoppingCartId);
                     break;
                 case ContactInformationSetDomainEvent e:
                     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
@@ -99,7 +99,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate
                         e.StreetAddress
                     );
                     break;
-                case BasketCheckoutRequestedDomainEvent _:
+                case ShoppingCartCheckoutRequestedDomainEvent _:
                     _isClosedForUpdates = true;
                     break;
             }

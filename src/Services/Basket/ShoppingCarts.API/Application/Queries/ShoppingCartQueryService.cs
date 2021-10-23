@@ -5,23 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using VShop.Services.ShoppingCarts.Infrastructure;
 using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
-using static VShop.Services.ShoppingCarts.Domain.Models.BasketAggregate.Basket;
+using static VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate.ShoppingCart;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Queries
 {
     public class ShoppingCartQueryService : IShoppingCartQueryService 
     {
-        private readonly BasketContext _dbContext;
+        private readonly ShoppingCartContext _dbContext;
         
-        public ShoppingCartQueryService(BasketContext dbContext)
+        public ShoppingCartQueryService(ShoppingCartContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public Task<BasketDetails> GetActiveBasketByCustomerIdAsync(Guid customerId)
+        public Task<ShoppingCart> GetActiveBasketByCustomerIdAsync(Guid customerId)
         {
-            return _dbContext.Baskets
-                .SingleOrDefaultAsync(b => b.CustomerId == customerId && b.Status != BasketStatus.Closed);
+            return _dbContext.ShoppingCarts
+                .SingleOrDefaultAsync(b => b.CustomerId == customerId && b.Status != ShoppingCartStatus.Closed);
         }
     }
 }

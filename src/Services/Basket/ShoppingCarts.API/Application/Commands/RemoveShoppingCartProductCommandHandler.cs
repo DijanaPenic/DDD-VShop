@@ -13,16 +13,16 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
     public class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand, Success>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> _basketRepository;
+        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _basketRepository;
         
-        public RemoveShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.BasketAggregate.Basket, EntityId> basketRepository)
+        public RemoveShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> basketRepository)
         {
             _basketRepository = basketRepository;
         }
         
         public async Task<OneOf<Success, ApplicationError>> Handle(RemoveShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.BasketAggregate.Basket basket = await _basketRepository.LoadAsync(EntityId.Create(command.BasketId));
+            Domain.Models.ShoppingCartAggregate.ShoppingCart basket = await _basketRepository.LoadAsync(EntityId.Create(command.BasketId));
             if (basket is null) return NotFoundError.Create("Basket not found.");
             
             Option<ApplicationError> errorResult = basket.RemoveProduct(EntityId.Create(command.ProductId));
