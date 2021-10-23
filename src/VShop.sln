@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventSourcing"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventStore", "SharedKernel\SharedKernel.EventStore\SharedKernel.EventStore.csproj", "{0CE2FD71-39B8-498E-8F8C-08F4C5B343F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "SharedKernel\Infrastructure\Infrastructure.csproj", "{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Infrastructure", "SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj", "{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.PostgresDb", "SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj", "{A0E178B3-14A0-4E12-9FCD-62D139519990}"
 EndProject

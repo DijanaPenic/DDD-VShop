@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
-      <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
