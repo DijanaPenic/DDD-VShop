@@ -20,7 +20,6 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
 {
     [ApiController]
     [Route("api/shopping-carts")]
-    // TODO - change query parameters to snake case
     public class ShoppingCartController : ApplicationControllerBase
     {
         private readonly IMediator _mediator;

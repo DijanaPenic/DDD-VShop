@@ -1,5 +1,9 @@
-﻿using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+
+using VShop.SharedKernel.Application.Providers;
 
 namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
 {
@@ -7,11 +11,19 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
     {
         public static void AddControllersServices(this IServiceCollection services)
         {
-            services.AddControllers()
+            services.AddControllers(options =>
+            {
+                options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
+            })
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Formatting = Formatting.Indented;
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                };
             });
         }
     }
