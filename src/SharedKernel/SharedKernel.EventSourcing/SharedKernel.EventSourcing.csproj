@@ -7,12 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="DeepCloner" Version="0.10.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
-      <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

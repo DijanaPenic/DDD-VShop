@@ -1,11 +1,11 @@
 ﻿using OneOf;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
 using Serilog;
 using Newtonsoft.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
