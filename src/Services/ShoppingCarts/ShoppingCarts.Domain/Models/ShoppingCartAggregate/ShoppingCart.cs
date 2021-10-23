@@ -74,7 +74,9 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
                     return ValidationError.Create(@$"Product's quantity cannot be increased - shopping cart already contains the 
                                                 requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
-                shoppingCartItem.IncreaseProductQuantity(quantity);
+                Option<ApplicationError> errorResult = shoppingCartItem.IncreaseProductQuantity(quantity);
+                
+                if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
             RecalculateDeliveryCost();
@@ -105,7 +107,9 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
             }
             else
             {
-                shoppingCartItem.DecreaseProductQuantity(value);          
+                Option<ApplicationError> errorResult = shoppingCartItem.DecreaseProductQuantity(value);
+
+                if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
             RecalculateDeliveryCost();
