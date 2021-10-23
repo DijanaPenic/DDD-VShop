@@ -5,8 +5,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["Services/Basket/ShoppingCarts.API/ShoppingCarts.API.csproj", "ShoppingCarts.API/"]
-RUN dotnet restore "Services/Basket/ShoppingCarts.API/ShoppingCarts.API.csproj"
+COPY ["Services/ShoppingCarts/ShoppingCarts.API/ShoppingCarts.API.csproj", "ShoppingCarts.API/"]
+RUN dotnet restore "Services/ShoppingCarts/ShoppingCarts.API/ShoppingCarts.API.csproj"
 COPY . .
 WORKDIR "/src/ShoppingCarts.API"
 RUN dotnet build "ShoppingCarts.API.csproj" -c Release -o /app/build

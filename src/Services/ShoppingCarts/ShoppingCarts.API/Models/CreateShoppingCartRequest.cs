@@ -7,7 +7,7 @@ namespace VShop.Services.ShoppingCarts.API.Models
     {
         public Guid CustomerId { get; init; }
         public int CustomerDiscount { get; init; }
-        public AddShoppingCartProductRequest[] BasketItems { get; init; }
+        public AddShoppingCartProductRequest[] ShoppingCartItems { get; init; }
     }
     
     public class CreateShoppingCartRequestValidator : AbstractValidator<CreateShoppingCartRequest>
@@ -16,7 +16,7 @@ namespace VShop.Services.ShoppingCarts.API.Models
         {
             RuleFor(c => c.CustomerId).NotEmpty();
             RuleFor(c => c.CustomerDiscount).GreaterThanOrEqualTo(0);
-            RuleForEach(c => c.BasketItems).SetValidator(new AddShoppingCartProductRequestValidator());
+            RuleForEach(c => c.ShoppingCartItems).SetValidator(new AddShoppingCartProductRequestValidator());
         }
     }
 }
