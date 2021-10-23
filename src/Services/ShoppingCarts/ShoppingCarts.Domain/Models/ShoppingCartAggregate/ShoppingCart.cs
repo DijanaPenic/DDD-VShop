@@ -17,14 +17,14 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
         private bool _isClosedForUpdates;
         private List<ShoppingCartItem> _shoppingCartItems;
         
-        public ShoppingCartCustomer ShoppingCartCustomer { get; private set; }
+        public ShoppingCartCustomer Customer { get; private set; }
         public ShoppingCartStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
         public DateTime ConfirmedAt { get; private set; }
-        public IReadOnlyCollection<ShoppingCartItem> ShoppingCartItems => _shoppingCartItems;
+        public IReadOnlyCollection<ShoppingCartItem> Items => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(sci => sci.TotalAmount));
-        public Price TotalDeduction => ProductsCostWithoutDiscount * (ShoppingCartCustomer.Discount / 100.00m);
+        public Price TotalDeduction => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
         public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
@@ -168,7 +168,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
         }
 
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
-            => ShoppingCartItems.SingleOrDefault(sci => sci.ProductId.Equals(productId));
+            => Items.SingleOrDefault(sci => sci.ProductId.Equals(productId));
 
         protected override void When(IDomainEvent @event)
         {
@@ -182,7 +182,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
                     // one-to-one relationship
                     ShoppingCartCustomer shoppingCartCustomer = new(Apply);
                     ApplyToEntity(shoppingCartCustomer, e);
-                    ShoppingCartCustomer = shoppingCartCustomer;
+                    Customer = shoppingCartCustomer;
                     
                     DeliveryCost = new Price(Settings.DefaultDeliveryCost);
                     Status = ShoppingCartStatus.New;
@@ -218,10 +218,10 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
 
         public enum ShoppingCartStatus
         {
-            New,
-            Fulfilled,              // Customer has provided needed contact information and is allowed to proceed with checkout.
-            PendingCheckout,        // Checkout has been requested. The next step: payment.
-            Closed                  // Shopping cart has been deleted (soft delete).
+            New = 1,
+            Fulfilled = 2,              // Customer has provided needed contact information and is allowed to proceed with checkout.
+            PendingCheckout = 3,        // Checkout has been requested. The next step: payment.
+            Closed = 4                  // Shopping cart has been deleted (soft delete).
         }
         
         public static class Settings

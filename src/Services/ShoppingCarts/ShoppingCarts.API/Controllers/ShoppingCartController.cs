@@ -128,9 +128,18 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
 
         [HttpPost]
         [Route("{shoppingCartId:guid}/customer/contact-information")]
-        public Task<IActionResult> SetContactInformationAsync([FromRoute] Guid shoppingCartId)
+        public async Task<IActionResult> SetContactInformationAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromBody] SetContactInformationRequest request
+            )
         {
-            throw new NotImplementedException();
+            SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+
+            return HandleResult(result, Ok);
         }
         
         [HttpPost]

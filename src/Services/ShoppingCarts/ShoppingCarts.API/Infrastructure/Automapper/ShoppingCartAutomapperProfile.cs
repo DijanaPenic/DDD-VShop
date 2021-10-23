@@ -14,6 +14,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Automapper
             CreateMap<CreateShoppingCartProductRequest, ShoppingCartItemDto>();
             CreateMap<AddShoppingCartProductRequest, ShoppingCartItemDto>();
             CreateMap<RemoveShoppingCartProductRequest, RemoveShoppingCartProductCommand>();
+            CreateMap<SetContactInformationRequest, SetContactInformationCommand>();
         }
     }
 }
