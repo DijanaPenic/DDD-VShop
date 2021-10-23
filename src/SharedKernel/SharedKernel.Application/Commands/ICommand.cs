@@ -3,7 +3,7 @@ using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Infrastructure.Commands
+namespace VShop.SharedKernel.Application.Commands
 {
     public interface ICommand<TResult> : IRequest<OneOf<TResult, ApplicationError>>
     { 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Infrastructure
+namespace VShop.SharedKernel.Application
 {
     public class ApplicationControllerBase : ControllerBase
     {

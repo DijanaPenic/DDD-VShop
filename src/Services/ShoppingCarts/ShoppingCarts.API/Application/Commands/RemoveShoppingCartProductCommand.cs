@@ -1,7 +1,7 @@
 ﻿using System;
 using OneOf.Types;
 
-using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Application.Commands;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {

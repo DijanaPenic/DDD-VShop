@@ -7,7 +7,7 @@ using MediatR;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.Services.ShoppingCarts.API.Models;
 using VShop.Services.ShoppingCarts.API.Application.Queries;

@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Commands;
 
-namespace VShop.SharedKernel.Infrastructure.Decorators
+namespace VShop.SharedKernel.Application.Decorators
 {
     public class ErrorCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
     {
