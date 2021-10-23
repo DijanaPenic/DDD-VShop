@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "0e968d33-9f52-419f-b0a0-70df8e83a691",
+		"name": "Shopping Carts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Shopping Cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customer_id\": \"a506f631-aa84-4bd8-922b-cc366da86c88\",\r\n    \"customer_discount\": 5,\r\n    \"shopping_cart_items\":\r\n    [\r\n        {\r\n            \"product_id\": \"5fa482fe-c876-4e7f-8365-07d0e739bd74\",\r\n            \"quantity\": 5,\r\n            \"unit_price\": 10.00\r\n        },\r\n        {\r\n            \"product_id\": \"e9a3e243-69e5-4d85-b851-5c2140368fd6\",\r\n            \"quantity\": 1,\r\n            \"unit_price\": 20.00\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Shopping Cart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts?customer_id={{customer_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts"
+					],
+					"query": [
+						{
+							"key": "customer_id",
+							"value": "{{customer_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product to Shopping Cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"unit_price\": 10.00,\r\n    \"quantity\": 1\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/products/5fa482fe-c876-4e7f-8365-07d0e739bd74",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts",
+						"{{shopping_cart_id}}",
+						"products",
+						"5fa482fe-c876-4e7f-8365-07d0e739bd74"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reove Product from Shopping Cart Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Quantity\": 1\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/products/e9a3e243-69e5-4d85-b851-5c2140368fd6",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts",
+						"{{shopping_cart_id}}",
+						"products",
+						"e9a3e243-69e5-4d85-b851-5c2140368fd6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Contact Information",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Dijana\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Penic\",\r\n    \"email_address\": \"penic.dijana@gmail.com\",\r\n    \"phone_number\": \"+385919440067\",\r\n    \"gender\": \"Female\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/customer/contact-information",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts",
+						"{{shopping_cart_id}}",
+						"customer",
+						"contact-information"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Delivery Address",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"city\": \"Osijek\",\r\n    \"country_code\": \"HR\",\r\n    \"postal_code\": \"31000\",\r\n    \"state_province\": \"Croatia\",\r\n    \"street_address\": \"Stonska 4\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/customer/delivery-address",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts",
+						"{{shopping_cart_id}}",
+						"customer",
+						"delivery-address"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/customer/delivery-address",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"shopping-carts",
+						"{{shopping_cart_id}}",
+						"customer",
+						"delivery-address"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "shopping_cart_id",
+			"value": "9ce0a68a-1726-407d-c9fe-08d9963d80b0"
+		},
+		{
+			"key": "customer_id",
+			"value": "a506f631-aa84-4bd8-922b-cc366da86c88"
+		}
+	]
+}
