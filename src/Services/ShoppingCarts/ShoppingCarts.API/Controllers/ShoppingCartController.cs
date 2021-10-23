@@ -7,12 +7,13 @@ using MediatR;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.Services.ShoppingCarts.API.Models;
 using VShop.Services.ShoppingCarts.API.Application.Queries;
 using VShop.Services.ShoppingCarts.API.Application.Commands;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 using VShop.Services.ShoppingCarts.Infrastructure.Entities;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.Services.ShoppingCarts.API.Controllers
 {
@@ -56,12 +57,12 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(Domain.Models.ShoppingCartAggregate.ShoppingCart), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateShoppingCartAsync([FromBody]CreateShoppingCartRequest request)
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
-            OneOf<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success<ShoppingCart>, ApplicationError> result = await _mediator.Send(command);
 
             return HandleObjectResult(result, Created);
         }

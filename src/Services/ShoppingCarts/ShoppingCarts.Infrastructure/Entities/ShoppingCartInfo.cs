@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 
 using VShop.SharedKernel.PostgresDb;
-
-using static VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate.ShoppingCart;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.Infrastructure.Entities
 {
@@ -11,7 +10,7 @@ namespace VShop.Services.ShoppingCarts.Infrastructure.Entities
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
-        public ShoppingCartStatus Status { get; set; }
+        public ShoppingCart.ShoppingCartStatus Status { get; set; }
         public ICollection<ShoppingCartInfoItem> Items { get; set; }
     }
 }

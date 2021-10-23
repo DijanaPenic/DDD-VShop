@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.Services.ShoppingCarts.Infrastructure;
 using VShop.Services.ShoppingCarts.Infrastructure.Entities;
-
-using static VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate.ShoppingCart;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Queries
 {
@@ -21,7 +20,7 @@ namespace VShop.Services.ShoppingCarts.API.Application.Queries
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {
             return _dbContext.ShoppingCarts
-                .SingleOrDefaultAsync(b => b.CustomerId == customerId && b.Status != ShoppingCartStatus.Closed);
+                .SingleOrDefaultAsync(b => b.CustomerId == customerId && b.Status != ShoppingCart.ShoppingCartStatus.Closed);
         }
     }
 }

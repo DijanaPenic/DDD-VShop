@@ -8,21 +8,22 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
     public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand, Success>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public AddShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> shoppingCartRepository)
+        public AddShoppingCartProductCommandHandler(IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         {
             _shoppingCartRepository = shoppingCartRepository;
         }
         
         public async Task<OneOf<Success, ApplicationError>> Handle(AddShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.ShoppingCartAggregate.ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
 
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             

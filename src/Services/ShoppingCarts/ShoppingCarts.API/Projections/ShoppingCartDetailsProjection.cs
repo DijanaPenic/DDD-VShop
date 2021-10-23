@@ -4,10 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Infrastructure.Domain;
 using VShop.Services.ShoppingCarts.Domain.Events;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 using VShop.Services.ShoppingCarts.Infrastructure;
 using VShop.Services.ShoppingCarts.Infrastructure.Entities;
-
-using static VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate.ShoppingCart;
 
 namespace VShop.Services.ShoppingCarts.API.Projections
 {
@@ -21,7 +20,7 @@ namespace VShop.Services.ShoppingCarts.API.Projections
                     dbContext.ShoppingCarts.Add(new ShoppingCartInfo()
                     {
                         Id = e.ShoppingCartId,
-                        Status = ShoppingCartStatus.New,
+                        Status = ShoppingCart.ShoppingCartStatus.New,
                         CustomerId = e.CustomerId
                     });
             
@@ -50,21 +49,21 @@ namespace VShop.Services.ShoppingCarts.API.Projections
                 DeliveryAddressSetDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await dbContext.ShoppingCarts.SingleAsync(b => b.Id == e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCartStatus.Fulfilled;
+                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.Fulfilled;
             
                     dbContext.ShoppingCarts.Update(shoppingCart);
                 },
                 ShoppingCartCheckoutRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await dbContext.ShoppingCarts.SingleAsync(b => b.Id == e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCartStatus.PendingCheckout;
+                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.PendingCheckout;
             
                     dbContext.ShoppingCarts.Update(shoppingCart);
                 },
                 ShoppingCartDeletionRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await dbContext.ShoppingCarts.SingleAsync(b => b.Id == e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCartStatus.Closed;
+                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.Closed;
             
                     dbContext.ShoppingCarts.Update(shoppingCart);
                 },

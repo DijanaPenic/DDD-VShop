@@ -9,21 +9,22 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>>
+    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<ShoppingCart>>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> shoppingCartRepository)
+        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         {
             _shoppingCartRepository = shoppingCartRepository;
         }
         
-        public async Task<OneOf<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
+        public async Task<OneOf<Success<ShoppingCart>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.ShoppingCartAggregate.ShoppingCart shoppingCart = Domain.Models.ShoppingCartAggregate.ShoppingCart.Create
+            ShoppingCart shoppingCart = ShoppingCart.Create
             (
                 EntityId.Create(command.CustomerId),
                 command.CustomerDiscount
@@ -43,7 +44,7 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
             
             await _shoppingCartRepository.SaveAsync(shoppingCart);
 
-            return new Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>(shoppingCart);
+            return new Success<ShoppingCart>(shoppingCart);
         }
     }
 }

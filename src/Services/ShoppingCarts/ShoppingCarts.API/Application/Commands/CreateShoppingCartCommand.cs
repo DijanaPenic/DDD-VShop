@@ -3,10 +3,11 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
+using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
-    public record CreateShoppingCartCommand : ICommand<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>>
+    public record CreateShoppingCartCommand : ICommand<Success<ShoppingCart>>
     {
         public Guid CustomerId { get; set; }
         public int CustomerDiscount { get; set; }
