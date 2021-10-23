@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\SharedKernel\EventSourcing\EventSourcing.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
