@@ -6,9 +6,9 @@ using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
 
 namespace VShop.Services.ShoppingCarts.API.Infrastructure.Automapper
 {
-    public class BasketAutomapperProfile : Profile
+    public class ShoppingCartAutomapperProfile : Profile
     {
-        public BasketAutomapperProfile()
+        public ShoppingCartAutomapperProfile()
         {
             CreateMap<CreateShoppingCartRequest, CreateShoppingCartCommand>();
             CreateMap<AddShoppingCartProductRequest, ShoppingCartItemDto>();

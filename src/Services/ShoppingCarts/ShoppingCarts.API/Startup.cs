@@ -30,7 +30,7 @@ namespace VShop.Services.ShoppingCarts.API
         {
             services.AddControllers();
             services.AddFluentValidationServices();
-            services.AddAutoMapper(typeof(BasketAutomapperProfile));
+            services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingCarts.API", Version = "v1" }); });
             services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
