@@ -12,6 +12,7 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.Services.ShoppingCarts.API.Models;
 using VShop.Services.ShoppingCarts.API.Application.Queries;
 using VShop.Services.ShoppingCarts.API.Application.Commands;
+using VShop.Services.ShoppingCarts.API.Application.Commands.Shared;
 using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
@@ -42,7 +43,7 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ShoppingCartInfo), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetShoppingCartAsync([FromQuery]Guid customerId)
+        public async Task<IActionResult> GetShoppingCartAsync([FromQuery] Guid customerId)
         {
             ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
             if (shoppingCart == null)
@@ -58,7 +59,7 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateShoppingCartAsync([FromBody]CreateShoppingCartRequest request)
+        public async Task<IActionResult> CreateShoppingCartAsync([FromBody] CreateShoppingCartRequest request)
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
@@ -69,25 +70,34 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpDelete]
         [Route("{shoppingCartId:guid}")]
-        public Task<IActionResult> DeleteShoppingCartAsync([FromRoute]Guid shoppingCartId)
+        public Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
             throw new NotImplementedException();
         }
         
         [HttpPut]
-        [Route("{shoppingCartId:guid}")]
-        public Task<IActionResult> CheckoutShoppingCartAsync([FromRoute]Guid shoppingCartId)
+        [Route("{shoppingCartId:guid}/actions/checkout")]
+        public Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
             throw new NotImplementedException();
         }
         
         [HttpPost]
-        [Route("{shoppingCartId:guid}/products")]
+        [Route("{shoppingCartId:guid}/products/{productId:guid}")]
         [Consumes("application/json")]
-        public async Task<IActionResult> AddProductAsync([FromRoute]Guid shoppingCartId, [FromBody]AddShoppingCartProductRequest request)
+        public async Task<IActionResult> AddProductAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] AddShoppingCartProductRequest request
+        )
         {
-            AddShoppingCartProductCommand command = _mapper.Map<AddShoppingCartProductCommand>(request);
-            command.ShoppingCartId = shoppingCartId;
+            AddShoppingCartProductCommand command = new()
+            {
+                ShoppingCartItem = _mapper.Map<ShoppingCartItemDto>(request),
+                ShoppingCartId = shoppingCartId
+            };
+            command.ShoppingCartItem.ProductId = productId;
             
             OneOf<Success, ApplicationError> result = await _mediator.Send(command);
 
@@ -100,43 +110,32 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveProductAsync([FromRoute]Guid shoppingCartId, [FromRoute]Guid productId)
+        public async Task<IActionResult> RemoveProductAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] RemoveShoppingCartProductRequest request
+        )
         {
-            RemoveShoppingCartProductCommand command = new()
-            {
-                ShoppingCartId = shoppingCartId,
-                ProductId = productId
-            };
+            RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+            command.ProductId = productId;
             
             OneOf<Success, ApplicationError> result = await _mediator.Send(command);
 
             return HandleResult(result, NoContent);
         }
-        
-        [HttpPut]
-        [Route("{shoppingCartId:guid}/products/{productId:guid}/actions/increase")]
-        public Task<IActionResult> IncreaseProductQuantityAsync([FromRoute]Guid shoppingCartId, [FromRoute]Guid productId)
-        {
-            throw new NotImplementedException();
-        }
-        
-        [HttpPut]
-        [Route("{shoppingCartId:guid}/products/{productId:guid}/actions/decrease")]
-        public Task<IActionResult> DecreaseProductQuantityAsync([FromRoute]Guid shoppingCartId, [FromRoute]Guid productId)
-        {
-            throw new NotImplementedException();
-        }
-        
-        [HttpPut]
+
+        [HttpPost]
         [Route("{shoppingCartId:guid}/customer/contact-information")]
-        public Task<IActionResult> SetContactInformationAsync([FromRoute]Guid shoppingCartId)
+        public Task<IActionResult> SetContactInformationAsync([FromRoute] Guid shoppingCartId)
         {
             throw new NotImplementedException();
         }
         
-        [HttpPut]
+        [HttpPost]
         [Route("{shoppingCartId:guid}/customer/delivery-address")]
-        public Task<IActionResult> SetDeliveryAddressAsync([FromRoute]Guid shoppingCartId)
+        public Task<IActionResult> SetDeliveryAddressAsync([FromRoute] Guid shoppingCartId)
         {
             throw new NotImplementedException();
         }

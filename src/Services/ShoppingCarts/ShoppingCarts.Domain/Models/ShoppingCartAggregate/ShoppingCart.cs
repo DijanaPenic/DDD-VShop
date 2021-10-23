@@ -82,7 +82,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
             return Option<ApplicationError>.None;
         }
         
-        public Option<ApplicationError> RemoveProduct(EntityId productId)
+        public Option<ApplicationError> RemoveProduct(EntityId productId, ProductQuantity value)
         {
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Removing product from the shopping cart in '{Status}' status is not allowed.");
@@ -92,50 +92,16 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
             if (shoppingCartItem == null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
             
-            Apply
-            (
-                new ProductRemovedFromShoppingCartDomainEvent
-                {
-                    ShoppingCartId = Id,
-                    ProductId = productId
-                }
-            );
-            
-            RecalculateDeliveryCost();
-            
-            return Option<ApplicationError>.None;
-        }
-        
-        public Option<ApplicationError> IncreaseProductQuantity(EntityId productId, ProductQuantity value)
-        {
-            if(_isClosedForUpdates)
-                return ValidationError.Create($"Updating product for the shopping cart in '{Status}' status is not allowed.");
-            
-            ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
-
-            if (shoppingCartItem == null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
-
-            shoppingCartItem.IncreaseProductQuantity(value);
-            
-            RecalculateDeliveryCost();
-            
-            return Option<ApplicationError>.None;
-        }
-        
-        public Option<ApplicationError> DecreaseProductQuantity(EntityId productId, ProductQuantity value)
-        {
-            if(_isClosedForUpdates)
-                return ValidationError.Create($"Updating product for the shopping cart in '{Status}' status is not allowed.");
-             
-            ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
-
-            if (shoppingCartItem == null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
-
             if (shoppingCartItem.Quantity - value <= 0)
             {
-                RemoveProduct(productId);
+                Apply
+                (
+                    new ProductRemovedFromShoppingCartDomainEvent
+                    {
+                        ShoppingCartId = Id,
+                        ProductId = productId
+                    }
+                );
             }
             else
             {

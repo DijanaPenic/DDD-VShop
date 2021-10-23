@@ -26,7 +26,11 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
-            Option<ApplicationError> errorResult = shoppingCart.RemoveProduct(EntityId.Create(command.ProductId));
+            Option<ApplicationError> errorResult = shoppingCart.RemoveProduct
+            (
+                EntityId.Create(command.ProductId),
+                ProductQuantity.Create(command.Quantity)
+            );
             
             if (errorResult.IsSome(out ApplicationError error)) return error;
 
