@@ -20,7 +20,8 @@ namespace VShop.Services.ShoppingCarts.API.Application.Queries
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {
             return _dbContext.ShoppingCarts
-                .SingleOrDefaultAsync(b => b.CustomerId == customerId && b.Status != ShoppingCart.ShoppingCartStatus.Closed);
+                .Include(sc => sc.Items)
+                .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCart.ShoppingCartStatus.Closed);
         }
     }
 }
