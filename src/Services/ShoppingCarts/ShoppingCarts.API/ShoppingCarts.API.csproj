@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\SharedKernel\EventStore\EventStore.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventStore\SharedKernel.EventStore.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\PostgresDb\PostgresDb.csproj" />
       <ProjectReference Include="..\ShoppingCarts.Domain\ShoppingCarts.Domain.csproj" />
