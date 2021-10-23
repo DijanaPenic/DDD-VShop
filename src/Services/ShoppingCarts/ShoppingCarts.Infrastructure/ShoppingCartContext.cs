@@ -20,8 +20,8 @@ namespace VShop.Services.ShoppingCarts.Infrastructure
     
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new ShoppingCartEntityTypeConfiguration());
-            builder.ApplyConfiguration(new ShoppingCartProductItemEntityTypeConfiguration());
+            builder.ApplyConfiguration(new ShoppingCartInfoEntityTypeConfiguration());
+            builder.ApplyConfiguration(new ShoppingCartInfoProductItemEntityTypeConfiguration());
         }
     }
 }

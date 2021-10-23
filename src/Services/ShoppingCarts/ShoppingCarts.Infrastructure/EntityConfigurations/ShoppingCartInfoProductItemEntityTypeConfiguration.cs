@@ -5,11 +5,11 @@ using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
 namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
 {
-    internal class ShoppingCartProductItemEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartInfoItem>
+    internal class ShoppingCartInfoProductItemEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartInfoItem>
     {
         public void Configure(EntityTypeBuilder<ShoppingCartInfoItem> builder)
         {
-            builder.ToTable("shopping_cart_details_product_item", ShoppingCartContext.DefaultSchema);
+            builder.ToTable("shopping_cart_info_product_item", ShoppingCartContext.DefaultSchema);
             
             builder.HasKey(bi => bi.Id);
             builder.Property(bi => bi.ProductId).IsRequired();
