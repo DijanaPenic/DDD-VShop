@@ -70,9 +70,16 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpDelete]
         [Route("{shoppingCartId:guid}")]
-        public Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
+        public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            throw new NotImplementedException();
+            DeleteShoppingCartCommand command = new()
+            {
+                ShoppingCartId = shoppingCartId
+            };
+
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+
+            return HandleResult(result, Ok);
         }
         
         [HttpPut]
