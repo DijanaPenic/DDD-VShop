@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\EventSourcing\EventSourcing.csproj" />
-      <ProjectReference Include="..\..\..\SharedKernel\PostgresDb\PostgresDb.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
       <ProjectReference Include="..\ShoppingCarts.Domain\ShoppingCarts.Domain.csproj" />
     </ItemGroup>
 

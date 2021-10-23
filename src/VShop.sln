@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventStore", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "SharedKernel\Infrastructure\Infrastructure.csproj", "{6196DF60-B0C1-41DD-AD70-58BB3A43D72F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgresDb", "SharedKernel\PostgresDb\PostgresDb.csproj", "{A0E178B3-14A0-4E12-9FCD-62D139519990}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.PostgresDb", "SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj", "{A0E178B3-14A0-4E12-9FCD-62D139519990}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
