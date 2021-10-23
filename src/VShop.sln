@@ -6,11 +6,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShoppingCarts", "ShoppingCa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ordering", "Ordering", "{CF71D41D-C558-46D8-AF8C-1E90022A365D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.API", "Services\Basket\ShoppingCarts.API\ShoppingCarts.API.csproj", "{BE64D095-A173-4605-924B-5B90261A86B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.API", "Services\ShoppingCarts\ShoppingCarts.API\ShoppingCarts.API.csproj", "{BE64D095-A173-4605-924B-5B90261A86B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.Domain", "Services\Basket\ShoppingCarts.Domain\ShoppingCarts.Domain.csproj", "{D7149FAA-9DD5-4BA8-A5DE-0A5C2FA26336}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.Domain", "Services\ShoppingCarts\ShoppingCarts.Domain\ShoppingCarts.Domain.csproj", "{D7149FAA-9DD5-4BA8-A5DE-0A5C2FA26336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.Infrastructure", "Services\Basket\ShoppingCarts.Infrastructure\ShoppingCarts.Infrastructure.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCarts.Infrastructure", "Services\ShoppingCarts\ShoppingCarts.Infrastructure\ShoppingCarts.Infrastructure.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedKernel", "SharedKernel", "{3DA93557-2604-4C17-8A86-25460DBC8EB9}"
 EndProject

@@ -8,7 +8,7 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
     public record AddShoppingCartProductCommand : ICommand<Success>
     {
-        public Guid BasketId { get; set; }
-        public BasketItemDto BasketItem { get; set; }
+        public Guid ShoppingCartId { get; set; }
+        public ShoppingCartItemDto ShoppingCartItem { get; set; }
     }
 }

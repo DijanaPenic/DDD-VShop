@@ -14,36 +14,36 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
     public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _basketRepository;
+        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> basketRepository)
+        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> shoppingCartRepository)
         {
-            _basketRepository = basketRepository;
+            _shoppingCartRepository = shoppingCartRepository;
         }
         
         public async Task<OneOf<Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.ShoppingCartAggregate.ShoppingCart basket = Domain.Models.ShoppingCartAggregate.ShoppingCart.Create
+            Domain.Models.ShoppingCartAggregate.ShoppingCart shoppingCart = Domain.Models.ShoppingCartAggregate.ShoppingCart.Create
             (
                 EntityId.Create(command.CustomerId),
                 command.CustomerDiscount
             );
 
-            foreach (BasketItemDto basketItem in command.BasketItems)
+            foreach (ShoppingCartItemDto shoppingCartItem in command.ShoppingCartItems)
             {
-                Option<ApplicationError> errorResult = basket.AddProduct
+                Option<ApplicationError> errorResult = shoppingCart.AddProduct
                 (
-                    EntityId.Create(basketItem.ProductId),
-                    ProductQuantity.Create(basketItem.Quantity),
-                    Price.Create(basketItem.UnitPrice)
+                    EntityId.Create(shoppingCartItem.ProductId),
+                    ProductQuantity.Create(shoppingCartItem.Quantity),
+                    Price.Create(shoppingCartItem.UnitPrice)
                 );
 
                 if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
-            await _basketRepository.SaveAsync(basket);
+            await _shoppingCartRepository.SaveAsync(shoppingCart);
 
-            return new Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>(basket);
+            return new Success<Domain.Models.ShoppingCartAggregate.ShoppingCart>(shoppingCart);
         }
     }
 }

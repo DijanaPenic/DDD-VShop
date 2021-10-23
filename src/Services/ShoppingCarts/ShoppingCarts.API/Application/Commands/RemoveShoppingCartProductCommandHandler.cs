@@ -13,23 +13,23 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
 {
     public class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand, Success>
     {
-        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _basketRepository;
+        private readonly IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public RemoveShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> basketRepository)
+        public RemoveShoppingCartProductCommandHandler(IEventStoreAggregateRepository<Domain.Models.ShoppingCartAggregate.ShoppingCart, EntityId> shoppingCartRepository)
         {
-            _basketRepository = basketRepository;
+            _shoppingCartRepository = shoppingCartRepository;
         }
         
         public async Task<OneOf<Success, ApplicationError>> Handle(RemoveShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
-            Domain.Models.ShoppingCartAggregate.ShoppingCart basket = await _basketRepository.LoadAsync(EntityId.Create(command.BasketId));
-            if (basket is null) return NotFoundError.Create("Basket not found.");
+            Domain.Models.ShoppingCartAggregate.ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
-            Option<ApplicationError> errorResult = basket.RemoveProduct(EntityId.Create(command.ProductId));
+            Option<ApplicationError> errorResult = shoppingCart.RemoveProduct(EntityId.Create(command.ProductId));
             
             if (errorResult.IsSome(out ApplicationError error)) return error;
 
-            await _basketRepository.SaveAsync(basket);
+            await _shoppingCartRepository.SaveAsync(shoppingCart);
 
             return new Success();
         }

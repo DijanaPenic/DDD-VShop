@@ -10,6 +10,6 @@ namespace VShop.Services.ShoppingCarts.API.Application.Commands
     {
         public Guid CustomerId { get; set; }
         public int CustomerDiscount { get; set; }
-        public BasketItemDto[] BasketItems { get; set; }
+        public ShoppingCartItemDto[] ShoppingCartItems { get; set; }
     }
 }
