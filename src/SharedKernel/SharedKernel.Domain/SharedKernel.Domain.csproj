@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <AssemblyName>VShop.SharedKernel..Domain</AssemblyName>
+        <AssemblyName>VShop.SharedKernel.Domain</AssemblyName>
         <RootNamespace>VShop.SharedKernel.Domain</RootNamespace>
     </PropertyGroup>
 
