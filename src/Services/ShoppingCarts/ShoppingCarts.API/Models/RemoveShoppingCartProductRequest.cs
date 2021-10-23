@@ -10,7 +10,7 @@ namespace VShop.Services.ShoppingCarts.API.Models
     public class RemoveShoppingCartProductRequestValidator : AbstractValidator<RemoveShoppingCartProductRequest> {
         public RemoveShoppingCartProductRequestValidator() 
         {
-            RuleFor(bi => bi.Quantity).GreaterThan(0);
+            RuleFor(sci => sci.Quantity).GreaterThan(0);
         }
     }
 }

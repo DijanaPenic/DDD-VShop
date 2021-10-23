@@ -14,9 +14,9 @@ namespace VShop.Services.ShoppingCarts.API.Models
     {
         public CreateShoppingCartRequestValidator()
         {
-            RuleFor(c => c.CustomerId).NotEmpty();
-            RuleFor(c => c.CustomerDiscount).GreaterThanOrEqualTo(0);
-            RuleForEach(c => c.ShoppingCartItems).SetValidator(new CreateShoppingCartProductRequestValidator());
+            RuleFor(sc => sc.CustomerId).NotEmpty();
+            RuleFor(sc => sc.CustomerDiscount).GreaterThanOrEqualTo(0);
+            RuleForEach(sc => sc.ShoppingCartItems).SetValidator(new CreateShoppingCartProductRequestValidator());
         }
     }
     
@@ -30,9 +30,9 @@ namespace VShop.Services.ShoppingCarts.API.Models
     public class CreateShoppingCartProductRequestValidator : AbstractValidator<CreateShoppingCartProductRequest> {
         public CreateShoppingCartProductRequestValidator() 
         {
-            RuleFor(bi => bi.ProductId).NotEmpty();
-            RuleFor(bi => bi.UnitPrice).GreaterThan(0);
-            RuleFor(bi => bi.Quantity).GreaterThan(0);
+            RuleFor(sci => sci.ProductId).NotEmpty();
+            RuleFor(sci => sci.UnitPrice).GreaterThan(0);
+            RuleFor(sci => sci.Quantity).GreaterThan(0);
         }
     }
     

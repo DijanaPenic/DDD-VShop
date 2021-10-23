@@ -23,7 +23,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
         public DateTime ConfirmedAt { get; private set; }
         public IReadOnlyCollection<ShoppingCartItem> ShoppingCartItems => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
-        public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(bi => bi.TotalAmount));
+        public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(sci => sci.TotalAmount));
         public Price TotalDeduction => ProductsCostWithoutDiscount * (ShoppingCartCustomer.Discount / 100.00m);
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
@@ -52,7 +52,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Adding product for the shopping cart in '{Status}' status is not allowed.");
 
-            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.ProductId.Equals(productId));
 
             if (shoppingCartItem == null)
             {
@@ -168,7 +168,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
         }
 
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
-            => ShoppingCartItems.SingleOrDefault(bi => bi.ProductId.Equals(productId));
+            => ShoppingCartItems.SingleOrDefault(sci => sci.ProductId.Equals(productId));
 
         protected override void When(IDomainEvent @event)
         {

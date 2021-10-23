@@ -11,8 +11,8 @@ namespace VShop.Services.ShoppingCarts.API.Models
     public class AddShoppingCartProductRequestValidator : AbstractValidator<AddShoppingCartProductRequest> {
         public AddShoppingCartProductRequestValidator() 
         {
-            RuleFor(bi => bi.UnitPrice).GreaterThan(0);
-            RuleFor(bi => bi.Quantity).GreaterThan(0);
+            RuleFor(sci => sci.UnitPrice).GreaterThan(0);
+            RuleFor(sci => sci.Quantity).GreaterThan(0);
         }
     }
 }

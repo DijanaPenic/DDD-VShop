@@ -11,16 +11,16 @@ namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
         {
             builder.ToTable("shopping_cart_info_product_item", ShoppingCartContext.DefaultSchema);
             
-            builder.HasKey(bi => bi.Id);
-            builder.Property(bi => bi.ProductId).IsRequired();
-            builder.Property(bi => bi.Quantity).IsRequired();
-            builder.Property(bi => bi.UnitPrice).IsRequired();
-            builder.Property(bi => bi.DateCreatedUtc).IsRequired();
-            builder.Property(bi => bi.DateUpdatedUtc).IsRequired();
+            builder.HasKey(sci => sci.Id);
+            builder.Property(sci => sci.ProductId).IsRequired();
+            builder.Property(sci => sci.Quantity).IsRequired();
+            builder.Property(sci => sci.UnitPrice).IsRequired();
+            builder.Property(sci => sci.DateCreatedUtc).IsRequired();
+            builder.Property(sci => sci.DateUpdatedUtc).IsRequired();
             
-            builder.HasOne(bi => bi.ShoppingCartInfo)
-                   .WithMany(b => b.Items)
-                   .HasForeignKey(bi => bi.ShoppingCartInfoId)
+            builder.HasOne(sci => sci.ShoppingCartInfo)
+                   .WithMany(sc => sc.Items)
+                   .HasForeignKey(sci => sci.ShoppingCartInfoId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Cascade);
         }

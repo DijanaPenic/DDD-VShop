@@ -11,11 +11,11 @@ namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
         {
             builder.ToTable("shopping_cart_info", ShoppingCartContext.DefaultSchema);
             
-            builder.HasKey(b => b.Id);
-            builder.Property(b => b.CustomerId).IsRequired();
-            builder.Property(b => b.Status).IsRequired();
-            builder.Property(b => b.DateCreatedUtc).IsRequired();
-            builder.Property(b => b.DateUpdatedUtc).IsRequired();
+            builder.HasKey(sc => sc.Id);
+            builder.Property(sc => sc.CustomerId).IsRequired();
+            builder.Property(sc => sc.Status).IsRequired();
+            builder.Property(sc => sc.DateCreatedUtc).IsRequired();
+            builder.Property(sc => sc.DateUpdatedUtc).IsRequired();
         }
     }
 }
