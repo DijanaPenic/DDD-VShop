@@ -28,9 +28,7 @@ namespace VShop.Services.ShoppingCarts.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            
+            services.AddControllersServices();
             services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingCarts.API", Version = "v1" }); });
