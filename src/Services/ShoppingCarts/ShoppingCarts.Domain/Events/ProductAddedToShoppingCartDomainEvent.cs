@@ -1,6 +1,6 @@
 ﻿using System;
 
-using VShop.SharedKernel.Infrastructure.Domain;
+using VShop.SharedKernel.Domain;
 
 namespace VShop.Services.ShoppingCarts.Domain.Events
 {

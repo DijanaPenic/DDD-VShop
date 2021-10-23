@@ -1,4 +1,4 @@
-﻿namespace VShop.SharedKernel.Infrastructure.Domain.Enums
+﻿namespace VShop.SharedKernel.Domain.Enums
 {
     public enum GenderType
     {

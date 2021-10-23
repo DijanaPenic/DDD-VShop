@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("VShop.Services.ShoppingCarts.Domain")]
-namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
+namespace VShop.SharedKernel.Domain.ValueObjects
 {
     public class Address : ValueObject
     {

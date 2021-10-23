@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Serilog;
 
+using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 
 using ILogger = Serilog.ILogger;
 

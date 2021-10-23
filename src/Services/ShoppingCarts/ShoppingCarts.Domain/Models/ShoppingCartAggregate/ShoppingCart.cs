@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Domain;
-using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.Services.ShoppingCarts.Domain.Events;

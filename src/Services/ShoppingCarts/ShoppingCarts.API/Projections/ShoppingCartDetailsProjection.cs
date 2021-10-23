@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Infrastructure.Domain;
+using VShop.SharedKernel.Domain;
 using VShop.Services.ShoppingCarts.Domain.Events;
 using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 using VShop.Services.ShoppingCarts.Infrastructure;

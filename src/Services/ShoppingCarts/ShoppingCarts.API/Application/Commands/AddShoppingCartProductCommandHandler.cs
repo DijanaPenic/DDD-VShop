@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate;
 
 namespace VShop.Services.ShoppingCarts.API.Application.Commands

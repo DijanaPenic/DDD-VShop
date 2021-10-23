@@ -5,8 +5,8 @@ using Serilog;
 using Serilog.Events;
 using EventStore.ClientAPI;
 
+using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 
 using ILogger = Serilog.ILogger;
 

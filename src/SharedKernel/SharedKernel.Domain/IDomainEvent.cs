@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace VShop.SharedKernel.Infrastructure.Domain
+namespace VShop.SharedKernel.Domain
 {
     public interface IDomainEvent : INotification
     {

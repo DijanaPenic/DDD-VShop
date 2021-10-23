@@ -1,11 +1,11 @@
 ﻿using System;
 
+using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Domain;
-using VShop.SharedKernel.Infrastructure.Domain.Enums;
-using VShop.SharedKernel.Infrastructure.Domain.ValueObjects;
 using VShop.Services.ShoppingCarts.Domain.Events;
 
 namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate

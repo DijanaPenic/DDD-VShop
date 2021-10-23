@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
 [assembly: InternalsVisibleTo("VShop.Services.ShoppingCarts.Domain")]
-namespace VShop.SharedKernel.Infrastructure.Domain.ValueObjects
+namespace VShop.SharedKernel.Domain.ValueObjects
 {
     public class EntityId : ValueObject
     {

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using MediatR;
 using EventStore.ClientAPI;
 
+using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {

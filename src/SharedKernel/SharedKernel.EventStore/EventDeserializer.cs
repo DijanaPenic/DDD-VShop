@@ -3,8 +3,8 @@ using System.Text;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
+using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure.Domain;
 
 namespace VShop.SharedKernel.EventStore
 {

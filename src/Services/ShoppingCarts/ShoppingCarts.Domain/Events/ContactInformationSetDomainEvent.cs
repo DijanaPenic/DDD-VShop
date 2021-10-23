@@ -1,7 +1,7 @@
 ﻿using System;
 
-using VShop.SharedKernel.Infrastructure.Domain;
-using VShop.SharedKernel.Infrastructure.Domain.Enums;
+using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Domain.Enums;
 
 namespace VShop.Services.ShoppingCarts.Domain.Events
 {

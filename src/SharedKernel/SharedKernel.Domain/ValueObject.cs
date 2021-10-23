@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace VShop.SharedKernel.Infrastructure.Domain
+namespace VShop.SharedKernel.Domain
 {
     public abstract class ValueObject
     {
