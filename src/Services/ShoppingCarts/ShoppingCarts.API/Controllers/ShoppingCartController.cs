@@ -144,9 +144,18 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpPost]
         [Route("{shoppingCartId:guid}/customer/delivery-address")]
-        public Task<IActionResult> SetDeliveryAddressAsync([FromRoute] Guid shoppingCartId)
+        public async Task<IActionResult> SetDeliveryAddressAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromBody] SetDeliveryAddressRequest request
+        )
         {
-            throw new NotImplementedException();
+            SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+
+            return HandleResult(result, Ok);
         }
     }
 }
