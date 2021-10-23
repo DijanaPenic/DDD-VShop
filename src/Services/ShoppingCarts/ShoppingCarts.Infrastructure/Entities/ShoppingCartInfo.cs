@@ -7,11 +7,11 @@ using static VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate.Sh
 
 namespace VShop.Services.ShoppingCarts.Infrastructure.Entities
 {
-    public class ShoppingCart : DbBaseEntity
+    public class ShoppingCartInfo : DbBaseEntity
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public ShoppingCartStatus Status { get; set; }
-        public ICollection<ShoppingCartItem> Items { get; set; }
+        public ICollection<ShoppingCartInfoItem> Items { get; set; }
     }
 }

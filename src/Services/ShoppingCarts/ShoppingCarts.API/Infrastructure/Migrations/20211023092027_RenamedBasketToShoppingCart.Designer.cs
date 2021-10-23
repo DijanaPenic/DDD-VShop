@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VShop.Services.ShoppingCarts.Infrastructure;
@@ -9,9 +10,10 @@ using VShop.Services.ShoppingCarts.Infrastructure;
 namespace VShop.Services.ShoppingCarts.API.Infrastructure.Migrations
 {
     [DbContext(typeof(ShoppingCartContext))]
-    partial class BasketContextModelSnapshot : ModelSnapshot
+    [Migration("20211023092027_RenamedBasketToShoppingCart")]
+    partial class RenamedBasketToShoppingCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

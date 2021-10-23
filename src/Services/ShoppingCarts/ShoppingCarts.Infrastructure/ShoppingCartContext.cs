@@ -10,8 +10,8 @@ namespace VShop.Services.ShoppingCarts.Infrastructure
     {
         public const string DefaultSchema = "shopping_cart";
 
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
-        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public DbSet<ShoppingCartInfo> ShoppingCarts { get; set; }
+        public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
         
         public ShoppingCartContext(DbContextOptions<ShoppingCartContext> options) : base(options)
         {

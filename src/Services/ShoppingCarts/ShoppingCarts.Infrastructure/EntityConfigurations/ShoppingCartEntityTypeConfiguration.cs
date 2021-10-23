@@ -5,9 +5,9 @@ using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
 namespace VShop.Services.ShoppingCarts.Infrastructure.EntityConfigurations
 {
-    internal class ShoppingCartEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCart>
+    internal class ShoppingCartEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartInfo>
     {
-        public void Configure(EntityTypeBuilder<ShoppingCart> builder)
+        public void Configure(EntityTypeBuilder<ShoppingCartInfo> builder)
         {
             builder.ToTable("shopping_cart_details", ShoppingCartContext.DefaultSchema);
             

@@ -40,10 +40,10 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ShoppingCartInfo), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShoppingCartAsync([FromQuery]Guid customerId)
         {
-            ShoppingCart shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
+            ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
             if (shoppingCart == null)
             {
                 return NotFound();

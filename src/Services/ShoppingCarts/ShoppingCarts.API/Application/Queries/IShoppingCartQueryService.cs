@@ -7,6 +7,6 @@ namespace VShop.Services.ShoppingCarts.API.Application.Queries
 {
     public interface IShoppingCartQueryService
     {
-        Task<ShoppingCart> GetActiveShoppingCartByCustomerIdAsync(Guid customerId);
+        Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId);
     }
 }
