@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.Modules.Sales.Domain.Events;
 
-namespace VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate
+namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
     public class ShoppingCart : AggregateRoot<EntityId>
     {

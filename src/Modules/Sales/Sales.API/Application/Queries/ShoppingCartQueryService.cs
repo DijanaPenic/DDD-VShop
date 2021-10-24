@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
-using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Queries
 {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Domain;
 using VShop.Modules.Sales.Domain.Events;
-using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
 

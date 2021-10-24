@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.Modules.Sales.Domain.Events;
 
-namespace VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate
+namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
     public class ShoppingCartCustomer : Entity<EntityId>
     {

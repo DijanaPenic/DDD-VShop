@@ -3,7 +3,7 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

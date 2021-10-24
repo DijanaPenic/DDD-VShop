@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Infrastructure.Entities
 {
