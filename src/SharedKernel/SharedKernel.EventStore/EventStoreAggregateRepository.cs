@@ -55,6 +55,7 @@ namespace VShop.SharedKernel.EventStore
         {
             const int maxSliceSize = 4096;
             
+            // TODO - fix this.
             TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true); 
             string streamName = GetStreamName(aggregateId);
 

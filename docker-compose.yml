@@ -23,5 +23,5 @@ services:
     restart: always
     environment: 
       POSTGRES_USER: postgres
-      POSTGRES_DB: VShop_ShoppingCart
+      POSTGRES_DB: VShop_Sales
       POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC

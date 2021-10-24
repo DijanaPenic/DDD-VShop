@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>VShop.Services.Sales.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Services.Sales.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
