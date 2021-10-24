@@ -40,6 +40,8 @@ namespace VShop.SharedKernel.EventStore
 
             aggregate.ClearChanges();
             
+            // TODO - should I change publish strategy?
+            // https://github.com/jbogard/MediatR/blob/master/samples/MediatR.Examples.PublishStrategies/PublishStrategy.cs
             foreach (IDomainEvent @event in events)
                 await _mediator.Publish(@event);
         }

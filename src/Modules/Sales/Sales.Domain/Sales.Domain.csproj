@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Ordering" />
+    </ItemGroup>
+
 </Project>

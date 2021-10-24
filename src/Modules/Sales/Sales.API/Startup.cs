@@ -37,8 +37,6 @@ namespace VShop.Modules.Sales.API
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             
             services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
-
-            // TODO - missing DI for domain handlers
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

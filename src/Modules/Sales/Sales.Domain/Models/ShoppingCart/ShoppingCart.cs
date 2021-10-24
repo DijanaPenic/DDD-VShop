@@ -84,7 +84,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Option<ApplicationError>.None;
         }
         
-        public Option<ApplicationError> RemoveProduct(EntityId productId, ProductQuantity value)
+        public Option<ApplicationError> RemoveProduct(EntityId productId, ProductQuantity quantity)
         {
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Removing product from the shopping cart in '{Status}' status is not allowed.");
@@ -94,7 +94,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (shoppingCartItem == null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
             
-            if (shoppingCartItem.Quantity - value <= 0)
+            if (shoppingCartItem.Quantity - quantity <= 0)
             {
                 Apply
                 (
@@ -107,7 +107,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             }
             else
             {
-                Option<ApplicationError> errorResult = shoppingCartItem.DecreaseProductQuantity(value);
+                Option<ApplicationError> errorResult = shoppingCartItem.DecreaseProductQuantity(quantity);
 
                 if (errorResult.IsSome(out ApplicationError error)) return error;
             }
