@@ -44,11 +44,8 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         public async Task<IActionResult> GetShoppingCartAsync([FromQuery] Guid customerId)
         {
             ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
-            if (shoppingCart == null)
-            {
-                return NotFound();
-            }
-            
+            if (shoppingCart == null) return NotFound();
+
             return Ok(shoppingCart);
         }
 
@@ -58,7 +55,14 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateShoppingCartAsync([FromBody] CreateShoppingCartRequest request)
-        {
+        {   
+            // TODO - should this check be performed by API gateway, command handler or bounded context API?
+            // ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(request.CustomerId);
+            // if (shoppingCart != null)
+            // {
+            //     return BadRequest("Only one active shopping cart is supported per customer.");
+            // }
+            
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
             OneOf<Success<ShoppingCart>, ApplicationError> result = await _mediator.Send(command);

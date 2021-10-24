@@ -32,6 +32,7 @@ namespace VShop.SharedKernel.Application
             );
         }
         
+        // TODO - move to extensions class
         protected IActionResult HandleResult<TResult>
         (
             OneOf<TResult, ApplicationError> result,
