@@ -8,16 +8,16 @@ namespace VShop.Services.ShoppingCarts.Infrastructure
     {
         public static void MapEventTypes()
         {
-            Map<ShoppingCartCreatedDomainEvent>("ShoppingCartCreated");
-            Map<ShoppingCartCheckoutRequestedDomainEvent>("ShoppingCartCheckoutRequested");
-            Map<ShoppingCartDeletionRequestedDomainEvent>("ShoppingCartDeletionRequested");
-            Map<ShoppingCartItemQuantityDecreasedDomainEvent>("ShoppingCartItemQuantityDecreased");
-            Map<ShoppingCartItemQuantityIncreasedDomainEvent>("ShoppingCartItemQuantityIncreased");
-            Map<ContactInformationSetDomainEvent>("ContactInformationSet");
-            Map<DeliveryAddressSetDomainEvent>("DeliveryAddressSet");
-            Map<DeliveryCostChangedDomainEvent>("DeliveryCostChanged");
-            Map<ProductAddedToShoppingCartDomainEvent>("ProductAddedToShoppingCart");
-            Map<ProductRemovedFromShoppingCartDomainEvent>("ProductRemovedFromShoppingCart");
+            Map<ShoppingCartCreatedDomainEvent>(nameof(ShoppingCartCreatedDomainEvent));
+            Map<ShoppingCartCheckoutRequestedDomainEvent>(nameof(ShoppingCartCheckoutRequestedDomainEvent));
+            Map<ShoppingCartDeletionRequestedDomainEvent>(nameof(ShoppingCartDeletionRequestedDomainEvent));
+            Map<ShoppingCartItemQuantityDecreasedDomainEvent>(nameof(ShoppingCartItemQuantityDecreasedDomainEvent));
+            Map<ShoppingCartItemQuantityIncreasedDomainEvent>(nameof(ShoppingCartItemQuantityIncreasedDomainEvent));
+            Map<ContactInformationSetDomainEvent>(nameof(ContactInformationSetDomainEvent));
+            Map<DeliveryAddressSetDomainEvent>(nameof(DeliveryAddressSetDomainEvent));
+            Map<DeliveryCostChangedDomainEvent>(nameof(DeliveryCostChangedDomainEvent));
+            Map<ProductAddedToShoppingCartDomainEvent>(nameof(ProductAddedToShoppingCartDomainEvent));
+            Map<ProductRemovedFromShoppingCartDomainEvent>(nameof(ProductRemovedFromShoppingCartDomainEvent));
         }
     }
 }
