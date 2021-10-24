@@ -7,10 +7,9 @@ using MediatR;
 using Serilog;
 using Newtonsoft.Json;
 
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Application.Decorators
+namespace VShop.SharedKernel.Application.Commands.Decorators
 {
     public class ErrorCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
     {

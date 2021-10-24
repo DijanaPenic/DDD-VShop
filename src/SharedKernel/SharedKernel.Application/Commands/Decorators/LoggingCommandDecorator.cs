@@ -4,10 +4,9 @@ using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Application.Decorators
+namespace VShop.SharedKernel.Application.Commands.Decorators
 {
     public class LoggingCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
     {

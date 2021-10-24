@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using MediatR;
 
-using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Application.Commands.Decorators;
 using VShop.Modules.Sales.API.Application.Commands;
 
 namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
