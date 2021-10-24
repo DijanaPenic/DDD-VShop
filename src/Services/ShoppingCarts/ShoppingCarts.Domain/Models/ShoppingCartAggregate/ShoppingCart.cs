@@ -119,7 +119,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
 
         public Option<ApplicationError> RequestCheckout()
         {
-            if(Status != ShoppingCartStatus.Fulfilled)
+            if(Status != ShoppingCartStatus.AwaitingConfirmation)
                 return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
             if(IsShoppingCartEmpty)
@@ -204,7 +204,7 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
                     _shoppingCartItems.Remove(shoppingCartItem);
                     break;
                 case DeliveryAddressSetDomainEvent _:
-                    Status = ShoppingCartStatus.Fulfilled;
+                    Status = ShoppingCartStatus.AwaitingConfirmation;
                     break;
                 case DeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
@@ -223,9 +223,9 @@ namespace VShop.Services.ShoppingCarts.Domain.Models.ShoppingCartAggregate
         public enum ShoppingCartStatus
         {
             New = 1,
-            Fulfilled = 2,              // Customer has provided needed contact information and is allowed to proceed with checkout.
-            PendingCheckout = 3,        // Checkout has been requested. The next step: payment.
-            Closed = 4                  // Shopping cart has been deleted (soft delete).
+            AwaitingConfirmation = 2,     // Customer has provided needed contact information and is allowed to proceed with checkout.
+            PendingCheckout = 3,          // Checkout has been requested. The next step: payment.
+            Closed = 4                    // Shopping cart has been deleted (soft delete).
         }
         
         public static class Settings

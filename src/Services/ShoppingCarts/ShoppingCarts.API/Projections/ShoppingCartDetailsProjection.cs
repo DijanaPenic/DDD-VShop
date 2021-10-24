@@ -49,7 +49,7 @@ namespace VShop.Services.ShoppingCarts.API.Projections
                 DeliveryAddressSetDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await dbContext.ShoppingCarts.SingleAsync(sc => sc.Id == e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.Fulfilled;
+                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.AwaitingConfirmation;
             
                     dbContext.ShoppingCarts.Update(shoppingCart);
                 },
