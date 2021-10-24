@@ -6,9 +6,9 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.Services.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Events;
 
-namespace VShop.Services.Sales.Domain.Models.ShoppingCartAggregate
+namespace VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate
 {
     public class ShoppingCartCustomer : Entity<EntityId>
     {

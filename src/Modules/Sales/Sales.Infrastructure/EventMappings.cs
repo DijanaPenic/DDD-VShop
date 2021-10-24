@@ -1,8 +1,8 @@
-﻿using VShop.Services.Sales.Domain.Events;
+﻿using VShop.Modules.Sales.Domain.Events;
 
 using static VShop.SharedKernel.EventSourcing.EventTypeMapper;
 
-namespace VShop.Services.Sales.Infrastructure
+namespace VShop.Modules.Sales.Infrastructure
 {
     public static class EventMappings
     {

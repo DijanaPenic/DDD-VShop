@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Services.Sales.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
-namespace VShop.Services.Sales.API.Infrastructure.Extensions
+namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
     public static class PostgresExtensions
     {

@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Domain;
-using VShop.Services.Sales.Domain.Events;
-using VShop.Services.Sales.Domain.Models.ShoppingCartAggregate;
-using VShop.Services.Sales.Infrastructure;
-using VShop.Services.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Infrastructure;
+using VShop.Modules.Sales.Infrastructure.Entities;
 
-namespace VShop.Services.Sales.API.Projections
+namespace VShop.Modules.Sales.API.Projections
 {
     public static class ShoppingCartInfoProjection
     {

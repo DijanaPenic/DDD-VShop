@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.Services.Sales.Infrastructure.Entities;
-using VShop.Services.Sales.Infrastructure.EntityConfigurations;
+using VShop.Modules.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Infrastructure.EntityConfigurations;
 
-namespace VShop.Services.Sales.Infrastructure
+namespace VShop.Modules.Sales.Infrastructure
 {
     public class SalesContext : ApplicationDbContextBase
     {

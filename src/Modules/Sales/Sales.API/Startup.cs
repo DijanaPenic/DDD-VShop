@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-using VShop.Services.Sales.API.Application.Queries;
-using VShop.Services.Sales.API.Infrastructure.Extensions;
-using VShop.Services.Sales.API.Infrastructure.Automapper;
-using VShop.Services.Sales.API.Infrastructure.AutofacModules;
+using VShop.Modules.Sales.API.Application.Queries;
+using VShop.Modules.Sales.API.Infrastructure.Extensions;
+using VShop.Modules.Sales.API.Infrastructure.Automapper;
+using VShop.Modules.Sales.API.Infrastructure.AutofacModules;
 
-namespace VShop.Services.Sales.API
+namespace VShop.Modules.Sales.API
 {
     public class Startup
     {

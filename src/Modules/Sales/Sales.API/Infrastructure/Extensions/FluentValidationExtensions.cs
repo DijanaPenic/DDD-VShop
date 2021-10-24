@@ -2,7 +2,7 @@
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace VShop.Services.Sales.API.Infrastructure.Extensions
+namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
     public static class FluentValidationExtensions
     {

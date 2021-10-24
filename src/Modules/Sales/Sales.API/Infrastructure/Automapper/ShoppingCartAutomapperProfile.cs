@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 
-using VShop.Services.Sales.API.Models;
-using VShop.Services.Sales.API.Application.Commands;
-using VShop.Services.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.API.Models;
+using VShop.Modules.Sales.API.Application.Commands;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-namespace VShop.Services.Sales.API.Infrastructure.Automapper
+namespace VShop.Modules.Sales.API.Infrastructure.Automapper
 {
     public class ShoppingCartAutomapperProfile : Profile
     {

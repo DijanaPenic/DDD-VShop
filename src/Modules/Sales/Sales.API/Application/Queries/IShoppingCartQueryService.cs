@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using VShop.Services.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Infrastructure.Entities;
 
-namespace VShop.Services.Sales.API.Application.Queries
+namespace VShop.Modules.Sales.API.Application.Queries
 {
     public interface IShoppingCartQueryService
     {

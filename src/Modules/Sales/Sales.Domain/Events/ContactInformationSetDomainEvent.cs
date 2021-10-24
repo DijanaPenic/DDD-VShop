@@ -3,7 +3,7 @@
 using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.Domain.Enums;
 
-namespace VShop.Services.Sales.Domain.Events
+namespace VShop.Modules.Sales.Domain.Events
 {
     public record ContactInformationSetDomainEvent : IDomainEvent
     {

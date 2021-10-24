@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace VShop.Services.Sales.API.Infrastructure.Migrations
+namespace VShop.Modules.Sales.API.Infrastructure.Migrations
 {
     public partial class AddedTimestampFields : Migration
     {

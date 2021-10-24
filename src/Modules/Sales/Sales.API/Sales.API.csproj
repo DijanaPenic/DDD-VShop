@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <AssemblyName>VShop.Services.Sales.API</AssemblyName>
-        <RootNamespace>VShop.Services.Sales.API</RootNamespace>
+        <AssemblyName>VShop.Modules.Sales.API</AssemblyName>
+        <RootNamespace>VShop.Modules.Sales.API</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

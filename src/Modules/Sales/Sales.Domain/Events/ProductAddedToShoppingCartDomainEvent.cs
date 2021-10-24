@@ -2,7 +2,7 @@
 
 using VShop.SharedKernel.Domain;
 
-namespace VShop.Services.Sales.Domain.Events
+namespace VShop.Modules.Sales.Domain.Events
 {
     public record ProductAddedToShoppingCartDomainEvent : IDomainEvent
     {

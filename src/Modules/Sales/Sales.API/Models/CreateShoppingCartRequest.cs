@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace VShop.Services.Sales.API.Models
+namespace VShop.Modules.Sales.API.Models
 {
     public record CreateShoppingCartRequest
     {

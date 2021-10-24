@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.Services.Sales.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
-namespace VShop.Services.Sales.API.Infrastructure.Migrations
+namespace VShop.Modules.Sales.API.Infrastructure.Migrations
 {
     [DbContext(typeof(SalesContext))]
     partial class ShoppingCartContextModelSnapshot : ModelSnapshot
@@ -19,7 +19,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.ShoppingCartInfo", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,7 +48,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.ToTable("shopping_cart_info", "shopping_cart");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.ShoppingCartInfoItem", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfoItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,9 +88,9 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.ToTable("shopping_cart_info_product_item", "shopping_cart");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.ShoppingCartInfoItem", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfoItem", b =>
                 {
-                    b.HasOne("VShop.Services.Sales.Infrastructure.Entities.ShoppingCartInfo", "ShoppingCartInfo")
+                    b.HasOne("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfo", "ShoppingCartInfo")
                         .WithMany("Items")
                         .HasForeignKey("ShoppingCartInfoId")
                         .HasConstraintName("fk_shopping_cart_info_product_item_shopping_cart_info_shopping")
@@ -100,7 +100,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.Navigation("ShoppingCartInfo");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.ShoppingCartInfo", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfo", b =>
                 {
                     b.Navigation("Items");
                 });

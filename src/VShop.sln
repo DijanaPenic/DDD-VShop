@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Domain", "Shar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Application", "SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj", "{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Integration", "Modules\Sales\Sales.Integration\Sales.Integration.csproj", "{9EAFD370-7391-48A4-8810-842B618A7A21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,7 @@ Global
 		{A0E178B3-14A0-4E12-9FCD-62D139519990} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{959AB583-3EF6-4348-85D1-CCA0B3175FD4} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
+		{9EAFD370-7391-48A4-8810-842B618A7A21} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -78,5 +81,9 @@ Global
 		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EAFD370-7391-48A4-8810-842B618A7A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EAFD370-7391-48A4-8810-842B618A7A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EAFD370-7391-48A4-8810-842B618A7A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EAFD370-7391-48A4-8810-842B618A7A21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

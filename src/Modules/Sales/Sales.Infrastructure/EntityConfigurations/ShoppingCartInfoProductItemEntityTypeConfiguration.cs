@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.Services.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Infrastructure.Entities;
 
-namespace VShop.Services.Sales.Infrastructure.EntityConfigurations
+namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
 {
     internal class ShoppingCartInfoProductItemEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartInfoItem>
     {

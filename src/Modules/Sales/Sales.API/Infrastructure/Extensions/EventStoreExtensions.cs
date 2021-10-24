@@ -4,10 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStore;
-using VShop.Services.Sales.Infrastructure;
-using VShop.Services.Sales.API.Projections;
+using VShop.Modules.Sales.Infrastructure;
+using VShop.Modules.Sales.API.Projections;
 
-namespace VShop.Services.Sales.API.Infrastructure.Extensions
+namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
     public static class EventStoreExtensions
     {

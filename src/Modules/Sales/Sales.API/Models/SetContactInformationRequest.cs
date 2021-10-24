@@ -3,7 +3,7 @@
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Application.Extensions;
 
-namespace VShop.Services.Sales.API.Models
+namespace VShop.Modules.Sales.API.Models
 {
     public record SetContactInformationRequest
     {

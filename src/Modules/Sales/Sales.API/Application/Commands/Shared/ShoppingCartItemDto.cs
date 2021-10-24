@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VShop.Services.Sales.API.Application.Commands.Shared
+namespace VShop.Modules.Sales.API.Application.Commands.Shared
 {
     public record ShoppingCartItemDto
     {

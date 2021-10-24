@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
-[assembly: InternalsVisibleTo("VShop.Services.Sales.Domain")]
+[assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
 {
     public class EntityId : ValueObject

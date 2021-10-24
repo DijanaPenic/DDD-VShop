@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Autofac.Extensions.DependencyInjection;
 
-namespace VShop.Services.Sales.API
+namespace VShop.Modules.Sales.API
 {
     public class Program
     {

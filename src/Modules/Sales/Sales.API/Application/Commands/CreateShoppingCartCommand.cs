@@ -2,10 +2,10 @@
 using OneOf.Types;
 
 using VShop.SharedKernel.Application.Commands;
-using VShop.Services.Sales.API.Application.Commands.Shared;
-using VShop.Services.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
 
-namespace VShop.Services.Sales.API.Application.Commands
+namespace VShop.Modules.Sales.API.Application.Commands
 {
     public record CreateShoppingCartCommand : ICommand<Success<ShoppingCart>>
     {

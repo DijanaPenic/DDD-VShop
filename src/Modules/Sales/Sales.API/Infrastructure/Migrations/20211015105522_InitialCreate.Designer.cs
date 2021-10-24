@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.Services.Sales.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
-namespace VShop.Services.Sales.API.Infrastructure.Migrations
+namespace VShop.Modules.Sales.API.Infrastructure.Migrations
 {
     [DbContext(typeof(SalesContext))]
     [Migration("20211015105522_InitialCreate")]
@@ -21,7 +21,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.BasketDetails", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.BasketDetails", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,7 +46,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.ToTable("basket_details", "basket");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.BasketDetailsProductItem", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.BasketDetailsProductItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,9 +78,9 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.ToTable("basket_details_product_item", "basket");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.BasketDetailsProductItem", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.BasketDetailsProductItem", b =>
                 {
-                    b.HasOne("VShop.Services.Sales.Infrastructure.Entities.BasketDetails", "BasketDetails")
+                    b.HasOne("VShop.Modules.Sales.Infrastructure.Entities.BasketDetails", "BasketDetails")
                         .WithMany("ProductItems")
                         .HasForeignKey("BasketDetailsId")
                         .HasConstraintName("fk_basket_details_product_item_basket_details_basket_details_id")
@@ -90,7 +90,7 @@ namespace VShop.Services.Sales.API.Infrastructure.Migrations
                     b.Navigation("BasketDetails");
                 });
 
-            modelBuilder.Entity("VShop.Services.Sales.Infrastructure.Entities.BasketDetails", b =>
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.BasketDetails", b =>
                 {
                     b.Navigation("ProductItems");
                 });

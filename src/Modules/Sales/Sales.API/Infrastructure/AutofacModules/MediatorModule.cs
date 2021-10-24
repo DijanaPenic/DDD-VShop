@@ -2,9 +2,9 @@
 using MediatR;
 
 using VShop.SharedKernel.Application.Decorators;
-using VShop.Services.Sales.API.Application.Commands;
+using VShop.Modules.Sales.API.Application.Commands;
 
-namespace VShop.Services.Sales.API.Infrastructure.AutofacModules
+namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 {
     public class MediatorModule : Module
     {

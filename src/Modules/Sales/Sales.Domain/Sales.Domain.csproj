@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <AssemblyName>VShop.Services.Sales.Domain</AssemblyName>
-        <RootNamespace>VShop.Services.Sales.Domain</RootNamespace>
+        <AssemblyName>VShop.Modules.Sales.Domain</AssemblyName>
+        <RootNamespace>VShop.Modules.Sales.Domain</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

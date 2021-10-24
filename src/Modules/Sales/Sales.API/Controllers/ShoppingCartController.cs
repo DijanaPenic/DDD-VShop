@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.Services.Sales.API.Models;
-using VShop.Services.Sales.API.Application.Queries;
-using VShop.Services.Sales.API.Application.Commands;
-using VShop.Services.Sales.API.Application.Commands.Shared;
-using VShop.Services.Sales.Domain.Models.ShoppingCartAggregate;
-using VShop.Services.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.API.Models;
+using VShop.Modules.Sales.API.Application.Queries;
+using VShop.Modules.Sales.API.Application.Commands;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Infrastructure.Entities;
 
-namespace VShop.Services.Sales.API.Controllers
+namespace VShop.Modules.Sales.API.Controllers
 {
     [ApiController]
     [Route("api/shopping-carts")]

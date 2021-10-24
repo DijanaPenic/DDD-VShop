@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.Services.Sales.Infrastructure;
-using VShop.Services.Sales.Infrastructure.Entities;
-using VShop.Services.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Infrastructure;
+using VShop.Modules.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
 
-namespace VShop.Services.Sales.API.Application.Queries
+namespace VShop.Modules.Sales.API.Application.Queries
 {
     public class ShoppingCartQueryService : IShoppingCartQueryService 
     {

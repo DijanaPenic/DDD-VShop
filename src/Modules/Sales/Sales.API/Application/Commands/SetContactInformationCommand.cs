@@ -4,7 +4,7 @@ using OneOf.Types;
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Application.Commands;
 
-namespace VShop.Services.Sales.API.Application.Commands
+namespace VShop.Modules.Sales.API.Application.Commands
 {
     public record SetContactInformationCommand : ICommand<Success>
     {

@@ -8,9 +8,9 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.Services.Sales.Domain.Models.ShoppingCartAggregate;
+using VShop.Modules.Sales.Domain.Models.ShoppingCartAggregate;
 
-namespace VShop.Services.Sales.API.Application.Commands
+namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, Success>
     {

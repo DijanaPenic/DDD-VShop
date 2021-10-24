@@ -2,7 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 
-namespace VShop.Services.Sales.Infrastructure.Entities
+namespace VShop.Modules.Sales.Infrastructure.Entities
 {
     public class ShoppingCartInfoItem : DbBaseEntity
     {
