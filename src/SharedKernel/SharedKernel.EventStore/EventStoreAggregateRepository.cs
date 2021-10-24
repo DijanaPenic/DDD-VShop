@@ -55,8 +55,6 @@ namespace VShop.SharedKernel.EventStore
         {
             const int maxSliceSize = 4096;
             
-            // TODO - fix this.
-            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true); 
             string streamName = GetStreamName(aggregateId);
 
             long position = 0L;
@@ -78,7 +76,10 @@ namespace VShop.SharedKernel.EventStore
 
                 events.AddRange(slice.Events.Select(resolvedEvent => resolvedEvent.DeserializeData()));
             } while (!endOfStream);
+
+            if (events.Count == 0) return default;
             
+            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true); 
             aggregate?.Load(events);
 
             return aggregate;
