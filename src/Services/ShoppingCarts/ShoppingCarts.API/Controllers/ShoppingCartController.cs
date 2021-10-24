@@ -90,9 +90,20 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpPut]
         [Route("{shoppingCartId:guid}/actions/checkout")]
-        public Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            throw new NotImplementedException();
+            CheckoutShoppingCartCommand command = new()
+            {
+                ShoppingCartId = shoppingCartId
+            };
+
+            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+
+            return HandleResult(result, NoContent);
         }
         
         [HttpPost]
