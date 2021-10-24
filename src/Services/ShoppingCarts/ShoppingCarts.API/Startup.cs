@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
+using VShop.Services.ShoppingCarts.API.Application.Queries;
 using VShop.Services.ShoppingCarts.API.Infrastructure.Extensions;
 using VShop.Services.ShoppingCarts.API.Infrastructure.Automapper;
 using VShop.Services.ShoppingCarts.API.Infrastructure.AutofacModules;
@@ -34,6 +35,8 @@ namespace VShop.Services.ShoppingCarts.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingCarts.API", Version = "v1" }); });
             services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
+            
+            services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
 
             // TODO - missing DI for domain handlers
         }

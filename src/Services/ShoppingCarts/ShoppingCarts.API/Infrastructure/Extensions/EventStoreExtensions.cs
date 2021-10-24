@@ -17,7 +17,9 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
             (
                 connectionString,
                 ConnectionSettings.Create().KeepReconnecting().DisableTls(),
-                "ShoppingCarts.API");
+                "ShoppingCarts.API"
+            );
+            
             services.AddSingleton(esConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton<IHostedService, EventStoreService>();
@@ -32,7 +34,7 @@ namespace VShop.Services.ShoppingCarts.API.Infrastructure.Extensions
                     esConnection,
                     new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
                     esSubscriptionName,
-                    new PostgresDbProjection<ShoppingCartContext>(dbContext, ShoppingCartDetailsProjection.ProjectAsync)
+                    new PostgresDbProjection<ShoppingCartContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
                 );
             });
             

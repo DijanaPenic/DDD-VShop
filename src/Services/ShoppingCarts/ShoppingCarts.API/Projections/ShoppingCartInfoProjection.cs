@@ -10,7 +10,7 @@ using VShop.Services.ShoppingCarts.Infrastructure.Entities;
 
 namespace VShop.Services.ShoppingCarts.API.Projections
 {
-    public static class ShoppingCartDetailsProjection
+    public static class ShoppingCartInfoProjection
     {
         public static Func<Task> ProjectAsync(ShoppingCartContext dbContext, IDomainEvent eventData)
             => eventData switch

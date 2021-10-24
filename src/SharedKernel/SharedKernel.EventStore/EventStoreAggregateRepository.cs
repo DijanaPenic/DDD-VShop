@@ -17,7 +17,11 @@ namespace VShop.SharedKernel.EventStore
         private readonly IEventStoreConnection _connection;
         private readonly IMediator _mediator;
 
-        public EventStoreAggregateRepository(IEventStoreConnection connection, IMediator mediator)
+        public EventStoreAggregateRepository
+        (
+            IEventStoreConnection connection,
+            IMediator mediator
+        )
         {
             _connection = connection;
             _mediator = mediator;
