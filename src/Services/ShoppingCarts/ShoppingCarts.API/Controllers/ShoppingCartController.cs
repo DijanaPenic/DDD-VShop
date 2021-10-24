@@ -68,6 +68,10 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpDelete]
         [Route("{shoppingCartId:guid}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
             DeleteShoppingCartCommand command = new()
@@ -77,7 +81,7 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
 
             OneOf<Success, ApplicationError> result = await _mediator.Send(command);
 
-            return HandleResult(result, Ok);
+            return HandleResult(result, NoContent);
         }
         
         [HttpPut]
@@ -90,6 +94,10 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         [HttpPost]
         [Route("{shoppingCartId:guid}/products/{productId:guid}")]
         [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> AddProductAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -111,6 +119,7 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpDelete]
         [Route("{shoppingCartId:guid}/products/{productId:guid}")]
+        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -133,6 +142,11 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
 
         [HttpPost]
         [Route("{shoppingCartId:guid}/customer/contact-information")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> SetContactInformationAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -149,6 +163,11 @@ namespace VShop.Services.ShoppingCarts.API.Controllers
         
         [HttpPost]
         [Route("{shoppingCartId:guid}/customer/delivery-address")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> SetDeliveryAddressAsync
         (
             [FromRoute] Guid shoppingCartId,
