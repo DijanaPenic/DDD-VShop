@@ -7,6 +7,7 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventStore
 {
@@ -14,16 +15,16 @@ namespace VShop.SharedKernel.EventStore
         where TKey : ValueObject
         where TA : AggregateRoot<TKey>
     {
-        private readonly IEventStoreConnection _connection;
+        private readonly IEventStoreConnection _esConnection;
         private readonly IMediator _mediator;
 
         public EventStoreAggregateRepository
         (
-            IEventStoreConnection connection,
+            IEventStoreConnection esConnection,
             IMediator mediator
         )
         {
-            _connection = connection;
+            _esConnection = esConnection;
             _mediator = mediator;
         }
         
@@ -35,7 +36,7 @@ namespace VShop.SharedKernel.EventStore
             string streamName = GetStreamName(aggregate.Id);
             IDomainEvent[] events = aggregate.GetChanges().ToArray();
 
-            await _connection.AppendEvents(streamName, aggregate.Version, events);
+            await _esConnection.AppendEvents(streamName, aggregate.Version, events);
 
             aggregate.ClearChanges();
             
@@ -46,7 +47,7 @@ namespace VShop.SharedKernel.EventStore
         public async Task<bool> ExistsAsync(TKey aggregateId)
         {
             string streamName = GetStreamName(aggregateId);
-            EventReadResult result = await _connection.ReadEventAsync(streamName, 1, false);
+            EventReadResult result = await _esConnection.ReadEventAsync(streamName, 1, false);
             
             return result.Status != EventReadStatus.NoStream;
         }
@@ -63,7 +64,7 @@ namespace VShop.SharedKernel.EventStore
 
             do
             {
-                StreamEventsSlice slice = await _connection.ReadStreamEventsForwardAsync
+                StreamEventsSlice slice = await _esConnection.ReadStreamEventsForwardAsync
                 (
                     streamName, 
                     position, 
@@ -85,8 +86,7 @@ namespace VShop.SharedKernel.EventStore
             return aggregate;
         }
 
-        // TODO - should I add BC prefix to stream name?
-        private static string GetStreamName(TKey aggregateId)
-            => $"{typeof(TA).Name}-{aggregateId}";
+        private string GetStreamName(TKey aggregateId)
+            => $"{_esConnection.ConnectionName}/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
     }
 }

@@ -17,7 +17,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             (
                 connectionString,
                 ConnectionSettings.Create().KeepReconnecting().DisableTls(),
-                "Sales.API"
+                "Sales"
             );
             
             services.AddSingleton(esConnection);

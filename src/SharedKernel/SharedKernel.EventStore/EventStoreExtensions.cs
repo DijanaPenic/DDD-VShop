@@ -15,7 +15,7 @@ namespace VShop.SharedKernel.EventStore
     {
         public static Task AppendEvents
         (
-            this IEventStoreConnection connection,
+            this IEventStoreConnection esConnection,
             string streamName,
             long version,
             params IDomainEvent[] events
@@ -39,7 +39,7 @@ namespace VShop.SharedKernel.EventStore
                 )
                 .ToArray();
 
-            return connection.AppendToStreamAsync
+            return esConnection.AppendToStreamAsync
             (
                 streamName,
                 version,
