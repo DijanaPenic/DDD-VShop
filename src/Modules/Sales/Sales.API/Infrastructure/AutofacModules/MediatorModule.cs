@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using MediatR;
 
+using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Application.Commands.Decorators;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.DomainEventHandlers;
@@ -31,6 +32,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            
+            builder.RegisterType<CommandBus>().As<ICommandBus>();
         }
     }
 }

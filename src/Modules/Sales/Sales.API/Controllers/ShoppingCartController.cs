@@ -3,11 +3,11 @@ using OneOf.Types;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using MediatR;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
+using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
@@ -22,18 +22,18 @@ namespace VShop.Modules.Sales.API.Controllers
     [Route("api/shopping-carts")]
     public class ShoppingCartController : ApplicationControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ICommandBus _commandBus;
         private readonly IMapper _mapper;
         private readonly IShoppingCartQueryService _queryService;
 
         public ShoppingCartController
         (
-            IMediator mediator,
+            ICommandBus commandBus,
             IMapper mapper,
             IShoppingCartQueryService queryService
         )
         {
-            _mediator = mediator;
+            _commandBus = commandBus;
             _mapper = mapper;
             _queryService = queryService;
         }
@@ -65,7 +65,7 @@ namespace VShop.Modules.Sales.API.Controllers
             
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
-            OneOf<Success<ShoppingCart>, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success<ShoppingCart>, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleObjectResult(result, Created);
         }
@@ -83,7 +83,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = shoppingCartId
             };
 
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, NoContent);
         }
@@ -101,7 +101,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = shoppingCartId
             };
 
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, NoContent);
         }
@@ -127,7 +127,7 @@ namespace VShop.Modules.Sales.API.Controllers
             };
             command.ShoppingCartItem.ProductId = productId;
             
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, Created);
         }
@@ -150,7 +150,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.ProductId = productId;
             
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, NoContent);
         }
@@ -171,7 +171,7 @@ namespace VShop.Modules.Sales.API.Controllers
             SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
             command.ShoppingCartId = shoppingCartId;
 
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, Ok);
         }
@@ -192,7 +192,7 @@ namespace VShop.Modules.Sales.API.Controllers
             SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
             command.ShoppingCartId = shoppingCartId;
 
-            OneOf<Success, ApplicationError> result = await _mediator.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
 
             return HandleResult(result, Ok);
         }
