@@ -13,15 +13,17 @@ namespace VShop.Modules.Sales.API.Application.DomainEventHandlers
 
         public PlaceOrderDomainEventHandler
         (
-            ILogger logger    
+            ILogger logger
         )
         {
             _logger = logger;
         }
         
-        public async Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
+        public Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
         {
             _logger.Information("Handling domain event: {DomainEvent}", nameof(ShoppingCartCheckoutRequestedDomainEvent));
+            
+            return Task.CompletedTask;
         }
     }
 }

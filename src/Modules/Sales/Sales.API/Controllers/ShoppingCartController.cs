@@ -166,7 +166,7 @@ namespace VShop.Modules.Sales.API.Controllers
         (
             [FromRoute] Guid shoppingCartId,
             [FromBody] SetContactInformationRequest request
-            )
+        )
         {
             SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
             command.ShoppingCartId = shoppingCartId;
