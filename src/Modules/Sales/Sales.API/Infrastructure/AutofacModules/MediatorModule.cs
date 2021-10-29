@@ -4,7 +4,7 @@ using MediatR;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Application.Commands.Decorators;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.DomainEventHandlers;
+using VShop.Modules.Sales.API.Application.ProcessManagers;
 
 namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 {
@@ -27,7 +27,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register domain event handlers
-            builder.RegisterAssemblyTypes(typeof(PlaceOrderDomainEventHandler).Assembly)
+            builder.RegisterAssemblyTypes(typeof(OrderFulfillmentProcessManager).Assembly)
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
 
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));

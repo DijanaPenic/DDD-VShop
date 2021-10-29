@@ -30,6 +30,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             _dbContext = dbContext;
         }
         
+        // TODO - placing an order is synchronous, but fulfilling your order is not
         public async Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
         {
             _logger.Information("Handling domain event: {DomainEvent}", nameof(ShoppingCartCheckoutRequestedDomainEvent));
@@ -40,8 +41,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 Status = OrderFulfillmentStatus.CheckoutRequested
             });
             await _dbContext.SaveChangesAsync(cancellationToken);
-
-            //_commandBus.Send() // TODO - need to trigger order creation; need to return command?
         }
     }
 }
