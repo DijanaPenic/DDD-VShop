@@ -3,26 +3,25 @@ using System.Text;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Extensions
 {
-    public static class EventDeserializer
+    public static class ResolvedEventExtensions
     {
-        public static IDomainEvent DeserializeData(this ResolvedEvent resolvedEvent)
+        public static object DeserializeData(this ResolvedEvent resolvedEvent)
         {
             Type dataType = EventTypeMapper.ToType(resolvedEvent.Event.EventType);
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
             
-            return JsonConvert.DeserializeObject(jsonData, dataType) as IDomainEvent;
+            return JsonConvert.DeserializeObject(jsonData, dataType);
         }
 
-        public static T DeserializeData<T>(this ResolvedEvent resolvedEvent)
+        public static TMessage DeserializeData<TMessage>(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
             
-            return JsonConvert.DeserializeObject<T>(jsonData);
+            return JsonConvert.DeserializeObject<TMessage>(jsonData);
         }
         
         public static EventMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)

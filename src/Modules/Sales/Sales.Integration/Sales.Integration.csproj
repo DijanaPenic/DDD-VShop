@@ -6,4 +6,8 @@
         <RootNamespace>VShop.Modules.Sales.Integration</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -3,11 +3,11 @@ using OneOf.Types;
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 

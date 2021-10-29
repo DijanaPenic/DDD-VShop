@@ -3,7 +3,7 @@
 using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Repositories.Contracts
 {
     public interface IEventStoreAggregateRepository<TA, TKey>
         where TKey : ValueObject

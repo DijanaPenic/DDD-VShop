@@ -10,6 +10,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
+      <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
     </ItemGroup>
 
 </Project>

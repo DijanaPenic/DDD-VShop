@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStore;
+using VShop.SharedKernel.EventStore.Repositories;
+using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 
@@ -22,6 +25,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             
             services.AddSingleton(esConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
+            services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton<IHostedService, EventStoreService>();
             
             services.AddSingleton(provider =>

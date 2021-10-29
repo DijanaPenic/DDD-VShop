@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
+using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Helpers;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreCheckpointRepository : IEventStoreCheckpointRepository
     {
@@ -40,14 +42,14 @@ namespace VShop.SharedKernel.EventStore
 
         public Task StoreCheckpointAsync(long? checkpoint)
         {
-            Checkpoint @event = new() { Position = checkpoint };
+            Checkpoint checkpointData = new() { Position = checkpoint };
 
-            EventData preparedEvent = new
+            EventData @event = new
             (
                 GuidHelper.NewSequentialGuid(),
                 "$checkpoint",
                 true,
-                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event)),
+                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(checkpointData)),
                 null
             );
 
@@ -55,7 +57,7 @@ namespace VShop.SharedKernel.EventStore
             (
                 _esSubscriptionName,
                 ExpectedVersion.Any,
-                preparedEvent
+                @event
             );
         }
 

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using EventStore.ClientAPI;
 using Microsoft.Extensions.Hosting;
 
+using VShop.SharedKernel.EventStore.Subscriptions;
+
 namespace VShop.SharedKernel.EventStore
 {
     public class EventStoreService : IHostedService

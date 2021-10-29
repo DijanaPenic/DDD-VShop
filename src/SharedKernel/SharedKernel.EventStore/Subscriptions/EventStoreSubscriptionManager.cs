@@ -7,10 +7,12 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.EventStore.Repositories.Contracts;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Subscriptions
 {
     public class EventStoreSubscriptionManager
     {
@@ -68,11 +70,12 @@ namespace VShop.SharedKernel.EventStore
         private async Task EventAppearedAsync
         (
             EventStoreCatchUpSubscription _,
-            ResolvedEvent resolvedEvent)
+            ResolvedEvent resolvedEvent
+        )
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
-            IDomainEvent eventData = resolvedEvent.DeserializeData();
+            IDomainEvent eventData = resolvedEvent.DeserializeData() as IDomainEvent;
             EventMetadata eventMetadata = resolvedEvent.DeserializeMetadata();
 
             Logger.Debug("EventStore subscription manager > identified event: {EventData}", eventData);

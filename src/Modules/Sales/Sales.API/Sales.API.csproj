@@ -32,6 +32,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
       <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
+      <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
+// TODO - adjust namespace
 namespace VShop.SharedKernel.Domain
 {
     public abstract class ValueObject

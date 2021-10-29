@@ -1,36 +1,30 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Helpers
 {
-    public static class EventStoreExtensions
+    public static class EventStoreHelper
     {
-        public static Task AppendEvents
-        (
-            this IEventStoreConnection esConnection,
-            string streamName,
-            long version,
-            params IDomainEvent[] events
-        )
+        public static EventData[] PrepareEventData<TMessage>(params TMessage[] messages)
+            where TMessage : class, IMessage
         {
-            if (events == null || !events.Any()) return Task.CompletedTask;
+            if (messages == null || !messages.Any()) return Array.Empty<EventData>();
 
             EventMetadata eventMetadata = new() { EffectiveTime = DateTime.UtcNow };
 
-            EventData[] preparedEvents = events
+            EventData[] events = messages
                 .Select(
                     @event =>
                         new EventData
                         (
-                            GuidHelper.NewSequentialGuid(),
+                            GuidHelper.NewSequentialGuid(), // TODO - idempotency
                             EventTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),
@@ -39,12 +33,7 @@ namespace VShop.SharedKernel.EventStore
                 )
                 .ToArray();
 
-            return esConnection.AppendToStreamAsync
-            (
-                streamName,
-                version,
-                preparedEvents
-            );
+            return events;
         }
 
         private static byte[] Serialize(object data) => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));

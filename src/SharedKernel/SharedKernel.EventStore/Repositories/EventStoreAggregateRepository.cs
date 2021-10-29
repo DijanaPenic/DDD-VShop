@@ -7,9 +7,12 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.EventStore.Helpers;
+using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreAggregateRepository<TA, TKey> : IEventStoreAggregateRepository<TA, TKey>
         where TKey : ValueObject
@@ -30,17 +33,22 @@ namespace VShop.SharedKernel.EventStore
         
         public async Task SaveAsync(TA aggregate)
         {
-            if (aggregate == null)
+            if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
             string streamName = GetStreamName(aggregate.Id);
             IDomainEvent[] events = aggregate.GetChanges().ToArray();
 
-            await _esConnection.AppendEvents(streamName, aggregate.Version, events);
+            await _esConnection.AppendToStreamAsync
+            (
+                streamName,
+                aggregate.Version,
+                EventStoreHelper.PrepareEventData(messages: events)
+            );
 
             aggregate.ClearChanges();
             
-            // TODO - should I change publish strategy?
+            // TODO - should I change publish strategy? Should I omit this code?
             // https://github.com/jbogard/MediatR/blob/master/samples/MediatR.Examples.PublishStrategies/PublishStrategy.cs
             foreach (IDomainEvent @event in events)
                 await _mediator.Publish(@event);
@@ -56,29 +64,7 @@ namespace VShop.SharedKernel.EventStore
         
         public async Task<TA> LoadAsync(TKey aggregateId)
         {
-            const int maxSliceSize = 4096;
-            
-            string streamName = GetStreamName(aggregateId);
-
-            long position = 0L;
-            bool endOfStream;
-            List<IDomainEvent> events = new();
-
-            do
-            {
-                StreamEventsSlice slice = await _esConnection.ReadStreamEventsForwardAsync
-                (
-                    streamName, 
-                    position, 
-                    maxSliceSize, 
-                    false
-                );
-                
-                position = slice.NextEventNumber;
-                endOfStream = slice.IsEndOfStream;
-
-                events.AddRange(slice.Events.Select(resolvedEvent => resolvedEvent.DeserializeData()));
-            } while (!endOfStream);
+            List<IDomainEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IDomainEvent>(GetStreamName(aggregateId));
 
             if (events.Count == 0) return default;
             
