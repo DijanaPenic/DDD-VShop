@@ -1,4 +1,5 @@
-﻿using OneOf;
+﻿using System;
+using OneOf;
 using OneOf.Types;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -40,5 +42,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             return new Success();
         }
+    }
+    
+    public record AddShoppingCartProductCommand : ICommand<Success>
+    {
+        public Guid ShoppingCartId { get; set; }
+        public ShoppingCartItemDto ShoppingCartItem { get; set; }
     }
 }

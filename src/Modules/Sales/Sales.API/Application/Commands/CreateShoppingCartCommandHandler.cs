@@ -1,7 +1,8 @@
-﻿using OneOf;
-using OneOf.Types;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OneOf;
+using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -46,5 +47,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             return new Success<ShoppingCart>(shoppingCart);
         }
+    }
+    
+    public record CreateShoppingCartCommand : ICommand<Success<ShoppingCart>>
+    {
+        public Guid CustomerId { get; set; }
+        public int CustomerDiscount { get; set; }
+        public ShoppingCartItemDto[] ShoppingCartItems { get; set; }
     }
 }

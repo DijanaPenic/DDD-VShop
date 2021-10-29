@@ -1,7 +1,8 @@
-﻿using OneOf;
-using OneOf.Types;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OneOf;
+using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -44,5 +45,15 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             return new Success();
         }
+    }
+    
+    public record SetDeliveryAddressCommand : ICommand<Success>
+    {
+        public Guid ShoppingCartId { get; set; }
+        public string City { get; set; }
+        public string CountryCode { get; set; }
+        public string PostalCode { get; set; }
+        public string StateProvince { get; set; }
+        public string StreetAddress { get; set; }
     }
 }

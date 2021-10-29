@@ -4,10 +4,11 @@ using OneOf.Types;
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Application.Commands;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -57,5 +58,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             return new Success();
         }
+    }
+    
+    public record SetContactInformationCommand : ICommand<Success>
+    {
+        public Guid ShoppingCartId { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public string LastName { get; set; }
+        public string EmailAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public GenderType Gender { get; set; }
     }
 }
