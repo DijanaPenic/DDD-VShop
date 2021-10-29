@@ -5,7 +5,7 @@ using VShop.Modules.Sales.Infrastructure.Entities;
 
 namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
 {
-    internal class ShoppingCartInfoProductItemEntityTypeConfiguration: IEntityTypeConfiguration<ShoppingCartInfoItem>
+    internal class ShoppingCartInfoProductItemEntityTypeConfiguration : IEntityTypeConfiguration<ShoppingCartInfoItem>
     {
         public void Configure(EntityTypeBuilder<ShoppingCartInfoItem> builder)
         {
