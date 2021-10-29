@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Queries
 {
@@ -21,7 +21,7 @@ namespace VShop.Modules.Sales.API.Application.Queries
         {
             return _dbContext.Sales
                 .Include(sc => sc.Items)
-                .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCart.ShoppingCartStatus.Closed);
+                .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCartStatus.Closed);
         }
     }
 }

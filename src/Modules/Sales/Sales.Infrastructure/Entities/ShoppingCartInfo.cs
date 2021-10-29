@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Domain.Enums;
 
 namespace VShop.Modules.Sales.Infrastructure.Entities
 {
@@ -10,7 +10,7 @@ namespace VShop.Modules.Sales.Infrastructure.Entities
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
-        public ShoppingCart.ShoppingCartStatus Status { get; set; }
+        public ShoppingCartStatus Status { get; set; }
         public ICollection<ShoppingCartInfoItem> Items { get; set; }
     }
 }

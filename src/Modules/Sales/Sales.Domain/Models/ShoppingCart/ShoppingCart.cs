@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.Modules.Sales.Domain.Enums;
+using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.Modules.Sales.Domain.Events;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
@@ -220,14 +221,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             }
         }
 
-        public enum ShoppingCartStatus
-        {
-            New = 1,
-            AwaitingConfirmation = 2,     // Customer has provided needed contact information and is allowed to proceed with checkout.
-            PendingCheckout = 3,          // Checkout has been requested. The next step: payment.
-            Closed = 4                    // Shopping cart has been deleted (soft delete).
-        }
-        
         public static class Settings
         {
             public const decimal MinShoppingCartAmountForCheckout = 100m;

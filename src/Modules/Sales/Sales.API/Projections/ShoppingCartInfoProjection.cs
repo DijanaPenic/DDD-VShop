@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -20,7 +20,7 @@ namespace VShop.Modules.Sales.API.Projections
                     dbContext.Sales.Add(new ShoppingCartInfo()
                     {
                         Id = e.ShoppingCartId,
-                        Status = ShoppingCart.ShoppingCartStatus.New,
+                        Status = ShoppingCartStatus.New,
                         CustomerId = e.CustomerId
                     });
             
@@ -48,21 +48,21 @@ namespace VShop.Modules.Sales.API.Projections
                 DeliveryAddressSetDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.AwaitingConfirmation;
+                    shoppingCart.Status = ShoppingCartStatus.AwaitingConfirmation;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
                 ShoppingCartCheckoutRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.PendingCheckout;
+                    shoppingCart.Status = ShoppingCartStatus.PendingCheckout;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
                 ShoppingCartDeletionRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
-                    shoppingCart.Status = ShoppingCart.ShoppingCartStatus.Closed;
+                    shoppingCart.Status = ShoppingCartStatus.Closed;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
