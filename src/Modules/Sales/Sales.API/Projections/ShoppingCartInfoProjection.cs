@@ -41,49 +41,53 @@ namespace VShop.Modules.Sales.API.Projections
                 },
                 ProductRemovedFromShoppingCartDomainEvent e => async() =>
                 {
-                    ShoppingCartInfoItem shoppingCartItem = await dbContext.ShoppingCartItems.SingleAsync(sci => 
-                        sci.ProductId == e.ProductId && sci.ShoppingCartInfoId == e.ShoppingCartId);
+                    ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(dbContext, e.ProductId, e.ShoppingCartId);
                     
                     dbContext.ShoppingCartItems.Remove(shoppingCartItem);
                 },
                 DeliveryAddressSetDomainEvent e => async() =>
                 {
-                    ShoppingCartInfo shoppingCart = await dbContext.Sales.SingleAsync(sc => sc.Id == e.ShoppingCartId);
+                    ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCart.ShoppingCartStatus.AwaitingConfirmation;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
                 ShoppingCartCheckoutRequestedDomainEvent e => async() =>
                 {
-                    ShoppingCartInfo shoppingCart = await dbContext.Sales.SingleAsync(sc => sc.Id == e.ShoppingCartId);
+                    ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCart.ShoppingCartStatus.PendingCheckout;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
                 ShoppingCartDeletionRequestedDomainEvent e => async() =>
                 {
-                    ShoppingCartInfo shoppingCart = await dbContext.Sales.SingleAsync(sc => sc.Id == e.ShoppingCartId);
+                    ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCart.ShoppingCartStatus.Closed;
             
                     dbContext.Sales.Update(shoppingCart);
                 },
                 ShoppingCartItemQuantityIncreasedDomainEvent e => async() =>
                 {
-                    ShoppingCartInfoItem shoppingCartItem = await dbContext.ShoppingCartItems.SingleAsync(sci => 
-                        sci.ProductId == e.ProductId && sci.ShoppingCartInfoId == e.ShoppingCartId);
+                    ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(dbContext, e.ProductId, e.ShoppingCartId);
                     shoppingCartItem.Quantity += e.Quantity;
             
                     dbContext.ShoppingCartItems.Update(shoppingCartItem);
                 },
                 ShoppingCartItemQuantityDecreasedDomainEvent e => async() =>
                 {
-                    ShoppingCartInfoItem shoppingCartItem = await dbContext.ShoppingCartItems.SingleAsync(sci => 
-                        sci.ProductId == e.ProductId && sci.ShoppingCartInfoId == e.ShoppingCartId);
+                    ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(dbContext, e.ProductId, e.ShoppingCartId);
                     shoppingCartItem.Quantity -= e.Quantity;
             
                     dbContext.ShoppingCartItems.Update(shoppingCartItem);
                 },
                 _ => null
             };
+
+        private static Task<ShoppingCartInfoItem> GetShoppingCartItemAsync(SalesContext dbContext, Guid productId, Guid shoppingCartId)
+            => dbContext.ShoppingCartItems.SingleAsync(sci => 
+                sci.ProductId == productId && sci.ShoppingCartInfoId == shoppingCartId);
+
+        private static Task<ShoppingCartInfo> GetShoppingCartAsync(SalesContext dbContext, Guid shoppingCartId)
+            => dbContext.Sales.SingleAsync(sc => sc.Id == shoppingCartId);
     }
 }
