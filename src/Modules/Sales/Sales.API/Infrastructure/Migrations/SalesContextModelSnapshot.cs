@@ -9,7 +9,7 @@ using VShop.Modules.Sales.Infrastructure;
 namespace VShop.Modules.Sales.API.Infrastructure.Migrations
 {
     [DbContext(typeof(SalesContext))]
-    partial class ShoppingCartContextModelSnapshot : ModelSnapshot
+    partial class SalesContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -18,6 +18,31 @@ namespace VShop.Modules.Sales.API.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.OrderFulfillmentProcess", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("date_created_utc");
+
+                    b.Property<DateTime>("DateUpdatedUtc")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("date_updated_utc");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("OrderId")
+                        .HasName("pk_order_fulfillment_process");
+
+                    b.ToTable("order_fulfillment_process", "order");
+                });
 
             modelBuilder.Entity("VShop.Modules.Sales.Infrastructure.Entities.ShoppingCartInfo", b =>
                 {

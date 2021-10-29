@@ -9,9 +9,11 @@ namespace VShop.Modules.Sales.Infrastructure
     public class SalesContext : ApplicationDbContextBase
     {
         public const string ShoppingCartSchema = "shopping_cart";
+        public const string OrderSchema = "order";
 
         public DbSet<ShoppingCartInfo> Sales { get; set; }
         public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
+        public DbSet<OrderFulfillmentProcess> OrderFulfillmentProcesses { get; set; }
         
         public SalesContext(DbContextOptions<SalesContext> options) : base(options)
         {
@@ -22,6 +24,7 @@ namespace VShop.Modules.Sales.Infrastructure
         {
             builder.ApplyConfiguration(new ShoppingCartInfoEntityTypeConfiguration());
             builder.ApplyConfiguration(new ShoppingCartInfoProductItemEntityTypeConfiguration());
+            builder.ApplyConfiguration(new OrderFulfillmentProcessEntityTypeConfiguration());
         }
     }
 }
