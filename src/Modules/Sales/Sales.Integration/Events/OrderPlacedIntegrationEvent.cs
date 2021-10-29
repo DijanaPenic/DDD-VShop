@@ -1,6 +1,6 @@
 ﻿using System;
 
-using VShop.SharedKernel.Application.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Integration.Events
 {

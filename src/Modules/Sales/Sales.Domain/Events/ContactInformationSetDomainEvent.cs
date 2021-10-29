@@ -1,7 +1,7 @@
 ﻿using System;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Events
 {

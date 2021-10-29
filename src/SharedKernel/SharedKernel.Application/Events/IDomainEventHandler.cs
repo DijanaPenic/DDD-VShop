@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Application.Events
 {

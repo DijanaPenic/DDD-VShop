@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Helpers
 {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {

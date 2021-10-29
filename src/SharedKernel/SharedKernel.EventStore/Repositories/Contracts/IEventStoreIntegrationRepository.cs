@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using VShop.SharedKernel.Application.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Repositories.Contracts
 {

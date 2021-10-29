@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using MediatR;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {

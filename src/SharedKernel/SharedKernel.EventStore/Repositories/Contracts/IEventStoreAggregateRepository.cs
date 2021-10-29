@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.SharedKernel.EventStore.Repositories.Contracts
 {

@@ -5,10 +5,10 @@ using Serilog;
 using Serilog.Events;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing
 {

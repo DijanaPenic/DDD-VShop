@@ -1,6 +1,7 @@
 ﻿using System;
 
-using VShop.SharedKernel.Domain;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing
 {

@@ -1,4 +1,4 @@
-﻿using VShop.SharedKernel.Domain;
+﻿using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing
 {

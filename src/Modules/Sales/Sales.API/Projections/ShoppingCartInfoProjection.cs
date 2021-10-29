@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Domain;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Projections
 {

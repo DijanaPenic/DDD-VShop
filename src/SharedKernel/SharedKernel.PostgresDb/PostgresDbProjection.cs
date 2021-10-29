@@ -2,24 +2,24 @@
 using System.Threading.Tasks;
 using Serilog;
 
-using VShop.SharedKernel.Domain;
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.PostgresDb
 {
-    public class PostgresDbProjection<T> : ISubscription 
-        where T : ApplicationDbContextBase
+    public class PostgresDbProjection<TDbContext> : ISubscription 
+        where TDbContext : ApplicationDbContextBase
     {
-        private readonly T _dbContext;
+        private readonly TDbContext _dbContext;
         private readonly Projector _projector;
         
-        private static readonly ILogger Logger = Log.ForContext<PostgresDbProjection<T>>(); 
+        private static readonly ILogger Logger = Log.ForContext<PostgresDbProjection<TDbContext>>(); 
         
         public PostgresDbProjection
         (
-            T dbContext,
+            TDbContext dbContext,
             Projector projector
         )
         {
@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.PostgresDb
         
         public delegate Func<Task> Projector
         (
-            T dbContext,
+            TDbContext dbContext,
             IDomainEvent eventData
         );
     }
