@@ -3,6 +3,7 @@ using MediatR;
 
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Application.Commands.Decorators;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
 
@@ -21,6 +22,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                 IComponentContext c = ctx.Resolve<IComponentContext>();
                 return t => c.Resolve(t);
             });
+            
+            // Register Publisher
+            builder.RegisterType(typeof(Publisher)).SingleInstance();
 
             // Register command handlers
             builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommand).Assembly)

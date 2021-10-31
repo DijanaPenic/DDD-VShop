@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using MediatR;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
@@ -20,16 +19,16 @@ namespace VShop.SharedKernel.EventStore.Repositories
         where TA : AggregateRoot<TKey>
     {
         private readonly IEventStoreConnection _esConnection;
-        private readonly IMediator _mediator;
+        private readonly Publisher _publisher;
 
         public EventStoreAggregateRepository
         (
             IEventStoreConnection esConnection,
-            IMediator mediator
+            Publisher publisher
         )
         {
             _esConnection = esConnection;
-            _mediator = mediator;
+            _publisher = publisher;
         }
         
         public async Task SaveAsync(TA aggregate)
@@ -44,17 +43,15 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareEventData(messages: events)
+                EventStoreHelper.PrepareEventData(events)
             );
 
             aggregate.ClearChanges();
             
-            // TODO - should I change publish strategy? Should I omit this code?
-            // error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
-            // https://github.com/jbogard/MediatR/blob/master/samples/MediatR.Examples.PublishStrategies/PublishStrategy.cs
+            // TODO - error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
             // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
             foreach (IDomainEvent @event in events)
-                await _mediator.Publish(@event);
+                await _publisher.Publish(@event, PublishStrategy.SyncStopOnException);
         }
         
         public async Task<bool> ExistsAsync(TKey aggregateId)
