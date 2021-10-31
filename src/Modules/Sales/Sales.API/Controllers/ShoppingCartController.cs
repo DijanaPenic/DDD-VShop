@@ -66,7 +66,7 @@ namespace VShop.Modules.Sales.API.Controllers
             
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             
-            OneOf<Success<ShoppingCart>, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success<ShoppingCart>, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
         }
@@ -84,7 +84,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = shoppingCartId
             };
 
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, NoContent);
         }
@@ -102,7 +102,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = shoppingCartId
             };
 
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
             
             // TODO - is this correct way to handle errors?
             if(result.IsT0)
@@ -142,7 +142,7 @@ namespace VShop.Modules.Sales.API.Controllers
             };
             command.ShoppingCartItem.ProductId = productId;
             
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
         }
@@ -165,7 +165,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.ProductId = productId;
             
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, NoContent);
         }
@@ -186,7 +186,7 @@ namespace VShop.Modules.Sales.API.Controllers
             SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
             command.ShoppingCartId = shoppingCartId;
 
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
         }
@@ -207,7 +207,7 @@ namespace VShop.Modules.Sales.API.Controllers
             SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
             command.ShoppingCartId = shoppingCartId;
 
-            OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
         }

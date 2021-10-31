@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.Application.Commands
             _mediator = mediator;
         }
 
-        public Task<TResponse> Send<TResponse>(IRequest<TResponse> command)
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command)
         {
             return _mediator.Send(command);
         }

@@ -88,7 +88,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 }).ToArray()
             };
 
-            OneOf<Success<Order>, ApplicationError> placeOrderResult = await _commandBus.Send(placeOrderCommand);
+            OneOf<Success<Order>, ApplicationError> placeOrderResult = await _commandBus.SendAsync(placeOrderCommand);
             if (placeOrderResult.IsT1)
             {
                 await TerminateProcessAsync(orderId, placeOrderResult.AsT1.ToString(), cancellationToken);

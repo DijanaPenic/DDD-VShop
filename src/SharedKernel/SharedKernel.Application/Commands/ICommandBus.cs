@@ -5,6 +5,6 @@ namespace VShop.SharedKernel.Application.Commands
 {
     public interface ICommandBus
     {
-        Task<TResponse> Send<TResponse>(IRequest<TResponse> command);
+        Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command);
     }
 }
