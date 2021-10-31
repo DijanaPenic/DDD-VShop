@@ -110,7 +110,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 OrderFulfillmentProcess orderFulfillmentProcess = await _queryService.GetActiveOrderFulfillmentProcessByShoppingCartIdAsync(shoppingCartId);
 
                 if (orderFulfillmentProcess is null)
-                    return InternalServerError("Reason from the process."); // TODO - change reason mapping
+                    return InternalServerError(orderFulfillmentProcess.Description); // TODO - change reason mapping
                 
                 dynamic order = new JObject();
                 order.OrderId = orderFulfillmentProcess.OrderId;

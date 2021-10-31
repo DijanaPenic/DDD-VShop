@@ -9,7 +9,7 @@ namespace VShop.Modules.Sales.Infrastructure.Entities
     {
         public Guid OrderId { get; set; }
         public Guid ShoppingCartId { get; set; }
-        public Guid CustomerId { get; set; }
+        public string Description { get; set; }
         public OrderFulfillmentStatus Status { get; set; }
     }
 }

@@ -26,7 +26,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
     // TODO - implement base process manager class
     public class OrderFulfillmentProcessManager :
-        IDomainEventHandler<ShoppingCartCheckoutRequestedDomainEvent>
+        IDomainEventHandler<ShoppingCartCheckoutRequestedDomainEvent>,
+        IDomainEventHandler<OrderPlacedDomainEvent>
     {
         private readonly ILogger _logger;
         private readonly SalesContext _dbContext;
@@ -58,7 +59,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             _dbContext.OrderFulfillmentProcesses.Add(new OrderFulfillmentProcess
             {
                 OrderId = orderId,
-                // ShoppingCartId, CustomerId mapping
+                ShoppingCartId = @event.ShoppingCartId,
                 Status = OrderFulfillmentStatus.CheckoutRequested
             });
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -89,11 +90,25 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             };
 
             OneOf<Success<Order>, ApplicationError> placeOrderResult = await _commandBus.SendAsync(placeOrderCommand);
-            if (placeOrderResult.IsT1)
-            {
-                await TerminateProcessAsync(orderId, placeOrderResult.AsT1.ToString(), cancellationToken);
-            }
+            if (placeOrderResult.IsT1) await TerminateProcessAsync(orderId, placeOrderResult.AsT1.ToString(), cancellationToken);
         }
+
+        public async Task Handle(OrderPlacedDomainEvent @event, CancellationToken cancellationToken)
+        {
+            OrderFulfillmentProcess process = await GetProcessByOrderIdAsync(@event.OrderId, cancellationToken);
+            process.Status = OrderFulfillmentStatus.OrderPlaced;
+            
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            
+            DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = process.ShoppingCartId };
+            
+            OneOf<Success, ApplicationError> deleteShoppingCartResult = await _commandBus.SendAsync(deleteShoppingCartCommand);
+            if (deleteShoppingCartResult.IsT1) await TerminateProcessAsync(@event.OrderId, deleteShoppingCartResult.AsT1.ToString(), cancellationToken);
+        }
+        
+        private Task<OrderFulfillmentProcess> GetProcessByOrderIdAsync(Guid orderId, CancellationToken cancellationToken) 
+            => _dbContext.OrderFulfillmentProcesses
+                .FirstOrDefaultAsync(ofp => ofp.OrderId == orderId, cancellationToken);
 
         private async Task TerminateProcessAsync(Guid orderId, string reason, CancellationToken cancellationToken)
         {
@@ -101,11 +116,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 .SingleOrDefaultAsync(ofp => ofp.OrderId == orderId, cancellationToken);
 
             process.Status = OrderFulfillmentStatus.Terminated;
-            // TODO - add information about the termination reason
+            process.Description = reason;
             
             _dbContext.OrderFulfillmentProcesses.Update(process);
             
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            throw new Exception(reason);
         }
     }
 }
