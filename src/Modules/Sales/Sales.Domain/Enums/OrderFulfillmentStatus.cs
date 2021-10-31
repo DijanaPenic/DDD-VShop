@@ -6,6 +6,7 @@
         OrderPlaced = 2,
         OrderBilled = 3,
         OrderCancelled = 4,
-        OrderShipped = 5
+        OrderShipped = 5,
+        Terminated = 6
     }
 }

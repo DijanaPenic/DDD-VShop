@@ -19,7 +19,7 @@ namespace VShop.SharedKernel.Application
         protected IActionResult Created() 
             => StatusCode(StatusCodes.Status201Created);
 
-        protected IActionResult HandleObjectResult<TResult>
+        protected IActionResult HandleResult<TResult>
         (
             OneOf<Success<TResult>, ApplicationError> result,
             Func<TResult, IActionResult> handleSuccess
@@ -33,9 +33,9 @@ namespace VShop.SharedKernel.Application
         }
         
         // TODO - move to extensions class
-        protected IActionResult HandleResult<TResult>
+        protected IActionResult HandleResult
         (
-            OneOf<TResult, ApplicationError> result,
+            OneOf<Success, ApplicationError> result,
             Func<IActionResult> handleSuccess
         )
         {
@@ -46,7 +46,7 @@ namespace VShop.SharedKernel.Application
             );
         }
 
-        private IActionResult HandleError(ApplicationError error)
+        protected IActionResult HandleError(ApplicationError error)
         {
             return error.Match
             (

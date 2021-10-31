@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
@@ -67,7 +68,7 @@ namespace VShop.Modules.Sales.API.Controllers
             
             OneOf<Success<ShoppingCart>, ApplicationError> result = await _commandBus.Send(command);
 
-            return HandleObjectResult(result, Created);
+            return HandleResult(result, Created);
         }
         
         [HttpDelete]
@@ -102,8 +103,22 @@ namespace VShop.Modules.Sales.API.Controllers
             };
 
             OneOf<Success, ApplicationError> result = await _commandBus.Send(command);
+            
+            // TODO - is this correct way to handle errors?
+            if(result.IsT0)
+            {
+                OrderFulfillmentProcess orderFulfillmentProcess = await _queryService.GetActiveOrderFulfillmentProcessByShoppingCartIdAsync(shoppingCartId);
 
-            return HandleResult(result, NoContent);
+                if (orderFulfillmentProcess is null)
+                    return InternalServerError("Reason from the process."); // TODO - change reason mapping
+                
+                dynamic order = new JObject();
+                order.OrderId = orderFulfillmentProcess.OrderId;
+
+                return Ok(order);
+            }
+
+            return HandleError(result.AsT1);
         }
         
         [HttpPost]

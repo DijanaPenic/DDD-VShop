@@ -20,6 +20,10 @@ namespace VShop.Modules.Sales.Infrastructure
             Map<DeliveryCostChangedDomainEvent>(nameof(DeliveryCostChangedDomainEvent));
             Map<ProductAddedToShoppingCartDomainEvent>(nameof(ProductAddedToShoppingCartDomainEvent));
             Map<ProductRemovedFromShoppingCartDomainEvent>(nameof(ProductRemovedFromShoppingCartDomainEvent));
+            Map<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
+            Map<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
+            Map<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
+            Map<OrderItemAddedDomainEvent>(nameof(OrderItemAddedDomainEvent));
             
             // Configure integration events
             Map<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));

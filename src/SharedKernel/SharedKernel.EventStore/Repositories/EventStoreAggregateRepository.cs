@@ -50,7 +50,9 @@ namespace VShop.SharedKernel.EventStore.Repositories
             aggregate.ClearChanges();
             
             // TODO - should I change publish strategy? Should I omit this code?
+            // error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
             // https://github.com/jbogard/MediatR/blob/master/samples/MediatR.Examples.PublishStrategies/PublishStrategy.cs
+            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
             foreach (IDomainEvent @event in events)
                 await _mediator.Publish(@event);
         }
