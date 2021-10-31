@@ -26,7 +26,7 @@ namespace VShop.Modules.Sales.API.Projections
             
                     return Task.CompletedTask;
                 },
-                ProductAddedToShoppingCartDomainEvent e => () =>
+                ShoppingCartProductAddedDomainEvent e => () =>
                 {
                     dbContext.ShoppingCartItems.Add(new ShoppingCartInfoItem()
                     {
@@ -39,13 +39,13 @@ namespace VShop.Modules.Sales.API.Projections
             
                     return Task.CompletedTask;
                 },
-                ProductRemovedFromShoppingCartDomainEvent e => async() =>
+                ShoppingCartProductRemovedDomainEvent e => async() =>
                 {
                     ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(dbContext, e.ProductId, e.ShoppingCartId);
                     
                     dbContext.ShoppingCartItems.Remove(shoppingCartItem);
                 },
-                DeliveryAddressSetDomainEvent e => async() =>
+                ShoppingCartDeliveryAddressSetDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCartStatus.AwaitingConfirmation;

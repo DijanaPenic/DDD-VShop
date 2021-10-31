@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ProductAddedToShoppingCartDomainEvent : IDomainEvent
+    public record ShoppingCartProductAddedDomainEvent : IDomainEvent
     {
         public Guid ShoppingCartId { get; init; }
         public Guid ShoppingCartItemId { get; init; }

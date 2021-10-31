@@ -4,9 +4,9 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record DeliveryCostChangedDomainEvent : IDomainEvent
+    public record ShoppingCartProductRemovedDomainEvent : IDomainEvent
     {
         public Guid ShoppingCartId { get; init; }
-        public decimal DeliveryCost { get; init; }
+        public Guid ProductId { get; init; }
     }
 }

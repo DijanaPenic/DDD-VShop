@@ -15,11 +15,11 @@ namespace VShop.Modules.Sales.Infrastructure
             Map<ShoppingCartDeletionRequestedDomainEvent>(nameof(ShoppingCartDeletionRequestedDomainEvent));
             Map<ShoppingCartItemQuantityDecreasedDomainEvent>(nameof(ShoppingCartItemQuantityDecreasedDomainEvent));
             Map<ShoppingCartItemQuantityIncreasedDomainEvent>(nameof(ShoppingCartItemQuantityIncreasedDomainEvent));
-            Map<ContactInformationSetDomainEvent>(nameof(ContactInformationSetDomainEvent));
-            Map<DeliveryAddressSetDomainEvent>(nameof(DeliveryAddressSetDomainEvent));
-            Map<DeliveryCostChangedDomainEvent>(nameof(DeliveryCostChangedDomainEvent));
-            Map<ProductAddedToShoppingCartDomainEvent>(nameof(ProductAddedToShoppingCartDomainEvent));
-            Map<ProductRemovedFromShoppingCartDomainEvent>(nameof(ProductRemovedFromShoppingCartDomainEvent));
+            Map<ShoppingCartContactInformationSetDomainEvent>(nameof(ShoppingCartContactInformationSetDomainEvent));
+            Map<ShoppingCartDeliveryAddressSetDomainEvent>(nameof(ShoppingCartDeliveryAddressSetDomainEvent));
+            Map<ShoppingCartDeliveryCostChangedDomainEvent>(nameof(ShoppingCartDeliveryCostChangedDomainEvent));
+            Map<ShoppingCartProductAddedDomainEvent>(nameof(ShoppingCartProductAddedDomainEvent));
+            Map<ShoppingCartProductRemovedDomainEvent>(nameof(ShoppingCartProductRemovedDomainEvent));
             Map<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
             Map<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
             Map<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));

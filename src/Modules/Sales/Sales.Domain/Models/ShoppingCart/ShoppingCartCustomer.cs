@@ -20,7 +20,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
-
         public int Discount { get; private set; }
         
         public ShoppingCartCustomer(Action<IDomainEvent> applier) : base(applier) { }
@@ -38,7 +37,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                                                             The shopping cart has been closed for updates.");
             Apply
             (
-                new ContactInformationSetDomainEvent
+                new ShoppingCartContactInformationSetDomainEvent
                 {
                     ShoppingCartId = Id,
                     FirstName = fullName.FirstName,
@@ -60,7 +59,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                                                             The shopping cart has been closed for updates.");
             Apply
             (
-                new DeliveryAddressSetDomainEvent
+                new ShoppingCartDeliveryAddressSetDomainEvent
                 {
                     ShoppingCartId = Id,
                     City = deliveryAddress.City,
@@ -83,13 +82,13 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Discount = e.CustomerDiscount;
                     Id = new EntityId(e.ShoppingCartId);
                     break;
-                case ContactInformationSetDomainEvent e:
+                case ShoppingCartContactInformationSetDomainEvent e:
                     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
                     EmailAddress = new EmailAddress(e.EmailAddress);
                     PhoneNumber = new PhoneNumber(e.PhoneNumber);
                     Gender = e.Gender;
                     break;
-                case DeliveryAddressSetDomainEvent e:
+                case ShoppingCartDeliveryAddressSetDomainEvent e:
                     DeliveryAddress = new Address
                     (
                         e.City, 

@@ -25,8 +25,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public IReadOnlyCollection<ShoppingCartItem> Items => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(sci => sci.TotalAmount));
-        public Price TotalDeduction => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);
-        public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDeduction;
+        public Price TotalDiscount => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);
+        public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
         public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
         public int TotalItemsCount() => _shoppingCartItems.Count;
@@ -55,11 +55,11 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
             ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.ProductId.Equals(productId));
 
-            if (shoppingCartItem == null)
+            if (shoppingCartItem is null)
             {
                 Apply
                 (
-                    new ProductAddedToShoppingCartDomainEvent
+                    new ShoppingCartProductAddedDomainEvent
                     {
                         ShoppingCartId = Id,
                         ShoppingCartItemId = GuidHelper.NewSequentialGuid(),
@@ -92,14 +92,14 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
 
-            if (shoppingCartItem == null)
+            if (shoppingCartItem is null)
                 return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
             
             if (shoppingCartItem.Quantity - quantity <= 0)
             {
                 Apply
                 (
-                    new ProductRemovedFromShoppingCartDomainEvent
+                    new ShoppingCartProductRemovedDomainEvent
                     {
                         ShoppingCartId = Id,
                         ProductId = productId
@@ -120,8 +120,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public Option<ApplicationError> RequestCheckout()
         {
-            if(Status != ShoppingCartStatus.AwaitingConfirmation)
-                return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
+            // if(Status != ShoppingCartStatus.AwaitingConfirmation)
+            //     return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
             if(IsShoppingCartEmpty)
                 return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the shopping cart.");
@@ -164,7 +164,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (newDeliveryCost != DeliveryCost)
                 Apply
                 (
-                    new DeliveryCostChangedDomainEvent
+                    new ShoppingCartDeliveryCostChangedDomainEvent
                     {
                         ShoppingCartId = Id,
                         DeliveryCost = newDeliveryCost
@@ -195,19 +195,19 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     // one-to-many relationship
                     _shoppingCartItems = new List<ShoppingCartItem>();
                     break;
-                case ProductAddedToShoppingCartDomainEvent e:
+                case ShoppingCartProductAddedDomainEvent e:
                     shoppingCartItem = new ShoppingCartItem(Apply);
                     ApplyToEntity(shoppingCartItem, e);
                     _shoppingCartItems.Add(shoppingCartItem);
                     break;
-                case ProductRemovedFromShoppingCartDomainEvent e:
+                case ShoppingCartProductRemovedDomainEvent e:
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     _shoppingCartItems.Remove(shoppingCartItem);
                     break;
-                case DeliveryAddressSetDomainEvent _:
+                case ShoppingCartDeliveryAddressSetDomainEvent _:
                     Status = ShoppingCartStatus.AwaitingConfirmation;
                     break;
-                case DeliveryCostChangedDomainEvent e:
+                case ShoppingCartDeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
                     break;
                 case ShoppingCartCheckoutRequestedDomainEvent e:
@@ -221,6 +221,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             }
         }
 
+        // TODO - use settings from the database. Need to support admin pages.
         public static class Settings
         {
             public const decimal MinShoppingCartAmountForCheckout = 100m;

@@ -68,7 +68,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         {
             switch (@event)
             {
-                case ProductAddedToShoppingCartDomainEvent e:
+                case ShoppingCartProductAddedDomainEvent e:
                     Id = new EntityId(e.ShoppingCartItemId);
                     ShoppingCartId = new EntityId(e.ShoppingCartId);
                     ProductId = new EntityId(e.ProductId);
