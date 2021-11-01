@@ -8,28 +8,28 @@ using EventStore.ClientAPI;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories;
-using VShop.SharedKernel.EventStore.Subscriptions.Settings;
-using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
+using VShop.SharedKernel.EventStore.Subscriptions.Settings;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore.Subscriptions
 {
-    public class EventStoreAllCatchUpSubscriptionManager : IEventStoreSubscriptionManager
+    public class EventStoreAllFilteredCatchUpSubscriptionManager : IEventStoreSubscriptionManager
     {
         private readonly IEventStoreCheckpointRepository _esCheckpointRepository;
         private readonly IEventStoreConnection _esConnection;
-        private readonly EventStoreSubscriptionManagerConfig _esSubscriptionManagerConfig;
-        private EventStoreAllCatchUpSubscription _esSubscription;
+        private readonly EventStoreSubscriptionManagerFilteredConfig _esSubscriptionManagerConfig;
+        private EventStoreAllFilteredCatchUpSubscription _esSubscription;
         
-        private static readonly ILogger Logger = Log.ForContext<EventStoreAllCatchUpSubscriptionManager>();
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
 
-        public EventStoreAllCatchUpSubscriptionManager
+        public EventStoreAllFilteredCatchUpSubscriptionManager
         (
             IEventStoreConnection esConnection,
-            EventStoreSubscriptionManagerConfig esSubscriptionManagerConfig
+            EventStoreSubscriptionManagerFilteredConfig esSubscriptionManagerConfig
         )
         {
             _esConnection = esConnection;
@@ -39,12 +39,13 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
         public async Task StartAsync()
         {
-            CatchUpSubscriptionSettings settings = new
+            CatchUpSubscriptionFilteredSettings settings = new
             (
                 2000, 
                 500,
                 Logger.IsEnabled(LogEventLevel.Debug),
             false, 
+                1000,
                 _esSubscriptionManagerConfig.Name
             );
 
@@ -53,13 +54,17 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             long? position = await _esCheckpointRepository.GetCheckpointAsync();
             Logger.Debug("Retrieved the checkpoint: {Checkpoint}", position);
 
-            _esSubscription = _esConnection.SubscribeToAllFrom
+            //Regex regexExpression = new(@".*\/integration$"); // TODO - purge
+
+            _esSubscription = _esConnection.FilteredSubscribeToAllFrom
             (
                 GetPosition(),
+                //Filter.EventType.Regex(regexExpression),  // TODO - purge
+                _esSubscriptionManagerConfig.Filter,
                 settings,
                 EventAppearedAsync
             );
-            Logger.Debug("Subscribed to $all stream");
+            Logger.Debug("Subscribed to filtered stream");
 
             Position? GetPosition() => position.HasValue
                 ? new Position(position.Value, position.Value)

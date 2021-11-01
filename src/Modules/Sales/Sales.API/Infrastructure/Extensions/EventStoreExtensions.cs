@@ -11,6 +11,7 @@ using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
+using VShop.SharedKernel.EventStore.Subscriptions.Settings;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -29,18 +30,20 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton<IHostedService, EventStoreService>();
-            
+
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
                 SalesContext dbContext = provider.GetRequiredService<SalesContext>();
                 const string esSubscriptionName = "subscriptionReadModels";
-                
+
                 return new EventStoreAllCatchUpSubscriptionManager
                 (
                     esConnection,
-                    new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
-                    esSubscriptionName,
-                    new PostgresDomainProjection<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
+                    new EventStoreSubscriptionManagerConfig
+                    (
+                        esSubscriptionName,
+                        new PostgresDomainProjection<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
+                    )
                 );
             });
             
@@ -52,9 +55,11 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 return new EventStoreAllCatchUpSubscriptionManager
                 (
                     esConnection,
-                    new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
-                    esSubscriptionName,
-                    new EventStoreIntegrationProjection(integrationRepository)
+                    new EventStoreSubscriptionManagerConfig
+                    (
+                        esSubscriptionName,
+                        new EventStoreIntegrationProjection(integrationRepository)
+                    )
                 );
             });
             
