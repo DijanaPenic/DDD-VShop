@@ -18,10 +18,6 @@ namespace VShop.SharedKernel.EventSourcing
 
         protected abstract void When(IDomainEvent @event);
 
-        protected void Apply(IDomainEvent @event)
-        {
-            When(@event);
-            _applier(@event);
-        }
+        protected void Apply(IDomainEvent @event) => _applier(@event);
     }
 }

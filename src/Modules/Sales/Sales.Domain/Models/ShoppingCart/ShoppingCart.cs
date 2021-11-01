@@ -204,13 +204,26 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     _shoppingCartItems.Remove(shoppingCartItem);
                     break;
-                case ShoppingCartDeliveryAddressSetDomainEvent _:
+                case ShoppingCartItemQuantityIncreasedDomainEvent e:
+                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                    ApplyToEntity(shoppingCartItem, e);
+                    break;
+                case ShoppingCartItemQuantityDecreasedDomainEvent e:
+                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                    ApplyToEntity(shoppingCartItem, e);
+                    break;
+                case ShoppingCartContactInformationSetDomainEvent e:
+                    ApplyToEntity(Customer, e);
+                    break;
+                case ShoppingCartDeliveryAddressSetDomainEvent e:
+                    ApplyToEntity(Customer, e);
                     Status = ShoppingCartStatus.AwaitingConfirmation;
                     break;
                 case ShoppingCartDeliveryCostChangedDomainEvent e:
                     DeliveryCost = new Price(e.DeliveryCost);
                     break;
                 case ShoppingCartCheckoutRequestedDomainEvent e:
+                    ApplyToEntity(Customer, e);
                     Status = ShoppingCartStatus.PendingCheckout;
                     ConfirmedAt = e.ConfirmedAt;
                     _isClosedForUpdates = true;
