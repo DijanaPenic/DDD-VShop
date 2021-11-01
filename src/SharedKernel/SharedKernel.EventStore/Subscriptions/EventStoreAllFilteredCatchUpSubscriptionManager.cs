@@ -43,12 +43,9 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             long? position = await ESCheckpointRepository.GetCheckpointAsync();
             Logger.Debug("Retrieved the checkpoint: {Checkpoint}", position);
 
-            //Regex regexExpression = new(@".*\/integration$"); // TODO - purge
-
             ESSubscription = ESConnection.FilteredSubscribeToAllFrom
             (
                 GetPosition(),
-                //Filter.EventType.Regex(regexExpression),  // TODO - purge
                 _esSubscriptionFilter,
                 settings,
                 EventAppearedAsync

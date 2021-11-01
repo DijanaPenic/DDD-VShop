@@ -9,13 +9,13 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore.Projections
 {
-    public class EventStoreIntegrationProjection : ISubscription
+    public class IntegrationEventProjectionToEventStore : ISubscription
     {
         private readonly IEventStoreIntegrationRepository _integrationRepository;
 
-        private static readonly ILogger Logger = Log.ForContext<EventStoreIntegrationProjection>(); 
+        private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionToEventStore>(); 
         
-        public EventStoreIntegrationProjection(IEventStoreIntegrationRepository integrationRepository)
+        public IntegrationEventProjectionToEventStore(IEventStoreIntegrationRepository integrationRepository)
         {
             _integrationRepository = integrationRepository;
         }

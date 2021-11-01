@@ -9,15 +9,15 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.PostgresDb.Projections
 {
-    public class PostgresDomainProjection<TDbContext> : ISubscription 
+    public class DomainEventProjectionToPostgres<TDbContext> : ISubscription 
         where TDbContext : ApplicationDbContextBase
     {
         private readonly TDbContext _dbContext;
         private readonly Projector _projector;
         
-        private static readonly ILogger Logger = Log.ForContext<PostgresDomainProjection<TDbContext>>(); 
+        private static readonly ILogger Logger = Log.ForContext<DomainEventProjectionToPostgres<TDbContext>>(); 
         
-        public PostgresDomainProjection
+        public DomainEventProjectionToPostgres
         (
             TDbContext dbContext,
             Projector projector
