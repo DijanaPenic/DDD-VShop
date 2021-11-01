@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton<IHostedService, EventStoreService>();
             
-            services.AddSingleton(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreSubscriptionManager>(provider =>
             {
                 SalesContext dbContext = provider.GetRequiredService<SalesContext>();
                 const string esSubscriptionName = "subscriptionReadModels";
@@ -42,7 +42,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 );
             });
             
-            services.AddSingleton(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreSubscriptionManager>(provider =>
             {
                 IEventStoreIntegrationRepository integrationRepository = provider.GetRequiredService<IEventStoreIntegrationRepository>();
                 const string esSubscriptionName = "subscriptionIntegrationEventsPub";

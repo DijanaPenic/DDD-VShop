@@ -8,6 +8,7 @@ using EventStore.ClientAPI;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
