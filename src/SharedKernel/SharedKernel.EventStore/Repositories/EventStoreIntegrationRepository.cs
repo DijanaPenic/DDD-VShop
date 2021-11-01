@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
@@ -33,11 +34,11 @@ namespace VShop.SharedKernel.EventStore.Repositories
             );
         }
 
-        public async Task<IIntegrationEvent[]> LoadAsync()
+        public async Task<IEnumerable<IIntegrationEvent>> LoadAsync()
         {
             List<IIntegrationEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(GetStreamName());
 
-            return events.ToArray();
+            return events.AsEnumerable();
         }
 
         private string GetStreamName() => $"{_esConnection.ConnectionName}/integration".ToSnakeCase();

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace VShop.SharedKernel.PostgresDb
+namespace VShop.SharedKernel.PostgresDb.Repositories
 {
     public class GenericRepository
     {

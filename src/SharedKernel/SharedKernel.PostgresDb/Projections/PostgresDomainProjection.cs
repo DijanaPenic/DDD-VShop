@@ -7,17 +7,17 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.PostgresDb
+namespace VShop.SharedKernel.PostgresDb.Projections
 {
-    public class PostgresDbProjection<TDbContext> : ISubscription 
+    public class PostgresDomainProjection<TDbContext> : ISubscription 
         where TDbContext : ApplicationDbContextBase
     {
         private readonly TDbContext _dbContext;
         private readonly Projector _projector;
         
-        private static readonly ILogger Logger = Log.ForContext<PostgresDbProjection<TDbContext>>(); 
+        private static readonly ILogger Logger = Log.ForContext<PostgresDomainProjection<TDbContext>>(); 
         
-        public PostgresDbProjection
+        public PostgresDomainProjection
         (
             TDbContext dbContext,
             Projector projector

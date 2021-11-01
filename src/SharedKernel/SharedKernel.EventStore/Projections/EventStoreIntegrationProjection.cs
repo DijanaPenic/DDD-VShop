@@ -7,15 +7,15 @@ using VShop.SharedKernel.EventStore.Repositories.Contracts;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStore.Subscriptions
+namespace VShop.SharedKernel.EventStore.Projections
 {
-    public class EventStoreDbIntegrationProjection : ISubscription
+    public class EventStoreIntegrationProjection : ISubscription
     {
         private readonly IEventStoreIntegrationRepository _integrationRepository;
 
-        private static readonly ILogger Logger = Log.ForContext<EventStoreDbIntegrationProjection>(); 
+        private static readonly ILogger Logger = Log.ForContext<EventStoreIntegrationProjection>(); 
         
-        public EventStoreDbIntegrationProjection(IEventStoreIntegrationRepository integrationRepository)
+        public EventStoreIntegrationProjection(IEventStoreIntegrationRepository integrationRepository)
         {
             _integrationRepository = integrationRepository;
         }

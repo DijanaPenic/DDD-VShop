@@ -15,7 +15,7 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore.Subscriptions
 {
-    public class EventStoreSubscriptionManager : IEventStoreSubscriptionManager
+    public class EventStoreAllCatchUpSubscriptionManager : IEventStoreSubscriptionManager
     {
         private readonly IEventStoreCheckpointRepository _esCheckpointRepository;
         private readonly IEventStoreConnection _esConnection;
@@ -23,9 +23,9 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         private readonly string _esSubscriptionName;
         private EventStoreAllCatchUpSubscription _esSubscription;
         
-        private static readonly ILogger Logger = Log.ForContext<EventStoreSubscriptionManager>();
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAllCatchUpSubscriptionManager>();
 
-        public EventStoreSubscriptionManager
+        public EventStoreAllCatchUpSubscriptionManager
         (
             IEventStoreConnection esConnection,
             IEventStoreCheckpointRepository esCheckpointRepository,
@@ -50,7 +50,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 _esSubscriptionName
             );
 
-            Logger.Debug("Starting the projection manager...");
+            Logger.Debug("Starting the subscription manager...");
 
             long? position = await _esCheckpointRepository.GetCheckpointAsync();
             Logger.Debug("Retrieved the checkpoint: {Checkpoint}", position);
@@ -76,14 +76,14 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
-            IMessage eventData = resolvedEvent.DeserializeData() as IMessage;
-            MessageMetadata eventMetadata = resolvedEvent.DeserializeMetadata();
+            IMessage message = resolvedEvent.DeserializeData() as IMessage;
+            MessageMetadata metadata = resolvedEvent.DeserializeMetadata();
 
-            Logger.Debug("EventStore subscription manager > identified event: {EventData}", eventData);
+            Logger.Debug("EventStore subscription manager > identified message: {Message}", message);
 
             try
             {
-                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(eventData, eventMetadata)));
+                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(message, metadata)));
                 await _esCheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
             }
             catch (Exception ex)
@@ -91,8 +91,8 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 Logger.Error
                 (
                     ex,
-                    "Error occured while projecting the event {EventData}",
-                    eventData
+                    "Error occured while projecting the message {Message}",
+                    message
                 );
                 throw;
             }

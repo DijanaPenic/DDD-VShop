@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace VShop.SharedKernel.PostgresDb
+namespace VShop.SharedKernel.PostgresDb.Repositories.Contracts
 {
     public interface IGenericRepository
     {

@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStore;
+using VShop.SharedKernel.PostgresDb.Projections;
+using VShop.SharedKernel.EventStore.Projections;
 using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 
@@ -28,31 +30,31 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton<IHostedService, EventStoreService>();
             
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreSubscriptionManager>(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
                 SalesContext dbContext = provider.GetRequiredService<SalesContext>();
                 const string esSubscriptionName = "subscriptionReadModels";
                 
-                return new EventStoreSubscriptionManager
+                return new EventStoreAllCatchUpSubscriptionManager
                 (
                     esConnection,
                     new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
                     esSubscriptionName,
-                    new PostgresDbProjection<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
+                    new PostgresDomainProjection<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
                 );
             });
             
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreSubscriptionManager>(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
                 IEventStoreIntegrationRepository integrationRepository = provider.GetRequiredService<IEventStoreIntegrationRepository>();
                 const string esSubscriptionName = "subscriptionIntegrationEventsPub";
                 
-                return new EventStoreSubscriptionManager
+                return new EventStoreAllCatchUpSubscriptionManager
                 (
                     esConnection,
                     new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
                     esSubscriptionName,
-                    new EventStoreDbIntegrationProjection(integrationRepository)
+                    new EventStoreIntegrationProjection(integrationRepository)
                 );
             });
             
