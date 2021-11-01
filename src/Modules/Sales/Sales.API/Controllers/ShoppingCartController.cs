@@ -105,6 +105,7 @@ namespace VShop.Modules.Sales.API.Controllers
             OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
             
             // TODO - is this correct way to handle errors?
+            // TODO - need to fix this; it's not working.
             if(result.IsT0)
             {
                 OrderFulfillmentProcess orderFulfillmentProcess = await _queryService.GetActiveOrderFulfillmentProcessByShoppingCartIdAsync(shoppingCartId);

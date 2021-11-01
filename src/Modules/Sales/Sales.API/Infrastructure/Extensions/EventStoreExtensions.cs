@@ -35,14 +35,13 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // Read model projections
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
-                SalesContext dbContext = provider.GetRequiredService<SalesContext>(); // TODO - check if this is going to cause some problems (alert anti-pattern).
                 const string esSubscriptionName = "ReadModels";
 
                 return new EventStoreAllCatchUpSubscriptionManager
                 (
                     esConnection,
                     esSubscriptionName,
-                    new DomainEventProjectionToPostgres<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
+                    new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
                 );
             });
             

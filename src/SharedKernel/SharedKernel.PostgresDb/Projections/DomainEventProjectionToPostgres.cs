@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Serilog;
+using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -12,18 +13,18 @@ namespace VShop.SharedKernel.PostgresDb.Projections
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscription 
         where TDbContext : ApplicationDbContextBase
     {
-        private readonly TDbContext _dbContext;
+        private readonly IServiceProvider _services;
         private readonly Projector _projector;
         
         private static readonly ILogger Logger = Log.ForContext<DomainEventProjectionToPostgres<TDbContext>>(); 
         
         public DomainEventProjectionToPostgres
         (
-            TDbContext dbContext,
+            IServiceProvider services,
             Projector projector
         )
         {
-            _dbContext = dbContext;
+            _services = services;
             _projector = projector;
         }
 
@@ -31,14 +32,19 @@ namespace VShop.SharedKernel.PostgresDb.Projections
         {
             if(message is IDomainEvent domainEvent)
             {
-                Func<Task> handler = _projector(_dbContext, domainEvent);
+                // Consuming a scoped service in a background task
+                // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task-1
+                using IServiceScope scope = _services.CreateScope();
+                TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+                Func<Task> handler = _projector(dbContext, domainEvent);
             
                 if (handler == null) return;
             
                 Logger.Debug("Projecting domain event: {Message}", domainEvent);
 
                 await handler();
-                await _dbContext.SaveChangesAsync(metadata.EffectiveTime);
+                await dbContext.SaveChangesAsync(metadata.EffectiveTime);
             }
         }
         
