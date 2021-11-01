@@ -36,7 +36,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            string streamName = GetStreamName(aggregate.Id);
+            string streamName = GetAggregateStreamName(aggregate.Id);
             
             IDomainEvent[] domainEvents = aggregate.GetDomainEvents().ToArray();
             IIntegrationEvent[] integrationEvents = aggregate.GetIntegrationEvents().ToArray();
@@ -59,7 +59,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         
         public async Task<bool> ExistsAsync(TKey aggregateId)
         {
-            string streamName = GetStreamName(aggregateId);
+            string streamName = GetAggregateStreamName(aggregateId);
             EventReadResult result = await _esConnection.ReadEventAsync(streamName, 1, false);
             
             return result.Status != EventReadStatus.NoStream;
@@ -67,7 +67,8 @@ namespace VShop.SharedKernel.EventStore.Repositories
         
         public async Task<TA> LoadAsync(TKey aggregateId)
         {
-            List<IMessage> events = await _esConnection.ReadStreamEventsForwardAsync<IMessage>(GetStreamName(aggregateId));
+            string streamName = GetAggregateStreamName(aggregateId);
+            List<IMessage> events = await _esConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
             if (events.Count == 0) return default;
             
@@ -77,7 +78,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             return aggregate;
         }
 
-        private string GetStreamName(TKey aggregateId)
+        private string GetAggregateStreamName(TKey aggregateId)
             => $"{_esConnection.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
     }
 }

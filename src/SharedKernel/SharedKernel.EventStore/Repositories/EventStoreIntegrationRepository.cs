@@ -15,10 +15,12 @@ namespace VShop.SharedKernel.EventStore.Repositories
     public class EventStoreIntegrationRepository : IEventStoreIntegrationRepository
     {
         private readonly IEventStoreConnection _esConnection;
+        private readonly string _esIntegrationStreamName;
 
         public EventStoreIntegrationRepository(IEventStoreConnection esConnection)
         {
             _esConnection = esConnection;
+            _esIntegrationStreamName = $"{_esConnection.ConnectionName}/integration".ToSnakeCase();
         }
         
         public async Task SaveAsync(IIntegrationEvent @event)
@@ -28,7 +30,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             await _esConnection.AppendToStreamAsync
             (
-                GetStreamName(),
+                _esIntegrationStreamName,
                 ExpectedVersion.Any,
                 EventStoreHelper.PrepareEventData(messages: @event)
             );
@@ -36,11 +38,9 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         public async Task<IEnumerable<IIntegrationEvent>> LoadAsync()
         {
-            List<IIntegrationEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(GetStreamName());
+            List<IIntegrationEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(_esIntegrationStreamName);
 
             return events.AsEnumerable();
         }
-
-        private string GetStreamName() => $"{_esConnection.ConnectionName}/integration".ToSnakeCase();
     }
 }

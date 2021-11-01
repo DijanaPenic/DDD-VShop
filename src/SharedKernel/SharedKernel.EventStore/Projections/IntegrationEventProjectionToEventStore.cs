@@ -12,7 +12,6 @@ namespace VShop.SharedKernel.EventStore.Projections
     public class IntegrationEventProjectionToEventStore : ISubscription
     {
         private readonly IEventStoreIntegrationRepository _integrationRepository;
-
         private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionToEventStore>(); 
         
         public IntegrationEventProjectionToEventStore(IEventStoreIntegrationRepository integrationRepository)

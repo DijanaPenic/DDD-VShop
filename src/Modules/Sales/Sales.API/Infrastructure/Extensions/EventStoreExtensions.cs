@@ -12,6 +12,7 @@ using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
+using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -32,10 +33,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton<IHostedService, EventStoreService>();
             
             // Read model projections
-            services.AddSingleton(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
                 SalesContext dbContext = provider.GetRequiredService<SalesContext>();
-                
                 const string esSubscriptionName = "ReadModels";
 
                 return new EventStoreAllCatchUpSubscriptionManager
@@ -47,10 +47,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             });
             
             // Publish integration events from the current bounded context 
-            services.AddSingleton(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 IEventStoreIntegrationRepository integrationRepository = provider.GetRequiredService<IEventStoreIntegrationRepository>();
-                
                 const string esSubscriptionName = "IntegrationEventsPub";
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
@@ -63,18 +62,16 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             });
             
             // Subscribe to all integration streams
-            services.AddSingleton(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 Publisher publisher = provider.GetRequiredService<Publisher>();
-                Regex regexExpression = new(@".*\/integration$");
-                
                 const string esSubscriptionName = "IntegrationEventsSub";
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     esConnection,
                     esSubscriptionName,
-                    Filter.StreamId.Regex(regexExpression),
+                    Filter.StreamId.Regex(new Regex(@".*\/integration$")),
                     new IntegrationEventProjectionPublisher(publisher)
                 );
             });
