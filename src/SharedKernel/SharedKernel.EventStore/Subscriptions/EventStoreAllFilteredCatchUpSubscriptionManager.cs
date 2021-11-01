@@ -38,10 +38,10 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 ESSubscriptionName
             );
 
-            Logger.Debug("Starting the subscription manager...");
+            Logger.Debug("Starting the subscription manager {ESSubscriptionName}...", ESSubscriptionName);
 
             long? position = await ESCheckpointRepository.GetCheckpointAsync();
-            Logger.Debug("Retrieved the checkpoint: {Checkpoint}", position);
+            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", ESSubscriptionName, position);
 
             ESSubscription = ESConnection.FilteredSubscribeToAllFrom
             (
@@ -50,7 +50,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 settings,
                 EventAppearedAsync
             );
-            Logger.Debug("Subscribed to filtered stream");
+            Logger.Debug("Subscribed to filtered stream in {ESSubscriptionName}", ESSubscriptionName);
 
             Position? GetPosition() => position.HasValue
                 ? new Position(position.Value, position.Value)
