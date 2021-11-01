@@ -9,10 +9,10 @@ using VShop.SharedKernel.EventStore.Projections;
 using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
-using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -30,12 +30,12 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(esConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
-            services.AddSingleton<IHostedService, EventStoreService>();
+            services.AddHostedService<EventStoreService>();
             
             // Read model projections
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {
-                SalesContext dbContext = provider.GetRequiredService<SalesContext>();
+                SalesContext dbContext = provider.GetRequiredService<SalesContext>(); // TODO - check if this is going to cause some problems (alert anti-pattern).
                 const string esSubscriptionName = "ReadModels";
 
                 return new EventStoreAllCatchUpSubscriptionManager
