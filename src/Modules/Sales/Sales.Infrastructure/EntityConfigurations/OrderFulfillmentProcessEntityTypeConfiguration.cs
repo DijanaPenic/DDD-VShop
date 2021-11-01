@@ -12,7 +12,9 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
             builder.ToTable("order_fulfillment_process", SalesContext.OrderSchema);
             
             builder.HasKey(ofp => ofp.OrderId);
+            builder.Property(ofp => ofp.ShoppingCartId).IsRequired();
             builder.Property(ofp => ofp.Status).IsRequired();
+            builder.Property(ofp => ofp.Description);
             builder.Property(ofp => ofp.DateCreatedUtc).IsRequired();
             builder.Property(ofp => ofp.DateUpdatedUtc).IsRequired();
         }
