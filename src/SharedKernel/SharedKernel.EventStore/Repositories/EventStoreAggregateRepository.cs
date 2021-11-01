@@ -78,6 +78,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
         }
 
         private string GetStreamName(TKey aggregateId)
-            => $"{_esConnection.ConnectionName}/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
+            => $"{_esConnection.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
     }
 }

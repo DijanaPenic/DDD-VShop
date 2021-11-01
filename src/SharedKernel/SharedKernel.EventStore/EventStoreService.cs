@@ -12,12 +12,12 @@ namespace VShop.SharedKernel.EventStore
     public class EventStoreService : IHostedService
     {
         private readonly IEventStoreConnection _esConnection;
-        private readonly IEnumerable<IEventStoreSubscriptionManager> _esSubscriptionManagers;
+        private readonly IEnumerable<EventStoreSubscriptionManager> _esSubscriptionManagers;
 
         public EventStoreService
         (
             IEventStoreConnection esConnection,
-            IEnumerable<IEventStoreSubscriptionManager> esSubscriptionManagers
+            IEnumerable<EventStoreSubscriptionManager> esSubscriptionManagers
         )
         {
             _esConnection = esConnection;
@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.EventStore
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            foreach(IEventStoreSubscriptionManager esSubscriptionManager in _esSubscriptionManagers)
+            foreach(EventStoreSubscriptionManager esSubscriptionManager in _esSubscriptionManagers)
             {
                 await esSubscriptionManager.StopAsync();
             }

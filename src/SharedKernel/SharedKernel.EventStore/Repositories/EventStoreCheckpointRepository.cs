@@ -7,15 +7,14 @@ using EventStore.ClientAPI;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreCheckpointRepository : IEventStoreCheckpointRepository
-    {
-        private const string CheckpointStreamPrefix = "checkpoint:";
-        
+    {       
         private readonly IEventStoreConnection _esConnection;
-        private readonly string _esSubscriptionName;
+        private readonly string _esCheckpointStreamName;
 
         public EventStoreCheckpointRepository
         (
@@ -24,12 +23,12 @@ namespace VShop.SharedKernel.EventStore.Repositories
         )
         {
             _esConnection = esConnection;
-            _esSubscriptionName = CheckpointStreamPrefix + esSubscriptionName;
+            _esCheckpointStreamName = $"{esConnection.ConnectionName}/checkpoint/{esSubscriptionName}".ToSnakeCase();
         }
 
         public async Task<long?> GetCheckpointAsync()
         {
-            StreamEventsSlice slice = await _esConnection.ReadStreamEventsBackwardAsync(_esSubscriptionName, -1, 1, false);
+            StreamEventsSlice slice = await _esConnection.ReadStreamEventsBackwardAsync(_esCheckpointStreamName, -1, 1, false);
             ResolvedEvent eventData = slice.Events.FirstOrDefault();
 
             if (!eventData.Equals(default(ResolvedEvent))) return eventData.DeserializeData<Checkpoint>()?.Position;
@@ -55,7 +54,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             return _esConnection.AppendToStreamAsync
             (
-                _esSubscriptionName,
+                _esCheckpointStreamName,
                 ExpectedVersion.Any,
                 @event
             );
@@ -63,12 +62,12 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         private async Task SetStreamMaxCountAsync()
         {
-            StreamMetadataResult metadata = await _esConnection.GetStreamMetadataAsync(_esSubscriptionName);
+            StreamMetadataResult metadata = await _esConnection.GetStreamMetadataAsync(_esCheckpointStreamName);
 
             if (!metadata.StreamMetadata.MaxCount.HasValue)
                 await _esConnection.SetStreamMetadataAsync
                 (
-                    _esSubscriptionName, 
+                    _esCheckpointStreamName, 
                     ExpectedVersion.Any,
                     StreamMetadata.Create(1)
                 );
