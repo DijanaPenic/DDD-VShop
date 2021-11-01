@@ -27,18 +27,16 @@ namespace VShop.SharedKernel.EventStore
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             await _esConnection.ConnectAsync();
-            await Task.WhenAll(_esSubscriptionManagers.Select(sm => sm.Start()));
+            await Task.WhenAll(_esSubscriptionManagers.Select(sm => sm.StartAsync()));
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             foreach(EventStoreSubscriptionManager esSubscriptionManager in _esSubscriptionManagers)
             {
-                esSubscriptionManager.Stop();
+                await esSubscriptionManager.StopAsync();
             }
             _esConnection.Close();
-            
-            return Task.CompletedTask;
         }
     }
 }

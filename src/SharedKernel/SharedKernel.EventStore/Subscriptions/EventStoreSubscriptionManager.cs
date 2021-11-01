@@ -14,7 +14,7 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore.Subscriptions
 {
-    public class EventStoreSubscriptionManager
+    public class EventStoreSubscriptionManager : IEventStoreSubscriptionManager
     {
         private readonly IEventStoreCheckpointRepository _esCheckpointRepository;
         private readonly IEventStoreConnection _esConnection;
@@ -38,7 +38,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             _subscriptionHandlers = subscriptionHandlers;
         }
 
-        public async Task Start()
+        public async Task StartAsync()
         {
             CatchUpSubscriptionSettings settings = new
             (
@@ -97,6 +97,11 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             }
         }
 
-        public void Stop() => _esSubscription.Stop();
+        public Task StopAsync()
+        {
+            _esSubscription.Stop();
+
+            return Task.CompletedTask;
+        }
     }
 }
