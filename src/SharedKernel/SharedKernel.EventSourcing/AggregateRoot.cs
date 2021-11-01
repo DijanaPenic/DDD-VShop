@@ -9,7 +9,8 @@ namespace VShop.SharedKernel.EventSourcing
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject
     {
-        private readonly IList<IDomainEvent> _changes = new List<IDomainEvent>();
+        private readonly IList<IDomainEvent> _domainEvents = new List<IDomainEvent>();
+        private readonly IList<IIntegrationEvent> _integrationEvents = new List<IIntegrationEvent>();
 
         public TKey Id { get; protected set; }
 
@@ -20,21 +21,31 @@ namespace VShop.SharedKernel.EventSourcing
         protected void Apply(IDomainEvent @event)
         {
             When(@event);
-            _changes.Add(@event);
+            _domainEvents.Add(@event);
         }
         
-        public void Load(IEnumerable<IDomainEvent> history)
+        public void Apply(IIntegrationEvent @event)
         {
-            foreach (IDomainEvent @event in history)
+            _integrationEvents.Add(@event);
+        }
+        
+        public void Load(IEnumerable<IMessage> history)
+        {
+            foreach (IMessage message in history)
             {
-                When(@event);
+                if(message is IDomainEvent domainEvent) When(domainEvent);
                 Version++;
             }
         }
-        
-        public IEnumerable<IDomainEvent> GetChanges() => _changes.AsEnumerable();
-        
-        public void ClearChanges() => _changes.Clear();
+
+        public IEnumerable<IDomainEvent> GetDomainEvents() => _domainEvents.ToArray();
+        public IEnumerable<IIntegrationEvent> GetIntegrationEvents() => _integrationEvents.AsEnumerable();
+
+        public void ClearEvents()
+        {
+            _domainEvents.Clear();
+            _integrationEvents.Clear();
+        }
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity?.Handle(@event);
     }

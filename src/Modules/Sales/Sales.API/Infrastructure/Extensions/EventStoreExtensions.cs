@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 ConnectionSettings.Create().KeepReconnecting().DisableTls(),
                 "Sales"
             );
-            
+
             services.AddSingleton(esConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
@@ -39,6 +39,20 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
                     esSubscriptionName,
                     new PostgresDbProjection<SalesContext>(dbContext, ShoppingCartInfoProjection.ProjectAsync)
+                );
+            });
+            
+            services.AddSingleton(provider =>
+            {
+                IEventStoreIntegrationRepository integrationRepository = provider.GetRequiredService<IEventStoreIntegrationRepository>();
+                const string esSubscriptionName = "subscriptionIntegrationEventsPub";
+                
+                return new EventStoreSubscriptionManager
+                (
+                    esConnection,
+                    new EventStoreCheckpointRepository(esConnection, esSubscriptionName),
+                    esSubscriptionName,
+                    new EventStoreDbIntegrationProjection(integrationRepository)
                 );
             });
             

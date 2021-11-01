@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    public record EventMetadata
+    public record MessageMetadata
     {
         public DateTime EffectiveTime { get; init; }
     }

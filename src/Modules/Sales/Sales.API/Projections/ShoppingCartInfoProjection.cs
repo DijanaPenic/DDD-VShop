@@ -12,7 +12,7 @@ namespace VShop.Modules.Sales.API.Projections
 {
     public static class ShoppingCartInfoProjection
     {
-        public static Func<Task> ProjectAsync(SalesContext dbContext, IDomainEvent eventData)
+        public static Func<Task> ProjectAsync(SalesContext dbContext, IMessage eventData)
             => eventData switch
             {
                 ShoppingCartCreatedDomainEvent e => () =>

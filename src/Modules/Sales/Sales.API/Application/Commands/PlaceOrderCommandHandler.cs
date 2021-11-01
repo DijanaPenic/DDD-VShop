@@ -9,6 +9,7 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
@@ -60,6 +61,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
                 if (errorResult.IsSome(out ApplicationError error)) return error;
             }
+            
+            order.Apply(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
             
             await _orderRepository.SaveAsync(order);
 

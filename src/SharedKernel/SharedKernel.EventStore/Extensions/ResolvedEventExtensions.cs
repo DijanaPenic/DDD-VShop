@@ -24,11 +24,11 @@ namespace VShop.SharedKernel.EventStore.Extensions
             return JsonConvert.DeserializeObject<TMessage>(jsonData);
         }
         
-        public static EventMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
+        public static MessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata);
             
-            return JsonConvert.DeserializeObject<EventMetadata>(jsonData);
+            return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
     }
 }

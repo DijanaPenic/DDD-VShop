@@ -37,21 +37,24 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 throw new ArgumentNullException(nameof(aggregate));
 
             string streamName = GetStreamName(aggregate.Id);
-            IDomainEvent[] events = aggregate.GetChanges().ToArray();
+            
+            IDomainEvent[] domainEvents = aggregate.GetDomainEvents().ToArray();
+            IIntegrationEvent[] integrationEvents = aggregate.GetIntegrationEvents().ToArray();
+            IMessage[] allEvents = domainEvents.Concat(integrationEvents.Cast<IMessage>()).ToArray();
 
             await _esConnection.AppendToStreamAsync
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareEventData(events)
+                EventStoreHelper.PrepareEventData(allEvents)
             );
 
-            aggregate.ClearChanges();
+            aggregate.ClearEvents();
             
             // TODO - error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
             // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-            foreach (IDomainEvent @event in events)
-                await _publisher.Publish(@event, PublishStrategy.SyncStopOnException);
+            foreach (IDomainEvent domainEvent in domainEvents)
+                await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
         }
         
         public async Task<bool> ExistsAsync(TKey aggregateId)
@@ -64,7 +67,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         
         public async Task<TA> LoadAsync(TKey aggregateId)
         {
-            List<IDomainEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IDomainEvent>(GetStreamName(aggregateId));
+            List<IMessage> events = await _esConnection.ReadStreamEventsForwardAsync<IMessage>(GetStreamName(aggregateId));
 
             if (events.Count == 0) return default;
             

@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.EventStore.Helpers
         {
             if (messages == null || !messages.Any()) return Array.Empty<EventData>();
 
-            EventMetadata eventMetadata = new() { EffectiveTime = DateTime.UtcNow };
+            MessageMetadata eventMetadata = new() { EffectiveTime = DateTime.UtcNow };
 
             EventData[] events = messages
                 .Select(

@@ -27,22 +27,25 @@ namespace VShop.SharedKernel.PostgresDb
             _projector = projector;
         }
 
-        public async Task ProjectAsync(IDomainEvent eventData, EventMetadata eventMetadata)
+        public async Task ProjectAsync(IMessage message, MessageMetadata metadata)
         {
-            Func<Task> handler = _projector(_dbContext, eventData);
+            if(message is IDomainEvent domainEvent)
+            {
+                Func<Task> handler = _projector(_dbContext, domainEvent);
             
-            if (handler == null) return;
+                if (handler == null) return;
             
-            Logger.Debug("Projecting {EventData}", eventData);
+                Logger.Debug("Projecting domain event: {Message}", domainEvent);
 
-            await handler();
-            await _dbContext.SaveChangesAsync(eventMetadata.EffectiveTime);
+                await handler();
+                await _dbContext.SaveChangesAsync(metadata.EffectiveTime);
+            }
         }
         
         public delegate Func<Task> Projector
         (
             TDbContext dbContext,
-            IDomainEvent eventData
+            IMessage eventData
         );
     }
 }

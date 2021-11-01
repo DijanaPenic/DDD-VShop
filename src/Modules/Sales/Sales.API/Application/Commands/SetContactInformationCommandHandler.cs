@@ -18,16 +18,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand, Success>
     {
         private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
-        private readonly IEventStoreIntegrationRepository _integrationRepository;
-        
-        public SetContactInformationCommandHandler
-        (
-            IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository,
-            IEventStoreIntegrationRepository integrationRepository
-        )
+
+        public SetContactInformationCommandHandler(IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         {
             _shoppingCartRepository = shoppingCartRepository;
-            _integrationRepository = integrationRepository;
         }
         
         public async Task<OneOf<Success, ApplicationError>> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)
@@ -46,15 +40,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             if (errorResult.IsSome(out ApplicationError error)) return error;
 
             await _shoppingCartRepository.SaveAsync(shoppingCart);
-
-            // TODO - need to remove this code after testing
-            await _integrationRepository.SaveAsync
-            (
-                new OrderPlacedIntegrationEvent
-                {
-                    OrderId = Guid.Empty
-                }
-            );
 
             return new Success();
         }
