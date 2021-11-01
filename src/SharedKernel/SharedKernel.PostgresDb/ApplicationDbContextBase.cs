@@ -15,6 +15,11 @@ namespace VShop.SharedKernel.PostgresDb
         {
         }
         
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return SaveChangesAsync(DateTime.UtcNow, cancellationToken);
+        }
+        
         public Task<int> SaveChangesAsync(DateTime effectiveTime, CancellationToken cancellationToken = default)
         {
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
