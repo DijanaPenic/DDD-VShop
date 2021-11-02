@@ -4,7 +4,6 @@ using EventStore.ClientAPI;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 
 using ILogger = Serilog.ILogger;
 
@@ -34,20 +33,16 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
             Logger.Debug("Starting the subscription manager {SubscriptionName}...", ESSubscriptionName);
 
-            long? position = await ESCheckpointRepository.GetCheckpointAsync();
-            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", ESSubscriptionName, position);
+            long? checkpoint = await ESCheckpointRepository.GetCheckpointAsync();
+            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", ESSubscriptionName, checkpoint);
 
             ESSubscription = ESConnection.SubscribeToAllFrom
             (
-                GetPosition(),
+                GetPosition(checkpoint),
                 settings,
                 EventAppearedAsync
             );
             Logger.Debug("Subscribed to $all stream in {ESSubscriptionName}", ESSubscriptionName);
-
-            Position? GetPosition() => position.HasValue
-                ? new Position(position.Value, position.Value)
-                : AllCheckpoint.AllStart;
         }
     }
 }

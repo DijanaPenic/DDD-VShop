@@ -77,5 +77,10 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 throw;
             }
         }
+        
+        protected static Position? GetPosition(long? checkpoint) 
+        => checkpoint.HasValue
+            ? new Position(checkpoint.Value, checkpoint.Value)
+            : AllCheckpoint.AllStart;
     }
 }
