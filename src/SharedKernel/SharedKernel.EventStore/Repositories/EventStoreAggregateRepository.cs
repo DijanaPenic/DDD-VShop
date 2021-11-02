@@ -18,16 +18,16 @@ namespace VShop.SharedKernel.EventStore.Repositories
         where TKey : ValueObject
         where TA : AggregateRoot<TKey>
     {
-        private readonly IEventStoreConnection _esConnection;
+        private readonly IEventStoreConnection _eventStoreConnection;
         private readonly Publisher _publisher;
 
         public EventStoreAggregateRepository
         (
-            IEventStoreConnection esConnection,
+            IEventStoreConnection eventStoreConnection,
             Publisher publisher
         )
         {
-            _esConnection = esConnection;
+            _eventStoreConnection = eventStoreConnection;
             _publisher = publisher;
         }
         
@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             IIntegrationEvent[] integrationEvents = aggregate.GetIntegrationEvents().ToArray();
             IMessage[] allEvents = domainEvents.Concat(integrationEvents.Cast<IMessage>()).ToArray();
 
-            await _esConnection.AppendToStreamAsync
+            await _eventStoreConnection.AppendToStreamAsync
             (
                 streamName,
                 aggregate.Version,
@@ -60,7 +60,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<bool> ExistsAsync(TKey aggregateId)
         {
             string streamName = GetAggregateStreamName(aggregateId);
-            EventReadResult result = await _esConnection.ReadEventAsync(streamName, 1, false);
+            EventReadResult result = await _eventStoreConnection.ReadEventAsync(streamName, 1, false);
             
             return result.Status != EventReadStatus.NoStream;
         }
@@ -68,7 +68,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<TA> LoadAsync(TKey aggregateId)
         {
             string streamName = GetAggregateStreamName(aggregateId);
-            List<IMessage> events = await _esConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
+            List<IMessage> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
             if (events.Count == 0) return default;
             
@@ -79,6 +79,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
         }
 
         private string GetAggregateStreamName(TKey aggregateId)
-            => $"{_esConnection.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
+            => $"{_eventStoreConnection.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
     }
 }

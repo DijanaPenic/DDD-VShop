@@ -21,14 +21,14 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
         public static void AddEventStoreServices(this IServiceCollection services, string connectionString)
         {
             // TODO - switch to gRPC
-            IEventStoreConnection esConnection = EventStoreConnection.Create
+            IEventStoreConnection eventStoreConnection = EventStoreConnection.Create
             (
                 connectionString,
                 ConnectionSettings.Create().KeepReconnecting().DisableTls(),
                 "Sales"
             );
 
-            services.AddSingleton(esConnection);
+            services.AddSingleton(eventStoreConnection);
             services.AddSingleton(typeof(IEventStoreAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IEventStoreIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddHostedService<EventStoreService>();
@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // Read model projections
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider => new EventStoreAllCatchUpSubscriptionManager
             (
-                esConnection,
+                eventStoreConnection,
                 "ReadModels",
                 new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
             ));
@@ -48,9 +48,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
-                    esConnection,
+                    eventStoreConnection,
                     "IntegrationEventsPub",
-                    Filter.StreamId.Prefix($"{esConnection.ConnectionName}/aggregate".ToSnakeCase()),
+                    Filter.StreamId.Prefix($"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase()),
                 new IntegrationEventProjectionToEventStore(integrationRepository)
                 );
             });
@@ -62,7 +62,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
-                    esConnection,
+                    eventStoreConnection,
                     "IntegrationEventsSub",
                     Filter.StreamId.Regex(new Regex(@".*\/integration$")),
                     new IntegrationEventProjectionPublisher(publisher)

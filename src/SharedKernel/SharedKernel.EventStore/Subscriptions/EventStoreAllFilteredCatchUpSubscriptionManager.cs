@@ -12,17 +12,17 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
     public class EventStoreAllFilteredCatchUpSubscriptionManager : EventStoreSubscriptionManager
     {
         private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
-        private readonly Filter _esSubscriptionFilter;
+        private readonly Filter _subscriptionFilter;
 
         public EventStoreAllFilteredCatchUpSubscriptionManager
         (
-            IEventStoreConnection esConnection,
-            string esSubscriptionName,
-            Filter esSubscriptionFilter,
-            params ISubscription[] esSubscriptionHandlers
-        ) : base(esConnection, esSubscriptionName, esSubscriptionHandlers)
+            IEventStoreConnection eventStoreConnection,
+            string subscriptionName,
+            Filter subscriptionFilter,
+            params ISubscription[] subscriptionHandlers
+        ) : base(eventStoreConnection, subscriptionName, subscriptionHandlers)
         {
-            _esSubscriptionFilter = esSubscriptionFilter;
+            _subscriptionFilter = subscriptionFilter;
         }
 
         public override async Task StartAsync()
@@ -34,22 +34,22 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 Logger.IsEnabled(LogEventLevel.Debug),
             false, 
                 1000,
-                ESSubscriptionName
+                SubscriptionName
             );
 
-            Logger.Debug("Starting the subscription manager {ESSubscriptionName}...", ESSubscriptionName);
+            Logger.Debug("Starting the subscription manager {ESSubscriptionName}...", SubscriptionName);
 
-            long? checkpoint = await ESCheckpointRepository.GetCheckpointAsync();
-            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", ESSubscriptionName, checkpoint);
+            long? checkpoint = await CheckpointRepository.GetCheckpointAsync();
+            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", SubscriptionName, checkpoint);
 
-            ESSubscription = ESConnection.FilteredSubscribeToAllFrom
+            EventStoreSubscription = EventStoreConnection.FilteredSubscribeToAllFrom
             (
                 GetPosition(checkpoint),
-                _esSubscriptionFilter,
+                _subscriptionFilter,
                 settings,
                 EventAppearedAsync
             );
-            Logger.Debug("Subscribed to filtered stream in {ESSubscriptionName}", ESSubscriptionName);
+            Logger.Debug("Subscribed to filtered stream in {ESSubscriptionName}", SubscriptionName);
         }
     }
 }

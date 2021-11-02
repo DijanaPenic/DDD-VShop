@@ -13,22 +13,22 @@ namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreCheckpointRepository : IEventStoreCheckpointRepository
     {       
-        private readonly IEventStoreConnection _esConnection;
-        private readonly string _esCheckpointStreamName;
+        private readonly IEventStoreConnection _eventStoreConnection;
+        private readonly string _checkpointStreamName;
 
         public EventStoreCheckpointRepository
         (
-            IEventStoreConnection esConnection,
+            IEventStoreConnection eventStoreConnection,
             string esSubscriptionName
         )
         {
-            _esConnection = esConnection;
-            _esCheckpointStreamName = $"{esConnection.ConnectionName}/checkpoint/{esSubscriptionName}".ToSnakeCase();
+            _eventStoreConnection = eventStoreConnection;
+            _checkpointStreamName = $"{eventStoreConnection.ConnectionName}/checkpoint/{esSubscriptionName}".ToSnakeCase();
         }
 
         public async Task<long?> GetCheckpointAsync()
         {
-            StreamEventsSlice slice = await _esConnection.ReadStreamEventsBackwardAsync(_esCheckpointStreamName, -1, 1, false);
+            StreamEventsSlice slice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(_checkpointStreamName, -1, 1, false);
             ResolvedEvent eventData = slice.Events.FirstOrDefault();
 
             if (!eventData.Equals(default(ResolvedEvent))) return eventData.DeserializeData<Checkpoint>()?.Position;
@@ -52,9 +52,9 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 null
             );
 
-            return _esConnection.AppendToStreamAsync
+            return _eventStoreConnection.AppendToStreamAsync
             (
-                _esCheckpointStreamName,
+                _checkpointStreamName,
                 ExpectedVersion.Any,
                 @event
             );
@@ -62,12 +62,12 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         private async Task SetStreamMaxCountAsync()
         {
-            StreamMetadataResult metadata = await _esConnection.GetStreamMetadataAsync(_esCheckpointStreamName);
+            StreamMetadataResult metadata = await _eventStoreConnection.GetStreamMetadataAsync(_checkpointStreamName);
 
             if (!metadata.StreamMetadata.MaxCount.HasValue)
-                await _esConnection.SetStreamMetadataAsync
+                await _eventStoreConnection.SetStreamMetadataAsync
                 (
-                    _esCheckpointStreamName, 
+                    _checkpointStreamName, 
                     ExpectedVersion.Any,
                     StreamMetadata.Create(1)
                 );

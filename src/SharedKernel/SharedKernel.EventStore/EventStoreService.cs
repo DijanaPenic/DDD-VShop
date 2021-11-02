@@ -11,32 +11,32 @@ namespace VShop.SharedKernel.EventStore
 {
     public class EventStoreService : IHostedService
     {
-        private readonly IEventStoreConnection _esConnection;
-        private readonly IEnumerable<IEventStoreSubscriptionManager> _esSubscriptionManagers;
+        private readonly IEventStoreConnection _eventStoreConnection;
+        private readonly IEnumerable<IEventStoreSubscriptionManager> _eventStoreSubscriptionManagers;
 
         public EventStoreService
         (
-            IEventStoreConnection esConnection,
-            IEnumerable<IEventStoreSubscriptionManager> esSubscriptionManagers
+            IEventStoreConnection eventStoreConnection,
+            IEnumerable<IEventStoreSubscriptionManager> eventStoreSubscriptionManagers
         )
         {
-            _esConnection = esConnection;
-            _esSubscriptionManagers = esSubscriptionManagers;
+            _eventStoreConnection = eventStoreConnection;
+            _eventStoreSubscriptionManagers = eventStoreSubscriptionManagers;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _esConnection.ConnectAsync();
-            await Task.WhenAll(_esSubscriptionManagers.Select(sm => sm.StartAsync()));
+            await _eventStoreConnection.ConnectAsync();
+            await Task.WhenAll(_eventStoreSubscriptionManagers.Select(sm => sm.StartAsync()));
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            foreach(IEventStoreSubscriptionManager esSubscriptionManager in _esSubscriptionManagers)
+            foreach(IEventStoreSubscriptionManager esSubscriptionManager in _eventStoreSubscriptionManagers)
             {
                 await esSubscriptionManager.StopAsync();
             }
-            _esConnection.Close();
+            _eventStoreConnection.Close();
         }
     }
 }

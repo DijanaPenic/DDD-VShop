@@ -17,33 +17,33 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 {
     public abstract class EventStoreSubscriptionManager : IEventStoreSubscriptionManager
     {
-        private readonly ISubscription[] _esSubscriptionHandlers;
+        private readonly ISubscription[] _subscriptionHandlers;
         private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
         
-        protected readonly IEventStoreCheckpointRepository ESCheckpointRepository;
-        protected readonly IEventStoreConnection ESConnection;
-        protected readonly string ESSubscriptionName;
-        protected EventStoreCatchUpSubscription ESSubscription;
+        protected readonly IEventStoreCheckpointRepository CheckpointRepository;
+        protected readonly IEventStoreConnection EventStoreConnection;
+        protected readonly string SubscriptionName;
+        protected EventStoreCatchUpSubscription EventStoreSubscription;
 
         protected EventStoreSubscriptionManager
         (
-            IEventStoreConnection esConnection, 
-            string esSubscriptionName,
-            ISubscription[] esSubscriptionHandlers
+            IEventStoreConnection eventStoreConnection, 
+            string subscriptionName,
+            ISubscription[] subscriptionHandlers
         )
         {
-            _esSubscriptionHandlers = esSubscriptionHandlers;
+            _subscriptionHandlers = subscriptionHandlers;
 
-            ESConnection = esConnection;
-            ESSubscriptionName = $"{esConnection.ConnectionName}{esSubscriptionName}"; // Need to prefix with the name of the bounded context
-            ESCheckpointRepository = new EventStoreCheckpointRepository(esConnection, esSubscriptionName);
+            EventStoreConnection = eventStoreConnection;
+            SubscriptionName = $"{eventStoreConnection.ConnectionName}{subscriptionName}"; // Need to prefix with the name of the bounded context
+            CheckpointRepository = new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName); // TODO - move to Startup (DI)
         }
         
         public abstract Task StartAsync();
         
         public Task StopAsync()
         {
-            ESSubscription.Stop();
+            EventStoreSubscription.Stop();
 
             return Task.CompletedTask;
         }
@@ -63,8 +63,8 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
             try
             {
-                await Task.WhenAll(_esSubscriptionHandlers.Select(sh => sh.ProjectAsync(message, metadata)));
-                await ESCheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
+                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(message, metadata)));
+                await CheckpointRepository.StoreCheckpointAsync(resolvedEvent.OriginalPosition?.CommitPosition);
             }
             catch (Exception ex)
             {

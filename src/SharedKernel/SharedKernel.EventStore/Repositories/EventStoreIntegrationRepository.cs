@@ -14,13 +14,13 @@ namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreIntegrationRepository : IEventStoreIntegrationRepository
     {
-        private readonly IEventStoreConnection _esConnection;
-        private readonly string _esIntegrationStreamName;
+        private readonly IEventStoreConnection _eventStoreConnection;
+        private readonly string _integrationStreamName;
 
-        public EventStoreIntegrationRepository(IEventStoreConnection esConnection)
+        public EventStoreIntegrationRepository(IEventStoreConnection eventStoreConnection)
         {
-            _esConnection = esConnection;
-            _esIntegrationStreamName = $"{_esConnection.ConnectionName}/integration".ToSnakeCase();
+            _eventStoreConnection = eventStoreConnection;
+            _integrationStreamName = $"{_eventStoreConnection.ConnectionName}/integration".ToSnakeCase();
         }
         
         public async Task SaveAsync(IIntegrationEvent @event)
@@ -28,9 +28,9 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
 
-            await _esConnection.AppendToStreamAsync
+            await _eventStoreConnection.AppendToStreamAsync
             (
-                _esIntegrationStreamName,
+                _integrationStreamName,
                 ExpectedVersion.Any,
                 EventStoreHelper.PrepareEventData(messages: @event)
             );
@@ -38,7 +38,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         public async Task<IEnumerable<IIntegrationEvent>> LoadAsync()
         {
-            List<IIntegrationEvent> events = await _esConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(_esIntegrationStreamName);
+            List<IIntegrationEvent> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(_integrationStreamName);
 
             return events.AsEnumerable();
         }

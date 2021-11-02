@@ -11,7 +11,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
     {
         public static async Task<List<TMessage>> ReadStreamEventsForwardAsync<TMessage>
         (
-            this IEventStoreConnection esConnection,
+            this IEventStoreConnection eventStoreConnection,
             string streamName
         ) where TMessage : class, IMessage
         {
@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
 
             do
             {
-                StreamEventsSlice slice = await esConnection.ReadStreamEventsForwardAsync
+                StreamEventsSlice slice = await eventStoreConnection.ReadStreamEventsForwardAsync
                 (
                     streamName,
                     position,

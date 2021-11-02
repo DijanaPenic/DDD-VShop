@@ -15,10 +15,10 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
         public EventStoreAllCatchUpSubscriptionManager
         (
-            IEventStoreConnection esConnection,
-            string esSubscriptionName,
-            params ISubscription[] esSubscriptionHandlers
-        ): base (esConnection, esSubscriptionName, esSubscriptionHandlers) { }
+            IEventStoreConnection eventStoreConnection,
+            string subscriptionName,
+            params ISubscription[] subscriptionHandlers
+        ): base (eventStoreConnection, subscriptionName, subscriptionHandlers) { }
 
         public override async Task StartAsync()
         {
@@ -28,21 +28,21 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 500,
                 Logger.IsEnabled(LogEventLevel.Debug),
             false, 
-                ESSubscriptionName
+                SubscriptionName
             );
 
-            Logger.Debug("Starting the subscription manager {SubscriptionName}...", ESSubscriptionName);
+            Logger.Debug("Starting the subscription manager {SubscriptionName}...", SubscriptionName);
 
-            long? checkpoint = await ESCheckpointRepository.GetCheckpointAsync();
-            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", ESSubscriptionName, checkpoint);
+            long? checkpoint = await CheckpointRepository.GetCheckpointAsync();
+            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", SubscriptionName, checkpoint);
 
-            ESSubscription = ESConnection.SubscribeToAllFrom
+            EventStoreSubscription = EventStoreConnection.SubscribeToAllFrom
             (
                 GetPosition(checkpoint),
                 settings,
                 EventAppearedAsync
             );
-            Logger.Debug("Subscribed to $all stream in {ESSubscriptionName}", ESSubscriptionName);
+            Logger.Debug("Subscribed to $all stream in {ESSubscriptionName}", SubscriptionName);
         }
     }
 }
