@@ -9,8 +9,8 @@ using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.EventSourcing.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 

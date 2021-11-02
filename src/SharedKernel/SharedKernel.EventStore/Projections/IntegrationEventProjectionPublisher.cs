@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
 
 using ILogger = Serilog.ILogger;
 

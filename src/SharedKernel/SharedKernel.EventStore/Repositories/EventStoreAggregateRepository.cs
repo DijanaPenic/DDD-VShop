@@ -11,6 +11,7 @@ using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {

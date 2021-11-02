@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using MediatR;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging
+namespace VShop.SharedKernel.Infrastructure.Messaging.Publishing
 {
     public class ApplicationMediator : Mediator
     {
