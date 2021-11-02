@@ -79,7 +79,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 );
             });
 
-            EventMappings.MapEventTypes();
+            MessageMappings.MapEventTypes();
         }
     }
 }

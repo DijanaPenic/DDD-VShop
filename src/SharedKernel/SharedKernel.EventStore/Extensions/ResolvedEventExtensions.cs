@@ -11,7 +11,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
     {
         public static object DeserializeData(this ResolvedEvent resolvedEvent)
         {
-            Type dataType = EventTypeMapper.ToType(resolvedEvent.Event.EventType);
+            Type dataType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
             
             return JsonConvert.DeserializeObject(jsonData, dataType);

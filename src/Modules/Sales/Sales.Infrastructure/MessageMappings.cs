@@ -1,11 +1,11 @@
 ﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 
-using static VShop.SharedKernel.EventSourcing.EventTypeMapper;
+using static VShop.SharedKernel.EventSourcing.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.Infrastructure
 {
-    public static class EventMappings
+    public static class MessageMappings
     {
         public static void MapEventTypes()
         {

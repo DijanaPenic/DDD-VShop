@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace VShop.SharedKernel.EventSourcing
 {
-    public static class EventTypeMapper
+    public static class MessageTypeMapper
     {
         private static readonly Dictionary<Type, string> NamesByType = new();
         private static readonly Dictionary<string, Type> TypesByName = new();
