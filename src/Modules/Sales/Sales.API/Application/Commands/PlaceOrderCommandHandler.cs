@@ -1,14 +1,14 @@
-﻿using System;
+﻿using OneOf;
+using OneOf.Types;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OneOf;
-using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.Application.Commands;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.Ordering;
@@ -17,9 +17,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Success<Order>>
     {
-        private readonly IEventStoreAggregateRepository<Order, EntityId> _orderRepository;
+        private readonly IAggregateRepository<Order, EntityId> _orderRepository;
         
-        public PlaceOrderCommandHandler(IEventStoreAggregateRepository<Order, EntityId> orderRepository)
+        public PlaceOrderCommandHandler(IAggregateRepository<Order, EntityId> orderRepository)
         {
             _orderRepository = orderRepository;
         }

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace VShop.SharedKernel.EventStore.Repositories.Contracts
+namespace VShop.SharedKernel.EventSourcing.Contracts
 {
-    public interface IEventStoreCheckpointRepository
+    public interface ICheckpointRepository
     {
         Task<long?> GetCheckpointAsync();
         Task StoreCheckpointAsync(long? checkpoint);

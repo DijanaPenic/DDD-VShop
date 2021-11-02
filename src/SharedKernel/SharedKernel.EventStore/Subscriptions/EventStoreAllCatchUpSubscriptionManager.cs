@@ -3,7 +3,7 @@ using Serilog.Events;
 using EventStore.ClientAPI;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.EventSourcing.Contracts;
 
 using ILogger = Serilog.ILogger;
 
@@ -16,9 +16,10 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         public EventStoreAllCatchUpSubscriptionManager
         (
             IEventStoreConnection eventStoreConnection,
+            ICheckpointRepository checkpointRepository,
             string subscriptionName,
             params ISubscription[] subscriptionHandlers
-        ): base (eventStoreConnection, subscriptionName, subscriptionHandlers) { }
+        ): base (eventStoreConnection, checkpointRepository, subscriptionName, subscriptionHandlers) { }
 
         public override async Task StartAsync()
         {

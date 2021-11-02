@@ -18,9 +18,9 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.SharedKernel.Application.Events;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.EventSourcing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
@@ -32,14 +32,14 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         private readonly ILogger _logger;
         private readonly SalesContext _dbContext;
         private readonly ICommandBus _commandBus;
-        private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public OrderFulfillmentProcessManager
         (
             ILogger logger,
             ICommandBus commandBus,
             SalesContext dbContext,
-            IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository
         )
         {
             _logger = logger;

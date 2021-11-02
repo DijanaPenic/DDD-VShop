@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing

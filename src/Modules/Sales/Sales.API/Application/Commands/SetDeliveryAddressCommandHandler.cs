@@ -1,23 +1,23 @@
-﻿using System;
+﻿using OneOf;
+using OneOf.Types;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OneOf;
-using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.Application.Commands;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class SetDeliveryAddressCommandHandler : ICommandHandler<SetDeliveryAddressCommand, Success>
     {
-        private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public SetDeliveryAddressCommandHandler(IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public SetDeliveryAddressCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         {
             _shoppingCartRepository = shoppingCartRepository;
         }

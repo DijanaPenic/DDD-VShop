@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {
-    public class EventStoreIntegrationRepository : IEventStoreIntegrationRepository
+    public class EventStoreIntegrationRepository : IIntegrationRepository
     {
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly string _integrationStreamName;

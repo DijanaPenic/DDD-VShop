@@ -5,9 +5,9 @@ using Serilog;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
@@ -20,14 +20,15 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         private readonly ISubscription[] _subscriptionHandlers;
         private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
         
-        protected readonly IEventStoreCheckpointRepository CheckpointRepository;
+        protected readonly ICheckpointRepository CheckpointRepository;
         protected readonly IEventStoreConnection EventStoreConnection;
         protected readonly string SubscriptionName;
         protected EventStoreCatchUpSubscription EventStoreSubscription;
 
         protected EventStoreSubscriptionManager
         (
-            IEventStoreConnection eventStoreConnection, 
+            IEventStoreConnection eventStoreConnection,
+            ICheckpointRepository checkpointRepository,
             string subscriptionName,
             ISubscription[] subscriptionHandlers
         )
@@ -36,7 +37,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
             EventStoreConnection = eventStoreConnection;
             SubscriptionName = $"{eventStoreConnection.ConnectionName}{subscriptionName}"; // Need to prefix with the name of the bounded context
-            CheckpointRepository = new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName); // TODO - move to Startup (DI)
+            CheckpointRepository = checkpointRepository;
         }
         
         public abstract Task StartAsync();

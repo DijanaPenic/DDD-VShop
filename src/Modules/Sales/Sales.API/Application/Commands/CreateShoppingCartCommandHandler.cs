@@ -6,9 +6,9 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
+using VShop.SharedKernel.Application.Commands;
+using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
@@ -16,9 +16,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<ShoppingCart>>
     {
-        private readonly IEventStoreAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
-        public CreateShoppingCartCommandHandler(IEventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public CreateShoppingCartCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         {
             _shoppingCartRepository = shoppingCartRepository;
         }

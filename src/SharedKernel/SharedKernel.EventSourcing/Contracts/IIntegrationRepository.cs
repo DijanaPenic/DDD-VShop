@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventStore.Repositories.Contracts
+// TODO - is this correct project for this class
+namespace VShop.SharedKernel.EventSourcing.Contracts
 {
-    public interface IEventStoreIntegrationRepository
+    public interface IIntegrationRepository
     {
         Task SaveAsync(IIntegrationEvent @event);
         Task<IEnumerable<IIntegrationEvent>> LoadAsync();

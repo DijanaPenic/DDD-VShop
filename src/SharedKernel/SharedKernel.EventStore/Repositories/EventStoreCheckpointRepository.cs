@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.EventSourcing.Contracts;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {
-    public class EventStoreCheckpointRepository : IEventStoreCheckpointRepository
+    public class EventStoreCheckpointRepository : ICheckpointRepository
     {       
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly string _checkpointStreamName;
@@ -19,11 +19,11 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public EventStoreCheckpointRepository
         (
             IEventStoreConnection eventStoreConnection,
-            string esSubscriptionName
+            string subscriptionName
         )
         {
             _eventStoreConnection = eventStoreConnection;
-            _checkpointStreamName = $"{eventStoreConnection.ConnectionName}/checkpoint/{esSubscriptionName}".ToSnakeCase();
+            _checkpointStreamName = $"{eventStoreConnection.ConnectionName}/checkpoint/{subscriptionName}".ToSnakeCase();
         }
 
         public async Task<long?> GetCheckpointAsync()
