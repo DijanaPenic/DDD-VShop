@@ -1,7 +1,6 @@
 ﻿using EventStore.ClientAPI;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.PostgresDb.Projections;
@@ -11,6 +10,7 @@ using VShop.SharedKernel.EventStore.Repositories.Contracts;
 using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 
@@ -20,6 +20,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
     {
         public static void AddEventStoreServices(this IServiceCollection services, string connectionString)
         {
+            // TODO - switch to gRPC
             IEventStoreConnection esConnection = EventStoreConnection.Create
             (
                 connectionString,
@@ -33,29 +34,23 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddHostedService<EventStoreService>();
             
             // Read model projections
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
-            {
-                const string esSubscriptionName = "ReadModels";
-
-                return new EventStoreAllCatchUpSubscriptionManager
-                (
-                    esConnection,
-                    esSubscriptionName,
-                    new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
-                );
-            });
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider => new EventStoreAllCatchUpSubscriptionManager
+            (
+                esConnection,
+                "ReadModels",
+                new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
+            ));
             
             // Publish integration events from the current bounded context 
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 IEventStoreIntegrationRepository integrationRepository = provider.GetRequiredService<IEventStoreIntegrationRepository>();
-                const string esSubscriptionName = "IntegrationEventsPub";
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     esConnection,
-                    esSubscriptionName,
-                    Filter.StreamId.Prefix(esConnection.ConnectionName),
+                    "IntegrationEventsPub",
+                    Filter.StreamId.Prefix($"{esConnection.ConnectionName}/aggregate".ToSnakeCase()),
                 new IntegrationEventProjectionToEventStore(integrationRepository)
                 );
             });
@@ -64,12 +59,11 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 Publisher publisher = provider.GetRequiredService<Publisher>();
-                const string esSubscriptionName = "IntegrationEventsSub";
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     esConnection,
-                    esSubscriptionName,
+                    "IntegrationEventsSub",
                     Filter.StreamId.Regex(new Regex(@".*\/integration$")),
                     new IntegrationEventProjectionPublisher(publisher)
                 );
