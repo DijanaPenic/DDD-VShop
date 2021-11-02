@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace VShop.SharedKernel.Infrastructure.Helpers
 {
-    public static class GuidHelper
+    public static class SequentialGuid
     {
         private static SequentialGuidValueGenerator _sequentialGuidGenerator;
 
@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.Infrastructure.Helpers
             }
         }
 
-        public static Guid NewSequentialGuid() => SequentialGuidGenerator.Next(null!);
+        public static Guid Create() => SequentialGuidGenerator.Next(null!);
 
         public static bool IsNullOrEmpty(object value)
         {

@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.EventStore.Helpers
                     @event =>
                         new EventData
                         (
-                            GuidHelper.NewSequentialGuid(), // TODO - idempotency
+                            SequentialGuid.Create(), // TODO - idempotency
                             MessageTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),

@@ -52,7 +52,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             _logger.Information("Handling domain event: {DomainEvent}", nameof(ShoppingCartCheckoutRequestedDomainEvent));
 
-            Guid orderId = GuidHelper.NewSequentialGuid();
+            Guid orderId = SequentialGuid.Create();
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(@event.ShoppingCartId));
             
             // Create a new OrderFulfillment process in the database

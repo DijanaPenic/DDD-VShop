@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             (
                 new ShoppingCartCreatedDomainEvent
                 {
-                    ShoppingCartId = GuidHelper.NewSequentialGuid(),
+                    ShoppingCartId = SequentialGuid.Create(),
                     CustomerId = customerId,
                     CustomerDiscount = customerDiscount
                 }
@@ -62,7 +62,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     new ShoppingCartProductAddedDomainEvent
                     {
                         ShoppingCartId = Id,
-                        ShoppingCartItemId = GuidHelper.NewSequentialGuid(),
+                        ShoppingCartItemId = SequentialGuid.Create(),
                         ProductId = productId,
                         Quantity = quantity,
                         UnitPrice = unitPrice

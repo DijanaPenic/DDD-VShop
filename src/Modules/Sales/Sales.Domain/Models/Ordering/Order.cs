@@ -75,7 +75,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 new OrderItemAddedDomainEvent
                 {
                     OrderId = Id,
-                    OrderItemId = GuidHelper.NewSequentialGuid(),
+                    OrderItemId = SequentialGuid.Create(),
                     ProductId = productId,
                     Quantity = quantity,
                     UnitPrice = unitPrice

@@ -6,6 +6,6 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
 {
     public static class GuidExtensions
     {
-        public static bool IsNullOrEmpty(this Guid value) => GuidHelper.IsNullOrEmpty(value);
+        public static bool IsNullOrEmpty(this Guid value) => SequentialGuid.IsNullOrEmpty(value);
     }
 }

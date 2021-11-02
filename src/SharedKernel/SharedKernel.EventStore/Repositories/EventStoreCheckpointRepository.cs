@@ -45,7 +45,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             EventData @event = new
             (
-                GuidHelper.NewSequentialGuid(),
+                SequentialGuid.Create(),
                 "$checkpoint",
                 true,
                 Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(checkpointData)),
