@@ -10,6 +10,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -24,7 +25,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
         
         public async Task<OneOf<Success, ApplicationError>> Handle(DeleteShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
+            (
+                EntityId.Create(command.ShoppingCartId),
+                command.MessageId,
+                command.CorrelationId
+            );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
 
             Option<ApplicationError> errorResult = shoppingCart.RequestDelete();
@@ -37,7 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record DeleteShoppingCartCommand : ICommand<Success>
+    public record DeleteShoppingCartCommand : BaseCommand<Success>
     {
         public Guid ShoppingCartId { get; set; }
     }

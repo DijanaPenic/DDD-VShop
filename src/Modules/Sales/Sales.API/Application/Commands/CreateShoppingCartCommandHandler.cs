@@ -6,6 +6,7 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.EventSourcing.Contracts;
@@ -30,8 +31,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.CustomerId),
                 command.CustomerDiscount,
-                Guid.Empty,
-                Guid.Empty
+                command.MessageId,
+                command.CorrelationId
             );
 
             foreach (ShoppingCartItemDto shoppingCartItem in command.ShoppingCartItems)
@@ -52,7 +53,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record CreateShoppingCartCommand : ICommand<Success<ShoppingCart>>
+    public record CreateShoppingCartCommand : BaseCommand<Success<ShoppingCart>>
     {
         public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; set; }

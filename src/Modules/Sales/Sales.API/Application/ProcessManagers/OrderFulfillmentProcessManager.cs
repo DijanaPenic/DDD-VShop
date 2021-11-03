@@ -88,7 +88,9 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                     ProductId = sci.Id,
                     Quantity = sci.Quantity,
                     UnitPrice = sci.UnitPrice
-                }).ToArray()
+                }).ToArray(),
+                CausationId = @event.MessageId,
+                CorrelationId = @event.CorrelationId
             };
 
             // TODO - idempo. - won't be a problem if I start using idempo. EntityId

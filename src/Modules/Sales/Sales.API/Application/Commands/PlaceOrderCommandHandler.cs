@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.EventSourcing.Contracts;
@@ -48,8 +49,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     command.StateProvince,
                     command.StreetAddress
                 ),
-                Guid.Empty, // TODO - need to pass real values
-                Guid.Empty
+                command.MessageId,
+                command.CorrelationId
             );
 
             foreach (OrderItemDto orderItem in command.OrderItems)
@@ -72,7 +73,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record PlaceOrderCommand : ICommand<Success<Order>>
+    public record PlaceOrderCommand : BaseCommand<Success<Order>>
     {
         public Guid OrderId { get; init; }
         public decimal DeliveryCost { get; init; }
