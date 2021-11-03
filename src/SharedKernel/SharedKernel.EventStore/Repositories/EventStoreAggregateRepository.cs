@@ -71,7 +71,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             string streamName = GetAggregateStreamName(aggregateId);
             List<IMessage> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
-            if (events.Count > 0) return default;
+            if (events.Count is 0) return default;
                 
             TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true);
             if (aggregate is null)
