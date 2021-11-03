@@ -52,9 +52,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             _logger.Information("Handling domain event: {DomainEvent}", nameof(ShoppingCartCheckoutRequestedDomainEvent));
 
+            // TODO - idempo.
             Guid orderId = SequentialGuid.Create();
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(@event.ShoppingCartId));
             
+            // TODO - idempo.
             // Create a new OrderFulfillment process in the database
             _dbContext.OrderFulfillmentProcesses.Add(new OrderFulfillmentProcess
             {
@@ -89,6 +91,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 }).ToArray()
             };
 
+            // TODO - idempo. - won't be a problem if I start using idempo. EntityId
             OneOf<Success<Order>, ApplicationError> placeOrderResult = await _commandBus.SendAsync(placeOrderCommand);
             if (placeOrderResult.IsT1) await TerminateProcessAsync(orderId, placeOrderResult.AsT1.ToString(), cancellationToken);
         }
