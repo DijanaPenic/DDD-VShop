@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderStatusSetToCancelledDomainEvent : IDomainEvent
+    public record OrderStatusSetToCancelledDomainEvent : BaseDomainEvent
     {
         public Guid OrderId { get; init; }
     }

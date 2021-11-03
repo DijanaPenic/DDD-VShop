@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderItemAddedDomainEvent : IDomainEvent
+    public record OrderItemAddedDomainEvent : BaseDomainEvent
     {
         public Guid OrderId { get; init; }
         public Guid OrderItemId { get; init; }

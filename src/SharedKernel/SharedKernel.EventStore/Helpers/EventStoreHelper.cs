@@ -17,8 +17,6 @@ namespace VShop.SharedKernel.EventStore.Helpers
         {
             if (messages == null || !messages.Any()) return Array.Empty<EventData>();
 
-            MessageMetadata eventMetadata = new() { EffectiveTime = DateTime.UtcNow };
-
             EventData[] events = messages
                 .Select(
                     @event =>
@@ -28,7 +26,7 @@ namespace VShop.SharedKernel.EventStore.Helpers
                             MessageTypeMapper.ToName(@event.GetType()),
                             true,
                             Serialize(@event),
-                            Serialize(eventMetadata)
+                            Serialize(GetMessageMetadata(@event))
                         )
                 )
                 .ToArray();
@@ -36,6 +34,15 @@ namespace VShop.SharedKernel.EventStore.Helpers
             return events;
         }
 
-        private static byte[] Serialize(object data) => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+        private static MessageMetadata GetMessageMetadata(IMessage message)
+         => new()
+            {
+                EffectiveTime = DateTime.UtcNow,
+                CausationId = message.CausationId,
+                CorrelationId = message.CorrelationId
+            };
+
+        private static byte[] Serialize(object data) 
+            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
     }
 }

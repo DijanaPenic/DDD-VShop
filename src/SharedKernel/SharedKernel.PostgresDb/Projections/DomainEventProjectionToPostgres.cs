@@ -52,7 +52,7 @@ namespace VShop.SharedKernel.PostgresDb.Projections
         public delegate Func<Task> Projector
         (
             TDbContext dbContext,
-            IMessage eventData
+            IDomainEvent @event
         );
     }
 }
