@@ -1,9 +1,9 @@
-﻿using System.Security.Policy;
-using Autofac;
+﻿using Autofac;
 using MediatR;
 
 using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Application.Commands.Decorators;
+using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
 

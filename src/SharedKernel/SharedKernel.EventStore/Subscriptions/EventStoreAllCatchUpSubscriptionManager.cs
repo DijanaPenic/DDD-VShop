@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             Logger.Debug("Starting the subscription manager {SubscriptionName}...", SubscriptionName);
 
             long? checkpoint = await CheckpointRepository.GetCheckpointAsync();
-            Logger.Debug("Retrieved the checkpoint {ESSubscriptionName}: {Checkpoint}", SubscriptionName, checkpoint);
+            Logger.Debug("Retrieved the checkpoint {SubscriptionName}: {Checkpoint}", SubscriptionName, checkpoint);
 
             EventStoreSubscription = EventStoreConnection.SubscribeToAllFrom
             (
@@ -43,7 +43,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
                 settings,
                 EventAppearedAsync
             );
-            Logger.Debug("Subscribed to $all stream in {ESSubscriptionName}", SubscriptionName);
+            Logger.Debug("Subscribed to $all stream in {SubscriptionName}", SubscriptionName);
         }
     }
 }
