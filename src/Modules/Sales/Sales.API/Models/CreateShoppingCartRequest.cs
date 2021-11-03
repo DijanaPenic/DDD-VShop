@@ -5,6 +5,7 @@ namespace VShop.Modules.Sales.API.Models
 {
     public record CreateShoppingCartRequest
     {
+        public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; init; }
         public int CustomerDiscount { get; init; }
         public CreateShoppingCartProductRequest[] ShoppingCartItems { get; init; }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -14,19 +15,22 @@ namespace VShop.SharedKernel.EventSourcing
         private readonly IList<IIntegrationEvent> _integrationEvents = new List<IIntegrationEvent>();
 
         public TKey Id { get; protected set; }
-
         public int Version { get; private set; } = -1;
+        public Guid CorrelationId { get; set; }
+        public Guid MessageId { get; set; }
 
         protected abstract void When(IDomainEvent @event);
 
         protected void Apply(IDomainEvent @event)
         {
             When(@event);
+            SetMessageIds(@event);
             _domainEvents.Add(@event);
         }
-        
+
         public void Apply(IIntegrationEvent @event)
         {
+            SetMessageIds(@event);
             _integrationEvents.Add(@event);
         }
         
@@ -48,6 +52,14 @@ namespace VShop.SharedKernel.EventSourcing
             _integrationEvents.Clear();
         }
 
-        protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity?.Handle(@event);
+        protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) 
+            => entity?.Handle(@event);
+        
+        // TODO - need better method name
+        private void SetMessageIds(IMessage @event)
+        {
+            @event.CausationId = MessageId;
+            @event.CorrelationId = CorrelationId;
+        }
     }
 }

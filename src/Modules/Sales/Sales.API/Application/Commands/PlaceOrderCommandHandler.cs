@@ -47,7 +47,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     command.PostalCode,
                     command.StateProvince,
                     command.StreetAddress
-                )
+                ),
+                Guid.Empty, // TODO - need to pass real values
+                Guid.Empty
             );
 
             foreach (OrderItemDto orderItem in command.OrderItems)

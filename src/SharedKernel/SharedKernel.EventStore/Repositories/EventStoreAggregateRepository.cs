@@ -66,14 +66,20 @@ namespace VShop.SharedKernel.EventStore.Repositories
             return result.Status != EventReadStatus.NoStream;
         }
         
-        public async Task<TA> LoadAsync(TKey aggregateId)
+        public async Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null)
         {
             string streamName = GetAggregateStreamName(aggregateId);
             List<IMessage> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
-            if (events.Count == 0) return default;
+            if (events.Count > 0) return default;
+                
+            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true);
+            if (aggregate is null)
+                throw new Exception($"Couldn't resolve {nameof(TA)} instance.");
             
-            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true); 
+            if (messageId is not null) aggregate.MessageId = messageId.Value;
+            if (correlationId is not null) aggregate.CorrelationId = correlationId.Value;
+            
             aggregate?.Load(events);
 
             return aggregate;

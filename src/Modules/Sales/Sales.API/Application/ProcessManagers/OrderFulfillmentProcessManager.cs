@@ -85,7 +85,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 StreetAddress = shoppingCart.Customer.DeliveryAddress.StreetAddress,
                 OrderItems = shoppingCart.Items.Select(sci => new OrderItemDto
                 {
-                    ProductId = sci.ProductId,
+                    ProductId = sci.Id,
                     Quantity = sci.Quantity,
                     UnitPrice = sci.UnitPrice
                 }).ToArray()

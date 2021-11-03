@@ -30,7 +30,6 @@ namespace VShop.Modules.Sales.API.Projections
                 {
                     dbContext.ShoppingCartItems.Add(new ShoppingCartInfoItem()
                     {
-                        Id = e.ShoppingCartItemId,
                         Quantity = e.Quantity,
                         ProductId = e.ProductId,
                         UnitPrice = e.UnitPrice,

@@ -11,8 +11,7 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
         {
             builder.ToTable("shopping_cart_info_product_item", SalesContext.ShoppingCartSchema);
             
-            builder.HasKey(sci => sci.Id);
-            builder.Property(sci => sci.ProductId).IsRequired();
+            builder.HasKey(sci => sci.ProductId);
             builder.Property(sci => sci.Quantity).IsRequired();
             builder.Property(sci => sci.UnitPrice).IsRequired();
             builder.Property(sci => sci.DateCreatedUtc).IsRequired();

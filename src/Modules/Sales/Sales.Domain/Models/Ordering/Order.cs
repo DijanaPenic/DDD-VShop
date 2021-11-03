@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using VShop.Modules.Sales.Domain.Enums;
@@ -34,10 +35,16 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            Address deliveryAddress
+            Address deliveryAddress,
+            Guid messageId,
+            Guid correlationId
         )
         {
-            Order order = new();
+            Order order = new()
+            {
+                CorrelationId = correlationId,
+                MessageId = messageId,
+            };
             
             order.Apply
             (
@@ -75,7 +82,6 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 new OrderItemAddedDomainEvent
                 {
                     OrderId = Id,
-                    OrderItemId = SequentialGuid.Create(),
                     ProductId = productId,
                     Quantity = quantity,
                     UnitPrice = unitPrice

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using VShop.SharedKernel.Domain.ValueObjects;
 
@@ -12,6 +13,6 @@ namespace VShop.SharedKernel.EventSourcing.Contracts
         
         Task<bool> ExistsAsync(TKey aggregateId);
         
-        Task<TA> LoadAsync(TKey aggregateId);
+        Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null);
     }
 }

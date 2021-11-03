@@ -27,8 +27,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = ShoppingCart.Create
             (
+                EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.CustomerId),
-                command.CustomerDiscount
+                command.CustomerDiscount,
+                Guid.Empty,
+                Guid.Empty
             );
 
             foreach (ShoppingCartItemDto shoppingCartItem in command.ShoppingCartItems)
@@ -51,6 +54,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CreateShoppingCartCommand : ICommand<Success<ShoppingCart>>
     {
+        public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; set; }
         public int CustomerDiscount { get; set; }
         public ShoppingCartItemDto[] ShoppingCartItems { get; set; }

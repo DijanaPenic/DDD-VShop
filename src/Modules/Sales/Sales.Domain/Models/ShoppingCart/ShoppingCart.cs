@@ -7,7 +7,6 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
 
@@ -31,15 +30,26 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
         public int TotalItemsCount() => _shoppingCartItems.Count;
 
-        public static ShoppingCart Create(EntityId customerId, int customerDiscount)
+        public static ShoppingCart Create
+        (
+            EntityId shoppingCartId,
+            EntityId customerId,
+            int customerDiscount,
+            Guid messageId,
+            Guid correlationId
+        )
         {
-            ShoppingCart shoppingCart = new();
+            ShoppingCart shoppingCart = new()
+            {
+                CorrelationId = correlationId,
+                MessageId = messageId,
+            };
             
             shoppingCart.Apply
             (
                 new ShoppingCartCreatedDomainEvent
                 {
-                    ShoppingCartId = SequentialGuid.Create(),
+                    ShoppingCartId = shoppingCartId,
                     CustomerId = customerId,
                     CustomerDiscount = customerDiscount
                 }
@@ -53,7 +63,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Adding product for the shopping cart in '{Status}' status is not allowed.");
 
-            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.ProductId.Equals(productId));
+            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.Id.Equals(productId));
 
             if (shoppingCartItem is null)
             {
@@ -62,7 +72,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     new ShoppingCartProductAddedDomainEvent
                     {
                         ShoppingCartId = Id,
-                        ShoppingCartItemId = SequentialGuid.Create(),
                         ProductId = productId,
                         Quantity = quantity,
                         UnitPrice = unitPrice
@@ -173,7 +182,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         }
 
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
-            => Items.SingleOrDefault(sci => sci.ProductId.Equals(productId));
+            => Items.SingleOrDefault(sci => sci.Id.Equals(productId));
 
         protected override void When(IDomainEvent @event)
         {
