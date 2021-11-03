@@ -15,6 +15,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         {
             public const decimal MaxQuantityPerProduct = 10;
         }
+        
+        public EntityId ShoppingCartId { get; private set; }
 
         public ProductQuantity Quantity { get; private set; }
         
@@ -33,6 +35,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             (
                 new ShoppingCartItemQuantityIncreasedDomainEvent
                 {
+                    ShoppingCartId = ShoppingCartId,
                     ProductId = Id,
                     Quantity = value
                 }
@@ -50,6 +53,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             (
                 new ShoppingCartItemQuantityDecreasedDomainEvent
                 {
+                    ShoppingCartId = ShoppingCartId,
                     ProductId = Id,
                     Quantity = value
                 }
@@ -64,6 +68,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             {
                 case ShoppingCartProductAddedDomainEvent e:
                     Id = new EntityId(e.ProductId);
+                    ShoppingCartId = new EntityId(e.ShoppingCartId);
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
                     break;
