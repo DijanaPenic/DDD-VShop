@@ -1,11 +1,11 @@
 ﻿using System;
 
-using VShop.SharedKernel.EventSourcing;
+using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.Modules.Sales.Domain.Events;
+using VShop.SharedKernel.EventSourcing.Aggregates;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {

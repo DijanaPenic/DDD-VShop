@@ -1,6 +1,6 @@
 ﻿using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing.Contracts
+namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public interface IInternalEventHandler
     {

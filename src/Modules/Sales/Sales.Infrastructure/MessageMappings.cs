@@ -1,7 +1,7 @@
 ﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 
-using static VShop.SharedKernel.EventSourcing.MessageTypeMapper;
+using static VShop.SharedKernel.EventSourcing.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.Infrastructure
 {

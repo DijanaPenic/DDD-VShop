@@ -4,9 +4,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventSourcing;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Helpers
 {
@@ -33,8 +33,8 @@ namespace VShop.SharedKernel.EventStore.Helpers
                 }).ToArray();
         }
 
-        private static MessageMetadata GetMetadata(IMessage message)
-         => new()
+        private static IMessageMetadata GetMetadata(IMessage message)
+         => new MessageMetadata()
             {
                 EffectiveTime = DateTime.UtcNow,
                 CausationId = message.CausationId,

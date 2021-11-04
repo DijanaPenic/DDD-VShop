@@ -20,7 +20,7 @@ using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {

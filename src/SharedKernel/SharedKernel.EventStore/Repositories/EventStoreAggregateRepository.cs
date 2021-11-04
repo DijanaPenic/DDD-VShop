@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.EventSourcing.Aggregates;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {

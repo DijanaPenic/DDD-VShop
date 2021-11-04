@@ -3,7 +3,8 @@ using Serilog.Events;
 using EventStore.ClientAPI;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.EventSourcing.Projections.Contracts;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 using ILogger = Serilog.ILogger;
 

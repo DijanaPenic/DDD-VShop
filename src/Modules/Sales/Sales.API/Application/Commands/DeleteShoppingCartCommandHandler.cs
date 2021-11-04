@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Application.Commands;
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

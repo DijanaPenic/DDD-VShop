@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VShop.SharedKernel.EventSourcing
+namespace VShop.SharedKernel.EventSourcing.Messaging
 {
     public static class MessageTypeMapper
     {

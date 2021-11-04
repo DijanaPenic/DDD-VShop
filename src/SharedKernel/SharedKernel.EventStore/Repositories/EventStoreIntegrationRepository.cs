@@ -6,9 +6,9 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {

@@ -3,7 +3,7 @@ using System.Text;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventSourcing;
+using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {
@@ -24,11 +24,11 @@ namespace VShop.SharedKernel.EventStore.Extensions
             return JsonConvert.DeserializeObject<TMessage>(jsonData);
         }
         
-        public static MessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
+        public static IMessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata);
             
-            return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
+            return JsonConvert.DeserializeObject<IMessageMetadata>(jsonData);
         }
     }
 }

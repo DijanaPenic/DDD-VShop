@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing.Contracts
+namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
 {
     public interface IIntegrationRepository
     {

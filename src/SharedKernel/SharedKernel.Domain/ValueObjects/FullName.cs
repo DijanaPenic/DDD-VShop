@@ -2,6 +2,8 @@
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
+using VShop.SharedKernel.EventSourcing.Aggregates;
+
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
 {

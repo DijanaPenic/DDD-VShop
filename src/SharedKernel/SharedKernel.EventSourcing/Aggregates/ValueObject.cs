@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace VShop.SharedKernel.Domain.ValueObjects
+namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class ValueObject
     {

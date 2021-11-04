@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing
+namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject

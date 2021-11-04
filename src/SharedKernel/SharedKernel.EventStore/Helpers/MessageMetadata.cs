@@ -1,13 +1,15 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace VShop.SharedKernel.EventSourcing
+using VShop.SharedKernel.EventSourcing.Messaging;
+
+namespace VShop.SharedKernel.EventStore.Helpers
 {
-    public record MessageMetadata
+    public record MessageMetadata : IMessageMetadata
     {
         public DateTime EffectiveTime { get; init; }
                 
-        [JsonProperty("$correlationId")] // TODO - this is EventStore naming
+        [JsonProperty("$correlationId")]
         public Guid CorrelationId { get; init; }
         
         [JsonProperty("$causationId")]

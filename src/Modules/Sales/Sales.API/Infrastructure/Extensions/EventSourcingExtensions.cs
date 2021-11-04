@@ -3,14 +3,14 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventStore;
-using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.EventStore.Projections;
 using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 

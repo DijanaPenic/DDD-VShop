@@ -1,8 +1,9 @@
 ﻿using Serilog;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.EventSourcing.Projections.Contracts;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
@@ -19,7 +20,7 @@ namespace VShop.SharedKernel.EventStore.Projections
             _integrationRepository = integrationRepository;
         }
 
-        public Task ProjectAsync(IMessage message, MessageMetadata metadata)
+        public Task ProjectAsync(IMessage message, IMessageMetadata metadata)
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             

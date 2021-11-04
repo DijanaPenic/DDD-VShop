@@ -1,10 +1,8 @@
 ﻿using System;
 
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing
+namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class Entity<TId> : IInternalEventHandler
         where TId : ValueObject

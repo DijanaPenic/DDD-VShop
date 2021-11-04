@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Serilog;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.EventSourcing.Contracts;
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
+using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.EventSourcing.Projections.Contracts;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 using ILogger = Serilog.ILogger;
@@ -58,7 +58,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
             IMessage message = resolvedEvent.DeserializeData() as IMessage;
-            MessageMetadata metadata = resolvedEvent.DeserializeMetadata();
+            IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
 
             Logger.Debug("EventStore subscription manager > identified message: {Message}", message);
 

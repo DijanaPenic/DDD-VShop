@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
     </ItemGroup>
 
 </Project>

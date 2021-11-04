@@ -1,8 +1,8 @@
 ﻿using Serilog;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventSourcing;
-using VShop.SharedKernel.EventSourcing.Contracts;
+using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.EventSourcing.Projections.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
 
@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.EventStore.Projections
             _publisher = publisher;
         }
 
-        public Task ProjectAsync(IMessage message, MessageMetadata metadata)
+        public Task ProjectAsync(IMessage message, IMessageMetadata metadata)
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
