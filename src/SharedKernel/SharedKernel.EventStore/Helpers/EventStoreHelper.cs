@@ -6,6 +6,7 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Helpers
@@ -16,6 +17,11 @@ namespace VShop.SharedKernel.EventStore.Helpers
             where TMessage : class, IMessage
         {
             if (messages == null || !messages.Any()) return Array.Empty<EventData>();
+            
+            PropertyIgnoreContractResolver jsonResolver = new();
+            jsonResolver.Ignore(typeof(BaseMessage));
+
+            JsonSerializerSettings serializerSettings = new() { ContractResolver = jsonResolver };
 
             return messages.Select((@event, index) =>
                 {
@@ -27,8 +33,8 @@ namespace VShop.SharedKernel.EventStore.Helpers
                         eventId,
                         eventName,
                         true,
-                        Serialize(@event),
-                        Serialize(GetMetadata(@event))
+                        Serialize(@event, serializerSettings),
+                        Serialize(GetMetadata(@event), serializerSettings)
                     );
                 }).ToArray();
         }
@@ -41,7 +47,7 @@ namespace VShop.SharedKernel.EventStore.Helpers
                 CorrelationId = message.CorrelationId
             };
 
-        private static byte[] Serialize(object data) 
-            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+        private static byte[] Serialize(object data, JsonSerializerSettings serializerSettings)
+            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
     }
 }
