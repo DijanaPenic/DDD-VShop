@@ -43,7 +43,7 @@ namespace VShop.SharedKernel.EventSourcing
             }
         }
 
-        public IEnumerable<IDomainEvent> GetDomainEvents() => _domainEvents.ToArray();
+        public IEnumerable<IDomainEvent> GetDomainEvents() => _domainEvents.AsEnumerable();
         public IEnumerable<IIntegrationEvent> GetIntegrationEvents() => _integrationEvents.AsEnumerable();
 
         public void ClearEvents()
@@ -55,7 +55,7 @@ namespace VShop.SharedKernel.EventSourcing
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) 
             => entity?.Handle(@event);
         
-        // TODO - need better method name
+        // TODO - need a better method name
         private void SetMessageIds(IMessage @event)
         {
             @event.CausationId = MessageId;
