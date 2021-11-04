@@ -24,13 +24,15 @@ namespace VShop.SharedKernel.EventSourcing
         protected void Apply(IDomainEvent @event)
         {
             When(@event);
-            SetMessageIds(@event);
+            SetCausation(@event);
+            SetCorrelation(@event);
             _domainEvents.Add(@event);
         }
 
         public void Apply(IIntegrationEvent @event)
         {
-            SetMessageIds(@event);
+            SetCausation(@event);
+            SetCorrelation(@event);
             _integrationEvents.Add(@event);
         }
         
@@ -55,11 +57,10 @@ namespace VShop.SharedKernel.EventSourcing
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) 
             => entity?.Handle(@event);
         
-        // TODO - need a better method name
-        private void SetMessageIds(IMessage @event)
-        {
-            @event.CausationId = MessageId;
-            @event.CorrelationId = CorrelationId;
-        }
+        private void SetCausation(IMessage @event) 
+            => @event.CausationId = MessageId;
+        
+        private void SetCorrelation(IMessage @event) 
+            => @event.CorrelationId = CorrelationId;
     }
 }

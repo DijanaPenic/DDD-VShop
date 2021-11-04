@@ -7,7 +7,7 @@ namespace VShop.SharedKernel.EventSourcing
     {
         public DateTime EffectiveTime { get; init; }
                 
-        [JsonProperty("$correlationId")]
+        [JsonProperty("$correlationId")] // TODO - this is EventStore naming
         public Guid CorrelationId { get; init; }
         
         [JsonProperty("$causationId")]

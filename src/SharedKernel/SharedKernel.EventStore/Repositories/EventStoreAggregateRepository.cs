@@ -47,7 +47,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareEventData(allEvents)
+                EventStoreHelper.PrepareMessageData(allEvents)
             );
 
             aggregate.ClearEvents();

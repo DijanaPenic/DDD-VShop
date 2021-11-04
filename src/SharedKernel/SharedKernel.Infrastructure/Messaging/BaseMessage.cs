@@ -7,7 +7,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
 {
     public abstract record BaseMessage : IMessage
     {
-        [JsonIgnore]
+        [JsonIgnore] // TODO - this is for the EventStore db
         public Guid MessageId { get; } = SequentialGuid.Create();
         
         [JsonIgnore]

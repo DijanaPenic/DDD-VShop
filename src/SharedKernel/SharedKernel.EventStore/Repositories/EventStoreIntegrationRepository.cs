@@ -32,13 +32,14 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 _integrationStreamName,
                 ExpectedVersion.Any,
-                EventStoreHelper.PrepareEventData(messages: @event)
+                EventStoreHelper.PrepareMessageData(messages: @event)
             );
         }
 
         public async Task<IEnumerable<IIntegrationEvent>> LoadAsync()
         {
-            List<IIntegrationEvent> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IIntegrationEvent>(_integrationStreamName);
+            List<IIntegrationEvent> events = await _eventStoreConnection
+                .ReadStreamEventsForwardAsync<IIntegrationEvent>(_integrationStreamName);
 
             return events.AsEnumerable();
         }

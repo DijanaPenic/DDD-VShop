@@ -19,12 +19,15 @@ namespace VShop.SharedKernel.EventStore.Projections
             _integrationRepository = integrationRepository;
         }
 
-        public Task ProjectAsync(IMessage message, MessageMetadata _)
+        public Task ProjectAsync(IMessage message, MessageMetadata metadata)
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
             Logger.Debug("Projecting integration event: {Message}", integrationEvent);
-                
+
+            integrationEvent.CausationId = metadata.CausationId;
+            integrationEvent.CorrelationId = metadata.CorrelationId;
+              
             return _integrationRepository.SaveAsync(integrationEvent);
         }
     }

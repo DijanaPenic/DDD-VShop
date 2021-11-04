@@ -12,29 +12,28 @@ namespace VShop.SharedKernel.EventStore.Helpers
 {
     public static class EventStoreHelper
     {
-        public static EventData[] PrepareEventData<TMessage>(params TMessage[] messages)
+        public static EventData[] PrepareMessageData<TMessage>(params TMessage[] messages)
             where TMessage : class, IMessage
         {
             if (messages == null || !messages.Any()) return Array.Empty<EventData>();
 
-            EventData[] events = messages
-                .Select(
-                    @event =>
-                        new EventData
-                        (
-                            SequentialGuid.Create(), // TODO - idempotency
-                            MessageTypeMapper.ToName(@event.GetType()),
-                            true,
-                            Serialize(@event),
-                            Serialize(GetMessageMetadata(@event))
-                        )
-                )
-                .ToArray();
+            return messages.Select((@event, index) =>
+                {
+                    string eventName = MessageTypeMapper.ToName(@event.GetType());
+                    Guid eventId = DeterministicGuid.Create(@event.CausationId, $"{eventName}-{index}"); // TODO - can this be improved?
 
-            return events;
+                    return new EventData
+                    (
+                        eventId,
+                        eventName,
+                        true,
+                        Serialize(@event),
+                        Serialize(GetMetadata(@event))
+                    );
+                }).ToArray();
         }
 
-        private static MessageMetadata GetMessageMetadata(IMessage message)
+        private static MessageMetadata GetMetadata(IMessage message)
          => new()
             {
                 EffectiveTime = DateTime.UtcNow,
