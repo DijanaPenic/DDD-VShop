@@ -8,9 +8,9 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Application.Commands;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands;

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Threading.Tasks;
 
-namespace VShop.SharedKernel.Application.Commands
+namespace VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing
 {
     public class CommandBus: ICommandBus
     {

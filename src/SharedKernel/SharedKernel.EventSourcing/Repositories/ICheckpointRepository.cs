@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
+namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public interface ICheckpointRepository
     {

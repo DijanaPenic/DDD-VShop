@@ -9,8 +9,8 @@ using VShop.SharedKernel.EventStore.Subscriptions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
 using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Publishing;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
+using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 

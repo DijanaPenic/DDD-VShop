@@ -6,12 +6,12 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Application.Commands;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

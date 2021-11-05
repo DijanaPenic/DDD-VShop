@@ -1,15 +1,8 @@
-﻿using OneOf;
-using OneOf.Types;
-using System.Net;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Application.Commands;
-using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.Modules.Sales.Domain.Models.Ordering;
-using VShop.Modules.Sales.API.Application.Commands;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 
 namespace VShop.Modules.Sales.API.Controllers
 {

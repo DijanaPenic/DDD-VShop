@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
+namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public interface IIntegrationRepository
     {

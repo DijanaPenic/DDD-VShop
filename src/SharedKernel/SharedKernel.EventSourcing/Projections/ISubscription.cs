@@ -3,7 +3,7 @@
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing.Projections.Contracts
+namespace VShop.SharedKernel.EventSourcing.Projections
 {
     public interface ISubscription
     {

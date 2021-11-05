@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Application.Commands.Decorators
+namespace VShop.SharedKernel.Application.Decorators
 {
     public class LoggingCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
     {

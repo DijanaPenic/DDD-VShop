@@ -4,8 +4,9 @@ using Serilog;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventSourcing.Messaging;
-using VShop.SharedKernel.EventSourcing.Projections.Contracts;
+using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 using ILogger = Serilog.ILogger;
 

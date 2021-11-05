@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {

@@ -11,6 +11,7 @@ using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Helpers
 {
+    // TODO - potentially rename this class and directory
     public static class EventStoreHelper
     {
         public static EventData[] PrepareMessageData<TMessage>(params TMessage[] messages)

@@ -6,9 +6,9 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
-using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
@@ -129,6 +129,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public Option<ApplicationError> RequestCheckout()
         {
+            // TODO - uncomment after testing
             // if(Status != ShoppingCartStatus.AwaitingConfirmation)
             //     return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
