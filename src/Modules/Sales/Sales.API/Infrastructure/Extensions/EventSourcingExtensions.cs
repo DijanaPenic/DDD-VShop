@@ -35,21 +35,22 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
             services.AddHostedService<EventStoreService>();
 
+            // TODO - uncomment
             // Read model projections
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
-            {
-                const string subscriptionName = "ReadModels";
-                string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
-
-                return new EventStoreAllFilteredCatchUpSubscriptionManager
-                (
-                    eventStoreConnection,
-                    new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
-                    subscriptionName,
-                    Filter.StreamId.Prefix(aggregateStreamPrefix),
-                    new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
-                );
-            });
+            // services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
+            // {
+            //     const string subscriptionName = "ReadModels";
+            //     string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
+            //
+            //     return new EventStoreAllFilteredCatchUpSubscriptionManager
+            //     (
+            //         eventStoreConnection,
+            //         new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
+            //         subscriptionName,
+            //         Filter.StreamId.Prefix(aggregateStreamPrefix),
+            //         new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
+            //     );
+            // });
             
             // Publish integration events from the current bounded context 
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
