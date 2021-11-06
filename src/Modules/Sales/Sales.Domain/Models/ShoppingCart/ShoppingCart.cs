@@ -129,9 +129,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public Option<ApplicationError> RequestCheckout(EntityId orderId)
         {
-            // TODO - uncomment after testing
-            // if(Status != ShoppingCartStatus.AwaitingConfirmation)
-            //     return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
+            if(Status != ShoppingCartStatus.AwaitingConfirmation)
+                return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
             if(IsShoppingCartEmpty)
                 return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the shopping cart.");

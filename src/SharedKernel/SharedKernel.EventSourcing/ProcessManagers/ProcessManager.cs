@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IMessage> _events = new();
         private readonly List<IMessage> _commands = new();
         
-        public Guid Id { get; protected set; } // TODO - use value object
+        public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
     
         protected abstract void When(IMessage @event);

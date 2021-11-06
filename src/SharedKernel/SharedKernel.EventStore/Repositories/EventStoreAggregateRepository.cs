@@ -54,7 +54,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             try
             {
-                // TODO - error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
                 foreach (IDomainEvent domainEvent in aggregate.GetDomainEvents())
                     await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
@@ -67,7 +66,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
             finally
             {
-                aggregate.ClearAllMessages(); // TODO - cannot clear messages here
+                aggregate.ClearAllMessages();
             }
         }
         

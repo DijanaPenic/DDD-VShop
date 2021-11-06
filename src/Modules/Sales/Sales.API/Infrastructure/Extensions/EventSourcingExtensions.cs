@@ -35,6 +35,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
             services.AddHostedService<EventStoreService>();
             
+            // TODO - update subscription rules to filter out process manager events
+            
             // Read model projections
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
             {

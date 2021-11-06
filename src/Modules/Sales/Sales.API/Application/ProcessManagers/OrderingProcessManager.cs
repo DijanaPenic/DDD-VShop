@@ -13,7 +13,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
     public class OrderingProcessManager : ProcessManager
     {
-        public Guid ShoppingCartId { get; private set; } // TODO - use value object
+        public Guid ShoppingCartId { get; private set; }
         public OrderFulfillmentStatus Status { get; private set; }
         
         public void Transition(ShoppingCartCheckoutRequestedDomainEvent @event, ShoppingCart shoppingCart)
