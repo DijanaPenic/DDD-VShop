@@ -33,7 +33,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
 
-            Option<ApplicationError> errorResult = shoppingCart.RequestCheckout();
+            Option<ApplicationError> errorResult = shoppingCart.RequestCheckout(EntityId.Create(command.OrderId));
 
             if (errorResult.IsSome(out ApplicationError error)) return error;
 
@@ -46,5 +46,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public record CheckoutShoppingCartCommand : BaseCommand<Success>
     {
         public Guid ShoppingCartId { get; set; }
+        public Guid OrderId { get; set; }
     }
 }

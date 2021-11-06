@@ -103,27 +103,18 @@ namespace VShop.Modules.Sales.API.Controllers
             CheckoutShoppingCartCommand command = new()
             {
                 ShoppingCartId = shoppingCartId,
+                OrderId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             };
 
             OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+
+            if (result.IsT1) return HandleError(result.AsT1);
             
-            // TODO - is this correct way to handle errors?
-            // TODO - need to fix this; it's not working.
-            if(result.IsT0)
-            {
-                OrderFulfillmentProcess orderFulfillmentProcess = await _queryService.GetActiveOrderFulfillmentProcessByShoppingCartIdAsync(shoppingCartId);
+            dynamic order = new JObject();
+            order.OrderId = command.OrderId;
 
-                if (orderFulfillmentProcess is null)
-                    return InternalServerError(orderFulfillmentProcess.Description); // TODO - change reason mapping
-                
-                dynamic order = new JObject();
-                order.OrderId = orderFulfillmentProcess.OrderId;
-
-                return Ok(order);
-            }
-
-            return HandleError(result.AsT1);
+            return Ok(order);
         }
         
         [HttpPost]

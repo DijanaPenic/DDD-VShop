@@ -127,7 +127,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Option<ApplicationError>.None;
         }
 
-        public Option<ApplicationError> RequestCheckout()
+        public Option<ApplicationError> RequestCheckout(EntityId orderId)
         {
             // TODO - uncomment after testing
             // if(Status != ShoppingCartStatus.AwaitingConfirmation)
@@ -144,6 +144,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 new ShoppingCartCheckoutRequestedDomainEvent
                 {
                     ShoppingCartId = Id,
+                    OrderId = orderId,
                     ConfirmedAt = DateTime.UtcNow
                 }
             );

@@ -6,7 +6,6 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
@@ -19,9 +18,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         
         public void Transition(ShoppingCartCheckoutRequestedDomainEvent @event, ShoppingCart shoppingCart)
         {
+            Apply(@event);
+            
             PlaceOrderCommand placeOrderCommand = new()
             {
-                OrderId = SequentialGuid.Create(), // TODO - idempo.
+                OrderId = @event.OrderId,
                 DeliveryCost = shoppingCart.DeliveryCost,
                 TotalDiscount = shoppingCart.TotalDiscount,
                 CustomerId = shoppingCart.Customer.CustomerId,
@@ -44,16 +45,14 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 CausationId = @event.MessageId,
                 CorrelationId = @event.CorrelationId
             };
-
-            Apply(@event);
             AddCommand(placeOrderCommand);
         }
 
         public void Transition(OrderPlacedDomainEvent @event)
         {
-            DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = Id };
-            
             Apply(@event);
+            
+            DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = Id };
             AddCommand(deleteShoppingCartCommand);
         }
 
@@ -62,7 +61,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             switch (@event)
             {
                 case ShoppingCartCheckoutRequestedDomainEvent e:
-                    Id = SequentialGuid.Create();               // TODO - idempo. This is OrderId
+                    Id = e.OrderId;
                     ShoppingCartId = e.ShoppingCartId;
                     Status = OrderFulfillmentStatus.CheckoutRequested;
                     break;
