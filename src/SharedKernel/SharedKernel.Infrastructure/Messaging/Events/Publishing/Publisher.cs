@@ -23,19 +23,13 @@ namespace VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing
         public static PublishStrategy DefaultStrategy => PublishStrategy.SyncContinueOnException;
 
         public Task Publish<TNotification>(TNotification notification)
-        {
-            return Publish(notification, DefaultStrategy, default);
-        }
+            => Publish(notification, DefaultStrategy, default);
 
         public Task Publish<TNotification>(TNotification notification, PublishStrategy strategy)
-        {
-            return Publish(notification, strategy, default);
-        }
+            => Publish(notification, strategy, default);
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken)
-        {
-            return Publish(notification, DefaultStrategy, cancellationToken);
-        }
+            => Publish(notification, DefaultStrategy, cancellationToken);
 
         public Task Publish<TNotification>(TNotification notification, PublishStrategy strategy, CancellationToken cancellationToken)
         {

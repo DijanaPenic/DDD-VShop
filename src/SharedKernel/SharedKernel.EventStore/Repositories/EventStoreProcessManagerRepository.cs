@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OneOf;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
@@ -51,11 +53,11 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             try
             {
-                // TODO - handling response from command
-                object commandResult;
                 foreach (IMessage command in processManager.GetCommands())
                 {
-                    commandResult = await _commandBus.SendAsync(command);
+                    object commandResult = await _commandBus.SendAsync(command);
+                    if (commandResult is IOneOf { Value: ApplicationError error }) 
+                        throw new Exception(error.ToString());
                 }
             }
             catch (Exception ex)
