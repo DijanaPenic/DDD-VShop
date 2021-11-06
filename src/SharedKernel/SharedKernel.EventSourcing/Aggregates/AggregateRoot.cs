@@ -45,10 +45,16 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             }
         }
 
-        public IEnumerable<IDomainEvent> GetDomainEvents() => _domainEvents.AsEnumerable();
-        public IEnumerable<IIntegrationEvent> GetIntegrationEvents() => _integrationEvents.AsEnumerable();
+        public IEnumerable<IDomainEvent> GetDomainEvents()
+            => _domainEvents.AsEnumerable();
+        
+        public IEnumerable<IIntegrationEvent> GetIntegrationEvents()
+            => _integrationEvents.AsEnumerable();
+        
+        public IEnumerable<IMessage> GetAllMessages()
+            => _domainEvents.Concat(_integrationEvents.Cast<IMessage>()).AsEnumerable();
 
-        public void ClearEvents()
+        public void ClearAllMessages()
         {
             _domainEvents.Clear();
             _integrationEvents.Clear();

@@ -1,13 +1,14 @@
 ﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
+using VShop.Modules.Sales.API.Application.Commands;
 
 using static VShop.SharedKernel.EventSourcing.Messaging.MessageTypeMapper;
 
-namespace VShop.Modules.Sales.Infrastructure
+namespace VShop.Modules.Sales.API.Application
 {
     public static class MessageMappings
     {
-        public static void MapEventTypes()
+        public static void MapMessageTypes()
         {
             // Configure domain events
             Map<ShoppingCartCreatedDomainEvent>(nameof(ShoppingCartCreatedDomainEvent));
@@ -27,6 +28,10 @@ namespace VShop.Modules.Sales.Infrastructure
             
             // Configure integration events
             Map<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
+            
+            // Configure commands
+            Map<PlaceOrderCommand>(nameof(PlaceOrderCommand));
+            Map<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
         }
     }
 }

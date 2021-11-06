@@ -13,6 +13,7 @@ using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
+using VShop.Modules.Sales.API.Application;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -31,6 +32,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(eventStoreConnection);
             services.AddSingleton(typeof(IAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
+            services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
             services.AddHostedService<EventStoreService>();
             
             // Read model projections
@@ -79,7 +81,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 );
             });
 
-            MessageMappings.MapEventTypes();
+            MessageMappings.MapMessageTypes();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing
@@ -7,14 +8,12 @@ namespace VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing
     {
         private readonly IMediator _mediator;
 
-        public CommandBus(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public CommandBus(IMediator mediator) => _mediator = mediator;
 
-        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command)
-        {
-            return _mediator.Send(command);
-        }
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command, CancellationToken cancellationToken = default) 
+            => _mediator.Send(command, cancellationToken);
+
+        public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
+            => _mediator.Send(command, cancellationToken);
     }
 }

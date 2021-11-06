@@ -5,6 +5,7 @@ using VShop.Modules.Sales.Infrastructure.Entities;
 
 namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
 {
+    // TODO - need to delete this table
     public class OrderFulfillmentProcessEntityTypeConfiguration : IEntityTypeConfiguration<OrderFulfillmentProcess>
     {
         public void Configure(EntityTypeBuilder<OrderFulfillmentProcess> builder)

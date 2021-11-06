@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Autofac;
-using System.Security.Policy;
 
 using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register domain event handlers
-            builder.RegisterAssemblyTypes(typeof(OrderFulfillmentProcessManager).Assembly)
+            builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
 
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));

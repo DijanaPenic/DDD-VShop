@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Serilog;
 using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
@@ -14,6 +15,8 @@ using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
+using ILogger = Serilog.ILogger;
+
 namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreAggregateRepository<TA, TKey> : IAggregateRepository<TA, TKey>
@@ -22,6 +25,8 @@ namespace VShop.SharedKernel.EventStore.Repositories
     {
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly Publisher _publisher;
+
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAggregateRepository<TA, TKey>>();
 
         public EventStoreAggregateRepository
         (
@@ -32,31 +37,38 @@ namespace VShop.SharedKernel.EventStore.Repositories
             _eventStoreConnection = eventStoreConnection;
             _publisher = publisher;
         }
-        
+
         public async Task SaveAsync(TA aggregate)
         {
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
             string streamName = GetAggregateStreamName(aggregate.Id);
-            
-            IDomainEvent[] domainEvents = aggregate.GetDomainEvents().ToArray();
-            IIntegrationEvent[] integrationEvents = aggregate.GetIntegrationEvents().ToArray();
-            IMessage[] allEvents = domainEvents.Concat(integrationEvents.Cast<IMessage>()).ToArray();
 
             await _eventStoreConnection.AppendToStreamAsync
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareMessageData(allEvents)
+                EventStoreHelper.PrepareMessageData(aggregate.GetAllMessages().ToArray())
             );
 
-            aggregate.ClearEvents();
-            
-            // TODO - error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
-            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-            foreach (IDomainEvent domainEvent in domainEvents)
-                await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
+            try
+            {
+                // TODO - error handling - I don't think there is a need for additional error handling. Command decorator will wrap exceptions.
+                // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
+                foreach (IDomainEvent domainEvent in aggregate.GetDomainEvents())
+                    await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Unhandled error has occurred");
+                
+                throw;
+            }
+            finally
+            {
+                aggregate.ClearAllMessages(); // TODO - cannot clear messages here
+            }
         }
         
         public async Task<bool> ExistsAsync(TKey aggregateId)
