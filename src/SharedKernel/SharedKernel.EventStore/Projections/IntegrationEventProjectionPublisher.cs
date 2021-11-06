@@ -26,7 +26,8 @@ namespace VShop.SharedKernel.EventStore.Projections
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
             Logger.Debug("Projecting integration event: {Message}", integrationEvent);
-                
+            
+            // TODO - need to figure out how to handle these exceptions. This will stop further integration projections.
             return _publisher.Publish(integrationEvent, PublishStrategy.SyncStopOnException);
         }
     }

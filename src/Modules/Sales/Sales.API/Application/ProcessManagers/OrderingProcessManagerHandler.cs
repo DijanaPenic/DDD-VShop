@@ -11,6 +11,7 @@ using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
+    // TODO - should I implement my own event publisher so that I can use customer errors instead of exception-driven approach?
     public class OrderingProcessManagerHandler :
         IDomainEventHandler<ShoppingCartCheckoutRequestedDomainEvent>,
         IDomainEventHandler<OrderPlacedDomainEvent>
