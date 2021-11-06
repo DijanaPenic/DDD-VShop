@@ -34,19 +34,19 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
             services.AddHostedService<EventStoreService>();
-            
-            // TODO - update subscription rules to filter out process manager events
-            
+
             // Read model projections
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllCatchUpSubscriptionManager>(provider =>
+            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 const string subscriptionName = "ReadModels";
+                string streamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
 
-                return new EventStoreAllCatchUpSubscriptionManager
+                return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     eventStoreConnection,
                     new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
                     subscriptionName,
+                    Filter.StreamId.Prefix(streamPrefix),
                     new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
                 );
             });
@@ -55,6 +55,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 IIntegrationRepository integrationRepository = provider.GetRequiredService<IIntegrationRepository>();
+                string streamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
                 const string subscriptionName = "IntegrationEventsPub";
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
@@ -62,7 +63,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     eventStoreConnection,
                     new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
                     subscriptionName,
-                    Filter.StreamId.Prefix($"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase()),
+                    Filter.StreamId.Prefix(streamPrefix),
                 new IntegrationEventProjectionToEventStore(integrationRepository)
                 );
             });
