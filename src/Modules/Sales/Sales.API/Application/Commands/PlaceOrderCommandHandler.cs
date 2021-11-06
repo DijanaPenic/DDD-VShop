@@ -65,7 +65,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
-            order.Apply(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
+            order.EnqueueEvents(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
             
             await _orderRepository.SaveAsync(order);
 
