@@ -15,7 +15,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
     {
         public Guid ShoppingCartId { get; private set; }
         public OrderFulfillmentStatus Status { get; private set; }
-        
+
         public void Transition(ShoppingCartCheckoutRequestedDomainEvent @event, ShoppingCart shoppingCart)
         {
             Apply(@event);

@@ -7,12 +7,14 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
-    // TODO - should I implement my own event publisher so that I can use customer errors instead of exception-driven approach?
+    // TODO - should I implement my own event publisher so that I can use customer errors instead of the exception-driven approach?
     public class OrderingProcessManagerHandler :
+        ProcessManagerHandler<OrderingProcessManager>,
         IDomainEventHandler<ShoppingCartCheckoutRequestedDomainEvent>,
         IDomainEventHandler<OrderPlacedDomainEvent>
     {
@@ -25,7 +27,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         (
             IProcessManagerRepository<OrderingProcessManager> processManagerRepository,
             IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository
-        )
+        ) : base (processManagerRepository)
         {
             _processManagerRepository = processManagerRepository;
             _shoppingCartRepository = shoppingCartRepository;
@@ -42,24 +44,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(EntityId.Create(@event.ShoppingCartId));
             if (shoppingCart is null) throw new Exception("Shopping cart not found.");
 
-            OrderingProcessManager process = new(); // TODO - I can use the same code as for update; needs refactoring
-            process.Transition(@event, shoppingCart);
+            ProcessManager = new OrderingProcessManager();
+            ProcessManager.Transition(@event, shoppingCart);
 
-            await _processManagerRepository.SaveAsync(process);
+            await _processManagerRepository.SaveAsync(ProcessManager);
         }
 
-        public async Task Handle(OrderPlacedDomainEvent @event, CancellationToken _)
-        {
-            Logger.Information
-            (
-                "{Process}: handling {Event} domain event",
-    nameof(OrderingProcessManagerHandler), nameof(@event)
-            );
-                
-            OrderingProcessManager process = await _processManagerRepository.LoadAsync(@event.OrderId);
-            if (process is null) throw new Exception("Ordering process not found.");
-            
-            process.Transition(@event);
-        }
+        public Task Handle(OrderPlacedDomainEvent @event, CancellationToken _)
+            => TransitionAsync<OrderPlacedDomainEvent>(@event.OrderId, () => ProcessManager.Transition(@event));
     }
 }
