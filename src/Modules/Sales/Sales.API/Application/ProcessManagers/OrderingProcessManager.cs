@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 CausationId = @event.MessageId,
                 CorrelationId = @event.CorrelationId
             };
-            AddCommand(placeOrderCommand);
+            EnqueueCommands(placeOrderCommand);
         }
 
         public void Transition(OrderPlacedDomainEvent @event)
@@ -53,7 +53,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             Apply(@event);
             
             DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = Id };
-            AddCommand(deleteShoppingCartCommand);
+            EnqueueCommands(deleteShoppingCartCommand);
         }
 
         protected override void When(IMessage @event)

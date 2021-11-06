@@ -10,6 +10,7 @@ using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories;
@@ -24,17 +25,20 @@ namespace VShop.SharedKernel.EventStore.Repositories
     {
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly ICommandBus _commandBus;
+        private readonly Publisher _publisher;
         
         private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
 
         public EventStoreProcessManagerRepository
         (
             IEventStoreConnection eventStoreConnection,
-            ICommandBus commandBus
+            ICommandBus commandBus,
+            Publisher publisher
         )
         {
             _eventStoreConnection = eventStoreConnection;
             _commandBus = commandBus;
+            _publisher = publisher;
         }
         
         public async Task SaveAsync(TProcess processManager)
@@ -53,12 +57,18 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             try
             {
-                foreach (IMessage command in processManager.GetCommands())
+                foreach (IMessage command in processManager.GetOutgoingCommands())
                 {
                     object commandResult = await _commandBus.SendAsync(command);
+                    
                     if (commandResult is IOneOf { Value: ApplicationError error }) 
                         throw new Exception(error.ToString());
                 }
+                
+                // TODO - need to see if domain events can be created by process manager.
+                // Publish domain events.
+                // foreach (IDomainEvent domainEvent in processManager.GetOutgoingDomainEvents())
+                //     await _publisher.Publish(@domainEvent, PublishStrategy.SyncStopOnException);
             }
             catch (Exception ex)
             {

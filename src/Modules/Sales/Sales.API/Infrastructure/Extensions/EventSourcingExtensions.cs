@@ -39,14 +39,14 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
                 const string subscriptionName = "ReadModels";
-                string streamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
+                string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     eventStoreConnection,
                     new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
                     subscriptionName,
-                    Filter.StreamId.Prefix(streamPrefix),
+                    Filter.StreamId.Prefix(aggregateStreamPrefix),
                     new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
                 );
             });
@@ -54,16 +54,17 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // Publish integration events from the current bounded context 
             services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
             {
-                IIntegrationRepository integrationRepository = provider.GetRequiredService<IIntegrationRepository>();
-                string streamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
                 const string subscriptionName = "IntegrationEventsPub";
+                IIntegrationRepository integrationRepository = provider.GetRequiredService<IIntegrationRepository>();
+                string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
+                string processManagerStreamPrefix = $"{eventStoreConnection.ConnectionName}/process_manager".ToSnakeCase();
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
                     eventStoreConnection,
                     new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
                     subscriptionName,
-                    Filter.StreamId.Prefix(streamPrefix),
+                    Filter.StreamId.Prefix(aggregateStreamPrefix, processManagerStreamPrefix),
                 new IntegrationEventProjectionToEventStore(integrationRepository)
                 );
             });

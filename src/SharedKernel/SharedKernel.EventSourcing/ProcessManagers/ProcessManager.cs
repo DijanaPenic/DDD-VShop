@@ -10,8 +10,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     // TODO - How can I issue a reminder event?
     public abstract class ProcessManager
     {
-        private readonly List<IMessage> _events = new();
-        private readonly List<IMessage> _commands = new();
+        private readonly List<IMessage> _incomingEvents = new();
+        private readonly List<IMessage> _outgoingEvents = new();
+        private readonly List<IMessage> _outgoingCommands = new();
         
         public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
@@ -21,11 +22,14 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected void Apply(IMessage @event)
         {
             When(@event);
-            _events.Add(@event);
+            _incomingEvents.Add(@event);
         }
         
-        protected void AddCommand(params IMessage[] commands)
-            => _commands.AddRange(commands);
+        protected void EnqueueCommands(params IMessage[] commands)
+            => _outgoingCommands.AddRange(commands);
+        
+        protected void EnqueueEvents(params IMessage[] events)
+            => _outgoingEvents.AddRange(events);
 
         public void Load(IEnumerable<IMessage> history)
         {
@@ -36,19 +40,24 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             }
         }
 
-        public IEnumerable<IMessage> GetCommands()
-            => _commands.AsEnumerable();
+        public IEnumerable<IMessage> GetOutgoingCommands()
+            => _outgoingCommands;
         
-        public IEnumerable<IMessage> GetEvents() 
-            => _events.AsEnumerable();
+        public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
+            => _outgoingEvents
+                .Where(e => e is IDomainEvent)
+                .Cast<IDomainEvent>();
         
-        public IEnumerable<IMessage> GetAllMessages() 
-            => _events.Concat(_commands.Cast<IMessage>()).AsEnumerable();
+        public IEnumerable<IMessage> GetAllMessages()
+            => _incomingEvents
+                .Concat(_outgoingCommands)
+                .Concat(_outgoingEvents);
 
         public void ClearAllMessages()
         {
-            _events.Clear();
-            _commands.Clear();
+            _incomingEvents.Clear();
+            _outgoingEvents.Clear();
+            _outgoingCommands.Clear();
         }
     }
 }
