@@ -23,11 +23,5 @@ namespace VShop.Modules.Sales.API.Application.Queries
                 .Include(sc => sc.Items)
                 .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCartStatus.Closed);
         }
-
-        public Task<OrderFulfillmentProcess> GetActiveOrderFulfillmentProcessByShoppingCartIdAsync(Guid shoppingCartId)
-        {
-            return _dbContext.OrderFulfillmentProcesses
-                .FirstOrDefaultAsync(scp => scp.ShoppingCartId == shoppingCartId && scp.Status == OrderFulfillmentStatus.CheckoutRequested);
-        }
     }
 }
