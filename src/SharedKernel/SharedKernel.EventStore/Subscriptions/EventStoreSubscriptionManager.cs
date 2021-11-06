@@ -17,13 +17,13 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 {
     public abstract class EventStoreSubscriptionManager : IEventStoreSubscriptionManager
     {
-        private readonly ISubscription[] _subscriptionHandlers;
-        private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
-        
         protected readonly ICheckpointRepository CheckpointRepository;
         protected readonly IEventStoreConnection EventStoreConnection;
         protected readonly string SubscriptionName;
+        private readonly ISubscription[] _subscriptionHandlers;
         protected EventStoreCatchUpSubscription EventStoreSubscription;
+        
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
 
         protected EventStoreSubscriptionManager
         (
@@ -36,7 +36,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             _subscriptionHandlers = subscriptionHandlers;
 
             EventStoreConnection = eventStoreConnection;
-            SubscriptionName = $"{eventStoreConnection.ConnectionName}{subscriptionName}"; // Need to prefix with the name of the bounded context
+            SubscriptionName = $"{eventStoreConnection.ConnectionName}{subscriptionName}"; // NOTE: Need to prefix with the name of the bounded context
             CheckpointRepository = checkpointRepository;
         }
         

@@ -12,8 +12,9 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 {
     public class EventStoreAllFilteredCatchUpSubscriptionManager : EventStoreSubscriptionManager
     {
-        private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
         private readonly Filter _subscriptionFilter;
+        
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
 
         public EventStoreAllFilteredCatchUpSubscriptionManager
         (
