@@ -52,7 +52,12 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             Apply(@event);
             
-            DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = Id };
+            DeleteShoppingCartCommand deleteShoppingCartCommand = new()
+            {
+                ShoppingCartId = ShoppingCartId,
+                CausationId = @event.MessageId,
+                CorrelationId = @event.CorrelationId
+            };
             EnqueueCommands(deleteShoppingCartCommand);
         }
 
