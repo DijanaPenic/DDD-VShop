@@ -32,6 +32,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             if (ProcessManager is null) throw new Exception("Process manager not found.");
 
             transition();
+            
+            await _processManagerRepository.SaveAsync(ProcessManager);
         }
     }
 }
