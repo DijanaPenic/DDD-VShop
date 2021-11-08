@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 MessageId = messageId,
             };
             
-            shoppingCart.Apply
+            shoppingCart.RaiseEvent
             (
                 new ShoppingCartCreatedDomainEvent
                 {
@@ -67,7 +67,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
             if (shoppingCartItem is null)
             {
-                Apply
+                RaiseEvent
                 (
                     new ShoppingCartProductAddedDomainEvent
                     {
@@ -106,7 +106,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             if (shoppingCartItem.Quantity - quantity <= 0)
             {
-                Apply
+                RaiseEvent
                 (
                     new ShoppingCartProductRemovedDomainEvent
                     {
@@ -138,7 +138,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if(ProductsCostWithDiscount < Settings.MinShoppingCartAmountForCheckout)
                 return ValidationError.Create(@$"Checkout is not allowed. Minimum required shopping cart amount 
                                                             for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
-            Apply
+            RaiseEvent
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
                 {
@@ -156,7 +156,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Status == ShoppingCartStatus.Closed)
                 return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
-            Apply
+            RaiseEvent
             (
                 new ShoppingCartDeletionRequestedDomainEvent
                 {
@@ -172,7 +172,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
             
             if (newDeliveryCost != DeliveryCost)
-                Apply
+                RaiseEvent
                 (
                     new ShoppingCartDeliveryCostChangedDomainEvent
                     {
@@ -185,7 +185,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
             => Items.SingleOrDefault(sci => sci.Id.Equals(productId));
 
-        protected override void When(IDomainEvent @event)
+        protected override void Apply(IDomainEvent @event)
         {
             ShoppingCartItem shoppingCartItem;
             
@@ -195,7 +195,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Id = new EntityId(e.ShoppingCartId);
 
                     // one-to-one relationship
-                    ShoppingCartCustomer shoppingCartCustomer = new(Apply);
+                    ShoppingCartCustomer shoppingCartCustomer = new(RaiseEvent);
                     ApplyToEntity(shoppingCartCustomer, e);
                     Customer = shoppingCartCustomer;
                     
@@ -206,7 +206,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     _shoppingCartItems = new List<ShoppingCartItem>();
                     break;
                 case ShoppingCartProductAddedDomainEvent e:
-                    shoppingCartItem = new ShoppingCartItem(Apply);
+                    shoppingCartItem = new ShoppingCartItem(RaiseEvent);
                     ApplyToEntity(shoppingCartItem, e);
                     _shoppingCartItems.Add(shoppingCartItem);
                     break;

@@ -17,26 +17,27 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         public int Version { get; private set; } = -1;
         public Guid CorrelationId { get; set; }
         public Guid MessageId { get; set; }
-
-        protected abstract void When(IDomainEvent @event);
-
-        protected void Apply(IDomainEvent @event)
+        
+        protected abstract void Apply(IDomainEvent @event);
+        
+        protected void RaiseEvent(IDomainEvent @event)
         {
-            When(@event);
+            Apply(@event);
+            
             SetCausationId(@event);
             SetCorrelationId(@event);
             
             _outgoingEvents.Add(@event);
         }
         
-        public void EnqueueEvents(params IIntegrationEvent[] events)
+        public void RaiseEvent(params IIntegrationEvent[] events)
         {
             foreach (IIntegrationEvent @event in events)
             {
                 SetCausationId(@event);
                 SetCorrelationId(@event);
             }
-
+        
             _outgoingEvents.AddRange(events);
         }
 
@@ -44,7 +45,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         {
             foreach (IMessage @event in history)
             {
-                if(@event is IDomainEvent domainEvent) When(domainEvent);
+                if(@event is IDomainEvent domainEvent) Apply(domainEvent);
                 Version++;
             }
         }

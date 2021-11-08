@@ -18,7 +18,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
         public void Transition(ShoppingCartCheckoutRequestedDomainEvent @event, ShoppingCart shoppingCart)
         {
-            Apply(@event);
+            ProcessEvent(@event);
             
             PlaceOrderCommand placeOrderCommand = new()
             {
@@ -45,12 +45,12 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 CausationId = @event.MessageId,
                 CorrelationId = @event.CorrelationId
             };
-            EnqueueCommands(placeOrderCommand);
+            RaiseCommand(placeOrderCommand);
         }
 
         public void Transition(OrderPlacedDomainEvent @event)
         {
-            Apply(@event);
+            ProcessEvent(@event);
             
             DeleteShoppingCartCommand deleteShoppingCartCommand = new()
             {
@@ -58,10 +58,10 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 CausationId = @event.MessageId,
                 CorrelationId = @event.CorrelationId
             };
-            EnqueueCommands(deleteShoppingCartCommand);
+            RaiseCommand(deleteShoppingCartCommand);
         }
 
-        protected override void When(IMessage @event)
+        protected override void Apply(IMessage @event)
         {
             switch (@event)
             {

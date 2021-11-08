@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 MessageId = messageId,
             };
             
-            order.Apply
+            order.RaiseEvent
             (
                 new OrderPlacedDomainEvent
                 {
@@ -76,7 +76,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             Price unitPrice
         )
         {
-            Apply
+            RaiseEvent
             (
                 new OrderItemAddedDomainEvent
                 {
@@ -95,7 +95,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status != OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Cancelled' is not allowed. Order Status: '{Status}'.");
             
-            Apply(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
             
             return Option<ApplicationError>.None;
         }
@@ -105,12 +105,12 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status != OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Shipped' is not allowed. Order Status: '{Status}'.");
             
-            Apply(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
             
             return Option<ApplicationError>.None;
         }
 
-        protected override void When(IDomainEvent @event)
+        protected override void Apply(IDomainEvent @event)
         {
             switch (@event)
             {
@@ -120,7 +120,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     DeliveryCost = new Price(e.DeliveryCost);
 
                     // one-to-one relationship
-                    OrderCustomer orderCustomer = new(Apply);
+                    OrderCustomer orderCustomer = new(RaiseEvent);
                     ApplyToEntity(orderCustomer, e);
                     Customer = orderCustomer;
                     
@@ -130,7 +130,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     _orderItems = new List<OrderItem>();
                     break;
                 case OrderItemAddedDomainEvent e:
-                    OrderItem orderItem = new(Apply);
+                    OrderItem orderItem = new(RaiseEvent);
                     ApplyToEntity(orderItem, e);
                     _orderItems.Add(orderItem);
                     break;

@@ -17,25 +17,25 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
     
-        protected abstract void When(IMessage @event);
+        protected abstract void Apply(IMessage @event);
         
-        protected void Apply(IMessage @event)
+        protected void ProcessEvent(IMessage @event)
         {
-            When(@event);
+            Apply(@event);
             _incomingEvents.Add(@event);
         }
         
-        protected void EnqueueCommands(params IMessage[] commands)
+        protected void RaiseCommand(params IMessage[] commands)
             => _outgoingCommands.AddRange(commands);
         
-        protected void EnqueueEvents(params IMessage[] events)
+        protected void RaiseEvent(params IMessage[] events)
             => _outgoingEvents.AddRange(events);
 
         public void Load(IEnumerable<IMessage> history)
         {
             foreach (IMessage message in history)
             {
-                if(message is IDomainEvent or IIntegrationEvent) When(message);
+                if(message is IDomainEvent or IIntegrationEvent) Apply(message);
                 Version++;
             }
         }
