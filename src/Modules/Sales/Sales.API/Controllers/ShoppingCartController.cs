@@ -112,8 +112,7 @@ namespace VShop.Modules.Sales.API.Controllers
 
             if (result.IsT1) return HandleError(result.AsT1);
             
-            dynamic order = new JObject();
-            order.OrderId = command.OrderId;
+            CheckoutShoppingCartResponse order = new() { OrderId = command.OrderId };
 
             return Ok(order);
         }

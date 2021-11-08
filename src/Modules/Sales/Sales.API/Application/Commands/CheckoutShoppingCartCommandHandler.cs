@@ -48,4 +48,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public Guid ShoppingCartId { get; set; }
         public Guid OrderId { get; set; }
     }
+    
+    public record CheckoutShoppingCartResponse
+    {
+        public Guid OrderId { get; init; }
+    }
 }
