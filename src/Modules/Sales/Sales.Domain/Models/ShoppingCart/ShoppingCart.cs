@@ -129,7 +129,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public Option<ApplicationError> RequestCheckout(EntityId orderId)
         {
-            if(Status != ShoppingCartStatus.AwaitingConfirmation)
+            if(Status is not ShoppingCartStatus.AwaitingConfirmation)
                 return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
             if(IsShoppingCartEmpty)
@@ -153,7 +153,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         
         public Option<ApplicationError> RequestDelete()
         {
-            if (Status == ShoppingCartStatus.Closed)
+            if (Status is ShoppingCartStatus.Closed)
                 return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
             RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent { ShoppingCartId = Id });

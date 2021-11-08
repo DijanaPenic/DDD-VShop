@@ -92,7 +92,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 
         public Option<ApplicationError> SetCancelledStatus()
         {
-            if(Status != OrderStatus.Processing)
+            if(Status is not OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Cancelled' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
@@ -102,7 +102,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public Option<ApplicationError> SetShippedStatus()
         {
-            if(Status != OrderStatus.Processing)
+            if(Status is not OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Shipped' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });

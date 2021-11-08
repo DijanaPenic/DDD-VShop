@@ -88,7 +88,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             string streamName = GetProcessManagerStreamName(processManagerId);
             EventReadResult result = await _eventStoreConnection.ReadEventAsync(streamName, 1, false);
             
-            return result.Status != EventReadStatus.NoStream;
+            return result.Status is not EventReadStatus.NoStream;
         }
         
         public async Task<TProcess> LoadAsync(Guid processManagerId)

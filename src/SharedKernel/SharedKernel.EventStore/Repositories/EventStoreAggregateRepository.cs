@@ -74,7 +74,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             string streamName = GetAggregateStreamName(aggregateId);
             EventReadResult result = await _eventStoreConnection.ReadEventAsync(streamName, 1, false);
             
-            return result.Status != EventReadStatus.NoStream;
+            return result.Status is not EventReadStatus.NoStream;
         }
         
         public async Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null)
