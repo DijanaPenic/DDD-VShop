@@ -57,8 +57,8 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
-            IMessage message = resolvedEvent.DeserializeData() as IMessage;
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
+            IMessage message = resolvedEvent.DeserializeMessage();
 
             Logger.Debug("EventStore subscription manager > identified message: {Message}", message);
 

@@ -6,8 +6,8 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
@@ -41,9 +41,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                     ProductId = sci.Id,
                     Quantity = sci.Quantity,
                     UnitPrice = sci.UnitPrice
-                }).ToArray(),
-                CausationId = @event.MessageId,
-                CorrelationId = @event.CorrelationId
+                }).ToArray()
             };
             RaiseCommand(placeOrderCommand);
         }
@@ -52,16 +50,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             ProcessEvent(@event);
             
-            DeleteShoppingCartCommand deleteShoppingCartCommand = new()
-            {
-                ShoppingCartId = ShoppingCartId,
-                CausationId = @event.MessageId,
-                CorrelationId = @event.CorrelationId
-            };
+            DeleteShoppingCartCommand deleteShoppingCartCommand = new() { ShoppingCartId = ShoppingCartId };
             RaiseCommand(deleteShoppingCartCommand);
         }
 
-        protected override void Apply(IMessage @event)
+        protected override void ApplyEvent(IEvent @event)
         {
             switch (@event)
             {

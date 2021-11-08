@@ -34,7 +34,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 position = slice.NextEventNumber;
                 endOfStream = slice.IsEndOfStream;
 
-                events.AddRange(slice.Events.Select(@event => @event.DeserializeData() as TMessage));
+                events.AddRange(slice.Events.Select(@event => @event.DeserializeMessage() as TMessage));
             } while (!endOfStream);
 
             return events;

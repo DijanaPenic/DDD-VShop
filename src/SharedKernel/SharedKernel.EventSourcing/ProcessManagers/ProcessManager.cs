@@ -2,62 +2,85 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands;
+using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     // TODO - How can I issue a reminder event?
     public abstract class ProcessManager
     {
-        private readonly List<IMessage> _incomingEvents = new();
-        private readonly List<IMessage> _outgoingEvents = new();
-        private readonly List<IMessage> _outgoingCommands = new();
+        private IEvent _incomingEvent;
+        private readonly List<IEvent> _outgoingEvents = new();
+        private readonly List<ICommand> _outgoingCommands = new();
         
         public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
     
-        protected abstract void Apply(IMessage @event);
+        protected abstract void ApplyEvent(IEvent @event);
         
-        protected void ProcessEvent(IMessage @event)
+        protected void ProcessEvent(IEvent @event)
         {
-            Apply(@event);
-            _incomingEvents.Add(@event);
+            ApplyEvent(@event);
+            _incomingEvent = @event;
+        }
+
+        protected void RaiseEvent(IEvent @event)
+        {
+            SetMessage(@event, _outgoingEvents.Count);
+            _outgoingEvents.Add(@event);
         }
         
-        protected void RaiseCommand(params IMessage[] commands)
-            => _outgoingCommands.AddRange(commands);
-        
-        protected void RaiseEvent(params IMessage[] events)
-            => _outgoingEvents.AddRange(events);
+        protected void RaiseCommand(ICommand command)
+        {
+            SetMessage(command, _outgoingCommands.Count);
+            _outgoingCommands.Add(command);
+        }
 
         public void Load(IEnumerable<IMessage> history)
         {
             foreach (IMessage message in history)
             {
-                if(message is IDomainEvent or IIntegrationEvent) Apply(message);
+                if(message is IEvent @event) ApplyEvent(@event);
                 Version++;
             }
         }
 
-        public IEnumerable<IMessage> GetOutgoingCommands()
+        public IEnumerable<ICommand> GetOutgoingCommands()
             => _outgoingCommands;
-        
+
         public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
-            => _outgoingEvents
-                .Where(e => e is IDomainEvent)
-                .Cast<IDomainEvent>();
-        
+            => _outgoingEvents.OfType<IDomainEvent>();
+
         public IEnumerable<IMessage> GetAllMessages()
-            => _incomingEvents
-                .Concat(_outgoingCommands)
-                .Concat(_outgoingEvents);
+        {
+            List<IMessage> messages = new() { _incomingEvent };
+
+            messages.AddRange(_outgoingEvents);
+            messages.AddRange(_outgoingCommands);
+
+            return messages;
+        }
 
         public void ClearAllMessages()
         {
-            _incomingEvents.Clear();
             _outgoingEvents.Clear();
             _outgoingCommands.Clear();
+            _incomingEvent = default;
+        }
+        
+        private void SetMessage(IMessage message, int position)
+        {
+            if (_incomingEvent is null) 
+                throw new Exception("Cannot issue new commands or events if the event inbox is empty!");
+            
+            message.Name = MessageTypeMapper.ToName(message.GetType());
+            message.MessageId = DeterministicGuid.Create(_incomingEvent.MessageId, $"{message.Name}-{position}");
+            message.CausationId = _incomingEvent.MessageId;
+            message.CorrelationId = _incomingEvent.CorrelationId;
         }
     }
 }

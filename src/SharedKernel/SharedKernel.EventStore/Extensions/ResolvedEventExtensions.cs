@@ -5,17 +5,25 @@ using EventStore.ClientAPI;
 
 using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {
     public static class ResolvedEventExtensions
     {
-        public static object DeserializeData(this ResolvedEvent resolvedEvent)
+        public static IMessage DeserializeMessage(this ResolvedEvent resolvedEvent)
         {
             Type dataType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
+
+            IMessage message = JsonConvert.DeserializeObject(jsonData, dataType) as IMessage;
+            IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
+
+            message.MessageId = metadata.MessageId;
+            message.CausationId = metadata.CausationId;
+            message.CorrelationId = metadata.CorrelationId;
             
-            return JsonConvert.DeserializeObject(jsonData, dataType);
+            return message;
         }
 
         public static TMessage DeserializeData<TMessage>(this ResolvedEvent resolvedEvent)

@@ -10,10 +10,9 @@ using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Extensions;
 
 using ILogger = Serilog.ILogger;
 
@@ -49,7 +48,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareMessageData(aggregate.GetAllMessages().ToArray())
+                EventStoreHelper.PrepareMessageData(aggregate.GetAllEvents().ToArray())
             );
 
             try
@@ -66,7 +65,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
             finally
             {
-                aggregate.ClearAllMessages();
+                aggregate.ClearAllEvents();
             }
         }
         
@@ -81,7 +80,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null)
         {
             string streamName = GetAggregateStreamName(aggregateId);
-            List<IMessage> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
+            List<IEvent> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IEvent>(streamName);
 
             if (events.Count is 0) return default;
                 

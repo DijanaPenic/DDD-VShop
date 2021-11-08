@@ -185,7 +185,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
             => Items.SingleOrDefault(sci => sci.Id.Equals(productId));
 
-        protected override void Apply(IDomainEvent @event)
+        protected override void ApplyEvent(IDomainEvent @event)
         {
             ShoppingCartItem shoppingCartItem;
             

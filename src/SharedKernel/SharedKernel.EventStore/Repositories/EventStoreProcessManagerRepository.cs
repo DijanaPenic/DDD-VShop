@@ -10,6 +10,7 @@ using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
@@ -57,7 +58,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             try
             {
-                foreach (IMessage command in processManager.GetOutgoingCommands())
+                foreach (ICommand command in processManager.GetOutgoingCommands())
                 {
                     object commandResult = await _commandBus.SendAsync(command);
                     
@@ -93,15 +94,15 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<TProcess> LoadAsync(Guid processManagerId)
         {
             string streamName = GetProcessManagerStreamName(processManagerId);
-            List<IMessage> events = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
+            List<IMessage> messages = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
-            if (events.Count is 0) return default;
+            if (messages.Count is 0) return default;
                 
             TProcess processManager = (TProcess)Activator.CreateInstance(typeof(TProcess), true);
             if (processManager is null)
                 throw new Exception($"Couldn't resolve {nameof(TProcess)} instance.");
 
-            processManager?.Load(events);
+            processManager?.Load(messages);
 
             return processManager;
         }

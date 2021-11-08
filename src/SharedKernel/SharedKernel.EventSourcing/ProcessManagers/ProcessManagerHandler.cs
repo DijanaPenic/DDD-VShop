@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Serilog;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _processManagerRepository = processManagerRepository;
 
         protected async Task TransitionAsync<TEvent>(Guid processId, Action transition)
-            where TEvent : IMessage
+            where TEvent : IEvent
         {
             Logger.Information
             (

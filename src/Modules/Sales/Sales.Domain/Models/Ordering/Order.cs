@@ -110,7 +110,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return Option<ApplicationError>.None;
         }
 
-        protected override void Apply(IDomainEvent @event)
+        protected override void ApplyEvent(IDomainEvent @event)
         {
             switch (@event)
             {

@@ -3,71 +3,64 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
+using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject
     {
-        private readonly List<IMessage> _outgoingEvents = new();
+        private readonly List<IEvent> _outgoingEvents = new();
 
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
         public Guid CorrelationId { get; set; }
         public Guid MessageId { get; set; }
         
-        protected abstract void Apply(IDomainEvent @event);
+        protected abstract void ApplyEvent(IDomainEvent @event);
         
         protected void RaiseEvent(IDomainEvent @event)
         {
-            Apply(@event);
-            
-            SetCausationId(@event);
-            SetCorrelationId(@event);
-            
+            ApplyEvent(@event);
+            SetEvent(@event);
             _outgoingEvents.Add(@event);
         }
         
-        public void RaiseEvent(params IIntegrationEvent[] events)
+        public void RaiseEvent(IIntegrationEvent @event)
         {
-            foreach (IIntegrationEvent @event in events)
-            {
-                SetCausationId(@event);
-                SetCorrelationId(@event);
-            }
-        
-            _outgoingEvents.AddRange(events);
+            SetEvent(@event);
+            _outgoingEvents.Add(@event);
         }
 
-        public void Load(IEnumerable<IMessage> history)
+        public void Load(IEnumerable<IEvent> history)
         {
-            foreach (IMessage @event in history)
+            foreach (IEvent @event in history)
             {
-                if(@event is IDomainEvent domainEvent) Apply(domainEvent);
+                if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
             }
         }
 
         public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
-            => _outgoingEvents
-                .Where(e => e is IDomainEvent)
-                .Cast<IDomainEvent>();
+            => _outgoingEvents.OfType<IDomainEvent>();
 
-        public IEnumerable<IMessage> GetAllMessages()
+        public IEnumerable<IEvent> GetAllEvents()
             => _outgoingEvents;
 
-        public void ClearAllMessages()
+        public void ClearAllEvents()
             => _outgoingEvents.Clear();
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event)
             => entity?.Handle(@event);
         
-        private void SetCausationId(IMessage @event)
-            => @event.CausationId = MessageId;
-        
-        private void SetCorrelationId(IMessage @event)
-            => @event.CorrelationId = CorrelationId;
+        private void SetEvent(IEvent @event)
+        {
+            @event.Name = MessageTypeMapper.ToName(@event.GetType());
+            @event.MessageId = DeterministicGuid.Create(MessageId, $"{@event.Name}-{_outgoingEvents.Count}");
+            @event.CausationId = MessageId;
+            @event.CorrelationId = CorrelationId;
+        }
     }
 }
