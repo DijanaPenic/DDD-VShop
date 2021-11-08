@@ -14,10 +14,10 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         protected Entity(Action<IDomainEvent> applier) => _applier = applier;
 
-        void IInternalEventHandler.Handle(IDomainEvent @event) => When(@event);
+        void IInternalEventHandler.Handle(IDomainEvent @event) => ApplyEvent(@event);
 
-        protected abstract void When(IDomainEvent @event);
+        protected abstract void ApplyEvent(IDomainEvent @event);
 
-        protected void Apply(IDomainEvent @event) => _applier(@event);
+        protected void RaiseEvent(IDomainEvent @event) => _applier(@event);
     }
 }

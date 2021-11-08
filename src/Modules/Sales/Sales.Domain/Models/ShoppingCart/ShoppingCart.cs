@@ -156,13 +156,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Status == ShoppingCartStatus.Closed)
                 return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
-            RaiseEvent
-            (
-                new ShoppingCartDeletionRequestedDomainEvent
-                {
-                    ShoppingCartId = Id
-                }
-            );
+            RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent { ShoppingCartId = Id });
             
             return Option<ApplicationError>.None;
         }
@@ -193,15 +187,14 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             {
                 case ShoppingCartCreatedDomainEvent e:
                     Id = new EntityId(e.ShoppingCartId);
+                    DeliveryCost = new Price(Settings.DefaultDeliveryCost);
+                    Status = ShoppingCartStatus.New;
 
                     // one-to-one relationship
                     ShoppingCartCustomer shoppingCartCustomer = new(RaiseEvent);
                     ApplyToEntity(shoppingCartCustomer, e);
                     Customer = shoppingCartCustomer;
-                    
-                    DeliveryCost = new Price(Settings.DefaultDeliveryCost);
-                    Status = ShoppingCartStatus.New;
-                    
+
                     // one-to-many relationship
                     _shoppingCartItems = new List<ShoppingCartItem>();
                     break;

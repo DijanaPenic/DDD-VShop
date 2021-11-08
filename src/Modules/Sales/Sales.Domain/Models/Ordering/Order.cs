@@ -118,14 +118,13 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Id = new EntityId(e.OrderId);
                     TotalDiscount = new Price(e.TotalDiscount);
                     DeliveryCost = new Price(e.DeliveryCost);
+                    Status = OrderStatus.Processing;
 
                     // one-to-one relationship
                     OrderCustomer orderCustomer = new(RaiseEvent);
                     ApplyToEntity(orderCustomer, e);
                     Customer = orderCustomer;
-                    
-                    Status = OrderStatus.Processing;
-                    
+
                     // one-to-many relationship
                     _orderItems = new List<OrderItem>();
                     break;

@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public OrderItem(Action<IDomainEvent> applier) : base(applier) { }
         
-        protected override void When(IDomainEvent @event)
+        protected override void ApplyEvent(IDomainEvent @event)
         {
             switch (@event)
             {

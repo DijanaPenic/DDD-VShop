@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Quantity + value > Settings.MaxQuantityPerProduct)
                 return ValidationError.Create($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
             
-            Apply
+            RaiseEvent
             (
                 new ShoppingCartItemQuantityIncreasedDomainEvent
                 {
@@ -49,7 +49,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Quantity - value <= 0)
                 return ValidationError.Create($"Cannot decrease quantity by {value}.");
             
-            Apply
+            RaiseEvent
             (
                 new ShoppingCartItemQuantityDecreasedDomainEvent
                 {
@@ -62,7 +62,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Option<ApplicationError>.None;
         }
         
-        protected override void When(IDomainEvent @event)
+        protected override void ApplyEvent(IDomainEvent @event)
         {
             switch (@event)
             {
