@@ -1,8 +1,13 @@
-﻿using System.Linq;
+﻿using Polly;
+using Polly.Retry;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.ClientAPI;
+using EventStore.ClientAPI.Exceptions;
 
+using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
@@ -12,7 +17,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
         public static async Task<List<TMessage>> ReadStreamEventsForwardAsync<TMessage>
         (
             this IEventStoreConnection eventStoreConnection,
-            string streamName
+            string stream
         ) where TMessage : class, IMessage
         {
             const int maxSliceSize = 4096;
@@ -25,7 +30,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
             {
                 StreamEventsSlice slice = await eventStoreConnection.ReadStreamEventsForwardAsync
                 (
-                    streamName,
+                    stream,
                     position,
                     maxSliceSize,
                     false
@@ -38,6 +43,34 @@ namespace VShop.SharedKernel.EventStore.Extensions
             } while (!endOfStream);
 
             return events;
+        }
+
+        public static async Task AppendToStreamAsync<TMessage>
+        (
+            this IEventStoreConnection eventStoreConnection,
+            string stream,
+            long expectedVersion,
+            params TMessage[] messages
+        ) where TMessage : IMessage
+        {
+            EventData[] streamMessages = EventStoreHelper.PrepareMessageData(messages);
+            
+            const int maxRetryAttempts = 3;
+            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
+
+            AsyncRetryPolicy retryPolicy = Policy
+                .Handle<Exception>(ex => ex is not WrongExpectedVersionException)
+                .WaitAndRetryAsync(maxRetryAttempts, _ => pauseBetweenFailures);
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                await eventStoreConnection.AppendToStreamAsync
+                (
+                    stream,
+                    expectedVersion,
+                    streamMessages
+                );
+            });
         }
     }
 }

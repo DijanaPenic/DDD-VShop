@@ -11,6 +11,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
@@ -48,7 +49,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                EventStoreHelper.PrepareMessageData(aggregate.GetAllEvents().ToArray())
+                aggregate.GetAllEvents().ToArray()
             );
 
             try

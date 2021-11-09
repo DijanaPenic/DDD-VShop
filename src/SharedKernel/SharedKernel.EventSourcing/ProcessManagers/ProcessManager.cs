@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands;
-using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
@@ -17,7 +15,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IEvent> _outgoingEvents = new();
         private readonly List<ICommand> _outgoingCommands = new();
         
-        public Guid Id { get; protected set; }
+        public Guid Id { get; protected set; } // TODO - should be generic key
         public int Version { get; private set; } = -1;
     
         protected abstract void ApplyEvent(IEvent @event);
@@ -30,13 +28,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected void RaiseEvent(IEvent @event)
         {
-            SetMessage(@event, _outgoingEvents.Count);
+            SetMessage(@event);
             _outgoingEvents.Add(@event);
         }
         
         protected void RaiseCommand(ICommand command)
         {
-            SetMessage(command, _outgoingCommands.Count);
+            SetMessage(command);
             _outgoingCommands.Add(command);
         }
 
@@ -72,13 +70,11 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _incomingEvent = default;
         }
         
-        private void SetMessage(IMessage message, int position)
+        private void SetMessage(IMessage message)
         {
             if (_incomingEvent is null) 
                 throw new Exception("Cannot issue new commands or events if the event inbox is empty!");
             
-            message.Name = MessageTypeMapper.ToName(message.GetType());
-            message.MessageId = DeterministicGuid.Create(_incomingEvent.MessageId, $"{message.Name}-{position}");
             message.CausationId = _incomingEvent.MessageId;
             message.CorrelationId = _incomingEvent.CorrelationId;
         }

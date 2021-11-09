@@ -3,9 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
-using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
@@ -57,8 +55,6 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         
         private void SetEvent(IEvent @event)
         {
-            @event.Name = MessageTypeMapper.ToName(@event.GetType());
-            @event.MessageId = DeterministicGuid.Create(MessageId, $"{@event.Name}-{_outgoingEvents.Count}");
             @event.CausationId = MessageId;
             @event.CorrelationId = CorrelationId;
         }

@@ -3,7 +3,6 @@ using System.Text;
 using Newtonsoft.Json;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
@@ -18,8 +17,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
 
             IMessage message = JsonConvert.DeserializeObject(jsonData, dataType) as IMessage;
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-
-            message.MessageId = metadata.MessageId;
+            
             message.CausationId = metadata.CausationId;
             message.CorrelationId = metadata.CorrelationId;
             

@@ -53,7 +53,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 processManager.Version,
-                EventStoreHelper.PrepareMessageData(processManager.GetAllMessages().ToArray())
+                processManager.GetAllMessages().ToArray()
             );
 
             try

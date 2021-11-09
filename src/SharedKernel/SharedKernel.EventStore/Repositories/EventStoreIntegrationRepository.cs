@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 _integrationStreamName,
                 ExpectedVersion.Any,
-                EventStoreHelper.PrepareMessageData(messages: @event)
+                 @event
             );
         }
 
