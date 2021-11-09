@@ -5,13 +5,11 @@ using System.Collections.Generic;
 using Serilog;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
@@ -57,12 +55,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
                 foreach (IDomainEvent domainEvent in aggregate.GetOutgoingDomainEvents())
                     await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Unhandled error has occurred");
-                
-                throw;
             }
             finally
             {

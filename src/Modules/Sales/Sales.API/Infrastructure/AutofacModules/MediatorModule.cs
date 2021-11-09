@@ -35,6 +35,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
 
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             
             builder.RegisterType<CommandBus>().As<ICommandBus>();

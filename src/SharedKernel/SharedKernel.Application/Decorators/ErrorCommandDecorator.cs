@@ -24,9 +24,7 @@ namespace VShop.SharedKernel.Application.Decorators
         {
             try
             {
-                OneOf<TResponse, ApplicationError> response = await next();
-
-                return response;
+                return await next();
             }
             catch (ValidationException ex)
             {

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Serilog;
 using EventStore.ClientAPI;
 
-using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -70,12 +69,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 // Publish domain events.
                 // foreach (IDomainEvent domainEvent in processManager.GetOutgoingDomainEvents())
                 //     await _publisher.Publish(@domainEvent, PublishStrategy.SyncStopOnException);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Unhandled error has occurred");
-                
-                throw;
             }
             finally
             {
