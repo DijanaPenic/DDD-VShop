@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
@@ -7,7 +8,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public interface IIntegrationRepository
     {
-        Task SaveAsync(IIntegrationEvent @event);
-        Task<IEnumerable<IIntegrationEvent>> LoadAsync();
+        Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default);
+        Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default);
     }
 }

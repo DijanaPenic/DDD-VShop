@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -10,10 +11,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         where TKey : ValueObject
         where TA : AggregateRoot<TKey>
     {
-        Task SaveAsync(TA aggregate);
-        
-        Task<bool> ExistsAsync(TKey aggregateId);
-        
-        Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null);
+        Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default);
+        Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = null, Guid? correlationId = null, CancellationToken cancellationToken = default);
     }
 }

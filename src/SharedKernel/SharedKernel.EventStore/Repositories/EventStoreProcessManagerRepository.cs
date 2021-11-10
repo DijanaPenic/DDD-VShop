@@ -1,18 +1,19 @@
 ﻿using OneOf;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Serilog;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
-using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
@@ -23,7 +24,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
     public class EventStoreProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager, new()
     {
-        private readonly IEventStoreConnection _eventStoreConnection;
+        private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
         private readonly Publisher _publisher;
         
@@ -31,27 +32,28 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         public EventStoreProcessManagerRepository
         (
-            IEventStoreConnection eventStoreConnection,
+            EventStoreClient eventStoreClient,
             ICommandBus commandBus,
             Publisher publisher
         )
         {
-            _eventStoreConnection = eventStoreConnection;
+            _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
             _publisher = publisher;
         }
         
-        public async Task SaveAsync(TProcess processManager)
+        public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken)
         {
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
 
             string streamName = GetProcessManagerStreamName(processManager.Id);
 
-            await _eventStoreConnection.AppendToStreamAsync
+            await _eventStoreClient.AppendToStreamWithRetryAsync
             (
                 streamName,
                 processManager.Version,
+                cancellationToken,
                 processManager.GetAllMessages().ToArray()
             );
 
@@ -59,7 +61,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             {
                 foreach (ICommand command in processManager.GetOutgoingCommands())
                 {
-                    object commandResult = await _commandBus.SendAsync(command);
+                    object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
                     if (commandResult is IOneOf { Value: ApplicationError error }) 
                         throw new Exception(error.ToString());
@@ -76,18 +78,15 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
         }
         
-        public async Task<bool> ExistsAsync(Guid processManagerId)
+        public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
         {
             string streamName = GetProcessManagerStreamName(processManagerId);
-            EventReadResult result = await _eventStoreConnection.ReadEventAsync(streamName, 1, false);
-            
-            return result.Status is not EventReadStatus.NoStream;
-        }
-        
-        public async Task<TProcess> LoadAsync(Guid processManagerId)
-        {
-            string streamName = GetProcessManagerStreamName(processManagerId);
-            List<IMessage> messages = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
+            IEnumerable<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            (
+                streamName,
+                StreamPosition.Start,
+                cancellationToken
+            );
 
             TProcess processManager = new();
             processManager.Load(messages);
@@ -97,9 +96,9 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         private string GetProcessManagerStreamName(Guid processManagerId)
         {
-            string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
+            string processManagerName = nameof(TProcess).Replace("ProcessManager", string.Empty); // TODO - need to test this
             
-            return $"{_eventStoreConnection.ConnectionName}/process_manager/{processManagerName}/{processManagerId}".ToSnakeCase();
+            return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}".ToSnakeCase();
         }
     }
 }

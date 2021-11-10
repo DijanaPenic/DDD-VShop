@@ -2,7 +2,7 @@
 using System.Text;
 using System.Linq;
 using Newtonsoft.Json;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -22,9 +22,8 @@ namespace VShop.SharedKernel.EventStore.Helpers
 
             return messages.Select(message => new EventData
             (
-                message.MessageId,
+                Uuid.Empty, // TODO - map from messageId
                 MessageTypeMapper.ToName(message.GetType()),
-                true,
                 Serialize(message, serializerSettings),
                 Serialize(GetMetadata(message), serializerSettings)
             )).ToArray();

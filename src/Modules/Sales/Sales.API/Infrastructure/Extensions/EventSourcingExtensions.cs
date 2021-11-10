@@ -1,4 +1,4 @@
-﻿using EventStore.ClientAPI;
+﻿using EventStore.Client;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,14 +22,19 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
         public static void AddEventSourcingServices(this IServiceCollection services, string connectionString)
         {
             // TODO - switch to gRPC
-            IEventStoreConnection eventStoreConnection = EventStoreConnection.Create
-            (
-                connectionString,
-                ConnectionSettings.Create().KeepReconnecting().DisableTls(),
-                "Sales"
-            );
+            // IEventStoreConnection eventStoreConnection = EventStoreConnection.Create
+            // (
+            //     connectionString,
+            //     ConnectionSettings.Create().KeepReconnecting().DisableTls(),
+            //     "Sales"
+            // );
+            
+            EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
+            eventStoreSettings.ConnectionName = "Sales";
+            
+            EventStoreClient eventStoreClient = new(eventStoreSettings);
 
-            services.AddSingleton(eventStoreConnection);
+            services.AddSingleton(eventStoreClient);
             services.AddSingleton(typeof(IAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
@@ -44,8 +49,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             //
             //     return new EventStoreAllFilteredCatchUpSubscriptionManager
             //     (
-            //         eventStoreConnection,
-            //         new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
+            //         eventStoreClient,
+            //         new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
             //         subscriptionName,
             //         Filter.StreamId.Prefix(aggregateStreamPrefix),
             //         new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
@@ -57,13 +62,13 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             {
                 const string subscriptionName = "IntegrationEventsPub";
                 IIntegrationRepository integrationRepository = provider.GetRequiredService<IIntegrationRepository>();
-                string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
-                string processManagerStreamPrefix = $"{eventStoreConnection.ConnectionName}/process_manager".ToSnakeCase();
+                string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
+                string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
-                    eventStoreConnection,
-                    new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
+                    eventStoreClient,
+                    new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
                     subscriptionName,
                     Filter.StreamId.Prefix(aggregateStreamPrefix, processManagerStreamPrefix),
                 new IntegrationEventProjectionToEventStore(integrationRepository)
@@ -78,8 +83,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
                 return new EventStoreAllFilteredCatchUpSubscriptionManager
                 (
-                    eventStoreConnection,
-                    new EventStoreCheckpointRepository(eventStoreConnection, subscriptionName),
+                    eventStoreClient,
+                    new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
                     subscriptionName,
                     Filter.StreamId.Regex(new Regex(@".*\/integration$")),
                     new IntegrationEventProjectionPublisher(publisher)

@@ -6,8 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Serilog;
-
-using EventStore.ClientAPI.Exceptions;
+using EventStore.Client;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 

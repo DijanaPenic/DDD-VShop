@@ -1,81 +1,75 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {
+    public record Checkpoint(string SubscriptionId, ulong? Position, DateTime DateUpdated);
+
     public class EventStoreCheckpointRepository : ICheckpointRepository
-    {       
-        private readonly IEventStoreConnection _eventStoreConnection;
-        private readonly string _checkpointStreamName;
+    {
+        private readonly EventStoreClient _eventStoreClient;
 
-        public EventStoreCheckpointRepository
-        (
-            IEventStoreConnection eventStoreConnection,
-            string subscriptionName
-        )
+        public EventStoreCheckpointRepository(EventStoreClient eventStoreClient)
+            => _eventStoreClient = eventStoreClient;
+
+        public async ValueTask<ulong?> LoadAsync(string subscriptionId, CancellationToken cancellationToken)
         {
-            _eventStoreConnection = eventStoreConnection;
-            _checkpointStreamName = $"{eventStoreConnection.ConnectionName}/checkpoint/{subscriptionName}".ToSnakeCase();
-        }
+            string streamName = GetCheckpointStreamName(subscriptionId);
 
-        public async Task<long?> GetCheckpointAsync()
-        {
-            StreamEventsSlice slice = await _eventStoreConnection.ReadStreamEventsBackwardAsync(_checkpointStreamName, -1, 1, false);
-            ResolvedEvent eventData = slice.Events.FirstOrDefault();
-
-            if (!eventData.Equals(default(ResolvedEvent))) return eventData.DeserializeData<Checkpoint>()?.Position;
-            
-            await StoreCheckpointAsync(AllCheckpoint.AllStart?.CommitPosition);
-            await SetStreamMaxCountAsync();
-                
-            return null;
-        }
-
-        public Task StoreCheckpointAsync(long? checkpoint)
-        {
-            Checkpoint checkpointData = new() { Position = checkpoint };
-
-            EventData @event = new
+            EventStoreClient.ReadStreamResult result = _eventStoreClient.ReadStreamAsync
             (
-                SequentialGuid.Create(),
-                "$checkpoint",
-                true,
-                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(checkpointData)),
-                null
+                Direction.Backwards,
+                streamName,
+                StreamPosition.End,
+                1,
+                cancellationToken: cancellationToken
             );
 
-            return _eventStoreConnection.AppendToStreamAsync
-            (
-                _checkpointStreamName,
-                ExpectedVersion.Any,
-                @event
+            if (await result.ReadState == ReadState.StreamNotFound)
+            {
+                await SetStreamMaxCountAsync(streamName, cancellationToken);
+                await SaveAsync(subscriptionId, StreamPosition.Start, cancellationToken);
+
+                return null;
+            }
+
+            ResolvedEvent? @event = await result.FirstOrDefaultAsync(cancellationToken);
+
+            return @event?.Deserialize<Checkpoint>().Position;
+        }
+
+        public async ValueTask SaveAsync(string subscriptionId, ulong position, CancellationToken cancellationToken)
+        {
+            Checkpoint message = new(subscriptionId, position, DateTime.UtcNow);
+            EventData[] messageToAppend = { message.ToJsonEventData() };
+            string streamName = GetCheckpointStreamName(subscriptionId);
+
+            // store new checkpoint expecting stream to exist
+            await _eventStoreClient.AppendToStreamAsync(
+                streamName,
+                StreamState.Any,
+                messageToAppend,
+                cancellationToken: cancellationToken
             );
         }
 
-        private async Task SetStreamMaxCountAsync()
-        {
-            StreamMetadataResult metadata = await _eventStoreConnection.GetStreamMetadataAsync(_checkpointStreamName);
-
-            if (!metadata.StreamMetadata.MaxCount.HasValue)
-                await _eventStoreConnection.SetStreamMetadataAsync
+        private Task SetStreamMaxCountAsync(string streamName, CancellationToken cancellationToken)
+            => _eventStoreClient.SetStreamMetadataAsync
                 (
-                    _checkpointStreamName, 
-                    ExpectedVersion.Any,
-                    StreamMetadata.Create(1)
+                    streamName,
+                    StreamState.NoStream,
+                    new StreamMetadata(1),
+                    cancellationToken: cancellationToken
                 );
-        }
 
-        private class Checkpoint
-        {
-            public long? Position { get; init; }
-        }
+        private string GetCheckpointStreamName(string subscriptionId) 
+            => $"{_eventStoreClient.ConnectionName}/checkpoint/{subscriptionId}".ToSnakeCase();
     }
 }

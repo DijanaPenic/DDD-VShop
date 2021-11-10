@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
-using EventStore.ClientAPI;
 using System.Threading.Tasks;
+using EventStore.Client;
 
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
@@ -18,12 +18,12 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
         public EventStoreAllFilteredCatchUpSubscriptionManager
         (
-            IEventStoreConnection eventStoreConnection,
+            EventStoreClient esClient,
             ICheckpointRepository checkpointRepository,
             string subscriptionName,
             Filter subscriptionFilter,
             params ISubscription[] subscriptionHandlers
-        ) : base(eventStoreConnection, checkpointRepository, subscriptionName, subscriptionHandlers)
+        ) : base(esClient, checkpointRepository, subscriptionName, subscriptionHandlers)
         {
             _subscriptionFilter = subscriptionFilter;
         }
@@ -45,7 +45,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             long? checkpoint = await CheckpointRepository.GetCheckpointAsync();
             Logger.Debug("Retrieved the checkpoint {SubscriptionName}: {Checkpoint}", SubscriptionName, checkpoint);
 
-            EventStoreSubscription = EventStoreConnection.FilteredSubscribeToAllFrom
+            EventStoreSubscription = EventStoreClient.FilteredSubscribeToAllFrom
             (
                 GetPosition(checkpoint),
                 _subscriptionFilter,

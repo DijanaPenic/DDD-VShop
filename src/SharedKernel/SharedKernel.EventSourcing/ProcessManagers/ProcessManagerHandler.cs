@@ -18,11 +18,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected ProcessManagerHandler(IProcessManagerRepository<TProcess> processManagerRepository)
             => _processManagerRepository = processManagerRepository;
-
-        // TODO - handle cancellation token
-        protected async Task TransitionAsync(Guid processId, IEvent @event, CancellationToken _)
+        
+        protected async Task TransitionAsync(Guid processId, IEvent @event, CancellationToken cancellationToken)
         {
-            _processManager = await _processManagerRepository.LoadAsync(processId);
+            _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
             Logger.Information
             (
@@ -32,7 +31,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             
             _processManager.Transition(@event);
             
-            await _processManagerRepository.SaveAsync(_processManager);
+            await _processManagerRepository.SaveAsync(_processManager, cancellationToken);
         }
     }
 }

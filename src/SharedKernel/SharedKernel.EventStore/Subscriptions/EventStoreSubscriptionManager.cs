@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
@@ -18,16 +19,16 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
     public abstract class EventStoreSubscriptionManager : IEventStoreSubscriptionManager
     {
         protected readonly ICheckpointRepository CheckpointRepository;
-        protected readonly IEventStoreConnection EventStoreConnection;
+        protected readonly EventStoreClient EventStoreClient;
         protected readonly string SubscriptionName;
         private readonly ISubscription[] _subscriptionHandlers;
-        protected EventStoreCatchUpSubscription EventStoreSubscription;
+        protected StreamSubscription EventStoreSubscription;
         
         private static readonly ILogger Logger = Log.ForContext<EventStoreAllFilteredCatchUpSubscriptionManager>();
 
         protected EventStoreSubscriptionManager
         (
-            IEventStoreConnection eventStoreConnection,
+            EventStoreClient eventStoreClient,
             ICheckpointRepository checkpointRepository,
             string subscriptionName,
             ISubscription[] subscriptionHandlers
@@ -35,8 +36,8 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         {
             _subscriptionHandlers = subscriptionHandlers;
 
-            EventStoreConnection = eventStoreConnection;
-            SubscriptionName = $"{eventStoreConnection.ConnectionName}{subscriptionName}"; // NOTE: Need to prefix with the name of the bounded context
+            EventStoreClient = eventStoreClient;
+            SubscriptionName = $"{eventStoreClient.ConnectionName}{subscriptionName}"; // NOTE: Need to prefix with the name of the bounded context
             CheckpointRepository = checkpointRepository;
         }
         
@@ -51,16 +52,15 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
         
         protected async Task EventAppearedAsync
         (
-            EventStoreCatchUpSubscription _,
-            ResolvedEvent resolvedEvent
+            StreamSubscription _,
+            ResolvedEvent resolvedEvent,
+            CancellationToken cancellationToken
         )
         {
             if (resolvedEvent.Event.EventType.StartsWith("$")) return;
 
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
             IMessage message = resolvedEvent.DeserializeMessage();
-
-            Logger.Debug("EventStore subscription manager > identified message: {Message}", message);
 
             try
             {
@@ -79,9 +79,9 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             }
         }
         
-        protected static Position? GetPosition(long? checkpoint) 
+        protected static Position GetPosition(ulong? checkpoint) 
         => checkpoint.HasValue
             ? new Position(checkpoint.Value, checkpoint.Value)
-            : AllCheckpoint.AllStart;
+            : Position.Start;
     }
 }

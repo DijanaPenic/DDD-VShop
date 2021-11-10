@@ -34,6 +34,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
             builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
 
+            // TODO - need to add Polly timeout
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
