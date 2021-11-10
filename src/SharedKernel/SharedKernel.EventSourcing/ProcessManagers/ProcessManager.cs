@@ -14,16 +14,22 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private IEvent _incomingEvent;
         private readonly List<IEvent> _outgoingEvents = new();
         private readonly List<ICommand> _outgoingCommands = new();
+        private readonly IDictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
         
-        public Guid Id { get; protected set; } // TODO - should be generic key
+        public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
     
         protected abstract void ApplyEvent(IEvent @event);
-        
-        protected void ProcessEvent(IEvent @event)
+
+        protected void Register<TMessage>(Action<TMessage> handler)
+            where TMessage : class, IEvent
+            => _eventHandlers[typeof(TMessage)] = message => handler(message as TMessage);
+
+        public void Transition(IEvent @event)
         {
             ApplyEvent(@event);
             _incomingEvent = @event;
+            _eventHandlers[@event.GetType()](@event);
         }
 
         protected void RaiseEvent(IEvent @event)
@@ -72,9 +78,6 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         private void SetMessage(IMessage message)
         {
-            if (_incomingEvent is null) 
-                throw new Exception("Cannot issue new commands or events if the event inbox is empty!");
-            
             message.CausationId = _incomingEvent.MessageId;
             message.CorrelationId = _incomingEvent.CorrelationId;
         }

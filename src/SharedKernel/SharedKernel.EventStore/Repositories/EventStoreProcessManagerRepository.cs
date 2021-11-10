@@ -21,7 +21,7 @@ using ILogger = Serilog.ILogger;
 namespace VShop.SharedKernel.EventStore.Repositories
 {
     public class EventStoreProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
-        where TProcess : ProcessManager
+        where TProcess : ProcessManager, new()
     {
         private readonly IEventStoreConnection _eventStoreConnection;
         private readonly ICommandBus _commandBus;
@@ -89,13 +89,8 @@ namespace VShop.SharedKernel.EventStore.Repositories
             string streamName = GetProcessManagerStreamName(processManagerId);
             List<IMessage> messages = await _eventStoreConnection.ReadStreamEventsForwardAsync<IMessage>(streamName);
 
-            if (messages.Count is 0) return default;
-                
-            TProcess processManager = (TProcess)Activator.CreateInstance(typeof(TProcess), true);
-            if (processManager is null)
-                throw new Exception($"Couldn't resolve {nameof(TProcess)} instance.");
-
-            processManager?.Load(messages);
+            TProcess processManager = new();
+            processManager.Load(messages);
 
             return processManager;
         }

@@ -133,7 +133,7 @@ namespace VShop.Modules.Sales.API.Controllers
         {
             AddShoppingCartProductCommand command = new()
             {
-                ShoppingCartItem = _mapper.Map<ShoppingCartItemDto>(request),
+                ShoppingCartItem = _mapper.Map<ShoppingCartItemCommandDto>(request),
                 ShoppingCartId = shoppingCartId,
                 CorrelationId = SequentialGuid.Create()
             };

@@ -53,7 +53,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId
             );
 
-            foreach (OrderItemDto orderItem in command.OrderItems)
+            foreach (OrderItemCommandDto orderItem in command.OrderItems)
             {
                 Option<ApplicationError> errorResult = order.AddOrderItem
                 (
@@ -89,6 +89,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public string PostalCode { get; init; }
         public string StateProvince { get; init; }
         public string StreetAddress { get; init; }
-        public OrderItemDto[] OrderItems { get; init; }
+        public OrderItemCommandDto[] OrderItems { get; init; }
     }
 }

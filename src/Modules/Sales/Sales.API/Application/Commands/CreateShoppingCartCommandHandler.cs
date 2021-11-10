@@ -35,7 +35,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId
             );
 
-            foreach (ShoppingCartItemDto shoppingCartItem in command.ShoppingCartItems)
+            foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
             {
                 Option<ApplicationError> errorResult = shoppingCart.AddProduct
                 (
@@ -58,6 +58,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; set; }
         public int CustomerDiscount { get; set; }
-        public ShoppingCartItemDto[] ShoppingCartItems { get; set; }
+        public ShoppingCartItemCommandDto[] ShoppingCartItems { get; set; }
     }
 }
