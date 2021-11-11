@@ -21,7 +21,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         public async ValueTask<ulong?> LoadAsync(string subscriptionId, CancellationToken cancellationToken)
         {
-            string streamName = GetCheckpointStreamName(subscriptionId);
+            string streamName = GetStreamName(subscriptionId);
 
             EventStoreClient.ReadStreamResult result = _eventStoreClient.ReadStreamAsync
             (
@@ -49,7 +49,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         {
             Checkpoint message = new(subscriptionId, position, DateTime.UtcNow);
             EventData[] messageToAppend = { message.ToJsonEventData() };
-            string streamName = GetCheckpointStreamName(subscriptionId);
+            string streamName = GetStreamName(subscriptionId);
 
             // store new checkpoint expecting stream to exist
             await _eventStoreClient.AppendToStreamAsync(
@@ -69,7 +69,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                     cancellationToken: cancellationToken
                 );
 
-        private string GetCheckpointStreamName(string subscriptionId) 
+        private string GetStreamName(string subscriptionId) 
             => $"{_eventStoreClient.ConnectionName}/checkpoint/{subscriptionId}".ToSnakeCase();
     }
 }

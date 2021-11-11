@@ -47,7 +47,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
 
-            string streamName = GetProcessManagerStreamName(processManager.Id);
+            string streamName = GetStreamName(processManager.Id);
 
             await _eventStoreClient.AppendToStreamWithRetryAsync
             (
@@ -80,7 +80,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
         {
-            string streamName = GetProcessManagerStreamName(processManagerId);
+            string streamName = GetStreamName(processManagerId);
             IEnumerable<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 streamName,
@@ -94,7 +94,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             return processManager;
         }
 
-        private string GetProcessManagerStreamName(Guid processManagerId)
+        private string GetStreamName(Guid processManagerId)
         {
             string processManagerName = nameof(TProcess).Replace("ProcessManager", string.Empty); // TODO - need to test this
             

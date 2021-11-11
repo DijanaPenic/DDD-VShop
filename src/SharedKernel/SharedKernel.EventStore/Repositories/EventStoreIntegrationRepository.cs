@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
 
-            string streamName = GetIntegrationStreamName();
+            string streamName = GetStreamName();
             
             await _eventStoreClient.AppendToStreamWithRetryAsync
             (
@@ -37,7 +37,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         public Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
         {
-            string streamName = GetIntegrationStreamName();
+            string streamName = GetStreamName();
             
             return _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
             (
@@ -47,7 +47,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             );
         }
         
-        private string GetIntegrationStreamName()
+        private string GetStreamName()
             => $"{_eventStoreClient.ConnectionName}/integration".ToSnakeCase();
     }
 }

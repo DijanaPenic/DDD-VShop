@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            string streamName = GetAggregateStreamName(aggregate.Id);
+            string streamName = GetStreamName(aggregate.Id);
 
             await _eventStoreClient.AppendToStreamWithRetryAsync
             (
@@ -72,7 +72,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            string streamName = GetAggregateStreamName(aggregateId);
+            string streamName = GetStreamName(aggregateId);
             
             IEnumerable<IEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IEvent>
             (
@@ -95,7 +95,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             return aggregate;
         }
 
-        private string GetAggregateStreamName(TKey aggregateId)
+        private string GetStreamName(TKey aggregateId)
             => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
     }
 }
