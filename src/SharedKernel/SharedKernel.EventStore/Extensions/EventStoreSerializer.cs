@@ -50,21 +50,17 @@ namespace VShop.SharedKernel.EventStore.Extensions
             Serialize(message, SerializerSettings),
             Serialize(new { })
         );
-        
-        public static IEnumerable<EventData> ToEventData<TMessage>(this TMessage[] messages)
-            where TMessage : IMessage
-        {
-            if (messages == null || !messages.Any()) return Enumerable.Empty<EventData>();
 
-            return messages.Select(message => new EventData
+        public static IEnumerable<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages)
+            where TMessage : IMessage
+            => messages.Select(message => new EventData
             (
                 Uuid.FromGuid(message.MessageId),
                 MessageTypeMapper.ToName<TMessage>(),
                 Serialize(message, SerializerSettings),
                 Serialize(GetMetadata(message))
             ));
-        }
-        
+
         private static byte[] Serialize(object data, JsonSerializerSettings serializerSettings)
             => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
         

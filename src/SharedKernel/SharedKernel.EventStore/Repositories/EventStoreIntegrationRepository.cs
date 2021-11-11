@@ -34,16 +34,18 @@ namespace VShop.SharedKernel.EventStore.Repositories
             );
         }
 
-        public Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
         {
             string streamName = GetStreamName();
             
-            return _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
+            IList<IIntegrationEvent> messages = await _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
             (
                 streamName,
                 StreamPosition.Start,
                 cancellationToken
             );
+
+            return messages;
         }
         
         private string GetStreamName()

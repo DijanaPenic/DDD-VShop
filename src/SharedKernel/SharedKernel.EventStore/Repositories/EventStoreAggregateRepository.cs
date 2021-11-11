@@ -48,7 +48,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                aggregate.GetAllEvents().ToArray(),
+                aggregate.GetAllEvents(),
                 cancellationToken
             );
 
@@ -74,14 +74,14 @@ namespace VShop.SharedKernel.EventStore.Repositories
         {
             string streamName = GetStreamName(aggregateId);
             
-            IEnumerable<IEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IEvent>
+            IList<IEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IEvent>
             (
                 streamName,
                 StreamPosition.Start,
                 cancellationToken
             );
 
-            if (events.Count() is 0) return default; // TODO - Resharper warning?
+            if (events.Count is 0) return default;
                 
             TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true);
             if (aggregate is null)
@@ -90,7 +90,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (messageId is not null) aggregate.MessageId = messageId.Value;
             if (correlationId is not null) aggregate.CorrelationId = correlationId.Value;
             
-            aggregate?.Load(events);
+            aggregate.Load(events);
 
             return aggregate;
         }

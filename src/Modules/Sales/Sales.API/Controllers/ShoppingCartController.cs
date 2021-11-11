@@ -58,8 +58,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateShoppingCartAsync([FromBody] CreateShoppingCartRequest request)
         {   
-            // TODO - uncomment
-            // TODO - should this check be performed by API gateway, command handler or bounded context API?
+            // TODO - uncomment; should this check be performed by API gateway, command handler or bounded context API?
             // ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(request.CustomerId);
             // if (shoppingCart != null)
             // {

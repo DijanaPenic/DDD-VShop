@@ -53,7 +53,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 processManager.Version,
-                processManager.GetAllMessages().ToArray(),
+                processManager.GetAllMessages(),
                 cancellationToken
             );
 
@@ -81,7 +81,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
         {
             string streamName = GetStreamName(processManagerId);
-            IEnumerable<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            IList<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 streamName,
                 StreamPosition.Start,

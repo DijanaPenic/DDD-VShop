@@ -1,10 +1,10 @@
 ﻿using Polly;
 using Polly.Retry;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -16,6 +16,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
         private const int MaxRetryAttempts = 3;
         private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(2);
         
+        // TODO - this should be done for all EventStore calls, not just these ones.
         private static readonly AsyncRetryPolicy RetryPolicy = Policy
             .Handle<Exception>(ex => ex is not WrongExpectedVersionException)
             .WaitAndRetryAsync(MaxRetryAttempts, _ => PauseBetweenFailures);
@@ -25,7 +26,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
             this EventStoreClient eventStoreClient,
             string streamName,
             int expectedRevision,
-            TMessage[] messages,
+            IEnumerable<TMessage> messages,
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
@@ -46,7 +47,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
             this EventStoreClient eventStoreClient,
             string streamName,
             StreamState expectedState,
-            TMessage[] messages,
+            IEnumerable<TMessage> messages,
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
@@ -62,7 +63,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
             }, cancellationToken);
         }
 
-        public static async Task<IEnumerable<TMessage>> ReadStreamForwardAsync<TMessage>
+        public static async Task<IList<TMessage>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,
@@ -78,7 +79,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 cancellationToken: cancellationToken
             ).ToListAsync(cancellationToken);
             
-            return events.Select(@event => @event.DeserializeData<TMessage>());
+            return events.Select(@event => @event.DeserializeData<TMessage>()).ToList();
         }
     }
 }
