@@ -2,18 +2,18 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStore;
-using VShop.SharedKernel.EventStore.Projections;
-using VShop.SharedKernel.EventStore.Repositories;
-using VShop.SharedKernel.EventStore.Subscriptions;
-using VShop.SharedKernel.EventStore.Subscriptions.Contracts;
-using VShop.SharedKernel.PostgresDb.Projections;
-using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
-using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;
+using VShop.SharedKernel.PostgresDb.Projections;
+using VShop.SharedKernel.EventStore.Projections;
+using VShop.SharedKernel.EventStore.Repositories;
+using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.EventSourcing.Projections;
+using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventStore;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -21,75 +21,62 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
     {
         public static void AddEventSourcingServices(this IServiceCollection services, string connectionString)
         {
-            // TODO - switch to gRPC
-            // IEventStoreConnection eventStoreConnection = EventStoreConnection.Create
-            // (
-            //     connectionString,
-            //     ConnectionSettings.Create().KeepReconnecting().DisableTls(),
-            //     "Sales"
-            // );
-            
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Sales";
             
             EventStoreClient eventStoreClient = new(eventStoreSettings);
-
             services.AddSingleton(eventStoreClient);
+            
             services.AddSingleton(typeof(IAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
             services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
             services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
-            services.AddHostedService<EventStoreService>();
 
-            // TODO - uncomment
+            // Stream names
+            string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
+            string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
+            
+            // NOTE: Cannot use AddHostedService to register multiple workers: https://github.com/dotnet/runtime/issues/38751
+            services.AddHostedService<EventStoreHostedService>();
+            
+            // TODO - comment
             // Read model projections
-            // services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
-            // {
-            //     const string subscriptionName = "ReadModels";
-            //     string aggregateStreamPrefix = $"{eventStoreConnection.ConnectionName}/aggregate".ToSnakeCase();
-            //
-            //     return new EventStoreAllFilteredCatchUpSubscriptionManager
-            //     (
-            //         eventStoreClient,
-            //         new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
-            //         subscriptionName,
-            //         Filter.StreamId.Prefix(aggregateStreamPrefix),
-            //         new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
-            //     );
-            // });
-            
-            // Publish integration events from the current bounded context 
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
-            {
-                const string subscriptionName = "IntegrationEventsPub";
-                IIntegrationRepository integrationRepository = provider.GetRequiredService<IIntegrationRepository>();
-                string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
-                string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
+            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            (
+                eventStoreClient,
+                new EventStoreCheckpointRepository(eventStoreClient),
+                "ReadModels",
+                new ISubscription[]
+                {
+                    new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
+                },
+                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+            ));
 
-                return new EventStoreAllFilteredCatchUpSubscriptionManager
-                (
-                    eventStoreClient,
-                    new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
-                    subscriptionName,
-                    Filter.StreamId.Prefix(aggregateStreamPrefix, processManagerStreamPrefix),
-                new IntegrationEventProjectionToEventStore(integrationRepository)
-                );
-            });
-            
+            // Publish integration events from the current bounded context
+            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            (
+                eventStoreClient,
+                new EventStoreCheckpointRepository(eventStoreClient),
+                "IntegrationEventsPub",
+                new ISubscription[]
+                {
+                    new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationRepository>())
+                },
+                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix, processManagerStreamPrefix))
+            ));
+
             // Subscribe to all integration streams
-            services.AddSingleton<IEventStoreSubscriptionManager, EventStoreAllFilteredCatchUpSubscriptionManager>(provider =>
-            {
-                Publisher publisher = provider.GetRequiredService<Publisher>();
-                const string subscriptionName = "IntegrationEventsSub";
-
-                return new EventStoreAllFilteredCatchUpSubscriptionManager
-                (
-                    eventStoreClient,
-                    new EventStoreCheckpointRepository(eventStoreClient, subscriptionName),
-                    subscriptionName,
-                    Filter.StreamId.Regex(new Regex(@".*\/integration$")),
-                    new IntegrationEventProjectionPublisher(publisher)
-                );
-            });
+            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            (
+                eventStoreClient,
+                new EventStoreCheckpointRepository(eventStoreClient),
+                "IntegrationEventsSub",
+                new ISubscription[]
+                {
+                    new IntegrationEventProjectionPublisher(provider.GetRequiredService<Publisher>())
+                },
+                new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
+            ));
 
             MessageMappings.MapMessageTypes();
         }
