@@ -51,10 +51,10 @@ namespace VShop.SharedKernel.EventStore.Repositories
             EventData[] messageToAppend = { message.ToJsonEventData() };
             string streamName = GetStreamName(subscriptionId);
 
-            // store new checkpoint expecting stream to exist
+            // Store new checkpoint expecting stream to exist
             await _eventStoreClient.AppendToStreamAsync(
                 streamName,
-                StreamState.Any,
+                StreamState.StreamExists,
                 messageToAppend,
                 cancellationToken: cancellationToken
             );
