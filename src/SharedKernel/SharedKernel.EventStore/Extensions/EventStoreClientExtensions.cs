@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EventStore.Client;
 
-using VShop.SharedKernel.EventStore.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
@@ -36,7 +35,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 (
                     streamName,
                     Convert.ToUInt64(expectedRevision),
-                    EventStoreHelper.PrepareMessageData(messages),
+                    messages.ToEventData(),
                     cancellationToken: cToken
                 );
             }, cancellationToken);
@@ -47,8 +46,8 @@ namespace VShop.SharedKernel.EventStore.Extensions
             this EventStoreClient eventStoreClient,
             string streamName,
             StreamState expectedState,
-            CancellationToken cancellationToken = default,
-            params TMessage[] messages
+            TMessage[] messages,
+            CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
             await RetryPolicy.ExecuteAsync(async (cToken) =>
@@ -57,7 +56,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 (
                     streamName,
                     expectedState,
-                    EventStoreHelper.PrepareMessageData(messages),
+                    messages.ToEventData(),
                     cancellationToken: cToken
                 );
             }, cancellationToken);

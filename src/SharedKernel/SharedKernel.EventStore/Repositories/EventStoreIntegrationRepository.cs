@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -25,13 +24,13 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 throw new ArgumentNullException(nameof(@event));
 
             string streamName = GetStreamName();
-            
+
             await _eventStoreClient.AppendToStreamWithRetryAsync
             (
                 streamName,
                 StreamState.Any,
-                cancellationToken,
-                @event
+                new[] { @event },
+                cancellationToken
             );
         }
 

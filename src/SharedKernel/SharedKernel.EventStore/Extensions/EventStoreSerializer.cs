@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using EventStore.Client;
 
-using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Serialization;
+using VShop.SharedKernel.EventSourcing.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {
     public static class EventStoreSerializer
     {
+        private static readonly JsonSerializerSettings SerializerSettings = GetJsonSerializerSettings();
+        
         public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) 
             => (T)DeserializeData(resolvedEvent);
         
@@ -32,16 +38,56 @@ namespace VShop.SharedKernel.EventStore.Extensions
         public static IMessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.Span);
-            
+
+            Uuid value = Uuid.FromGuid(Guid.Empty);
             return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
         
         public static EventData ToEventData(this object message) => new
         (
-            Uuid.NewUuid(),
+            Uuid.FromGuid(SequentialGuid.Create()),
             MessageTypeMapper.ToName(message.GetType()),
-            Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message)),
-            Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { }))
+            Serialize(message, SerializerSettings),
+            Serialize(new { })
         );
+        
+        public static IEnumerable<EventData> ToEventData<TMessage>(this TMessage[] messages)
+            where TMessage : IMessage
+        {
+            if (messages == null || !messages.Any()) return Enumerable.Empty<EventData>();
+
+            return messages.Select(message => new EventData
+            (
+                Uuid.FromGuid(message.MessageId),
+                MessageTypeMapper.ToName<TMessage>(),
+                Serialize(message, SerializerSettings),
+                Serialize(GetMetadata(message))
+            ));
+        }
+        
+        private static byte[] Serialize(object data, JsonSerializerSettings serializerSettings)
+            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
+        
+        private static byte[] Serialize(object data)
+            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+
+        private static JsonSerializerSettings GetJsonSerializerSettings()
+        {
+            PropertyIgnoreContractResolver jsonResolver = new();
+            jsonResolver.Ignore(typeof(BaseMessage));
+
+            JsonSerializerSettings serializerSettings = new() { ContractResolver = jsonResolver };
+
+            return serializerSettings;
+        }
+        
+        private static IMessageMetadata GetMetadata(IMessage message)
+            => new MessageMetadata
+            {
+                EffectiveTime = DateTime.UtcNow,
+                MessageId = message.MessageId,
+                CausationId = message.CausationId,
+                CorrelationId = message.CorrelationId
+            };
     }
 }
