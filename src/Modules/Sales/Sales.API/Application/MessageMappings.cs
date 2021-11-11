@@ -1,7 +1,7 @@
 ﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
-
+using VShop.SharedKernel.EventStore.Repositories;
 using static VShop.SharedKernel.EventSourcing.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.API.Application
@@ -32,6 +32,9 @@ namespace VShop.Modules.Sales.API.Application
             // Configure commands
             Map<PlaceOrderCommand>(nameof(PlaceOrderCommand));
             Map<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
+            
+            // Configure checkpoints
+            Map<Checkpoint>(nameof(Checkpoint));
         }
     }
 }

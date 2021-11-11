@@ -26,6 +26,7 @@ namespace VShop.SharedKernel.EventSourcing.Messaging
 
         public static void Map<T>(string name) => Map(typeof(T), name);
 
+        // TODO - add generic argument
         public static string ToName(Type type)
         {
             if (!TryGetTypeName(type, out string name))
