@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using EventStore.Client;
-using Microsoft.Extensions.Hosting;
 
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories;
@@ -111,7 +110,12 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
             try
             {
-                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync(message, metadata)));
+                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync
+                (
+                    message,
+                    metadata,
+                    cancellationToken
+                )));
                 await _checkpointRepository.SaveAsync
                 (
                     _subscriptionId,

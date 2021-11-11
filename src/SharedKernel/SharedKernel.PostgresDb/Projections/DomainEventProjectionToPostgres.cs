@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,7 @@ namespace VShop.SharedKernel.PostgresDb.Projections
             _projector = projector;
         }
 
-        public async Task ProjectAsync(IMessage message, IMessageMetadata metadata)
+        public async Task ProjectAsync(IMessage message, IMessageMetadata metadata, CancellationToken cancellationToken)
         {
             if(message is IDomainEvent domainEvent)
             {
@@ -46,7 +47,7 @@ namespace VShop.SharedKernel.PostgresDb.Projections
                 Logger.Debug("Projecting domain event: {Message}", domainEvent);
 
                 await handler();
-                await dbContext.SaveChangesAsync(metadata.EffectiveTime);
+                await dbContext.SaveChangesAsync(metadata.EffectiveTime, cancellationToken);
             }
         }
         

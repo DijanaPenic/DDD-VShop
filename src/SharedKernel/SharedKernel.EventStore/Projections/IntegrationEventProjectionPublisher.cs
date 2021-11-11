@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.EventSourcing.Messaging;
@@ -13,22 +14,21 @@ namespace VShop.SharedKernel.EventStore.Projections
 {
     public class IntegrationEventProjectionPublisher : ISubscription
     {
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionPublisher>(); 
         private readonly Publisher _publisher;
         
-        public IntegrationEventProjectionPublisher(Publisher publisher)
-        {
-            _publisher = publisher;
-        }
+        private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionPublisher>();
 
-        public Task ProjectAsync(IMessage message, IMessageMetadata _)
+        public IntegrationEventProjectionPublisher(Publisher publisher)
+            => _publisher = publisher;
+
+        public Task ProjectAsync(IMessage message, IMessageMetadata _, CancellationToken cancellationToken)
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
             Logger.Debug("Projecting integration event: {Message}", integrationEvent);
             
             // TODO - need to figure out how to handle these exceptions. This will stop further integration projections.
-            return _publisher.Publish(integrationEvent, PublishStrategy.SyncStopOnException);
+            return _publisher.Publish(integrationEvent, PublishStrategy.SyncStopOnException, cancellationToken);
         }
     }
 }
