@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -18,14 +17,14 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventStore.Repositories
 {
-    public class EventStoreAggregateRepository<TA, TKey> : IAggregateRepository<TA, TKey>
+    public class EventStoreAggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
         where TKey : ValueObject
-        where TA : AggregateRoot<TKey>
+        where TAggregate : AggregateRoot<TKey>
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly Publisher _publisher;
 
-        private static readonly ILogger Logger = Log.ForContext<EventStoreAggregateRepository<TA, TKey>>();
+        private static readonly ILogger Logger = Log.ForContext<EventStoreAggregateRepository<TAggregate, TKey>>();
 
         public EventStoreAggregateRepository
         (
@@ -37,7 +36,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             _publisher = publisher;
         }
 
-        public async Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default)
+        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
         {
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
@@ -64,7 +63,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
         }
 
-        public async Task<TA> LoadAsync
+        public async Task<TAggregate> LoadAsync
         (
             TKey aggregateId,
             Guid? messageId = null,
@@ -83,7 +82,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             if (events.Count is 0) return default;
                 
-            TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true);
+            TAggregate aggregate = (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
             if (aggregate is null)
                 throw new Exception($"Couldn't resolve {nameof(aggregate)} instance.");
             
@@ -96,6 +95,6 @@ namespace VShop.SharedKernel.EventStore.Repositories
         }
 
         private string GetStreamName(TKey aggregateId)
-            => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TA).Name}/{aggregateId}".ToSnakeCase();
+            => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
     }
 }
