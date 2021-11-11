@@ -107,7 +107,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             if (IsEventWithEmptyData(resolvedEvent) || IsCheckpointEvent(resolvedEvent)) return;
 
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-            IMessage message = resolvedEvent.DeserializeMessage(); // TODO - refactor
+            IMessage message = resolvedEvent.DeserializeData<IMessage>();
 
             try
             {
@@ -141,7 +141,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
 
         private bool IsCheckpointEvent(ResolvedEvent resolvedEvent)
         {
-            if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName(typeof(Checkpoint))) return false;
+            if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName<Checkpoint>()) return false;
 
             Logger.Information("Checkpoint event - ignoring");
             

@@ -26,22 +26,20 @@ namespace VShop.SharedKernel.EventStore.Extensions
             this EventStoreClient eventStoreClient,
             string streamName,
             int expectedRevision,
-            CancellationToken cancellationToken = default,
-            params TMessage[] messages
+            TMessage[] messages,
+            CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
-            EventData[] streamMessages = EventStoreHelper.PrepareMessageData(messages);
-
-            await RetryPolicy.ExecuteAsync(async () =>
+            await RetryPolicy.ExecuteAsync(async (cToken) =>
             {
                 await eventStoreClient.AppendToStreamAsync
                 (
                     streamName,
-                    (ulong)expectedRevision,
-                    streamMessages,
-                    cancellationToken: cancellationToken
+                    Convert.ToUInt64(expectedRevision),
+                    EventStoreHelper.PrepareMessageData(messages),
+                    cancellationToken: cToken
                 );
-            });
+            }, cancellationToken);
         }
         
         public static async Task AppendToStreamWithRetryAsync<TMessage>
@@ -53,18 +51,16 @@ namespace VShop.SharedKernel.EventStore.Extensions
             params TMessage[] messages
         ) where TMessage : IMessage
         {
-            EventData[] streamMessages = EventStoreHelper.PrepareMessageData(messages);
-
-            await RetryPolicy.ExecuteAsync(async () =>
+            await RetryPolicy.ExecuteAsync(async (cToken) =>
             {
                 await eventStoreClient.AppendToStreamAsync
                 (
                     streamName,
                     expectedState,
-                    streamMessages,
-                    cancellationToken: cancellationToken
+                    EventStoreHelper.PrepareMessageData(messages),
+                    cancellationToken: cToken
                 );
-            });
+            }, cancellationToken);
         }
 
         public static async Task<IEnumerable<TMessage>> ReadStreamForwardAsync<TMessage>
@@ -83,7 +79,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 cancellationToken: cancellationToken
             ).ToListAsync(cancellationToken);
             
-            return events.Select(@event => @event.DeserializeMessage() as TMessage); // TODO - refactor
+            return events.Select(@event => @event.DeserializeData<TMessage>());
         }
     }
 }

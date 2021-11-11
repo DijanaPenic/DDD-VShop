@@ -48,15 +48,15 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 aggregate.Version,
-                cancellationToken,
-                aggregate.GetAllEvents().ToArray()
+                aggregate.GetAllEvents().ToArray(),
+                cancellationToken
             );
 
             try
             {
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
                 foreach (IDomainEvent domainEvent in aggregate.GetOutgoingDomainEvents())
-                    await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException);
+                    await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
             {
@@ -81,7 +81,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 cancellationToken
             );
 
-            if (events.Count() is 0) return default; // TODO - zasto me Resharper tu upozorava?
+            if (events.Count() is 0) return default; // TODO - Resharper warning?
                 
             TA aggregate = (TA)Activator.CreateInstance(typeof(TA), true);
             if (aggregate is null)

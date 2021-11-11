@@ -53,8 +53,8 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 streamName,
                 processManager.Version,
-                cancellationToken,
-                processManager.GetAllMessages().ToArray()
+                processManager.GetAllMessages().ToArray(),
+                cancellationToken
             );
 
             try

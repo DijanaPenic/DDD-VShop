@@ -42,13 +42,13 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             ResolvedEvent? @event = await result.FirstOrDefaultAsync(cancellationToken);
 
-            return @event?.Deserialize<Checkpoint>().Position;
+            return @event?.DeserializeData<Checkpoint>().Position;
         }
 
         public async ValueTask SaveAsync(string subscriptionId, ulong position, CancellationToken cancellationToken)
         {
             Checkpoint message = new(subscriptionId, position, DateTime.UtcNow);
-            EventData[] messageToAppend = { message.ToJsonEventData() };
+            EventData[] messageToAppend = { message.ToEventData() };
             string streamName = GetStreamName(subscriptionId);
 
             // Store new checkpoint expecting stream to exist

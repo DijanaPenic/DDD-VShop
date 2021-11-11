@@ -1,46 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Collections.Concurrent;
 
 namespace VShop.SharedKernel.EventSourcing.Messaging
 {
-    public static class MessageTypeMapper
+    public class MessageTypeMapper
     {
-        private static readonly Dictionary<Type, string> NamesByType = new();
-        private static readonly Dictionary<string, Type> TypesByName = new();
+        private static readonly MessageTypeMapper Instance = new();
 
-        private static void Map(Type type, string name = null)
+        private readonly ConcurrentDictionary<Type, string> _typeNameMap = new();
+        private readonly ConcurrentDictionary<string, Type> _typeMap = new();
+
+        public static void AddCustomMap<T>(string mappedEventTypeName)
+            => AddCustomMap(typeof(T), mappedEventTypeName);
+
+        public static void AddCustomMap(Type eventType, string mappedEventTypeName)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                name = type.FullName;
-
-            if (TypesByName.ContainsKey(name))
-                throw new InvalidOperationException($"'{type}' is already mapped to the following name: {TypesByName[name]}");
-
-            TypesByName[name] = type;
-            NamesByType[type] = name;
+            Instance._typeNameMap.AddOrUpdate(eventType, mappedEventTypeName, (_, _) => mappedEventTypeName);
+            Instance._typeMap.AddOrUpdate(mappedEventTypeName, eventType, (_, _) => eventType);
         }
 
-        private static bool TryGetType(string name, out Type type) => TypesByName.TryGetValue(name, out type);
+        public static string ToName<TEventType>()
+            => ToName(typeof(TEventType));
 
-        private static bool TryGetTypeName(Type type, out string name) => NamesByType.TryGetValue(type, out name);
-
-        public static void Map<T>(string name) => Map(typeof(T), name);
-
-        // TODO - add generic argument
-        public static string ToName(Type type)
+        public static string ToName(Type eventType) => Instance._typeNameMap.GetOrAdd(eventType, (_) =>
         {
-            if (!TryGetTypeName(type, out string name))
-                throw new Exception($"Failed to find name mapped with '{type}'."); 
+            string eventTypeName = eventType.FullName!.Replace(".", "_");
 
-            return name;
-        }
+            Instance._typeMap.AddOrUpdate(eventTypeName, eventType, (_, _) => eventType);
 
-        public static Type ToType(string name)
+            return eventTypeName;
+        });
+
+        public static Type ToType(string eventTypeName) => Instance._typeMap.GetOrAdd(eventTypeName, (_) =>
         {
-            if (!TryGetType(name, out Type type))
-                throw new Exception($"Failed to find type mapped with '{name}'.");
+            Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(eventTypeName.Replace("_", "."))!;
+
+            if (type == null)
+                throw new Exception($"Type map for '{eventTypeName}' wasn't found!");
+
+            Instance._typeNameMap.AddOrUpdate(type, eventTypeName, (_, _) => eventTypeName);
 
             return type;
+        });
+        
+        private static Type GetFirstMatchingTypeFromCurrentDomainAssembly(string typeName)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes().Where(x => x.FullName == typeName || x.Name == typeName))
+                .FirstOrDefault();
         }
     }
 }

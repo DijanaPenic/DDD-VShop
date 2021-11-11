@@ -2,6 +2,7 @@
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.SharedKernel.EventStore.Repositories;
+
 using static VShop.SharedKernel.EventSourcing.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.API.Application
@@ -11,30 +12,30 @@ namespace VShop.Modules.Sales.API.Application
         public static void MapMessageTypes()
         {
             // Configure domain events
-            Map<ShoppingCartCreatedDomainEvent>(nameof(ShoppingCartCreatedDomainEvent));
-            Map<ShoppingCartCheckoutRequestedDomainEvent>(nameof(ShoppingCartCheckoutRequestedDomainEvent));
-            Map<ShoppingCartDeletionRequestedDomainEvent>(nameof(ShoppingCartDeletionRequestedDomainEvent));
-            Map<ShoppingCartItemQuantityDecreasedDomainEvent>(nameof(ShoppingCartItemQuantityDecreasedDomainEvent));
-            Map<ShoppingCartItemQuantityIncreasedDomainEvent>(nameof(ShoppingCartItemQuantityIncreasedDomainEvent));
-            Map<ShoppingCartContactInformationSetDomainEvent>(nameof(ShoppingCartContactInformationSetDomainEvent));
-            Map<ShoppingCartDeliveryAddressSetDomainEvent>(nameof(ShoppingCartDeliveryAddressSetDomainEvent));
-            Map<ShoppingCartDeliveryCostChangedDomainEvent>(nameof(ShoppingCartDeliveryCostChangedDomainEvent));
-            Map<ShoppingCartProductAddedDomainEvent>(nameof(ShoppingCartProductAddedDomainEvent));
-            Map<ShoppingCartProductRemovedDomainEvent>(nameof(ShoppingCartProductRemovedDomainEvent));
-            Map<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
-            Map<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
-            Map<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
-            Map<OrderItemAddedDomainEvent>(nameof(OrderItemAddedDomainEvent));
+            AddCustomMap<ShoppingCartCreatedDomainEvent>(nameof(ShoppingCartCreatedDomainEvent));
+            AddCustomMap<ShoppingCartCheckoutRequestedDomainEvent>(nameof(ShoppingCartCheckoutRequestedDomainEvent));
+            AddCustomMap<ShoppingCartDeletionRequestedDomainEvent>(nameof(ShoppingCartDeletionRequestedDomainEvent));
+            AddCustomMap<ShoppingCartItemQuantityDecreasedDomainEvent>(nameof(ShoppingCartItemQuantityDecreasedDomainEvent));
+            AddCustomMap<ShoppingCartItemQuantityIncreasedDomainEvent>(nameof(ShoppingCartItemQuantityIncreasedDomainEvent));
+            AddCustomMap<ShoppingCartContactInformationSetDomainEvent>(nameof(ShoppingCartContactInformationSetDomainEvent));
+            AddCustomMap<ShoppingCartDeliveryAddressSetDomainEvent>(nameof(ShoppingCartDeliveryAddressSetDomainEvent));
+            AddCustomMap<ShoppingCartDeliveryCostChangedDomainEvent>(nameof(ShoppingCartDeliveryCostChangedDomainEvent));
+            AddCustomMap<ShoppingCartProductAddedDomainEvent>(nameof(ShoppingCartProductAddedDomainEvent));
+            AddCustomMap<ShoppingCartProductRemovedDomainEvent>(nameof(ShoppingCartProductRemovedDomainEvent));
+            AddCustomMap<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
+            AddCustomMap<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
+            AddCustomMap<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
+            AddCustomMap<OrderItemAddedDomainEvent>(nameof(OrderItemAddedDomainEvent));
             
             // Configure integration events
-            Map<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
+            AddCustomMap<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
             
             // Configure commands
-            Map<PlaceOrderCommand>(nameof(PlaceOrderCommand));
-            Map<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
+            AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));
+            AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
             
             // Configure checkpoints
-            Map<Checkpoint>(nameof(Checkpoint));
+            AddCustomMap<Checkpoint>(nameof(Checkpoint));
         }
     }
 }

@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.EventStore.Helpers
             return messages.Select(message => new EventData
             (
                 Uuid.Empty, // TODO - map from messageId
-                MessageTypeMapper.ToName(message.GetType()),
+                MessageTypeMapper.ToName<TMessage>(),
                 Serialize(message, serializerSettings),
                 Serialize(GetMetadata(message), serializerSettings)
             )).ToArray();
