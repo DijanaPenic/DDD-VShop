@@ -56,7 +56,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
             => messages.Select(message => new EventData
             (
                 Uuid.FromGuid(message.MessageId),
-                MessageTypeMapper.ToName<TMessage>(),
+                MessageTypeMapper.ToName(message.GetType()),
                 Serialize(message, SerializerSettings),
                 Serialize(GetMetadata(message))
             ));
