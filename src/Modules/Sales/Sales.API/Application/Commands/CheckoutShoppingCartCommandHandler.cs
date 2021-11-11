@@ -29,7 +29,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             (
                 EntityId.Create(command.ShoppingCartId),
                 command.MessageId,
-                command.CorrelationId
+                command.CorrelationId,
+                cancellationToken
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
 
@@ -37,7 +38,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (errorResult.IsSome(out ApplicationError error)) return error;
 
-            await _shoppingCartRepository.SaveAsync(shoppingCart);
+            await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
             return new Success();
         }

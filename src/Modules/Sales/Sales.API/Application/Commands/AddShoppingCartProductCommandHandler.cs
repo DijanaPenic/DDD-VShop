@@ -15,7 +15,7 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    // TOOD - add logger to all commands
+    // TODO - add logger to all commands
     public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand, Success>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
@@ -31,7 +31,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             (
                 EntityId.Create(command.ShoppingCartId),
                 command.MessageId,
-                command.CorrelationId
+                command.CorrelationId, 
+                cancellationToken
             );
 
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
@@ -45,7 +46,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (errorResult.IsSome(out ApplicationError error)) return error;
         
-            await _shoppingCartRepository.SaveAsync(shoppingCart);
+            await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
             return new Success();
         }

@@ -67,7 +67,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             order.RaiseEvent(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
             
-            await _orderRepository.SaveAsync(order);
+            await _orderRepository.SaveAsync(order, cancellationToken);
 
             return new Success<Order>(order);
         }
