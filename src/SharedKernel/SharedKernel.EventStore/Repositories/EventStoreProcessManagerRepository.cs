@@ -1,6 +1,5 @@
 ﻿using OneOf;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -81,6 +80,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
         {
             string streamName = GetStreamName(processManagerId);
+            
             IList<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 streamName,
@@ -96,7 +96,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
         private string GetStreamName(Guid processManagerId)
         {
-            string processManagerName = nameof(TProcess).Replace("ProcessManager", string.Empty); // TODO - need to test this
+            string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
             
             return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}".ToSnakeCase();
         }
