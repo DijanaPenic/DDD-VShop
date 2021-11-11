@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
                 await eventStoreClient.AppendToStreamAsync
                 (
                     streamName,
-                    Convert.ToUInt64(expectedRevision),
+                    StreamRevision.FromInt64(expectedRevision),
                     messages.ToEventData(),
                     cancellationToken: cToken
                 );
