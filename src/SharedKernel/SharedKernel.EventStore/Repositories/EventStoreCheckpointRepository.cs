@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 cancellationToken: cancellationToken
             );
 
-            if (await result.ReadState == ReadState.StreamNotFound)
+            if ((await result.ReadState) is ReadState.StreamNotFound)
             {
                 await SetStreamMaxCountAsync(streamName, cancellationToken);
                 await SaveAsync(subscriptionId, StreamPosition.Start, cancellationToken);

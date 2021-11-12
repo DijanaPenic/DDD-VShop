@@ -71,15 +71,19 @@ namespace VShop.SharedKernel.EventStore.Extensions
             CancellationToken cancellationToken = default
         ) where TMessage : class, IMessage
         {
-            IList<ResolvedEvent> events = await eventStoreClient.ReadStreamAsync
+            EventStoreClient.ReadStreamResult result = eventStoreClient.ReadStreamAsync
             (
                 Direction.Forwards,
                 streamName,
                 position,
                 cancellationToken: cancellationToken
-            ).ToListAsync(cancellationToken);
-            
-            return events.Select(@event => @event.DeserializeData<TMessage>()).ToList();
+            );
+
+            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<TMessage>();
+
+            IList<ResolvedEvent> messages = await result.ToListAsync(cancellationToken);
+
+            return messages.Select(@event => @event.DeserializeData<TMessage>()).ToList();
         }
     }
 }

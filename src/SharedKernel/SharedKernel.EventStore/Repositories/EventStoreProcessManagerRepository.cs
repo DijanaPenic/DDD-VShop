@@ -62,7 +62,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
-                    if (commandResult is IOneOf { Value: ApplicationError error }) 
+                    if (commandResult is IOneOf { Value: ApplicationError error })
                         throw new Exception(error.ToString());
                 }
                 
