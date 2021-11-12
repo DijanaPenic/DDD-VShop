@@ -52,7 +52,8 @@ namespace VShop.SharedKernel.EventStore.Repositories
             string streamName = GetStreamName(subscriptionId);
 
             // Store new checkpoint expecting stream to exist
-            await _eventStoreClient.AppendToStreamAsync(
+            await _eventStoreClient.AppendToStreamAsync
+            (
                 streamName,
                 StreamState.StreamExists,
                 messageToAppend,

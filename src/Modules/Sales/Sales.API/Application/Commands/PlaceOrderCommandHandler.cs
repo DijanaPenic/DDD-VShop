@@ -65,6 +65,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (errorResult.IsSome(out ApplicationError error)) return error;
             }
             
+            // NOTE: atomic operation
             order.RaiseEvent(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
             
             await _orderRepository.SaveAsync(order, cancellationToken);
