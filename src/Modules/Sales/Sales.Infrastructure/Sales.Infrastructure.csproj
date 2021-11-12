@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>VShop.Modules.Sales.Infrastructure</AssemblyName>
         <RootNamespace>VShop.Modules.Sales.Infrastructure</RootNamespace>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
