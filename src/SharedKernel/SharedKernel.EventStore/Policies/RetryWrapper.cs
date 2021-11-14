@@ -8,6 +8,7 @@ using EventStore.Client;
 
 namespace VShop.SharedKernel.EventStore.Policies
 {
+    // Polly Wiki page: https://github.com/App-vNext/Polly/wiki/Retry
     internal static class RetryWrapper
     {
         private const int MaxRetryAttempts = 3;

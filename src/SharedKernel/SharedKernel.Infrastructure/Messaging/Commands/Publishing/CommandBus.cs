@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Infrastructure.Policies;
+
 namespace VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing
 {
     public class CommandBus: ICommandBus
@@ -10,10 +12,10 @@ namespace VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing
 
         public CommandBus(IMediator mediator) => _mediator = mediator;
 
-        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command, CancellationToken cancellationToken = default) 
-            => _mediator.Send(command, cancellationToken);
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command, CancellationToken cancellationToken = default)
+            => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
 
         public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
-            => _mediator.Send(command, cancellationToken);
+            => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
     }
 }
