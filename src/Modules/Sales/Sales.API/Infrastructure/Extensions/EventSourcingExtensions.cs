@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
             // (
             //     eventStoreClient,
-            //     new EventStoreCheckpointRepository(eventStoreClient),
+            //     new EventStoreCheckpointRepository(eventStoreClient), // TODO - implement PostgresDb checkpoint (needed for atomic operation)
             //     "ReadModels",
             //     new ISubscription[]
             //     {
