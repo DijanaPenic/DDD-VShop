@@ -48,7 +48,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             string streamName = GetStreamName(processManager.Id);
 
-            await _eventStoreClient.AppendToStreamWithRetryAsync
+            await _eventStoreClient.AppendToStreamAsync
             (
                 streamName,
                 processManager.Version,

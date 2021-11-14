@@ -2,18 +2,18 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.Infrastructure;
-using VShop.Modules.Sales.API.Projections;
-using VShop.Modules.Sales.API.Application;
-using VShop.SharedKernel.PostgresDb.Projections;
+using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.EventStore.Projections;
 using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.EventStore;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
+using VShop.Modules.Sales.Infrastructure;
+using VShop.Modules.Sales.API.Projections;
+using VShop.Modules.Sales.API.Application;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

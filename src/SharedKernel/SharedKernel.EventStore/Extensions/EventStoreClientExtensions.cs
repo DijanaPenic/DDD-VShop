@@ -1,27 +1,17 @@
-﻿using Polly;
-using Polly.Retry;
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
+using VShop.SharedKernel.EventStore.Policies;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {
     public static class EventStoreClientExtensions
     {
-        private const int MaxRetryAttempts = 3;
-        private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(2);
-        
-        // TODO - this should be done for all EventStore calls, not just these ones.
-        private static readonly AsyncRetryPolicy RetryPolicy = Policy
-            .Handle<Exception>(ex => ex is not WrongExpectedVersionException)
-            .WaitAndRetryAsync(MaxRetryAttempts, _ => PauseBetweenFailures);
-        
-        public static async Task AppendToStreamWithRetryAsync<TMessage>
+        public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,
@@ -30,19 +20,16 @@ namespace VShop.SharedKernel.EventStore.Extensions
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
-            await RetryPolicy.ExecuteAsync(async (cToken) =>
-            {
-                await eventStoreClient.AppendToStreamAsync
-                (
-                    streamName,
-                    StreamRevision.FromInt64(expectedRevision),
-                    messages.ToEventData(),
-                    cancellationToken: cToken
-                );
-            }, cancellationToken);
+            await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
+            (
+                streamName,
+                StreamRevision.FromInt64(expectedRevision),
+                messages.ToEventData(),
+                cancellationToken: ct
+            ), cancellationToken);
         }
         
-        public static async Task AppendToStreamWithRetryAsync<TMessage>
+        public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,
@@ -51,16 +38,13 @@ namespace VShop.SharedKernel.EventStore.Extensions
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
-            await RetryPolicy.ExecuteAsync(async (cToken) =>
-            {
-                await eventStoreClient.AppendToStreamAsync
-                (
-                    streamName,
-                    expectedState,
-                    messages.ToEventData(),
-                    cancellationToken: cToken
-                );
-            }, cancellationToken);
+            await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
+            (
+                streamName,
+                expectedState,
+                messages.ToEventData(),
+                cancellationToken: ct
+            ), cancellationToken);
         }
 
         public static async Task<IList<TMessage>> ReadStreamForwardAsync<TMessage>
@@ -71,13 +55,13 @@ namespace VShop.SharedKernel.EventStore.Extensions
             CancellationToken cancellationToken = default
         ) where TMessage : class, IMessage
         {
-            EventStoreClient.ReadStreamResult result = eventStoreClient.ReadStreamAsync
+            EventStoreClient.ReadStreamResult result = await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.ReadStreamAsync
             (
                 Direction.Forwards,
                 streamName,
                 position,
-                cancellationToken: cancellationToken
-            );
+                cancellationToken: ct
+            ), cancellationToken);
 
             if ((await result.ReadState) is ReadState.StreamNotFound) return new List<TMessage>();
 

@@ -134,7 +134,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             }
         }
         
-        private bool IsEventWithEmptyData(ResolvedEvent resolvedEvent)
+        private static bool IsEventWithEmptyData(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.Data.Length != 0) return false;
 
@@ -143,7 +143,7 @@ namespace VShop.SharedKernel.EventStore.Subscriptions
             return true;
         }
 
-        private bool IsCheckpointEvent(ResolvedEvent resolvedEvent)
+        private static bool IsCheckpointEvent(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName<Checkpoint>()) return false;
 

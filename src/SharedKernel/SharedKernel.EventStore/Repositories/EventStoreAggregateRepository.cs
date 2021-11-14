@@ -43,7 +43,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
 
             string streamName = GetStreamName(aggregate.Id);
 
-            await _eventStoreClient.AppendToStreamWithRetryAsync
+            await _eventStoreClient.AppendToStreamAsync
             (
                 streamName,
                 aggregate.Version,
