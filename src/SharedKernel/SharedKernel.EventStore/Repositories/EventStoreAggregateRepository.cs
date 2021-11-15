@@ -59,7 +59,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
             finally
             {
-                aggregate.ClearAllEvents();
+                aggregate.Clear();
             }
         }
 

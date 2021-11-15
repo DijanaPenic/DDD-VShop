@@ -11,75 +11,61 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     // TODO - How can I issue a reminder event?
     public abstract class ProcessManager
     {
-        private IEvent _incomingEvent;
-        private readonly List<IEvent> _outgoingEvents = new();
-        private readonly List<ICommand> _outgoingCommands = new();
-        private readonly IDictionary<Type, Action<IEvent>> _eventHandlers = new Dictionary<Type, Action<IEvent>>();
-        
         public Guid Id { get; protected set; }
-        public int Version { get; private set; } = -1;
-    
+        public Inbox Inbox { get; private set; } = new();
+        public Outbox Outbox { get; private set; } = new();
+
         protected abstract void ApplyEvent(IEvent @event);
 
+        // TODO - register command handler and execution
         protected void Register<TMessage>(Action<TMessage> handler)
             where TMessage : class, IEvent
-            => _eventHandlers[typeof(TMessage)] = (message) => handler(message as TMessage);
+            => Inbox.EventHandlers[typeof(TMessage)] = (message) => handler(message as TMessage);
 
         public void Transition(IEvent @event)
         {
             ApplyEvent(@event);
-            _incomingEvent = @event;
-            _eventHandlers[@event.GetType()](@event);
+            Inbox.Events.Add(@event);
+            Inbox.EventHandlers[@event.GetType()](@event);
         }
 
         protected void RaiseEvent(IEvent @event)
         {
             SetMessageIdentification(@event);
-            _outgoingEvents.Add(@event);
+            Outbox.Events.Add(@event);
         }
         
         protected void RaiseCommand(ICommand command)
         {
             SetMessageIdentification(command);
-            _outgoingCommands.Add(command);
+            Outbox.Commands.Add(command);
         }
+        
+        // TODO - ScheduleCommand
 
-        public void Load(IEnumerable<IMessage> history)
+        public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory)
         {
-            foreach (IMessage message in history)
+            foreach (IMessage inboxMessage in inboxHistory)
             {
-                if(message is IEvent @event) ApplyEvent(@event);
-                Version++;
+                if(inboxMessage is IEvent @event) ApplyEvent(@event);
+                Inbox.Version++;
             }
+
+            Outbox.Version = outboxHistory.Count() - 1;
         }
-
-        public IEnumerable<ICommand> GetOutgoingCommands()
-            => _outgoingCommands;
-
-        public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
-            => _outgoingEvents.OfType<IDomainEvent>();
-
-        public IEnumerable<IMessage> GetAllMessages()
+        
+        public void Clear()
         {
-            List<IMessage> messages = new() { _incomingEvent };
-
-            messages.AddRange(_outgoingEvents);
-            messages.AddRange(_outgoingCommands);
-
-            return messages;
-        }
-
-        public void ClearAllMessages()
-        {
-            _outgoingEvents.Clear();
-            _outgoingCommands.Clear();
-            _incomingEvent = default;
+            Outbox = default;
+            Inbox = default;
         }
         
         private void SetMessageIdentification(IMessage message)
         {
-            message.CausationId = _incomingEvent.MessageId;
-            message.CorrelationId = _incomingEvent.CorrelationId;
+            IEvent triggerEvent = Inbox.Events.Last();
+            
+            message.CausationId = triggerEvent.MessageId;
+            message.CorrelationId = triggerEvent.CorrelationId;
         }
     }
 }

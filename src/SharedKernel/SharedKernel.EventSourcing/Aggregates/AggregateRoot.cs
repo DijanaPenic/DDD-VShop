@@ -10,7 +10,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject
     {
-        private readonly List<IEvent> _outgoingEvents = new();
+        private readonly List<IEvent> _outbox = new();
 
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
@@ -23,13 +23,13 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         {
             ApplyEvent(@event);
             SetEventIdentification(@event);
-            _outgoingEvents.Add(@event);
+            _outbox.Add(@event);
         }
         
         public void RaiseEvent(IIntegrationEvent @event)
         {
             SetEventIdentification(@event);
-            _outgoingEvents.Add(@event);
+            _outbox.Add(@event);
         }
 
         public void Load(IEnumerable<IEvent> history)
@@ -42,13 +42,13 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         }
 
         public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
-            => _outgoingEvents.OfType<IDomainEvent>();
+            => _outbox.OfType<IDomainEvent>();
 
         public IEnumerable<IEvent> GetAllEvents()
-            => _outgoingEvents;
+            => _outbox;
 
-        public void ClearAllEvents()
-            => _outgoingEvents.Clear();
+        public void Clear()
+            => _outbox.Clear();
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event)
             => entity?.Handle(@event);

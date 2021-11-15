@@ -46,19 +46,25 @@ namespace VShop.SharedKernel.EventStore.Repositories
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
 
-            string streamName = GetStreamName(processManager.Id);
-
             await _eventStoreClient.AppendToStreamAsync
             (
-                streamName,
-                processManager.Version,
-                processManager.GetAllMessages(),
+                GetInboxStreamName(processManager.Id),
+                processManager.Inbox.Version,
+                processManager.Inbox.GetMessages(),
+                cancellationToken
+            );
+            
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                GetOutboxStreamName(processManager.Id),
+                processManager.Outbox.Version,
+                processManager.Outbox.GetMessages(),
                 cancellationToken
             );
 
             try
             {
-                foreach (ICommand command in processManager.GetOutgoingCommands())
+                foreach (ICommand command in processManager.Outbox.Commands)
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
@@ -74,32 +80,43 @@ namespace VShop.SharedKernel.EventStore.Repositories
             }
             finally
             {
-                processManager.ClearAllMessages();
+                processManager.Clear();
             }
         }
         
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
         {
-            string streamName = GetStreamName(processManagerId);
-            
-            IList<IMessage> messages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            IList<IMessage> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
-                streamName,
+                GetInboxStreamName(processManagerId),
+                StreamPosition.Start,
+                cancellationToken
+            );
+            
+            IList<IMessage> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            (
+                GetOutboxStreamName(processManagerId),
                 StreamPosition.Start,
                 cancellationToken
             );
 
             TProcess processManager = new();
-            processManager.Load(messages);
+            processManager.Load(inboxMessages, outboxMessages);
 
             return processManager;
         }
 
-        private string GetStreamName(Guid processManagerId)
+        private string GetStreamPrefix(Guid processManagerId)
         {
             string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
             
-            return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}".ToSnakeCase();
+            return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}";
         }
+
+        private string GetInboxStreamName(Guid processManagerId)
+            => $"{GetStreamPrefix(processManagerId)}/inbox".ToSnakeCase();
+        
+        private string GetOutboxStreamName(Guid processManagerId)
+            => $"{GetStreamPrefix(processManagerId)}/outbox".ToSnakeCase();
     }
 }

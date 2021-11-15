@@ -25,7 +25,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             
             Logger.Information
             (
-                "{Process}: handling {Event} domain event",
+                "{Process}: handling {Event} event",
                 typeof(TProcess).Name, @event.GetType().Name
             );
             
