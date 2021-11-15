@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
-    public class OrderingProcessManager : ProcessManager
+    internal class OrderingProcessManager : ProcessManager
     {
         public Guid ShoppingCartId { get; private set; }
         public OrderFulfillmentStatus Status { get; private set; }

@@ -67,6 +67,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 }
                 
                 // TODO - need to see if domain events can be created by process manager.
+                // FYI - integration events are being picked up by ES subscription (integration publisher).
                 // Publish domain events.
                 // foreach (IDomainEvent domainEvent in processManager.GetOutgoingDomainEvents())
                 //     await _publisher.Publish(@domainEvent, PublishStrategy.SyncStopOnException);

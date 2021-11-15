@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected void Register<TMessage>(Action<TMessage> handler)
             where TMessage : class, IEvent
-            => _eventHandlers[typeof(TMessage)] = message => handler(message as TMessage);
+            => _eventHandlers[typeof(TMessage)] = (message) => handler(message as TMessage);
 
         public void Transition(IEvent @event)
         {
@@ -34,13 +34,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected void RaiseEvent(IEvent @event)
         {
-            SetMessage(@event);
+            SetMessageIdentification(@event);
             _outgoingEvents.Add(@event);
         }
         
         protected void RaiseCommand(ICommand command)
         {
-            SetMessage(command);
+            SetMessageIdentification(command);
             _outgoingCommands.Add(command);
         }
 
@@ -76,7 +76,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _incomingEvent = default;
         }
         
-        private void SetMessage(IMessage message)
+        private void SetMessageIdentification(IMessage message)
         {
             message.CausationId = _incomingEvent.MessageId;
             message.CorrelationId = _incomingEvent.CorrelationId;
