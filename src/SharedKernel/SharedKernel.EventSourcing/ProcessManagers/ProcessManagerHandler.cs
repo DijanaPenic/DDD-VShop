@@ -19,6 +19,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected ProcessManagerHandler(IProcessManagerRepository<TProcess> processManagerRepository)
             => _processManagerRepository = processManagerRepository;
         
+        // TODO - missing command execute method
+        
         protected async Task TransitionAsync(Guid processId, IEvent @event, CancellationToken cancellationToken)
         {
             _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);

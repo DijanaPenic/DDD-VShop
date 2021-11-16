@@ -53,6 +53,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // ));
 
             // Publish integration events from the current bounded context
+            // TODO - will need to adjust filter per latest PM changes
             services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
             (
                 eventStoreClient,
