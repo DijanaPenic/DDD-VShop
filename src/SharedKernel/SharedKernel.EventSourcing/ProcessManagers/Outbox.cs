@@ -7,16 +7,30 @@ using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
-    public class Outbox
+    public class Outbox : IOutbox
     {
+        private readonly List<IEvent> _events = new();
+        private readonly List<ICommand> _immediateCommands = new();
+        private readonly List<ICommand> _scheduledCommands = new();
+        
         public int Version { get; set; } = -1;
-        public List<IEvent> Events { get; } = new();
-        public List<ICommand> Commands { get; } = new();
-        
-        public IEnumerable<T> GetEvents<T>()
-            => Events.OfType<T>();
-        
-        public IEnumerable<IMessage> GetMessages()
-            => Events.Concat<IMessage>(Commands);
+
+        public void Raise(IEvent @event) => _events.Add(@event);
+        public void Raise(ICommand command) => _immediateCommands.Add(command);
+        public void Schedule(ICommand command) => _scheduledCommands.Add(command);
+        public IEnumerable<TEvent> GetEvents<TEvent>() => _events.OfType<TEvent>();
+        public IEnumerable<IMessage> GetAllMessages()
+            => _events.Concat<IMessage>(_immediateCommands).Concat(_scheduledCommands);
+        public IEnumerable<ICommand> GetScheduledCommands() => _scheduledCommands;
+        public IEnumerable<ICommand> GetImmediateCommands() => _immediateCommands;
+    }
+    
+    public interface IOutbox
+    {
+        public int Version { get; }
+        IEnumerable<TEvent> GetEvents<TEvent>();
+        public IEnumerable<IMessage> GetAllMessages();
+        public IEnumerable<ICommand> GetScheduledCommands();
+        public IEnumerable<ICommand> GetImmediateCommands();
     }
 }

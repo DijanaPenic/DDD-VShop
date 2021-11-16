@@ -50,7 +50,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                processManager.Inbox.GetMessages(),
+                new[]{ processManager.Inbox.Trigger },
                 cancellationToken
             );
             
@@ -58,13 +58,14 @@ namespace VShop.SharedKernel.EventStore.Repositories
             (
                 GetOutboxStreamName(processManager.Id),
                 processManager.Outbox.Version,
-                processManager.Outbox.GetMessages(),
+                processManager.Outbox.GetAllMessages(),
                 cancellationToken
             );
 
             try
             {
-                foreach (ICommand command in processManager.Outbox.Commands)
+                // Dispatch immediate commands
+                foreach (ICommand command in processManager.Outbox.GetImmediateCommands())
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
@@ -76,7 +77,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 // FYI - integration events are being picked up by ES subscription (integration publisher).
                 // Publish domain events.
                 // foreach (IDomainEvent domainEvent in processManager.GetOutgoingDomainEvents())
-                //     await _publisher.Publish(@domainEvent, PublishStrategy.SyncStopOnException);
+                //     await _eventBus.Publish(@domainEvent, PublishStrategy.SyncStopOnException);
             }
             finally
             {

@@ -17,8 +17,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
         public OrderingProcessManager()
         {
-            Register<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
-            Register<OrderPlacedDomainEvent>(Handle);
+            RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
+            RegisterEvent<OrderPlacedDomainEvent>(Handle);
         }
         
         public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
