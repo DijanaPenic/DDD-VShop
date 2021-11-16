@@ -65,7 +65,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             try
             {
                 // Dispatch immediate commands
-                foreach (ICommand command in processManager.Outbox.GetImmediateCommands())
+                foreach (IBaseCommand command in processManager.Outbox.GetImmediateCommands())
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     

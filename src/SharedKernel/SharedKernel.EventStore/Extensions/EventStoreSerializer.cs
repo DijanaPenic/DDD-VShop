@@ -69,7 +69,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
         private static JsonSerializerSettings GetJsonSerializerSettings()
         {
             PropertyIgnoreContractResolver jsonResolver = new();
-            jsonResolver.Ignore(typeof(BaseMessage));
+            jsonResolver.Ignore(typeof(Message));
 
             JsonSerializerSettings serializerSettings = new() { ContractResolver = jsonResolver };
 

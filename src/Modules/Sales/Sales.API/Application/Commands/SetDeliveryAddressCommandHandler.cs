@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record SetDeliveryAddressCommand : BaseCommand<Success>
+    public record SetDeliveryAddressCommand : Command<Success>
     {
         public Guid ShoppingCartId { get; set; }
         public string City { get; set; }

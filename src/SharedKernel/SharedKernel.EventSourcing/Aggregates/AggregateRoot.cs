@@ -10,7 +10,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
     public abstract class AggregateRoot<TKey>
         where TKey : ValueObject
     {
-        private readonly List<IEvent> _outbox = new();
+        private readonly List<IBaseEvent> _outbox = new();
 
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
@@ -32,9 +32,9 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             _outbox.Add(@event);
         }
 
-        public void Load(IEnumerable<IEvent> history)
+        public void Load(IEnumerable<IBaseEvent> history)
         {
-            foreach (IEvent @event in history)
+            foreach (IBaseEvent @event in history)
             {
                 if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
@@ -44,7 +44,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
             => _outbox.OfType<IDomainEvent>();
 
-        public IEnumerable<IEvent> GetAllEvents()
+        public IEnumerable<IBaseEvent> GetAllEvents()
             => _outbox;
 
         public void Clear()
@@ -53,7 +53,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event)
             => entity?.Handle(@event);
         
-        private void SetEventIdentification(IEvent @event)
+        private void SetEventIdentification(IBaseEvent @event)
         {
             @event.CausationId = MessageId;
             @event.CorrelationId = CorrelationId;

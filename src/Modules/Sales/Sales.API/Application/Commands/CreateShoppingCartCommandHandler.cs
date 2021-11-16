@@ -53,7 +53,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record CreateShoppingCartCommand : BaseCommand<Success<ShoppingCart>>
+    public record CreateShoppingCartCommand : Command<Success<ShoppingCart>>
     {
         public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; set; }

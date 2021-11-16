@@ -55,7 +55,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RaiseCommand(deleteShoppingCartCommand);
         }
 
-        protected override void ApplyEvent(IEvent @event)
+        protected override void ApplyEvent(IBaseEvent @event)
         {
             switch (@event)
             {

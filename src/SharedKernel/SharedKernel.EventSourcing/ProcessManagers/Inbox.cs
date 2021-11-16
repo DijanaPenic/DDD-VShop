@@ -11,10 +11,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         public IMessage Trigger { get; set; }
         public int Version { get; set; } = -1;
-        public IDictionary<Type, Action<IEvent>> EventHandlers { get; } 
-            = new Dictionary<Type, Action<IEvent>>();
-        public IDictionary<Type, Action<ICommand>> CommandHandlers { get; }
-            = new Dictionary<Type, Action<ICommand>>();
+        public IDictionary<Type, Action<IBaseEvent>> EventHandlers { get; } 
+            = new Dictionary<Type, Action<IBaseEvent>>();
+        public IDictionary<Type, Action<IBaseCommand>> CommandHandlers { get; }
+            = new Dictionary<Type, Action<IBaseCommand>>();
     }
     
     public interface IInbox

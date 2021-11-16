@@ -51,7 +51,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record SetContactInformationCommand : BaseCommand<Success>
+    public record SetContactInformationCommand : Command<Success>
     {
         public Guid ShoppingCartId { get; set; }
         public string FirstName { get; set; }

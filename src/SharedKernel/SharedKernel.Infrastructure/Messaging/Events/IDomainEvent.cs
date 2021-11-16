@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Infrastructure.Messaging.Events
 {
-    public interface IDomainEvent : IEvent, INotification
+    public interface IDomainEvent : IBaseEvent, INotification
     {
     
     }

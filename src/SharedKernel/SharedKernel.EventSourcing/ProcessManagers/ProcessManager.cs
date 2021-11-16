@@ -17,42 +17,42 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public IInbox Inbox => _inbox;
         public IOutbox Outbox => _outbox;
 
-        protected abstract void ApplyEvent(IEvent @event);
+        protected abstract void ApplyEvent(IBaseEvent @event);
         
         protected void RegisterEvent<TEvent>(Action<TEvent> handler)
-            where TEvent : class, IEvent
+            where TEvent : class, IBaseEvent
             => _inbox.EventHandlers[typeof(TEvent)] = (message) => handler(message as TEvent);
         
         protected void RegisterCommand<TCommand>(Action<TCommand> handler)
-            where TCommand : class, ICommand
+            where TCommand : class, IBaseCommand
             => _inbox.CommandHandlers[typeof(TCommand)] = (message) => handler(message as TCommand);
 
-        public void Transition(IEvent @event)
+        public void Transition(IBaseEvent @event)
         {
             ApplyEvent(@event);
             _inbox.Trigger = @event;
             _inbox.EventHandlers[@event.GetType()](@event);
         }
         
-        public void Execute(ICommand command)
+        public void Execute(IBaseCommand command)
         {
             _inbox.Trigger = command;
             _inbox.CommandHandlers[command.GetType()](command);
         }
 
-        protected void RaiseEvent(IEvent @event)
+        protected void RaiseEvent(IBaseEvent @event)
         {
             SetMessageIdentification(@event);
             _outbox.Raise(@event);
         }
         
-        protected void RaiseCommand(ICommand command)
+        protected void RaiseCommand(IBaseCommand command)
         {
             SetMessageIdentification(command);
             _outbox.Raise(command);
         }
         
-        protected void ScheduleCommand(ICommand command)
+        protected void ScheduleCommand(IBaseCommand command)
         {
             SetMessageIdentification(command);
             _outbox.Schedule(command);
@@ -62,7 +62,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         {
             foreach (IMessage inboxMessage in inboxHistory)
             {
-                if(inboxMessage is IEvent @event) ApplyEvent(@event);
+                if(inboxMessage is IBaseEvent @event) ApplyEvent(@event);
                 _inbox.Version++;
             }
 

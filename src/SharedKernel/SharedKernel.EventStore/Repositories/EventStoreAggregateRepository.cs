@@ -73,7 +73,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         {
             string streamName = GetStreamName(aggregateId);
             
-            IList<IEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IEvent>
+            IList<IBaseEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
             (
                 streamName,
                 StreamPosition.Start,

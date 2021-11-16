@@ -74,7 +74,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
-    public record PlaceOrderCommand : BaseCommand<Success<Order>>
+    public record PlaceOrderCommand : Command<Success<Order>>
     {
         public Guid OrderId { get; init; }
         public decimal DeliveryCost { get; init; }
