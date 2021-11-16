@@ -13,6 +13,7 @@ using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.Scheduler.Quartz.Services;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
@@ -25,6 +26,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
+        private readonly IMessageSchedulerService _messageSchedulerService;
         private readonly IEventBus _eventBus;
         
         private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
@@ -33,11 +35,13 @@ namespace VShop.SharedKernel.EventStore.Repositories
         (
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
+            IMessageSchedulerService messageSchedulerService,
             IEventBus eventBus
         )
         {
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
+            _messageSchedulerService = messageSchedulerService;
             _eventBus = eventBus;
         }
         
@@ -65,12 +69,18 @@ namespace VShop.SharedKernel.EventStore.Repositories
             try
             {
                 // Dispatch immediate commands
-                foreach (IBaseCommand command in processManager.Outbox.GetImmediateCommands())
+                foreach (IBaseCommand command in processManager.Outbox.GetCommandsForImmediateDispatch())
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
                     if (commandResult is IOneOf { Value: ApplicationError error })
                         throw new Exception(error.ToString());
+                }
+
+                // Queue scheduled commands
+                foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
+                {
+                    await _messageSchedulerService.ScheduleCommandAsync(scheduledCommand, cancellationToken);
                 }
                 
                 // TODO - need to see if domain events can be created by process manager.

@@ -43,19 +43,19 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected void RaiseEvent(IBaseEvent @event)
         {
             SetMessageIdentification(@event);
-            _outbox.Raise(@event);
+            _outbox.Add(@event);
         }
         
         protected void RaiseCommand(IBaseCommand command)
         {
             SetMessageIdentification(command);
-            _outbox.Raise(command);
+            _outbox.Add(command);
         }
         
-        protected void ScheduleCommand(IBaseCommand command)
+        protected void ScheduleMessage(IMessage message, DateTime scheduledTime)
         {
-            SetMessageIdentification(command);
-            _outbox.Schedule(command);
+            SetMessageIdentification(message);
+            _outbox.Add(message, scheduledTime);
         }
 
         public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory)

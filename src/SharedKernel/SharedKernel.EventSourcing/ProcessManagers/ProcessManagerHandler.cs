@@ -2,9 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using OneOf.Types;
 
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
@@ -19,7 +21,22 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected ProcessManagerHandler(IProcessManagerRepository<TProcess> processManagerRepository)
             => _processManagerRepository = processManagerRepository;
         
-        // TODO - missing command execute method
+        protected async Task<None> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
+        {
+            _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
+            
+            Logger.Information
+            (
+                "{Process}: handling {Command} command",
+                typeof(TProcess).Name, command.GetType().Name
+            );
+            
+            _processManager.Execute(command);
+            
+            await _processManagerRepository.SaveAsync(_processManager, cancellationToken);
+
+            return new None();
+        }
         
         protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
         {

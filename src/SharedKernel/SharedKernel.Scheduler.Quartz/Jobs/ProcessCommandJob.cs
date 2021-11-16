@@ -32,8 +32,5 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
 
         private static object GetCommandBody(IJobExecutionContext context)
             => context.JobDetail.JobDataMap.Get(JobDataBody);
-        
-        private static Guid GetCommandId(IJobExecutionContext context)
-            => context.JobDetail.JobDataMap.GetGuidValue(JobDataId);
     }
 }

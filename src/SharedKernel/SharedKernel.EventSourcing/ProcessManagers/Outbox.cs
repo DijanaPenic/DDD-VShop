@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -10,19 +11,21 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     public class Outbox : IOutbox
     {
         private readonly List<IBaseEvent> _events = new();
-        private readonly List<IBaseCommand> _immediateCommands = new();
-        private readonly List<IBaseCommand> _scheduledCommands = new();
+        private readonly List<IBaseCommand> _commands = new();
+        private readonly List<IScheduledMessage> _scheduledMessages = new();
         
         public int Version { get; set; } = -1;
 
-        public void Raise(IBaseEvent @event) => _events.Add(@event);
-        public void Raise(IBaseCommand command) => _immediateCommands.Add(command);
-        public void Schedule(IBaseCommand command) => _scheduledCommands.Add(command);
+        public void Add(IBaseEvent @event) => _events.Add(@event);
+        public void Add(IBaseCommand command) => _commands.Add(command);
+        public void Add(IMessage message, DateTime scheduledTime)
+            => _scheduledMessages.Add(new ScheduledMessage(message, scheduledTime));
         public IEnumerable<TEvent> GetEvents<TEvent>() => _events.OfType<TEvent>();
         public IEnumerable<IMessage> GetAllMessages()
-            => _events.Concat<IMessage>(_immediateCommands).Concat(_scheduledCommands);
-        public IEnumerable<IBaseCommand> GetScheduledCommands() => _scheduledCommands;
-        public IEnumerable<IBaseCommand> GetImmediateCommands() => _immediateCommands;
+            => _events.Concat<IMessage>(_commands).Concat(_scheduledMessages);
+        public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch()
+            => _scheduledMessages.Where(m => m.Message is ICommand);
+        public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
     }
     
     public interface IOutbox
@@ -30,7 +33,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public int Version { get; }
         IEnumerable<TEvent> GetEvents<TEvent>();
         public IEnumerable<IMessage> GetAllMessages();
-        public IEnumerable<IBaseCommand> GetScheduledCommands();
-        public IEnumerable<IBaseCommand> GetImmediateCommands();
+        public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch();
+        public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch();
     }
 }

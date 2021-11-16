@@ -1,10 +1,11 @@
 ﻿using Quartz;
+using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Scheduler.Quartz.Jobs;
-using VShop.SharedKernel.Scheduler.Quartz.Models;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {
@@ -15,17 +16,16 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
         public MessageSchedulerService(IScheduler scheduler)
             => _scheduler = scheduler;
 
-        public async Task ScheduleCommandAsync(IScheduledCommand message, CancellationToken cancellationToken = default)
+        public async Task ScheduleCommandAsync(IScheduledMessage scheduledCommand, CancellationToken cancellationToken = default)
         {
             IJobDetail job = JobBuilder.Create<ProcessCommandJob>()
                 .WithIdentity(SequentialGuid.Create().ToString())
-                .UsingJobData(ProcessCommandJob.JobDataId, message.Id)
-                .UsingJobData(ProcessCommandJob.JobDataBody, message.Body)
+                .UsingJobData(ProcessCommandJob.JobDataBody, JsonConvert.SerializeObject(scheduledCommand.Message))
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity(SequentialGuid.Create().ToString())
-                .StartAt(message.ScheduledTime)
+                .StartAt(scheduledCommand.ScheduledTime)
                 .Build();
 
             await _scheduler.ScheduleJob(job, trigger, cancellationToken);

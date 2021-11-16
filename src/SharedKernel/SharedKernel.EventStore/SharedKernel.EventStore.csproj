@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
+      <ProjectReference Include="..\SharedKernel.Scheduler.Quartz\SharedKernel.Scheduler.Quartz.csproj" />
     </ItemGroup>
 
     <ItemGroup>

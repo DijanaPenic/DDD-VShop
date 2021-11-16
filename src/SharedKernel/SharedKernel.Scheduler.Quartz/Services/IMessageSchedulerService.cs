@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Scheduler.Quartz.Models;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {
     public interface IMessageSchedulerService
     {
-        Task ScheduleCommandAsync(IScheduledCommand message, CancellationToken cancellationToken = default);
+        Task ScheduleCommandAsync(IScheduledMessage message, CancellationToken cancellationToken = default);
     }
 }

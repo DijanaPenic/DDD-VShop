@@ -19,7 +19,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
+            //RegisterCommand<ReminderCommand>(Handle);
         }
+        
+        // public void Handle(ReminderCommand command)
+        // {
+        //     
+        // }
         
         public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
         {
