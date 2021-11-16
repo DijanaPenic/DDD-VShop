@@ -25,7 +25,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
-        private readonly Publisher _publisher;
+        private readonly IEventBus _eventBus;
         
         private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
 
@@ -33,12 +33,12 @@ namespace VShop.SharedKernel.EventStore.Repositories
         (
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
-            Publisher publisher
+            IEventBus eventBus
         )
         {
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
-            _publisher = publisher;
+            _eventBus = eventBus;
         }
         
         public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken)

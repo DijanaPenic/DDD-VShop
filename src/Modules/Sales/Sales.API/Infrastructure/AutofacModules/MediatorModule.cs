@@ -23,8 +23,11 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                 return t => c.Resolve(t);
             });
             
-            // Register Publisher
-            builder.RegisterType(typeof(Publisher)).SingleInstance();
+            // Register event bus
+            builder.RegisterType<EventBus>().As<IEventBus>().SingleInstance();
+            
+            // Register command bus
+            builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
 
             // Register command handlers
             builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommand).Assembly)
@@ -34,11 +37,10 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
             builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
             
+            // Register behaviors
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
-            
-            builder.RegisterType<CommandBus>().As<ICommandBus>();
         }
     }
 }

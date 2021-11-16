@@ -14,12 +14,12 @@ namespace VShop.SharedKernel.EventStore.Projections
 {
     public class IntegrationEventProjectionPublisher : ISubscription
     {
-        private readonly Publisher _publisher;
+        private readonly IEventBus _eventBus;
         
         private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionPublisher>();
 
-        public IntegrationEventProjectionPublisher(Publisher publisher)
-            => _publisher = publisher;
+        public IntegrationEventProjectionPublisher(IEventBus eventBus)
+            => _eventBus = eventBus;
 
         public Task ProjectAsync(IMessage message, IMessageMetadata _, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace VShop.SharedKernel.EventStore.Projections
             Logger.Debug("Projecting integration event: {Message}", integrationEvent);
             
             // TODO - need to figure out how to handle these exceptions. This will stop further integration projections.
-            return _publisher.Publish(integrationEvent, PublishStrategy.SyncStopOnException, cancellationToken);
+            return _eventBus.Publish(integrationEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
         }
     }
 }

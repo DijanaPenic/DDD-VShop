@@ -3,7 +3,7 @@
     /// <summary>
     /// Strategy to use when publishing notifications
     /// </summary>
-    public enum PublishStrategy
+    public enum EventPublishStrategy
     {
         /// <summary>
         /// Run each notification handler after one another. Returns when all handlers are finished. In case of any exception(s), they will be captured in an AggregateException.

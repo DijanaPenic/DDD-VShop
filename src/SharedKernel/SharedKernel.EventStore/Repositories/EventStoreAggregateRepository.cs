@@ -22,18 +22,18 @@ namespace VShop.SharedKernel.EventStore.Repositories
         where TAggregate : AggregateRoot<TKey>
     {
         private readonly EventStoreClient _eventStoreClient;
-        private readonly Publisher _publisher;
+        private readonly IEventBus _eventBus;
 
         private static readonly ILogger Logger = Log.ForContext<EventStoreAggregateRepository<TAggregate, TKey>>();
 
         public EventStoreAggregateRepository
         (
             EventStoreClient eventStoreClient,
-            Publisher publisher
+            IEventBus eventBus
         )
         {
             _eventStoreClient = eventStoreClient;
-            _publisher = publisher;
+            _eventBus = eventBus;
         }
 
         public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
@@ -55,7 +55,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
             {
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
                 foreach (IDomainEvent domainEvent in aggregate.GetOutgoingDomainEvents())
-                    await _publisher.Publish(domainEvent, PublishStrategy.SyncStopOnException, cancellationToken);
+                    await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
             {
