@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 using VShop.SharedKernel.EventSourcing.Messaging;
 
+// TODO - consider changing project name to EvenstStoreDb
 namespace VShop.SharedKernel.EventStore
 {
     public record MessageMetadata : IMessageMetadata

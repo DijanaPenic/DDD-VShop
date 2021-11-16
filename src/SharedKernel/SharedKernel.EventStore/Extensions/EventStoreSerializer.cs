@@ -38,8 +38,7 @@ namespace VShop.SharedKernel.EventStore.Extensions
         public static IMessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.Span);
-
-            Uuid value = Uuid.FromGuid(Guid.Empty);
+            
             return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
         
