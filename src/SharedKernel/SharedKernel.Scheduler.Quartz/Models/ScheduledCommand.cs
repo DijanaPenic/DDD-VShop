@@ -4,9 +4,15 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Models
 {
     public record ScheduledCommand
     {
-        public Guid Id { get; init; }
-        public string Topic { get; init; }
-        public string Body { get; init; }
-        public DateTime ScheduledTime { get; init; }
+        public Guid Id { get; }
+        public string Body { get; }
+        public DateTime ScheduledTime { get; }
+
+        public ScheduledCommand(Guid id, string body, DateTime scheduledTime)
+        {
+            Id = id;
+            Body = body;
+            ScheduledTime = scheduledTime;
+        }
     }
 }
