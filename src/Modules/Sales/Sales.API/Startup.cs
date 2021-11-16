@@ -2,11 +2,11 @@ using Serilog;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Infrastructure.Extensions;
@@ -35,6 +35,7 @@ namespace VShop.Modules.Sales.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
             services.AddEventSourcingServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
+            services.AddQuartzServices();
             
             services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
         }
@@ -61,6 +62,7 @@ namespace VShop.Modules.Sales.API
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseQuartz();
         }
     }
 }

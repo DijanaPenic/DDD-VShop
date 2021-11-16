@@ -31,6 +31,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventStore\SharedKernel.EventStore.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Scheduler.Quartz\SharedKernel.Scheduler.Quartz.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
       <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
       <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
