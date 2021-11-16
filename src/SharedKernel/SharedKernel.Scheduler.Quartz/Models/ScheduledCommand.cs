@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Models
 {
-    public record ScheduledCommand
+    public record ScheduledCommand : IScheduledCommand
     {
         public Guid Id { get; }
         public string Body { get; }

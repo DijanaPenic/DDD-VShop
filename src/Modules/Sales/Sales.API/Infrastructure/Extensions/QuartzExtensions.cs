@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
                 return scheduler;
             });
-            services.AddTransient<ICommandSchedulerService, CommandSchedulerService>();
+            services.AddTransient<IMessageSchedulerService, MessageSchedulerService>();
             services.AddTransient<ProcessCommandJob>();
 
             return services;
