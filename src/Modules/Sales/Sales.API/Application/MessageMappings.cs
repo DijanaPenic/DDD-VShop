@@ -2,8 +2,9 @@
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.SharedKernel.EventStore.Repositories;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
-using static VShop.SharedKernel.EventSourcing.Messaging.MessageTypeMapper;
+using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.API.Application
 {
@@ -25,17 +26,19 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
             AddCustomMap<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
             AddCustomMap<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
-            AddCustomMap<OrderItemAddedDomainEvent>(nameof(OrderItemAddedDomainEvent));
-            
+
             // Configure integration events
             AddCustomMap<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
             
             // Configure commands
             AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));
             AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
-            
-            // Configure checkpoints
+
+            // Configure checkpoint
             AddCustomMap<Checkpoint>(nameof(Checkpoint));
+            
+            // Configure scheduled message
+            AddCustomMap<ScheduledMessage>(nameof(ScheduledMessage));
         }
     }
 }

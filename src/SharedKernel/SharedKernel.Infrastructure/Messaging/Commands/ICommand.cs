@@ -1,6 +1,6 @@
 ﻿using OneOf;
-using MediatR;
 using OneOf.Types;
+using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 

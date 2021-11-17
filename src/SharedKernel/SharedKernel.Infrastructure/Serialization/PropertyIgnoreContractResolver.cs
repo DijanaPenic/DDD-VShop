@@ -14,8 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
 
         public void Ignore(Type type)
         {
-            if (!_ignores.Contains(type))
-                _ignores.Add(type);
+            if (!_ignores.Contains(type)) _ignores.Add(type);
         }
         
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
@@ -24,7 +23,7 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
 
             if (_ignores.Contains(property.DeclaringType))
             {
-                property.ShouldSerialize = i => false;
+                property.ShouldSerialize = o => false;
                 property.Ignored = true;
             }
 

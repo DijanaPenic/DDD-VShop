@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace VShop.SharedKernel.Domain.ValueObjects
 {
+    // TODO - consider moving this class to the Infrastructure layer
     public abstract class ValueObject
     {
         protected static bool EqualOperator(ValueObject left, ValueObject right)

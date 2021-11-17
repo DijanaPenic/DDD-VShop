@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 

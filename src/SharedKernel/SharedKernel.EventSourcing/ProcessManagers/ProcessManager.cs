@@ -52,10 +52,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(command);
         }
         
-        protected void ScheduleMessage(IMessage message, DateTime scheduledTime)
+        protected void ScheduleCommand(IBaseCommand command, DateTime scheduledTime)
         {
-            SetMessageIdentification(message);
-            _outbox.Add(message, scheduledTime);
+            SetMessageIdentification(command);
+            _outbox.Add(command, scheduledTime);
         }
 
         public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory)

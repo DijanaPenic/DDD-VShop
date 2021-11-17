@@ -1,5 +1,4 @@
 ﻿using Quartz;
-using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +19,8 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
         {
             IJobDetail job = JobBuilder.Create<ProcessCommandJob>()
                 .WithIdentity(SequentialGuid.Create().ToString())
-                .UsingJobData(ProcessCommandJob.JobDataBody, JsonConvert.SerializeObject(scheduledCommand.Message))
+                .UsingJobData(ProcessCommandJob.JobDataBody, scheduledCommand.Message)
+                .UsingJobData(ProcessCommandJob.JobDataType, scheduledCommand.Type)
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
@@ -31,7 +31,7 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
             await _scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
         
-        // Save scheduled message into the database
+        // Save scheduled message into the database (will be needed to resume triggers)
         // private Task SaveJob(ScheduledMessage message, CancellationToken cancellationToken = default)
         // {
         //     return Task.CompletedTask;

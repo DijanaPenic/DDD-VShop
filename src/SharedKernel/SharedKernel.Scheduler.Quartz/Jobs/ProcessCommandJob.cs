@@ -1,8 +1,9 @@
 ﻿using Quartz;
-using System;
-using System.Threading.Tasks;
 using Serilog;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
 
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 
 using ILogger = Serilog.ILogger;
@@ -11,8 +12,8 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
 {
     public class ProcessCommandJob : IJob
     {
-        public const string JobDataId = "COMMAND_ID";
         public const string JobDataBody = "COMMAND_BODY";
+        public const string JobDataType = "COMMAND_TYPE";
         
         private readonly ICommandBus _commandBus;
         
@@ -31,6 +32,11 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
         }
 
         private static object GetCommandBody(IJobExecutionContext context)
-            => context.JobDetail.JobDataMap.Get(JobDataBody);
+        {
+            string body = context.JobDetail.JobDataMap.GetString(JobDataBody)!;
+            string typeName = context.JobDetail.JobDataMap.GetString(JobDataType)!;
+
+            return JsonConvert.DeserializeObject(body, MessageTypeMapper.ToType(typeName));
+        }
     }
 }
