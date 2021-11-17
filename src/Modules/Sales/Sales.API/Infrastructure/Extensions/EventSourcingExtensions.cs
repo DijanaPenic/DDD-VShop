@@ -76,7 +76,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 "IntegrationEventsSub",
                 new ISubscription[]
                 {
-                    new IntegrationEventProjectionPublisher(provider.GetRequiredService<EventBus>())
+                    new IntegrationEventProjectionPublisher(provider.GetRequiredService<IEventBus>())
                 },
                 new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
             ));
