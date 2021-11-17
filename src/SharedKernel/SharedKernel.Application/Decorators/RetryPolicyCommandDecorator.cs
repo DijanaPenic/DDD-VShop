@@ -31,7 +31,7 @@ namespace VShop.SharedKernel.Application.Decorators
                 .WaitAndRetryAsync
                 (
                     maxRetryAttempts,
-                    i => TimeSpan.FromMilliseconds(i * sleepDuration),
+                    provider => TimeSpan.FromMilliseconds(provider * sleepDuration),
                     (ex, ts, _)
                         => Logger.Warning
                         (

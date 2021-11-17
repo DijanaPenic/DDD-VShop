@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Infrastructure.Policies
     // Polly Wiki page: https://github.com/App-vNext/Polly/wiki/Timeout
     public static class TimeoutWrapper
     {
-        private const int TimeoutSeconds = 10;
+        private const int TimeoutSeconds = 1000; // TODO - decrease time after testing
         
         private static readonly AsyncTimeoutPolicy TimeoutPolicy = Policy.TimeoutAsync(TimeoutSeconds);
 
