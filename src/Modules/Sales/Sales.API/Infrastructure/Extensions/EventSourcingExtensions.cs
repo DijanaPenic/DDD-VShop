@@ -34,7 +34,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // Stream names
             string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
             string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
-            
+
             // NOTE: Cannot use AddHostedService to register multiple workers: https://github.com/dotnet/runtime/issues/38751
             services.AddHostedService<EventStoreHostedService>();
             
@@ -53,7 +53,6 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // ));
 
             // Publish integration events from the current bounded context
-            // TODO - will need to adjust filter per latest PM changes
             services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
             (
                 eventStoreClient,
@@ -63,7 +62,10 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 {
                     new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationRepository>())
                 },
-                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix, processManagerStreamPrefix))
+                // This will subscribe to these streams:
+                // * process manager outbox and
+                // * aggregate
+                new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
             ));
 
             // Subscribe to all integration streams
