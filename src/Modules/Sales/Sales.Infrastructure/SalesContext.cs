@@ -11,7 +11,7 @@ namespace VShop.Modules.Sales.Infrastructure
         public const string ShoppingCartSchema = "shopping_cart";
         public const string OrderSchema = "order";
 
-        public DbSet<ShoppingCartInfo> Sales { get; set; }
+        public DbSet<ShoppingCartInfo> ShoppingCarts { get; set; }
         public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
 
         public SalesContext(DbContextOptions<SalesContext> options) : base(options)

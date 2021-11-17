@@ -17,7 +17,7 @@ namespace VShop.Modules.Sales.API.Projections
             {
                 ShoppingCartCreatedDomainEvent e => () =>
                 {
-                    dbContext.Sales.Add(new ShoppingCartInfo()
+                    dbContext.ShoppingCarts.Add(new ShoppingCartInfo()
                     {
                         Id = e.ShoppingCartId,
                         Status = ShoppingCartStatus.New,
@@ -49,21 +49,21 @@ namespace VShop.Modules.Sales.API.Projections
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCartStatus.AwaitingConfirmation;
             
-                    dbContext.Sales.Update(shoppingCart);
+                    dbContext.ShoppingCarts.Update(shoppingCart);
                 },
                 ShoppingCartCheckoutRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCartStatus.PendingCheckout;
             
-                    dbContext.Sales.Update(shoppingCart);
+                    dbContext.ShoppingCarts.Update(shoppingCart);
                 },
                 ShoppingCartDeletionRequestedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(dbContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCartStatus.Closed;
             
-                    dbContext.Sales.Update(shoppingCart);
+                    dbContext.ShoppingCarts.Update(shoppingCart);
                 },
                 ShoppingCartItemQuantityIncreasedDomainEvent e => async() =>
                 {
@@ -87,6 +87,6 @@ namespace VShop.Modules.Sales.API.Projections
                 sci.ProductId == productId && sci.ShoppingCartInfoId == shoppingCartId);
 
         private static Task<ShoppingCartInfo> GetShoppingCartAsync(SalesContext dbContext, Guid shoppingCartId)
-            => dbContext.Sales.SingleAsync(sc => sc.Id == shoppingCartId);
+            => dbContext.ShoppingCarts.SingleAsync(sc => sc.Id == shoppingCartId);
     }
 }

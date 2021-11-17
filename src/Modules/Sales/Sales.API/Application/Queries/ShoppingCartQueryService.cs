@@ -19,7 +19,7 @@ namespace VShop.Modules.Sales.API.Application.Queries
 
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {
-            return _dbContext.Sales
+            return _dbContext.ShoppingCarts
                 .Include(sc => sc.Items)
                 .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCartStatus.Closed);
         }
