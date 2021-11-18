@@ -5,8 +5,8 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {
-    public interface IMessageSchedulerService
+    public interface ISchedulerService
     {
-        Task ScheduleCommandAsync(IScheduledMessage message, CancellationToken cancellationToken = default);
+        Task ScheduleMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default);
     }
 }

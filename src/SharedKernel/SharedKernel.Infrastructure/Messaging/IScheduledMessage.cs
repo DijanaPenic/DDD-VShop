@@ -4,8 +4,9 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
 {
     public interface IScheduledMessage : IMessage
     {
-        public string Message { get; }
-        public string Type { get; }
+        public string Body { get; }
+        public string RuntimeType { get; }
+        public ScheduledMessageType MessageType { get; }
         public DateTime ScheduledTime { get; }
     }
 }

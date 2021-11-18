@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Scheduler.Services;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Infrastructure.Extensions;
 using VShop.Modules.Sales.API.Infrastructure.Automapper;
@@ -17,10 +18,7 @@ namespace VShop.Modules.Sales.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
         
@@ -35,6 +33,9 @@ namespace VShop.Modules.Sales.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
             services.AddEventSourcingServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
+            
+            // Configure scheduler
+            services.AddTransient<IMessagingService, MessagingService>();
             services.AddQuartzServices();
             
             services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();

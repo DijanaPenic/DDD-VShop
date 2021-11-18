@@ -11,6 +11,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
+      <ProjectReference Include="..\SharedKernel.Scheduler\SharedKernel.Scheduler.csproj" />
     </ItemGroup>
 
     <ItemGroup>

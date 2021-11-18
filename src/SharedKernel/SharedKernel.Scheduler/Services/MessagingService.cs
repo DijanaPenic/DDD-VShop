@@ -1,0 +1,99 @@
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Serilog;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+
+using VShop.SharedKernel.Scheduler.Database;
+using VShop.SharedKernel.Scheduler.Database.Entities;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
+
+using ILogger = Serilog.ILogger;
+
+namespace VShop.SharedKernel.Scheduler.Services
+{
+    public class MessagingService : IMessagingService // TODO - need to resume pending schedule messages 
+    {
+        private readonly ICommandBus _commandBus;
+        private readonly SchedulerContext _dbContext;
+        
+        private static readonly ILogger Logger = Log.ForContext<MessagingService>();
+
+        public MessagingService(ICommandBus commandBus, SchedulerContext dbContext)
+        {
+            _commandBus = commandBus;
+            _dbContext = dbContext;
+        }
+
+        public async Task SendMessageAsync(Guid messageId, CancellationToken cancellationToken)
+        {
+            MessageLog message = await GetScheduledMessageAsync(messageId, cancellationToken);
+
+            await SendMessageAsync(message, cancellationToken);
+        }
+
+        private async Task SendMessagesAsync(IEnumerable<MessageLog> messages, CancellationToken cancellationToken)
+        {
+            foreach (MessageLog message in messages)
+            {
+                await SendMessageAsync(message, cancellationToken);
+            }
+        }
+
+        private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)         
+        {
+            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.RuntimeType));                                                     
+                                                                                                                                 
+            try                                                                                                                  
+            {
+                switch (message.MessageType)
+                {
+                    case ScheduledMessageType.Command:
+                        await _commandBus.SendAsync(target, cancellationToken);
+                        break;
+                    default:
+                        throw new Exception($"Unknown message type: {message.MessageType}");
+                } 
+                                                                            
+                await SetMessageStatusAsync(message, SchedulingStatus.Finished, cancellationToken);                              
+            }                                                                                                                    
+            catch (Exception ex)                                                                                                  
+            {                                                                                                                    
+                Logger.Error(ex, "Unhandled error has occurred");
+                                                                                                                                 
+                await SetMessageStatusAsync(message, SchedulingStatus.Failed, cancellationToken);                                
+            }
+        }
+
+        private Task<List<MessageLog>> GetScheduledMessagesAsync(DateTime scheduledTime, CancellationToken cancellationToken)
+            => _dbContext.MessageLogs
+                    .Where(m => m.Status == SchedulingStatus.Scheduled)
+                    .Where(m => m.ScheduledTime <= scheduledTime)
+                    .AsNoTracking()
+                    .ToListAsync(cancellationToken);
+
+        private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
+            => _dbContext.MessageLogs
+                .Where(m => m.Status == SchedulingStatus.Scheduled)
+                .Where(m => m.Id == messageId)
+                .AsTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+        
+        private async Task SetMessageStatusAsync(MessageLog message, SchedulingStatus status, CancellationToken cancellationToken)
+        {
+            _dbContext.Attach(message);
+            
+            // Set the new Status
+            message.Status = status;
+
+            // Mark the Status as modified, so it is the only updated value
+            _dbContext.Entry(message).Property(m => m.Status).IsModified = true;
+            
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+}

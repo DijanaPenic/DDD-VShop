@@ -26,7 +26,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
-        private readonly IMessageSchedulerService _messageSchedulerService;
+        private readonly ISchedulerService _messageSchedulerService;
         private readonly IEventBus _eventBus;
         
         private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
         (
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
-            IMessageSchedulerService messageSchedulerService,
+            ISchedulerService messageSchedulerService,
             IEventBus eventBus
         )
         {
@@ -80,7 +80,7 @@ namespace VShop.SharedKernel.EventStore.Repositories
                 // Queue scheduled commands
                 foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
                 {
-                    await _messageSchedulerService.ScheduleCommandAsync(scheduledCommand, cancellationToken);
+                    await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
                 }
                 
                 // TODO - need to see if domain events can be created by process manager.

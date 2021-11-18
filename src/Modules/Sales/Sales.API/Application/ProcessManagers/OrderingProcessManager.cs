@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Newtonsoft.Json;
 
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
@@ -19,13 +20,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
-            //RegisterCommand<ReminderCommand>(Handle);
+            RegisterCommand<ReminderCommand>(Handle);
         }
         
-        // public void Handle(ReminderCommand command)
-        // {
-        //     
-        // }
+        public void Handle(ReminderCommand command)
+        {
+            
+        }
         
         public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
         {
@@ -53,6 +54,16 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 }).ToArray()
             };
             RaiseCommand(placeOrderCommand);
+
+            // TODO - test scheduling command + create Command > ReminderCommand converter
+            ReminderCommand reminderCommand = new()
+            {
+                ProcessId = @event.OrderId,
+                Status = (int)Status,
+                Command = JsonConvert.SerializeObject(placeOrderCommand),
+                Type = placeOrderCommand.GetType().Name
+            };
+            ScheduleCommand(reminderCommand, DateTime.UtcNow.AddSeconds(10));
         }
 
         public void Handle(OrderPlacedDomainEvent _)
