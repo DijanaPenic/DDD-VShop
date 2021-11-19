@@ -19,7 +19,7 @@ services:
   postgres.db:
     image: postgres
     ports: 
-      - 5432:5432
+      - 5438:5432
     restart: always
     environment: 
       POSTGRES_USER: postgres
