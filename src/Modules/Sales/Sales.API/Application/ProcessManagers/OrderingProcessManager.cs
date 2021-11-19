@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
@@ -27,30 +25,12 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         //     
         // }
         
-        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
+        public void Handle(ShoppingCartCheckoutRequestedDomainEvent _)
         {
             PlaceOrderCommand placeOrderCommand = new()
             {
-                OrderId = @event.OrderId,
-                DeliveryCost = @event.DeliveryCost,
-                TotalDiscount = @event.TotalDiscount,
-                CustomerId = @event.CustomerId,
-                FirstName = @event.FirstName,
-                MiddleName = @event.MiddleName,
-                LastName = @event.LastName,
-                EmailAddress = @event.EmailAddress,
-                PhoneNumber = @event.PhoneNumber,
-                City = @event.City,
-                CountryCode = @event.CountryCode,
-                PostalCode = @event.PostalCode,
-                StateProvince = @event.StateProvince,
-                StreetAddress = @event.StreetAddress,
-                OrderItems = @event.Items.Select(sci => new OrderItemCommandDto
-                {
-                    ProductId = sci.ProductId,
-                    Quantity = sci.Quantity,
-                    UnitPrice = sci.UnitPrice
-                }).ToArray()
+                OrderId = Id,
+                ShoppingCartId = ShoppingCartId
             };
             RaiseCommand(placeOrderCommand);
 

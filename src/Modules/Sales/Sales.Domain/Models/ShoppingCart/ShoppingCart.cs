@@ -144,26 +144,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 {
                     ShoppingCartId = Id,
                     OrderId = orderId,
-                    ConfirmedAt = DateTime.UtcNow,
-                    DeliveryCost = DeliveryCost,
-                    TotalDiscount = TotalDiscount,
-                    CustomerId = Customer.CustomerId,
-                    FirstName = Customer.FullName.FirstName,
-                    MiddleName = Customer.FullName.MiddleName,
-                    LastName = Customer.FullName.LastName,
-                    EmailAddress = Customer.EmailAddress,
-                    PhoneNumber = Customer.PhoneNumber,
-                    City = Customer.DeliveryAddress.City,
-                    CountryCode = Customer.DeliveryAddress.CountryCode,
-                    PostalCode = Customer.DeliveryAddress.PostalCode,
-                    StateProvince = Customer.DeliveryAddress.StateProvince,
-                    StreetAddress = Customer.DeliveryAddress.StreetAddress,
-                    Items = Items.Select(sci => new ShoppingCartItemDomainEventDto()
-                    {
-                        ProductId = sci.Id,
-                        Quantity = sci.Quantity,
-                        UnitPrice = sci.UnitPrice
-                    }).ToArray()
+                    ConfirmedAt = DateTime.UtcNow
                 }
             );
             
