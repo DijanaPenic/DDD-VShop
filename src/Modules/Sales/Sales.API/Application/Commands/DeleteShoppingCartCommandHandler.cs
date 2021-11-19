@@ -19,9 +19,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public DeleteShoppingCartCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
-        {
-            _shoppingCartRepository = shoppingCartRepository;
-        }
+            => _shoppingCartRepository = shoppingCartRepository;
         
         public async Task<OneOf<Success, ApplicationError>> Handle(DeleteShoppingCartCommand command, CancellationToken cancellationToken)
         {

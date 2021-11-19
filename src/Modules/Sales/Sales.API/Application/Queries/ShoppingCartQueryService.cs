@@ -12,10 +12,7 @@ namespace VShop.Modules.Sales.API.Application.Queries
     {
         private readonly SalesContext _dbContext;
         
-        public ShoppingCartQueryService(SalesContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        public ShoppingCartQueryService(SalesContext dbContext) => _dbContext = dbContext;
 
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {

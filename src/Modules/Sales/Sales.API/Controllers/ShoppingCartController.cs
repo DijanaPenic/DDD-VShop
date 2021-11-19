@@ -108,7 +108,7 @@ namespace VShop.Modules.Sales.API.Controllers
 
             OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
 
-            if (result.IsT1) return HandleError(result.AsT1);
+            if (result.IsT1) return HandleError(result.AsT1); // TODO - create custom class to hide IsT1
             
             CheckoutShoppingCartResponse order = new() { OrderId = command.OrderId };
 

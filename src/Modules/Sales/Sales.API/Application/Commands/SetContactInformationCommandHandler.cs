@@ -20,9 +20,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
 
         public SetContactInformationCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
-        {
-            _shoppingCartRepository = shoppingCartRepository;
-        }
+            => _shoppingCartRepository = shoppingCartRepository;
         
         public async Task<OneOf<Success, ApplicationError>> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)
         {

@@ -21,10 +21,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
         private readonly IAggregateRepository<Order, EntityId> _orderRepository;
         
         public PlaceOrderCommandHandler(IAggregateRepository<Order, EntityId> orderRepository)
-        {
-            _orderRepository = orderRepository;
-        }
-        
+            => _orderRepository = orderRepository;
+
         public async Task<OneOf<Success<Order>, ApplicationError>> Handle(PlaceOrderCommand command, CancellationToken cancellationToken)
         {
             Order order = Order.Create
