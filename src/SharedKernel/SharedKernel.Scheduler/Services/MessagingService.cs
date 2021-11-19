@@ -33,21 +33,13 @@ namespace VShop.SharedKernel.Scheduler.Services
             await SendMessageAsync(message, cancellationToken);
         }
         
-        private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)         
+        private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)
         {
             object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.RuntimeType));                                                     
                                                                                                                                  
             try                                                                                                                  
             {
-                switch (message.MessageType)
-                {
-                    case ScheduledMessageType.Command:
-                        await _commandBus.SendAsync(target, cancellationToken);
-                        break;
-                    default:
-                        throw new Exception($"Unknown message type: {message.MessageType}");
-                } 
-                                                                            
+                await _commandBus.SendAsync(target, cancellationToken);
                 await SetMessageStatusAsync(message, SchedulingStatus.Finished, cancellationToken);                              
             }                                                                                                                    
             catch (Exception ex)                                                                                                  

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Newtonsoft.Json;
-
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
@@ -13,7 +9,6 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
         
         [JsonIgnore]
         public string RuntimeType { get; }
-        public ScheduledMessageType MessageType { get; }
         public DateTime ScheduledTime { get; }
 
         [JsonConstructor]
@@ -23,23 +18,9 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
         {
             Body = JsonConvert.SerializeObject(message);
             RuntimeType = MessageTypeMapper.ToName(message.GetType());
-            MessageType = GetMessageType(message.GetType());
             ScheduledTime = scheduledTime;
             CausationId = message.CausationId;
             CorrelationId = message.CorrelationId;
-        }
-
-        private static ScheduledMessageType GetMessageType(Type messageType)
-        {
-            Type[] interfaces = messageType.GetInterfaces();
-
-            if (interfaces.Contains(typeof(IBaseCommand)))
-                return ScheduledMessageType.Command;
-            
-            if (interfaces.Contains(typeof(IBaseEvent)))
-                return ScheduledMessageType.Event;
-
-            throw new ArgumentException($"Unknown message type: {messageType}");
         }
     }
 }

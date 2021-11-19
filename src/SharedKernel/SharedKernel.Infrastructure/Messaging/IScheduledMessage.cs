@@ -6,7 +6,6 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
     {
         public string Body { get; }
         public string RuntimeType { get; }
-        public ScheduledMessageType MessageType { get; }
         public DateTime ScheduledTime { get; }
     }
 }
