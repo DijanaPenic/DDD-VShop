@@ -6,8 +6,8 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {

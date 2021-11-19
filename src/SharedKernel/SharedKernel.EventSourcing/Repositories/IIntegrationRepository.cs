@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {

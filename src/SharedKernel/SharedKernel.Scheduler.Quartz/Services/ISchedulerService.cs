@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Messaging;
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {

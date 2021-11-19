@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Scheduler.Quar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Scheduler", "SharedKernel\SharedKernel.Scheduler\SharedKernel.Scheduler.csproj", "{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Messaging", "SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj", "{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,7 @@ Global
 		{9EAFD370-7391-48A4-8810-842B618A7A21} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 		{6C159003-FF08-4AC3-A9A4-814BCFB8FE42} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
+		{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -99,5 +102,9 @@ Global
 		{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B5D86E3-6D5E-4707-B96F-AF5FEA209B42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

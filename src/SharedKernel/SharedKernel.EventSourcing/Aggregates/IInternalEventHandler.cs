@@ -1,4 +1,4 @@
-﻿using VShop.SharedKernel.Infrastructure.Messaging.Events;
+﻿using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {

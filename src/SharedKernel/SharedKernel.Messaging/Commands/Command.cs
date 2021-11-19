@@ -4,8 +4,18 @@ using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging.Commands
+namespace VShop.SharedKernel.Messaging.Commands
 {
+    public abstract record Command<TResult> : Message, ICommand<TResult>
+    {
+        
+    }
+
+    public abstract record Command : Message, ICommand
+    {
+        
+    }
+    
     public interface ICommand<TResult> : IBaseCommand, IRequest<OneOf<TResult, ApplicationError>>
     {
 	

@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.Repositories;
 
 namespace VShop.SharedKernel.EventStore.Repositories

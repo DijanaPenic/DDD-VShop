@@ -2,13 +2,19 @@
 
 using VShop.SharedKernel.Infrastructure.Helpers;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging
+namespace VShop.SharedKernel.Messaging
 {
-    // TODO - consider creating a separate Messaging project
     public abstract record Message : IMessage
     {
         public Guid MessageId { get; } = SequentialGuid.Create();
         public Guid CorrelationId { get; set; }
         public Guid CausationId { get; set; }
+    }
+    
+    public interface IMessage
+    {
+        Guid MessageId { get; }
+        Guid CausationId { get; set; }
+        Guid CorrelationId { get; set; }
     }
 }

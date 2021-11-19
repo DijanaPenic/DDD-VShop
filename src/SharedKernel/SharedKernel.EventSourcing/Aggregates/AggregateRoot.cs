@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {

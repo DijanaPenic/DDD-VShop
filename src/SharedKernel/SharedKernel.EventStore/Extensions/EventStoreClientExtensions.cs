@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStore.Policies;
-using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStore.Extensions
 {

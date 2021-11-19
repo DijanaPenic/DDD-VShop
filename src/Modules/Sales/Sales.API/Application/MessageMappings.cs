@@ -1,10 +1,10 @@
-﻿using VShop.Modules.Sales.Domain.Events;
+﻿using VShop.SharedKernel.Messaging;
+using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.SharedKernel.EventStore.Repositories;
-using VShop.SharedKernel.Infrastructure.Messaging;
 
-using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
+using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.API.Application
 {

@@ -6,8 +6,8 @@ using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
+using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;

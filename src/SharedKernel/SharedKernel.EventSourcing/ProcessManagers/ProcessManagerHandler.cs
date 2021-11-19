@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Serilog;
 using OneOf.Types;
 
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {

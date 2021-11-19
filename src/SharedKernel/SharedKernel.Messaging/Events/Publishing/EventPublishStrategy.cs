@@ -1,4 +1,4 @@
-﻿namespace VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing
+﻿namespace VShop.SharedKernel.Messaging.Events.Publishing
 {
     /// <summary>
     /// Strategy to use when publishing notifications

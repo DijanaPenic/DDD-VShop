@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using Serilog;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
 
 using ILogger = Serilog.ILogger;
 

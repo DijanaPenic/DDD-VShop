@@ -1,7 +1,6 @@
 ﻿using System;
 
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {

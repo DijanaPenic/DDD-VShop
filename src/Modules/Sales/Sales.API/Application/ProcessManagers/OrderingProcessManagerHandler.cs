@@ -6,9 +6,9 @@ using OneOf.Types;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {

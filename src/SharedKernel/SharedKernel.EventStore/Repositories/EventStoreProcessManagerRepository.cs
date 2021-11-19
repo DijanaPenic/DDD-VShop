@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using Serilog;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.Scheduler.Quartz.Services;

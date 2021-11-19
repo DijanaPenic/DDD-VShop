@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Concurrent;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging
+namespace VShop.SharedKernel.Messaging
 {
     public static class MessageTypeMapper
     {
@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             return type;
         });
 
-        private static Type GetFirstMatchingTypeFromCurrentDomainAssembly(string typeName)
+        private static Type? GetFirstMatchingTypeFromCurrentDomainAssembly(string typeName)
             => AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes()
                     .Where(t => t.FullName == typeName || t.Name == typeName))

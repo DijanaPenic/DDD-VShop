@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Controllers
 {

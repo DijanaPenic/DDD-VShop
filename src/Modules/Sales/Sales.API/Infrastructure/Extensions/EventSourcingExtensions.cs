@@ -10,7 +10,7 @@ using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Events;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands;
+using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {

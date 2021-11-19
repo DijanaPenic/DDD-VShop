@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging
+namespace VShop.SharedKernel.Messaging
 {
     public record ScheduledMessage : Message, IScheduledMessage
     {
@@ -22,5 +22,12 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             CausationId = message.CausationId;
             CorrelationId = message.CorrelationId;
         }
+    }
+    
+    public interface IScheduledMessage : IMessage
+    {
+        public string Body { get; }
+        public string RuntimeType { get; }
+        public DateTime ScheduledTime { get; }
     }
 }

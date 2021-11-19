@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using MediatR;
 
-namespace VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+
+namespace VShop.SharedKernel.Messaging.Events.Publishing
 {
     public class EventBus : IEventBus
     {

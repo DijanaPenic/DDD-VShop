@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Serilog;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStore.Extensions;
 using VShop.SharedKernel.EventStore.Repositories;
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Threading;
 
 using ILogger = Serilog.ILogger;

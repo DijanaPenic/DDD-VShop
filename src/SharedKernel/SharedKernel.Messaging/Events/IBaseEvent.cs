@@ -1,4 +1,4 @@
-﻿namespace VShop.SharedKernel.Infrastructure.Messaging.Events
+﻿namespace VShop.SharedKernel.Messaging.Events
 {
     public interface IBaseEvent : IMessage
     {

@@ -2,10 +2,12 @@
 using Autofac;
 
 using VShop.SharedKernel.Application.Decorators;
-using VShop.SharedKernel.Infrastructure.Messaging.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
+using VShop.SharedKernel.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+using VShop.SharedKernel.Messaging.Commands.Publishing;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 {

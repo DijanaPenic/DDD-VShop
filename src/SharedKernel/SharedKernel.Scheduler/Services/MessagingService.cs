@@ -5,10 +5,10 @@ using Serilog;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Database;
 using VShop.SharedKernel.Scheduler.Database.Entities;
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Commands.Publishing;
 
 using ILogger = Serilog.ILogger;
 

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.EventSourcing.Messaging;
 
