@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
 
-using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
-namespace VShop.SharedKernel.EventStore
+namespace VShop.SharedKernel.EventStoreDb
 {
     public class EventStoreHostedService : IHostedService
     {

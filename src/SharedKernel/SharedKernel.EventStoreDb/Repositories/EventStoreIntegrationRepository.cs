@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories;
 
-namespace VShop.SharedKernel.EventStore.Repositories
+namespace VShop.SharedKernel.EventStoreDb.Repositories
 {
     public class EventStoreIntegrationRepository : IIntegrationRepository
     {

@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventStore.Client;
 
-using VShop.SharedKernel.EventStore.Extensions;
+using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories;
 
-namespace VShop.SharedKernel.EventStore.Repositories
+namespace VShop.SharedKernel.EventStoreDb.Repositories
 {
     public record Checkpoint(string SubscriptionId, ulong? Position, DateTime DateUpdated);
 

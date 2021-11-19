@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.EventStore.Policies;
+using VShop.SharedKernel.EventStoreDb.Policies;
 
-namespace VShop.SharedKernel.EventStore.Extensions
+namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreClientExtensions
     {

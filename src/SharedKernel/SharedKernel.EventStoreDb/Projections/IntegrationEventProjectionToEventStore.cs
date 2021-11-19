@@ -10,7 +10,7 @@ using VShop.SharedKernel.EventSourcing.Repositories;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStore.Projections
+namespace VShop.SharedKernel.EventStoreDb.Projections
 {
     public class IntegrationEventProjectionToEventStore : ISubscription
     {

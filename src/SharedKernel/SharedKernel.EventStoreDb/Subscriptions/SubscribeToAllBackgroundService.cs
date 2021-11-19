@@ -6,8 +6,8 @@ using Serilog;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.EventStore.Extensions;
-using VShop.SharedKernel.EventStore.Repositories;
+using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Repositories;
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
@@ -15,7 +15,7 @@ using VShop.SharedKernel.Infrastructure.Threading;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStore.Subscriptions
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions
 {
     public class SubscribeToAllBackgroundService : ISubscribeBackgroundService
     {

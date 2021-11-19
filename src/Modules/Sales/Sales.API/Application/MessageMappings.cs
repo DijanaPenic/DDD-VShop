@@ -2,7 +2,7 @@
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.SharedKernel.EventStore.Repositories;
+using VShop.SharedKernel.EventStoreDb.Repositories;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 

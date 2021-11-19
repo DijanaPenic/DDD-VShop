@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
-namespace VShop.SharedKernel.EventStore.Policies
+namespace VShop.SharedKernel.EventStoreDb.Policies
 {
     // Polly Wiki page: https://github.com/App-vNext/Polly/wiki/Retry
     internal static class RetryWrapper

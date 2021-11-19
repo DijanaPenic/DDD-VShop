@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <AssemblyName>VShop.SharedKernel.EventStore</AssemblyName>
-        <RootNamespace>VShop.SharedKernel.EventStore</RootNamespace>
+        <AssemblyName>VShop.SharedKernel.EventStoreDb</AssemblyName>
+        <RootNamespace>VShop.SharedKernel.EventStoreDb</RootNamespace>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 

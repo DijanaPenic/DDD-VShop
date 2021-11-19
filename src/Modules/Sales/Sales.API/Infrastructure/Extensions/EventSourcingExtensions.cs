@@ -2,10 +2,10 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStore;
-using VShop.SharedKernel.EventStore.Projections;
-using VShop.SharedKernel.EventStore.Repositories;
-using VShop.SharedKernel.EventStore.Subscriptions;
+using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.EventStoreDb.Projections;
+using VShop.SharedKernel.EventStoreDb.Repositories;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.PostgresDb.Projections;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;

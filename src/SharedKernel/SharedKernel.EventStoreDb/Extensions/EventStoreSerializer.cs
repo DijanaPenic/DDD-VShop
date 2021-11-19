@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.EventSourcing.Messaging;
 
-namespace VShop.SharedKernel.EventStore.Extensions
+namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
