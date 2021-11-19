@@ -21,6 +21,8 @@ services:
     ports: 
       - 5438:5432
     restart: always
+    volumes:
+    - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Sales

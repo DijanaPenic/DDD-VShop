@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Serilog;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
-    public class MessagingService : IMessagingService // TODO - need to resume pending schedule messages 
+    public class MessagingService : IMessagingService
     {
         private readonly ICommandBus _commandBus;
         private readonly SchedulerContext _dbContext;
@@ -35,15 +34,7 @@ namespace VShop.SharedKernel.Scheduler.Services
 
             await SendMessageAsync(message, cancellationToken);
         }
-
-        private async Task SendMessagesAsync(IEnumerable<MessageLog> messages, CancellationToken cancellationToken)
-        {
-            foreach (MessageLog message in messages)
-            {
-                await SendMessageAsync(message, cancellationToken);
-            }
-        }
-
+        
         private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)         
         {
             object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.RuntimeType));                                                     
@@ -68,13 +59,6 @@ namespace VShop.SharedKernel.Scheduler.Services
                 await SetMessageStatusAsync(message, SchedulingStatus.Failed, cancellationToken);                                
             }
         }
-
-        private Task<List<MessageLog>> GetScheduledMessagesAsync(DateTime scheduledTime, CancellationToken cancellationToken)
-            => _dbContext.MessageLogs
-                    .Where(m => m.Status == SchedulingStatus.Scheduled)
-                    .Where(m => m.ScheduledTime <= scheduledTime)
-                    .AsNoTracking()
-                    .ToListAsync(cancellationToken);
 
         private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
             => _dbContext.MessageLogs

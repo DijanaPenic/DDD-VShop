@@ -13,12 +13,12 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {
     public class SchedulerService : ISchedulerService
     {
-        private readonly IScheduler _scheduler;
+        private readonly ISchedulerFactory _schedulerFactory;
         private readonly SchedulerContext _dbContext;
 
-        public SchedulerService(IScheduler scheduler, SchedulerContext dbContext)
+        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerContext dbContext)
         {
-            _scheduler = scheduler;
+            _schedulerFactory = schedulerFactory;
             _dbContext = dbContext;
         }
 
@@ -28,7 +28,7 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
                 
             IJobDetail job = JobBuilder.Create<ProcessMessageJob>()
                 .WithIdentity(SequentialGuid.Create().ToString())
-                .UsingJobData(ProcessMessageJob.JobDataKey, message.MessageId)
+                .UsingJobData(ProcessMessageJob.JobDataKey, message.MessageId.ToString())
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
@@ -36,7 +36,9 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
                 .StartAt(message.ScheduledTime)
                 .Build();
 
-            await _scheduler.ScheduleJob(job, trigger, cancellationToken);
+            IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+
+            await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
         
         private Task SaveJobAsync(IScheduledMessage message, CancellationToken cancellationToken = default)

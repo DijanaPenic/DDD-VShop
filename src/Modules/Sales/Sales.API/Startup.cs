@@ -36,15 +36,13 @@ namespace VShop.Modules.Sales.API
             
             // Configure scheduler
             services.AddTransient<IMessagingService, MessagingService>();
-            services.AddQuartzServices();
+            services.AddQuartzServices(Configuration.GetConnectionString("PostgresDb"));
             
             services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 
-        {
-            builder.RegisterModule(new MediatorModule());
-        }
+            => builder.RegisterModule(new MediatorModule());
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -63,7 +61,6 @@ namespace VShop.Modules.Sales.API
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseQuartz();
         }
     }
 }
