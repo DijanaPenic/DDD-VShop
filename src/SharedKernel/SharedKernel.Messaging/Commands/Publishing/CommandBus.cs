@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.Messaging.Commands.Publishing
         public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> command, CancellationToken cancellationToken = default)
             => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
 
-        public Task<object?> SendAsync(object command, CancellationToken cancellationToken = default)
+        public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
             => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
     }
 }

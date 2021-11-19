@@ -4,7 +4,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;

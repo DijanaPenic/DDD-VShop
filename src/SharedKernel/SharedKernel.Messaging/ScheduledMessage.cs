@@ -6,14 +6,15 @@ namespace VShop.SharedKernel.Messaging
     public record ScheduledMessage : Message, IScheduledMessage
     {
         public string Body { get; }
-        
-        [JsonIgnore]
         public string RuntimeType { get; }
         public DateTime ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage() { }
-        
+        protected ScheduledMessage()
+        {
+            
+        }
+
         public ScheduledMessage(IMessage message, DateTime scheduledTime)
         {
             Body = JsonConvert.SerializeObject(message);

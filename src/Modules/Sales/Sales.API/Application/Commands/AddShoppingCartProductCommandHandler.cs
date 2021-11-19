@@ -15,7 +15,6 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    // TODO - add logger to all commands
     public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand, Success>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;

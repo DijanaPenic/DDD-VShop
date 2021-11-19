@@ -22,7 +22,7 @@ namespace VShop.SharedKernel.Messaging
         
         public static string ToName(Type messageType) => TypeNameMap.GetOrAdd(messageType, (_) =>
         {
-            string messageTypeName = messageType.FullName!.Replace(".", "_");
+            string messageTypeName = messageType.FullName?.Replace(".", "_");
 
             TypeMap.AddOrUpdate(messageTypeName, messageType, (_, _) => messageType);
 
@@ -31,7 +31,7 @@ namespace VShop.SharedKernel.Messaging
 
         public static Type ToType(string messageTypeName) => TypeMap.GetOrAdd(messageTypeName, (_) =>
         {
-            Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(messageTypeName.Replace("_", "."))!;
+            Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(messageTypeName.Replace("_", "."));
 
             if (type == null)
                 throw new Exception($"Type map for '{messageTypeName}' wasn't found!");
@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.Messaging
             return type;
         });
 
-        private static Type? GetFirstMatchingTypeFromCurrentDomainAssembly(string typeName)
+        private static Type GetFirstMatchingTypeFromCurrentDomainAssembly(string typeName)
             => AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes()
                     .Where(t => t.FullName == typeName || t.Name == typeName))

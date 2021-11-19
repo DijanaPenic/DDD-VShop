@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <LangVersion>10</LangVersion>
         <AssemblyName>VShop.SharedKernel.Scheduler.Quartz</AssemblyName>
         <RootNamespace>VShop.SharedKernel.Scheduler.Quartz</RootNamespace>

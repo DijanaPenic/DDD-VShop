@@ -24,16 +24,20 @@ namespace VShop.SharedKernel.Messaging.Events.Publishing
         private readonly IDictionary<EventPublishStrategy, IMediator> _publishStrategies = new Dictionary<EventPublishStrategy, IMediator>();
         private static EventPublishStrategy DefaultStrategy => EventPublishStrategy.SyncContinueOnException;
 
-        public Task Publish<TNotification>(TNotification notification)
+        public Task Publish<TNotification>(TNotification notification) 
+            where TNotification : INotification
             => Publish(notification, DefaultStrategy, default);
 
         public Task Publish<TNotification>(TNotification notification, EventPublishStrategy strategy)
+            where TNotification : INotification
             => Publish(notification, strategy, default);
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken)
+            where TNotification : INotification
             => Publish(notification, DefaultStrategy, cancellationToken);
 
         public Task Publish<TNotification>(TNotification notification, EventPublishStrategy strategy, CancellationToken cancellationToken)
+            where TNotification : INotification
         {
             if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))
             {

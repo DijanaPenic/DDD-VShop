@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Serilog;
-using EventStore.Client;
 
 using VShop.SharedKernel.Infrastructure.Errors;
 
@@ -27,7 +26,7 @@ namespace VShop.SharedKernel.Application.Decorators
             const int sleepDuration = 200;
             
             AsyncRetryPolicy retryPolicy = Policy
-                .Handle<WrongExpectedVersionException>() // TODO - which exceptions should be retried?
+                .Handle<Exception>() // TODO - which exceptions should be retried?
                 .WaitAndRetryAsync
                 (
                     maxRetryAttempts,
