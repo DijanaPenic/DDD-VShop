@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
@@ -31,7 +30,6 @@ namespace VShop.SharedKernel.Scheduler.Services
         public async Task SendMessageAsync(Guid messageId, CancellationToken cancellationToken)
         {
             MessageLog message = await GetScheduledMessageAsync(messageId, cancellationToken);
-
             await SendMessageAsync(message, cancellationToken);
         }
         
@@ -62,10 +60,12 @@ namespace VShop.SharedKernel.Scheduler.Services
 
         private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
             => _dbContext.MessageLogs
-                .Where(m => m.Status == SchedulingStatus.Scheduled)
-                .Where(m => m.Id == messageId)
-                .AsTracking()
-                .FirstOrDefaultAsync(cancellationToken);
+                .AsNoTracking()
+                .FirstOrDefaultAsync
+                (
+                    m => m.Status == SchedulingStatus.Scheduled && m.Id == messageId,
+                    cancellationToken
+                );
         
         private async Task SetMessageStatusAsync(MessageLog message, SchedulingStatus status, CancellationToken cancellationToken)
         {

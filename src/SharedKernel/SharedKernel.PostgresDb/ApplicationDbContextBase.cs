@@ -25,7 +25,7 @@ namespace VShop.SharedKernel.PostgresDb
 
             foreach (EntityEntry entry in entries)
             {
-                DbBaseEntity baseEntity = entry.Entity as DbBaseEntity;
+                DbBaseEntity baseEntity = (DbBaseEntity)entry.Entity;
 
                 baseEntity.DateUpdatedUtc = effectiveTime;
                 if (entry.State == EntityState.Added) baseEntity.DateCreatedUtc = effectiveTime;
