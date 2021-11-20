@@ -15,7 +15,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
     public class ShoppingCart : AggregateRoot<EntityId>
     {
         private bool _isClosedForUpdates;
-        private List<ShoppingCartItem> _shoppingCartItems;
+        private readonly List<ShoppingCartItem> _shoppingCartItems = new();
         
         public ShoppingCartCustomer Customer { get; private set; }
         public ShoppingCartStatus Status { get; private set; }
@@ -30,22 +30,14 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
         public int TotalItemsCount() => _shoppingCartItems.Count;
 
-        public static ShoppingCart Create
+        public Result Create
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            int customerDiscount,
-            Guid messageId,
-            Guid correlationId
+            int customerDiscount
         )
         {
-            ShoppingCart shoppingCart = new()
-            {
-                CorrelationId = correlationId,
-                MessageId = messageId,
-            };
-            
-            shoppingCart.RaiseEvent
+            RaiseEvent
             (
                 new ShoppingCartCreatedDomainEvent
                 {
@@ -55,7 +47,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 }
             );
 
-            return shoppingCart;
+            return Result.Success;
         }
         
         public Result AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
@@ -194,9 +186,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     ShoppingCartCustomer shoppingCartCustomer = new(RaiseEvent);
                     ApplyToEntity(shoppingCartCustomer, e);
                     Customer = shoppingCartCustomer;
-
-                    // one-to-many relationship
-                    _shoppingCartItems = new List<ShoppingCartItem>();
                     break;
                 case ShoppingCartProductAddedDomainEvent e:
                     shoppingCartItem = new ShoppingCartItem(RaiseEvent);

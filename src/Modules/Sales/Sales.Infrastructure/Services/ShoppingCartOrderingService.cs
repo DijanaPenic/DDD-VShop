@@ -28,9 +28,21 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             CancellationToken cancellationToken = default
         )
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(shoppingCartId, messageId, correlationId, cancellationToken);
+            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
+            (
+                shoppingCartId,
+                messageId,
+                correlationId,
+                cancellationToken
+            );
             
-            Order order = Order.Create
+            Order order = new()
+            {
+                CorrelationId = correlationId,
+                MessageId = messageId,
+            };
+            
+            Result createOrderResult = order.Create
             (
                 orderId,
                 shoppingCart.DeliveryCost,
@@ -39,21 +51,21 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 shoppingCart.Customer.FullName,
                 shoppingCart.Customer.EmailAddress,
                 shoppingCart.Customer.PhoneNumber,
-                shoppingCart.Customer.DeliveryAddress,
-                messageId,
-                correlationId
+                shoppingCart.Customer.DeliveryAddress
             );
+            
+            if (createOrderResult.IsError(out ApplicationError createOrderError)) return createOrderError;
             
             foreach (ShoppingCartItem item in shoppingCart.Items)
             {
-                Result addOrderItemResult = order.AddOrderLine
+                Result addOrderLineResult = order.AddOrderLine
                 (
                     item.Id,
                     item.Quantity,
                     item.UnitPrice
                 );
 
-                if (addOrderItemResult.IsError(out ApplicationError error)) return error;
+                if (addOrderLineResult.IsError(out ApplicationError addOrderLineError)) return addOrderLineError;
             }
 
             return order;

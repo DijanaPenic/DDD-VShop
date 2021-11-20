@@ -22,14 +22,20 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<ShoppingCart>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            ShoppingCart shoppingCart = ShoppingCart.Create
+            ShoppingCart shoppingCart = new()
+            {
+                CorrelationId = command.CorrelationId,
+                MessageId = command.MessageId,
+            };
+            
+            Result createShoppingCartResult = shoppingCart.Create
             (
                 EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.CustomerId),
-                command.CustomerDiscount,
-                command.MessageId,
-                command.CorrelationId
+                command.CustomerDiscount
             );
+            
+            if (createShoppingCartResult.IsError(out ApplicationError createShoppingCartError)) return createShoppingCartError;
 
             foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
             {
@@ -40,9 +46,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     Price.Create(shoppingCartItem.UnitPrice)
                 );
 
-                if (addProductResult.IsError(out ApplicationError error)) return error;
+                if (addProductResult.IsError(out ApplicationError addProductError)) return addProductError;
             }
-            
+
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
             return shoppingCart;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 using VShop.Modules.Sales.Domain.Enums;
@@ -14,10 +13,10 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
     public class Order : AggregateRoot<EntityId>
     {
-        private List<OrderLine> _orderLines;
+        private readonly List<OrderLine> _orderLines = new();
         
         public Price DeliveryCost { get; private set; }
-        public Price ProductsCostWithoutDiscount  => new(_orderLines.Sum(sci => sci.TotalAmount));
+        public Price ProductsCostWithoutDiscount => new(_orderLines.Sum(sci => sci.TotalAmount));
         public Price TotalDiscount { get; private set; }
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
@@ -25,7 +24,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public OrderStatus Status { get; private set; }
         public OrderCustomer Customer { get; private set; }
 
-        public static Order Create
+        public Result Create
         (
             EntityId orderId,
             Price deliveryCost,
@@ -34,18 +33,10 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            Address deliveryAddress,
-            Guid messageId,
-            Guid correlationId
+            Address deliveryAddress
         )
         {
-            Order order = new()
-            {
-                CorrelationId = correlationId,
-                MessageId = messageId,
-            };
-            
-            order.RaiseEvent
+            RaiseEvent
             (
                 new OrderPlacedDomainEvent
                 {
@@ -66,7 +57,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 }
             );
 
-            return order;
+            return Result.Success;
         }
 
         public Result AddOrderLine
@@ -124,9 +115,6 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     OrderCustomer orderCustomer = new(RaiseEvent);
                     ApplyToEntity(orderCustomer, e);
                     Customer = orderCustomer;
-
-                    // one-to-many relationship
-                    _orderLines = new List<OrderLine>();
                     break;
                 case OrderLineAddedDomainEvent e:
                     OrderLine orderLine = new(RaiseEvent);

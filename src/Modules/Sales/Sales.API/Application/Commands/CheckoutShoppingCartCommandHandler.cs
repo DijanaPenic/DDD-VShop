@@ -31,6 +31,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
+            // TODO - this will generate a new Id every time user submits the checkout request (problem!).
+            // Potentially use the same Id for shopping cart and order.
             EntityId orderId = EntityId.Create(SequentialGuid.Create());
 
             Result checkoutResult = shoppingCart.RequestCheckout(orderId);
