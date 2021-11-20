@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -23,10 +24,11 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             EntityId shoppingCartId,
             EntityId orderId,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            CancellationToken cancellationToken = default
         )
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(shoppingCartId);
+            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync(shoppingCartId, messageId, correlationId, cancellationToken);
             
             Order order = Order.Create
             (

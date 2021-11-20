@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -9,6 +10,6 @@ namespace VShop.Modules.Sales.Domain.Services
 {
     public interface IShoppingCartOrderingService
     {
-        Task<Result<Order>> CreateOrderAsync(EntityId shoppingCartId, EntityId orderId, Guid messageId, Guid correlationId);
+        Task<Result<Order>> CreateOrderAsync(EntityId shoppingCartId, EntityId orderId, Guid messageId, Guid correlationId, CancellationToken cancellationToken = default);
     }
 }

@@ -36,7 +36,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.OrderId),
                 command.MessageId,
-                command.CorrelationId
+                command.CorrelationId,
+                cancellationToken
             );
             
             if (result.IsError(out ApplicationError error)) return error;
