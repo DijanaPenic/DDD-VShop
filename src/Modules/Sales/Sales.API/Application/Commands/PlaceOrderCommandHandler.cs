@@ -45,6 +45,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             Order order = result.GetData();
             
             // NOTE: atomic operation
+            // TODO - remove this integration event. 
             order.RaiseEvent(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
             
             await _orderRepository.SaveAsync(order, cancellationToken);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
+using VShop.SharedKernel.Infrastructure.Helpers;
+
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
 {
@@ -14,8 +16,8 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         
         public static EntityId Create(Guid value)
         {
-            if (value == default) // TODO - check sequential Guid
-                throw new ValidationException("The entity Id cannot be empty."); // TODO - use custom assert class
+            if (SequentialGuid.IsNullOrEmpty(value))
+                throw new ValidationException("The entity Id cannot be empty.");
 
             return new EntityId(value);
         }
