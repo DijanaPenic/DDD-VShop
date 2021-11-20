@@ -38,19 +38,18 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             // NOTE: Cannot use AddHostedService to register multiple workers: https://github.com/dotnet/runtime/issues/38751
             services.AddHostedService<EventStoreHostedService>();
             
-            // TODO - uncomment
             // Read model projections
-            // services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
-            // (
-            //     eventStoreClient,
-            //     new EventStoreCheckpointRepository(eventStoreClient), // TODO - implement PostgresDb checkpoint (needed for atomic operation)
-            //     "ReadModels",
-            //     new ISubscription[]
-            //     {
-            //         new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
-            //     },
-            //     new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
-            // ));
+            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            (
+                eventStoreClient,
+                new EventStoreCheckpointRepository(eventStoreClient), // TODO - implement PostgresDb checkpoint (needed for atomic operation)
+                "ReadModels",
+                new ISubscription[]
+                {
+                    new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
+                },
+                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+            ));
 
             // Publish integration events from the current bounded context
             services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
