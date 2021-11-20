@@ -14,14 +14,14 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
     public class Order : AggregateRoot<EntityId>
     {
-        private List<OrderItem> _orderItems;
+        private List<OrderLine> _orderLines;
         
         public Price DeliveryCost { get; private set; }
-        public Price ProductsCostWithoutDiscount  => new(_orderItems.Sum(sci => sci.TotalAmount));
+        public Price ProductsCostWithoutDiscount  => new(_orderLines.Sum(sci => sci.TotalAmount));
         public Price TotalDiscount { get; private set; }
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
-        public IReadOnlyCollection<OrderItem> Items => _orderItems;
+        public IReadOnlyCollection<OrderLine> OrderLines => _orderLines;
         public OrderStatus Status { get; private set; }
         public OrderCustomer Customer { get; private set; }
 
@@ -69,7 +69,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return order;
         }
 
-        public Result AddOrderItem
+        public Result AddOrderLine
         (
             EntityId productId,
             ProductQuantity quantity,
@@ -78,7 +78,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         {
             RaiseEvent
             (
-                new OrderItemAddedDomainEvent
+                new OrderLineAddedDomainEvent
                 {
                     OrderId = Id,
                     ProductId = productId,
@@ -126,12 +126,12 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Customer = orderCustomer;
 
                     // one-to-many relationship
-                    _orderItems = new List<OrderItem>();
+                    _orderLines = new List<OrderLine>();
                     break;
-                case OrderItemAddedDomainEvent e:
-                    OrderItem orderItem = new(RaiseEvent);
-                    ApplyToEntity(orderItem, e);
-                    _orderItems.Add(orderItem);
+                case OrderLineAddedDomainEvent e:
+                    OrderLine orderLine = new(RaiseEvent);
+                    ApplyToEntity(orderLine, e);
+                    _orderLines.Add(orderLine);
                     break;
                 case OrderStatusSetToCancelledDomainEvent _:
                     Status = OrderStatus.Cancelled;

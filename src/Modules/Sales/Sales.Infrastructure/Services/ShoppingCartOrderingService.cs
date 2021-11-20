@@ -46,7 +46,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             
             foreach (ShoppingCartItem item in shoppingCart.Items)
             {
-                Result addOrderItemResult = order.AddOrderItem
+                Result addOrderItemResult = order.AddOrderLine
                 (
                     item.Id,
                     item.Quantity,
