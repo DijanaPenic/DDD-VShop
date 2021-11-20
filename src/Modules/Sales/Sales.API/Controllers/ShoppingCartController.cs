@@ -100,17 +100,12 @@ namespace VShop.Modules.Sales.API.Controllers
             CheckoutShoppingCartCommand command = new()
             {
                 ShoppingCartId = shoppingCartId,
-                OrderId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             };
 
-            Result result = await _commandBus.SendAsync(command);
+            Result<CheckoutOrder> result = await _commandBus.SendAsync(command);
 
-            if (result.IsT1) return HandleError(result.AsT1); // TODO - create custom class to hide IsT1
-            
-            CheckoutShoppingCartResponse order = new() { OrderId = command.OrderId };
-
-            return Ok(order);
+            return HandleResult(result, Ok);
         }
         
         [HttpPost]
