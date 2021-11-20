@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Controllers
         // {
         //     PlaceOrderCommand command = _mapper.Map<PlaceOrderCommand>(request);
         //     
-        //     OneOf<Success<Order>, ApplicationError> result = await _commandBus.Send(command);
+        //     Result<Order> result = await _commandBus.Send(command);
         //
         //     return HandleObjectResult(result, Created);
         // }

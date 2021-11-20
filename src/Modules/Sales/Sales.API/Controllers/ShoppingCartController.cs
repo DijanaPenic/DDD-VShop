@@ -1,13 +1,11 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Models;
@@ -67,7 +65,7 @@ namespace VShop.Modules.Sales.API.Controllers
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             command.CorrelationId = SequentialGuid.Create();
             
-            OneOf<Success<ShoppingCart>, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result<ShoppingCart> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
         }
@@ -86,7 +84,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 CorrelationId = SequentialGuid.Create()
             };
 
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, NoContent);
         }
@@ -106,7 +104,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 CorrelationId = SequentialGuid.Create()
             };
 
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             if (result.IsT1) return HandleError(result.AsT1); // TODO - create custom class to hide IsT1
             
@@ -137,7 +135,7 @@ namespace VShop.Modules.Sales.API.Controllers
             };
             command.ShoppingCartItem.ProductId = productId;
             
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
         }
@@ -161,7 +159,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ProductId = productId;
             command.CorrelationId = SequentialGuid.Create();
             
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, NoContent);
         }
@@ -183,7 +181,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.CorrelationId = SequentialGuid.Create();
 
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
         }
@@ -205,7 +203,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.CorrelationId = SequentialGuid.Create();
 
-            OneOf<Success, ApplicationError> result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
         }

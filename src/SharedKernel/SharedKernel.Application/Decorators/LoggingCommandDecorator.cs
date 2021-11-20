@@ -1,10 +1,9 @@
-﻿using OneOf;
-using MediatR;
+﻿using MediatR;
 using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.SharedKernel.Application.Decorators
 {
@@ -12,22 +11,22 @@ namespace VShop.SharedKernel.Application.Decorators
     {
         private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
         
-        public async Task<OneOf<TResponse, ApplicationError>> Handle
+        public async Task<Result<TResponse>> Handle
         (
             TRequest request,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<OneOf<TResponse, ApplicationError>> next
+            RequestHandlerDelegate<Result<TResponse>> next
         )
         {
             string requestTypeName = request.GetType().Name;
             
             Logger.Information("Handling command {CommandName} ({@Command})", requestTypeName, request);
             
-            OneOf<TResponse, ApplicationError> response = await next();
+            Result<TResponse> result = await next();
             
-            Logger.Information("Command {CommandName} handled - response: {@Response}", requestTypeName, response);
+            Logger.Information("Command {CommandName} handled - response: {@Result}", requestTypeName, result);
 
-            return response;
+            return result;
         }
     }
 }

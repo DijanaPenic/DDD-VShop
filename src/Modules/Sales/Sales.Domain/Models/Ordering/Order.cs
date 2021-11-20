@@ -69,7 +69,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return order;
         }
 
-        public Option<ApplicationError> AddOrderItem
+        public Result AddOrderItem
         (
             EntityId productId,
             ProductQuantity quantity,
@@ -87,27 +87,27 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 }
             );
 
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
-        public Option<ApplicationError> SetCancelledStatus()
+        public Result SetCancelledStatus()
         {
             if(Status is not OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Cancelled' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
         
-        public Option<ApplicationError> SetShippedStatus()
+        public Result SetShippedStatus()
         {
             if(Status is not OrderStatus.Processing)
                 return ValidationError.Create($"Changing status to 'Shipped' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
         protected override void ApplyEvent(IDomainEvent @event)

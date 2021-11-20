@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OneOf.Types;
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.EventSourcing.Repositories;
@@ -31,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public Task Handle(OrderPlacedDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
 
-        // public Task<None> Handle(ReminderCommand command, CancellationToken cancellationToken)
+        // public Task<Result> Handle(ReminderCommand command, CancellationToken cancellationToken)
         //     => ExecuteAsync(command.ProcessId, command, cancellationToken);
     }
     

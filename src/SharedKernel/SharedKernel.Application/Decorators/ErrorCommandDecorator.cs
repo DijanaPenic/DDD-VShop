@@ -1,5 +1,4 @@
-﻿using OneOf;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +6,7 @@ using MediatR;
 using Serilog;
 using Newtonsoft.Json;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.SharedKernel.Application.Decorators
@@ -15,11 +15,11 @@ namespace VShop.SharedKernel.Application.Decorators
     {
         private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
         
-        public async Task<OneOf<TResponse, ApplicationError>> Handle
+        public async Task<Result<TResponse>> Handle
         (
             TRequest request,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<OneOf<TResponse, ApplicationError>> next
+            RequestHandlerDelegate<Result<TResponse>> next
         )
         {
             try

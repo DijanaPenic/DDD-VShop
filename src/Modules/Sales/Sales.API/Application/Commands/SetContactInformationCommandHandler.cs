@@ -1,6 +1,4 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,14 +13,14 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand, Success>
+    public class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
 
         public SetContactInformationCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)
         {
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
             (
@@ -33,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
-            Option<ApplicationError> errorResult = shoppingCart.Customer.SetContactInformation
+            Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
             (
                 FullName.Create(command.FirstName, command.MiddleName, command.LastName),
                 EmailAddress.Create(command.EmailAddress),
@@ -41,15 +39,15 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.Gender
             );
             
-            if (errorResult.IsSome(out ApplicationError error)) return error;
+            if (setContactInformationResult.IsError(out ApplicationError error)) return error;
 
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
-            return new Success();
+            return Result.Success;
         }
     }
     
-    public record SetContactInformationCommand : Command<Success>
+    public record SetContactInformationCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
         public string FirstName { get; set; }

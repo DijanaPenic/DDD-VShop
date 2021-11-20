@@ -1,17 +1,15 @@
-﻿using OneOf;
-using MediatR;
-using OneOf.Types;
-using VShop.SharedKernel.Infrastructure.Errors;
+﻿using MediatR;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.SharedKernel.Messaging.Commands.Publishing.Contracts
 {
-    public interface ICommandHandler<in TCommand, TResult> : IRequestHandler<TCommand, OneOf<TResult, ApplicationError>>
-        where TCommand : ICommand<TResult>
+    public interface ICommandHandler<in TCommand, TData> : IRequestHandler<TCommand, Result<TData>>
+        where TCommand : ICommand<TData>
     {
 	
     }
     
-    public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, None>
+    public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, Result>
         where TCommand : ICommand
     {
 	

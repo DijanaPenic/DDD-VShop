@@ -1,6 +1,4 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,14 +12,14 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class DeleteShoppingCartCommandHandler : ICommandHandler<DeleteShoppingCartCommand, Success>
+    public class DeleteShoppingCartCommandHandler : ICommandHandler<DeleteShoppingCartCommand>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public DeleteShoppingCartCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(DeleteShoppingCartCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteShoppingCartCommand command, CancellationToken cancellationToken)
         {
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
             (
@@ -32,17 +30,17 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
 
-            Option<ApplicationError> errorResult = shoppingCart.RequestDelete();
+            Result deleteResult = shoppingCart.RequestDelete();
             
-            if (errorResult.IsSome(out ApplicationError error)) return error;
+            if (deleteResult.IsError(out ApplicationError error)) return error;
 
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
-            return new Success();
+            return Result.Success;
         }
     }
     
-    public record DeleteShoppingCartCommand : Command<Success>
+    public record DeleteShoppingCartCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
     }

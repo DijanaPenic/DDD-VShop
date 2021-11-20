@@ -1,12 +1,10 @@
-﻿using OneOf;
-using OneOf.Types;
-using MediatR;
+﻿using MediatR;
 
-using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.SharedKernel.Messaging.Commands
 {
-    public abstract record Command<TResult> : Message, ICommand<TResult>
+    public abstract record Command<TData> : Message, ICommand<TData>
     {
         
     }
@@ -16,12 +14,12 @@ namespace VShop.SharedKernel.Messaging.Commands
         
     }
     
-    public interface ICommand<TResult> : IBaseCommand, IRequest<OneOf<TResult, ApplicationError>>
+    public interface ICommand<TData> : IBaseCommand, IRequest<Result<TData>>
     {
 	
     }
     
-    public interface ICommand : IBaseCommand, IRequest<None>
+    public interface ICommand : IBaseCommand, IRequest<Result>
     {
 	
     }

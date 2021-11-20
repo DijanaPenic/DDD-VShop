@@ -58,7 +58,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return shoppingCart;
         }
         
-        public Option<ApplicationError> AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
+        public Result AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Adding product for the shopping cart in '{Status}' status is not allowed.");
@@ -84,17 +84,17 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     return ValidationError.Create(@$"Product's quantity cannot be increased - shopping cart already contains the 
                                                 requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
-                Option<ApplicationError> errorResult = shoppingCartItem.IncreaseProductQuantity(quantity);
+                Result increaseProductQuantityResult = shoppingCartItem.IncreaseProductQuantity(quantity);
                 
-                if (errorResult.IsSome(out ApplicationError error)) return error;
+                if (increaseProductQuantityResult.IsError(out ApplicationError error)) return error;
             }
             
             RecalculateDeliveryCost();
 
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
         
-        public Option<ApplicationError> RemoveProduct(EntityId productId, ProductQuantity quantity)
+        public Result RemoveProduct(EntityId productId, ProductQuantity quantity)
         {
             if(_isClosedForUpdates)
                 return ValidationError.Create($"Removing product from the shopping cart in '{Status}' status is not allowed.");
@@ -117,17 +117,17 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             }
             else
             {
-                Option<ApplicationError> errorResult = shoppingCartItem.DecreaseProductQuantity(quantity);
+                Result decreaseProductQuantityResult = shoppingCartItem.DecreaseProductQuantity(quantity);
 
-                if (errorResult.IsSome(out ApplicationError error)) return error;
+                if (decreaseProductQuantityResult.IsError(out ApplicationError error)) return error;
             }
             
             RecalculateDeliveryCost();
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
-        public Option<ApplicationError> RequestCheckout(EntityId orderId)
+        public Result RequestCheckout(EntityId orderId)
         {
             if(Status is not ShoppingCartStatus.AwaitingConfirmation)
                 return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
@@ -148,17 +148,17 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 }
             );
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
         
-        public Option<ApplicationError> RequestDelete()
+        public Result RequestDelete()
         {
             if (Status is ShoppingCartStatus.Closed)
                 return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
             RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent { ShoppingCartId = Id });
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
         private void RecalculateDeliveryCost()

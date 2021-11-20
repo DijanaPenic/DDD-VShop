@@ -1,5 +1,4 @@
-﻿using OneOf;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventStoreDb.Extensions;
@@ -73,7 +73,7 @@ namespace VShop.SharedKernel.EventStoreDb.Repositories
                 {
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
-                    if (commandResult is IOneOf { Value: ApplicationError error })
+                    if (commandResult is IResult { Value: ApplicationError error })
                         throw new Exception(error.ToString());
                 }
 

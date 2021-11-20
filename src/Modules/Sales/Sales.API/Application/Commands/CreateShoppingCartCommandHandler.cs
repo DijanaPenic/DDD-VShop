@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OneOf;
-using OneOf.Types;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -15,14 +13,14 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, Success<ShoppingCart>>
+    public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public CreateShoppingCartCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
 
-        public async Task<OneOf<Success<ShoppingCart>, ApplicationError>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
+        public async Task<Result<ShoppingCart>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
             ShoppingCart shoppingCart = ShoppingCart.Create
             (
@@ -35,23 +33,23 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
             {
-                Option<ApplicationError> errorResult = shoppingCart.AddProduct
+                Result addProductResult = shoppingCart.AddProduct
                 (
                     EntityId.Create(shoppingCartItem.ProductId),
                     ProductQuantity.Create(shoppingCartItem.Quantity),
                     Price.Create(shoppingCartItem.UnitPrice)
                 );
 
-                if (errorResult.IsSome(out ApplicationError error)) return error;
+                if (addProductResult.IsError(out ApplicationError error)) return error;
             }
             
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
-            return new Success<ShoppingCart>(shoppingCart);
+            return shoppingCart;
         }
     }
     
-    public record CreateShoppingCartCommand : Command<Success<ShoppingCart>>
+    public record CreateShoppingCartCommand : Command<ShoppingCart>
     {
         public Guid ShoppingCartId { get; set; }
         public Guid CustomerId { get; set; }

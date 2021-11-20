@@ -1,6 +1,4 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,14 +13,14 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand, Success>
+    public class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public AddShoppingCartProductCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(AddShoppingCartProductCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddShoppingCartProductCommand command, CancellationToken cancellationToken)
         {
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
             (
@@ -34,22 +32,22 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
-            Option<ApplicationError> errorResult = shoppingCart.AddProduct
+            Result addProductResult = shoppingCart.AddProduct
             (
                 EntityId.Create(command.ShoppingCartItem.ProductId),
                 ProductQuantity.Create(command.ShoppingCartItem.Quantity),
                 Price.Create(command.ShoppingCartItem.UnitPrice)
             );
             
-            if (errorResult.IsSome(out ApplicationError error)) return error;
+            if (addProductResult.IsError(out ApplicationError error)) return error;
         
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
-            return new Success();
+            return Result.Success;
         }
     }
     
-    public record AddShoppingCartProductCommand : Command<Success>
+    public record AddShoppingCartProductCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
         public ShoppingCartItemCommandDto ShoppingCartItem { get; set; }

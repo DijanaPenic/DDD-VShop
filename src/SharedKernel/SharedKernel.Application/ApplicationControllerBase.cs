@@ -1,9 +1,8 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.SharedKernel.Application
@@ -21,38 +20,30 @@ namespace VShop.SharedKernel.Application
 
         protected IActionResult HandleResult<TData>
         (
-            OneOf<Success<TData>, ApplicationError> result,
+            Result<TData> result,
             Func<TData, IActionResult> handleSuccess
-        )
-        {
-            return result.Match
-            (
-                data => handleSuccess(data.Value),
-                HandleError
-            );
-        }
-        
+        ) => result.Match
+        (
+            successResult => handleSuccess(successResult.Value),
+            HandleError
+        );
+
         protected IActionResult HandleResult
         (
-            OneOf<Success, ApplicationError> result,
+            Result result,
             Func<IActionResult> handleSuccess
-        )
-        {
-            return result.Match
-            (
-                _ => handleSuccess(),
-                HandleError
-            );
-        }
+        ) => result.Match
+        (
+            successResult => handleSuccess(),
+            HandleError
+        );
 
         protected IActionResult HandleError(ApplicationError error)
-        {
-            return error.Match
+            => error.Match
             (
                 validationError => BadRequest(validationError.Message),
                 systemError => InternalServerError(systemError.Message),
                 notFoundError => NotFound(notFoundError.Message)
             );
-        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,14 +12,14 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class SetDeliveryAddressCommandHandler : ICommandHandler<SetDeliveryAddressCommand, Success>
+    public class SetDeliveryAddressCommandHandler : ICommandHandler<SetDeliveryAddressCommand>
     {
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
         
         public SetDeliveryAddressCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
         => _shoppingCartRepository = shoppingCartRepository;
         
-        public async Task<OneOf<Success, ApplicationError>> Handle(SetDeliveryAddressCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetDeliveryAddressCommand command, CancellationToken cancellationToken)
         {
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
             (
@@ -32,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
             
-            Option<ApplicationError> errorResult = shoppingCart.Customer.SetDeliveryAddress
+            Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress
             (
                 Address.Create
                 (
@@ -44,15 +42,15 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 )
             );
             
-            if (errorResult.IsSome(out ApplicationError error)) return error;
+            if (setDeliveryAddressResult.IsError(out ApplicationError error)) return error;
 
             await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
 
-            return new Success();
+            return Result.Success;
         }
     }
     
-    public record SetDeliveryAddressCommand : Command<Success>
+    public record SetDeliveryAddressCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
         public string City { get; set; }

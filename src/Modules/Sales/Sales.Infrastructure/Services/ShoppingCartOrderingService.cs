@@ -1,6 +1,4 @@
-﻿using OneOf;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -20,7 +18,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
         public ShoppingCartOrderingService(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
 
-        public async Task<OneOf<Success<Order>, ApplicationError>> CreateOrderAsync
+        public async Task<Result<Order>> CreateOrderAsync
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -46,17 +44,17 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             
             foreach (ShoppingCartItem item in shoppingCart.Items)
             {
-                Option<ApplicationError> errorResult = order.AddOrderItem
+                Result addOrderItemResult = order.AddOrderItem
                 (
                     item.Id,
                     item.Quantity,
                     item.UnitPrice
                 );
 
-                if (errorResult.IsSome(out ApplicationError error)) return error;
+                if (addOrderItemResult.IsError(out ApplicationError error)) return error;
             }
 
-            return new Success<Order>(order);
+            return order;
         }
     }
 }

@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using OneOf.Types;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.EventSourcing.Repositories;
@@ -21,7 +21,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected ProcessManagerHandler(IProcessManagerRepository<TProcess> processManagerRepository)
             => _processManagerRepository = processManagerRepository;
         
-        protected async Task<None> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
+        protected async Task<Result> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
         {
             _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             
             await _processManagerRepository.SaveAsync(_processManager, cancellationToken);
 
-            return new None();
+            return Result.Success;
         }
         
         protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)

@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         
         public ShoppingCartCustomer(Action<IDomainEvent> applier) : base(applier) { }
 
-        public Option<ApplicationError> SetContactInformation
+        public Result SetContactInformation
         (
             FullName fullName, 
             EmailAddress emailAddress, 
@@ -49,10 +49,10 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 }
             );
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
-        public Option<ApplicationError> SetDeliveryAddress(Address deliveryAddress)
+        public Result SetDeliveryAddress(Address deliveryAddress)
         {
             if(_isClosedForUpdates)
                 return ValidationError.Create(@"Updating delivery address for the shopping cart is not allowed. 
@@ -70,7 +70,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 }
             );
             
-            return Option<ApplicationError>.None;
+            return Result.Success;
         }
 
         protected override void ApplyEvent(IDomainEvent @event)
