@@ -1,6 +1,5 @@
 ﻿using System;
 
-using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.SharedKernel.Messaging.Events;
@@ -11,7 +10,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
     internal class OrderingProcessManager : ProcessManager
     {
         public Guid ShoppingCartId { get; private set; }
-        public OrderFulfillmentStatus Status { get; private set; }
+        public OrderingProcessManagerStatus Status { get; private set; }
 
         public OrderingProcessManager()
         {
@@ -58,10 +57,10 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 case ShoppingCartCheckoutRequestedDomainEvent e:
                     Id = e.OrderId;
                     ShoppingCartId = e.ShoppingCartId;
-                    Status = OrderFulfillmentStatus.CheckoutRequested;
+                    Status = OrderingProcessManagerStatus.CheckoutRequested;
                     break;
                 case OrderPlacedDomainEvent _:
-                    Status = OrderFulfillmentStatus.OrderPlaced;
+                    Status = OrderingProcessManagerStatus.OrderPlaced;
                     break;
             }
         }

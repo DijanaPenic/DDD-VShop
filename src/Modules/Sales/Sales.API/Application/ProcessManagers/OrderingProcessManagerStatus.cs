@@ -1,6 +1,6 @@
-﻿namespace VShop.Modules.Sales.Domain.Enums
+﻿namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
-    public enum OrderFulfillmentStatus
+    public enum OrderingProcessManagerStatus
     {
         CheckoutRequested = 1,
         OrderPlaced = 2,
