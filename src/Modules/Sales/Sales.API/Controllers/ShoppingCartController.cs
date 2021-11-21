@@ -94,7 +94,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
             CheckoutShoppingCartCommand command = new()
