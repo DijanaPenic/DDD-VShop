@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="Autofac" Version="6.3.0" />
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageReference Include="EventStore.Client.Grpc.Streams" Version="21.2.0" />
