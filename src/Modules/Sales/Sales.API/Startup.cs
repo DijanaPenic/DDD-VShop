@@ -1,6 +1,5 @@
 using Serilog;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,9 +22,6 @@ namespace VShop.Modules.Sales.API
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
-        
-        public ILifetimeScope AutofacContainer { get; private set; }
-
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -53,8 +49,6 @@ namespace VShop.Modules.Sales.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

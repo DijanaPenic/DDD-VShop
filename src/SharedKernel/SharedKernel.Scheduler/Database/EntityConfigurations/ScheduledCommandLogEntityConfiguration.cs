@@ -5,7 +5,7 @@ using VShop.SharedKernel.Scheduler.Database.Entities;
 
 namespace VShop.SharedKernel.Scheduler.Database.EntityConfigurations
 {
-    public class ScheduledCommandLogEntityConfiguration : IEntityTypeConfiguration<MessageLog>
+    internal class ScheduledCommandLogEntityConfiguration : IEntityTypeConfiguration<MessageLog>
     {
         public void Configure(EntityTypeBuilder<MessageLog> builder)
         {
