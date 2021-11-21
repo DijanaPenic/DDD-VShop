@@ -16,7 +16,7 @@ services:
       - "1113:1113"
       - "2113:2113"
       
-  postgres.db:
+  postgres.db.sales:
     image: postgres
     ports: 
       - 5438:5432
@@ -27,3 +27,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Sales
       POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
+      
+  postgres.db.billing:
+    image: postgres
+    ports: 
+      - 5439:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_Billing
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g

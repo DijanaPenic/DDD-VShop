@@ -1,3 +1,4 @@
+using Autofac;
 using Serilog;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +7,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.Modules.Billing.Infrastructure.Services;
+using VShop.Modules.Billing.API.Infrastructure.Automapper;
 using VShop.Modules.Billing.API.Infrastructure.Extensions;
+using VShop.Modules.Billing.API.Infrastructure.AutofacModules;
 
 namespace VShop.Modules.Billing.API
 {
@@ -15,28 +19,24 @@ namespace VShop.Modules.Billing.API
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
-        
-        //public ILifetimeScope AutofacContainer { get; private set; }
-
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersServices();
             services.AddFluentValidationServices();
-            // services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
+            services.AddAutoMapper(typeof(PaymentAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
-            // services.AddEventSourcingServices(Configuration.GetConnectionString("EventStoreDb"));
-            // services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
+            services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
+
+            services.AddTransient<IPaymentService, FakePaymentService>();
         }
         
-        // public static void ConfigureContainer(ContainerBuilder builder) 
-        //     => builder.RegisterModule(new MediatorModule());
+        public static void ConfigureContainer(ContainerBuilder builder) 
+            => builder.RegisterModule(new MediatorModule());
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
