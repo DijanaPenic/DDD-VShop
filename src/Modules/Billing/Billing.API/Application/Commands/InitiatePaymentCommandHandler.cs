@@ -3,38 +3,57 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.Modules.Billing.Infrastructure;
+using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
-using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
     public class InitiatePaymentCommandHandler : ICommandHandler<InitiatePaymentCommand>
     {
         private readonly IPaymentService _paymentService;
-        
-        public InitiatePaymentCommandHandler(IPaymentService paymentService)
-            => _paymentService = paymentService;
+        private readonly BillingContext _billingContext;
+
+        public InitiatePaymentCommandHandler
+        (
+            IPaymentService paymentService,
+            BillingContext billingContext
+        )
+        {
+            _paymentService = paymentService;
+            _billingContext = billingContext;
+        }
 
         public async Task<Result> Handle(InitiatePaymentCommand command, CancellationToken cancellationToken)
         {
-            Result transferResult = await _paymentService.TransferAsync
+            Result paymentTransferResult = await _paymentService.TransferAsync
             (
                 command.OrderId,
                 command.CardTypeId,
                 command.CardNumber,
                 command.CardSecurityNumber,
                 command.CardholderName,
-                command.CardExpiration
+                command.CardExpiration,
+                cancellationToken
             );
 
-            if (transferResult.IsError(out ApplicationError transferError)) return transferError;
+            bool hasPaymentTransferFailed = paymentTransferResult.IsError(out ApplicationError paymentTransferError);
+
+            _billingContext.Payments.Add(new PaymentTransfer
+            {
+                OrderId = command.OrderId,
+                Status = hasPaymentTransferFailed ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
+                Error = paymentTransferError?.ToString()
+            });
+
+            await _billingContext.SaveChangesAsync(cancellationToken);
             
-            // TODO - need to save result in the database
             // TODO - implement outbox pattern
             
-            return Result.Success;
+            return hasPaymentTransferFailed ? paymentTransferError : Result.Success;
         }
     }
     

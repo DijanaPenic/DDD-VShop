@@ -13,6 +13,7 @@ namespace VShop.Modules.Billing.Infrastructure.EntityConfigurations
             
             builder.HasKey(p => p.OrderId);
             builder.Property(p => p.Status).IsRequired();
+            builder.Property(p => p.Error);
             builder.Property(p => p.DateCreatedUtc).IsRequired();
             builder.Property(p => p.DateUpdatedUtc).IsRequired();
         }

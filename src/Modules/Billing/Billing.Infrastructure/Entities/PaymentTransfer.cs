@@ -8,5 +8,6 @@ namespace VShop.Modules.Billing.Infrastructure.Entities
     {
         public Guid OrderId { get; set; }
         public PaymentTransferStatus Status { get; set; }
+        public string Error { get; set; }
     }
 }
