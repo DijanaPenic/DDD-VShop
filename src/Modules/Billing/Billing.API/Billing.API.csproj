@@ -21,6 +21,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Serilog" Version="2.10.0" />
@@ -32,6 +33,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
       <ProjectReference Include="..\Billing.Infrastructure\Billing.Infrastructure.csproj" />
+      <ProjectReference Include="..\Billing.Integration\Billing.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>

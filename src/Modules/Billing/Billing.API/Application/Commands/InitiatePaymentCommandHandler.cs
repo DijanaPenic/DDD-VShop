@@ -4,11 +4,14 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
+using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Billing.Integration.Services;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
@@ -16,15 +19,18 @@ namespace VShop.Modules.Billing.API.Application.Commands
     {
         private readonly IPaymentService _paymentService;
         private readonly BillingContext _billingContext;
+        private readonly IBillingIntegrationEventService _billingIntegrationEventService;
 
         public InitiatePaymentCommandHandler
         (
             IPaymentService paymentService,
-            BillingContext billingContext
+            BillingContext billingContext,
+            IBillingIntegrationEventService billingIntegrationEventService
         )
         {
             _paymentService = paymentService;
             _billingContext = billingContext;
+            _billingIntegrationEventService = billingIntegrationEventService;
         }
 
         public async Task<Result> Handle(InitiatePaymentCommand command, CancellationToken cancellationToken)
@@ -50,8 +56,12 @@ namespace VShop.Modules.Billing.API.Application.Commands
             });
 
             await _billingContext.SaveChangesAsync(cancellationToken);
+
+            IIntegrationEvent integrationEvent = hasPaymentTransferFailed 
+                ? new PaymentFailedIntegrationEvent(command.OrderId) 
+                : new PaymentSucceededIntegrationEvent(command.OrderId);
             
-            // TODO - implement outbox pattern
+            await _billingIntegrationEventService.AddAndSaveEventAsync(integrationEvent, cancellationToken);
             
             return hasPaymentTransferFailed ? paymentTransferError : Result.Success;
         }
