@@ -5,6 +5,7 @@ using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Billing.API.Application.Commands;
+using VShop.Modules.Billing.API.Application.Decorators;
 
 namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
 {
@@ -33,6 +34,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterGeneric(typeof(TransactionCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
         }
     }
 }
