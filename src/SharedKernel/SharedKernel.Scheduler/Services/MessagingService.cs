@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         
         private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)
         {
-            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.RuntimeType));                                                     
+            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.TypeName));                                                     
                                                                                                                                  
             try                                                                                                                  
             {

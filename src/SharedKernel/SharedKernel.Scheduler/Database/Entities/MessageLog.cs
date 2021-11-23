@@ -8,7 +8,7 @@ namespace VShop.SharedKernel.Scheduler.Database.Entities
     {
         public Guid Id { get; set; }
         public string Body { get; set; }
-        public string RuntimeType { get; set; }
+        public string TypeName { get; set; }
         public DateTime ScheduledTime { get; set; }
         public SchedulingStatus Status { get; set; }
     }

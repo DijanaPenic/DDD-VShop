@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.Scheduler.Database.EntityConfigurations
             
             builder.HasKey(sc => sc.Id);
             builder.Property(sc => sc.Body).IsRequired();
-            builder.Property(sc => sc.RuntimeType).IsRequired();
+            builder.Property(sc => sc.TypeName).IsRequired();
             builder.Property(sc => sc.ScheduledTime).IsRequired();
             builder.Property(sc => sc.Status).IsRequired();
             builder.Property(sc => sc.DateCreatedUtc).IsRequired();

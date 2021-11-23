@@ -6,7 +6,7 @@ namespace VShop.SharedKernel.Messaging
     public record ScheduledMessage : Message, IScheduledMessage
     {
         public string Body { get; }
-        public string RuntimeType { get; }
+        public string TypeName { get; }
         public DateTime ScheduledTime { get; }
 
         [JsonConstructor]
@@ -18,7 +18,7 @@ namespace VShop.SharedKernel.Messaging
         public ScheduledMessage(IMessage message, DateTime scheduledTime)
         {
             Body = JsonConvert.SerializeObject(message);
-            RuntimeType = MessageTypeMapper.ToName(message.GetType());
+            TypeName = MessageTypeMapper.ToName(message.GetType());
             ScheduledTime = scheduledTime;
             CausationId = message.CausationId;
             CorrelationId = message.CorrelationId;
@@ -28,7 +28,7 @@ namespace VShop.SharedKernel.Messaging
     public interface IScheduledMessage : IMessage
     {
         public string Body { get; }
-        public string RuntimeType { get; }
+        public string TypeName { get; }
         public DateTime ScheduledTime { get; }
     }
 }

@@ -48,7 +48,7 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
                 Id = message.MessageId,
                 Body = message.Body,
                 Status = SchedulingStatus.Scheduled,
-                RuntimeType = message.RuntimeType,
+                TypeName = message.TypeName,
                 ScheduledTime = message.ScheduledTime
             };
             
