@@ -10,10 +10,7 @@ namespace VShop.SharedKernel.Messaging
         public DateTime ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage()
-        {
-            
-        }
+        protected ScheduledMessage() { }
 
         public ScheduledMessage(IMessage message, DateTime scheduledTime)
         {
