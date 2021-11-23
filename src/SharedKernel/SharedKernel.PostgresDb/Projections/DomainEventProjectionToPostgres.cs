@@ -14,7 +14,7 @@ using ILogger = Serilog.ILogger;
 namespace VShop.SharedKernel.PostgresDb.Projections
 {
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscription 
-        where TDbContext : ApplicationDbContextBase
+        where TDbContext : DbContextBase
     {
         private readonly IServiceProvider _services;
         private readonly Projector _projector;

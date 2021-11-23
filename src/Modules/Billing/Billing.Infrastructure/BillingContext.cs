@@ -1,25 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Database;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Billing.Infrastructure
 {
-    public class BillingContext : ApplicationDbContextBase
+    public class BillingContext : DbContextBase
     {
+        private readonly IDbContextBuilder _contextBuilder;
+        
         public const string PaymentSchema = "payment";
 
         public DbSet<PaymentTransfer> Payments { get; set; }
 
-        public BillingContext(DbContextOptions<BillingContext> options) : base(options)
-        {
+        public BillingContext(IDbContextBuilder contextBuilder)
+            => _contextBuilder = contextBuilder;
 
-        }
-    
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => _contextBuilder.ConfigureContext(optionsBuilder);
+        
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
-        }
+            => builder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
     }
 }

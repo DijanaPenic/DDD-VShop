@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Sales.Infrastructure
 {
-    public class SalesContext : ApplicationDbContextBase
+    public class SalesContext : DbContextBase
     {
         public const string ShoppingCartSchema = "shopping_cart";
         public const string OrderSchema = "order";

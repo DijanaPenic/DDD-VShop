@@ -4,9 +4,10 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Database.Entities;
 using VShop.SharedKernel.Scheduler.Database.EntityConfigurations;
 
+// TODO - rename Database to Infrastructure
 namespace VShop.SharedKernel.Scheduler.Database
 {
-    public class SchedulerContext : ApplicationDbContextBase
+    public class SchedulerContext : DbContextBase
     {
         public const string SchedulerSchema = "scheduler";
 
@@ -18,8 +19,6 @@ namespace VShop.SharedKernel.Scheduler.Database
         }
     
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.ApplyConfiguration(new ScheduledCommandLogEntityConfiguration());
-        }
+            => builder.ApplyConfiguration(new ScheduledCommandLogEntityConfiguration());
     }
 }

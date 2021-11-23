@@ -5,9 +5,9 @@ namespace VShop.SharedKernel.PostgresDb.Repositories
 {
     public class GenericRepository
     {
-        private readonly ApplicationDbContextBase _dbContext;
+        private readonly DbContextBase _dbContext;
         
-        public GenericRepository(ApplicationDbContextBase dbContext)
+        public GenericRepository(DbContextBase dbContext)
         {
             _dbContext = dbContext;
         }
