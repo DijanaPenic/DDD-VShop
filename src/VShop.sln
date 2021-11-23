@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.Infrastructure", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.Integration", "Modules\Billing\Billing.Integration\Billing.Integration.csproj", "{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", "SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj", "{39455F91-CFA1-4D8D-83D4-B4F1EA649767}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,7 @@ Global
 		{07C382AC-81A0-4B40-B3DE-F84113F26914} = {DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9}
 		{B493CCCE-A0C3-428B-838B-471F5FD1DDFA} = {DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9}
 		{C33E159F-EAF6-4F6B-9E00-87DCD24BD253} = {DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9}
+		{39455F91-CFA1-4D8D-83D4-B4F1EA649767} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -130,5 +133,9 @@ Global
 		{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39455F91-CFA1-4D8D-83D4-B4F1EA649767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39455F91-CFA1-4D8D-83D4-B4F1EA649767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39455F91-CFA1-4D8D-83D4-B4F1EA649767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39455F91-CFA1-4D8D-83D4-B4F1EA649767}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
