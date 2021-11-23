@@ -9,6 +9,7 @@ namespace VShop.SharedKernel.Integration.Database.Entities
 {
     public class IntegrationEventLog : DbBaseEntity
     {
+        public IntegrationEventLog() { }
         public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
         {
             EventId = @event.MessageId;
