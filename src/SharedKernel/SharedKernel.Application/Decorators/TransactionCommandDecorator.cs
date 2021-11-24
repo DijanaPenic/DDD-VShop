@@ -7,30 +7,29 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
 using Serilog.Context;
 
-using VShop.Modules.Billing.Infrastructure;
-using VShop.Modules.Billing.Integration.Services;
-using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Integration.Services.Contracts;
+using VShop.SharedKernel.Application.Decorators.Contracts;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.Modules.Billing.API.Application.Decorators
+namespace VShop.SharedKernel.Application.Decorators
 {
-    // TODO - create decorator template class
     public class TransactionCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        private readonly BillingContext _billingContext;
-        private readonly IBillingIntegrationEventService _billingIntegrationEventService;
+        private readonly DbContextBase _dbContext;
+        private readonly IIntegrationEventService _integrationEventService;
         
         private static readonly ILogger Logger = Log.ForContext<TransactionCommandDecorator<TCommand, TResponse>>(); 
 
         public TransactionCommandDecorator
         (
-            BillingContext billingContext,
-            IBillingIntegrationEventService billingIntegrationEventService
+            DbContextProvider dbContextProvider,
+            IIntegrationEventService integrationEventService
         )
         {
-            _billingContext = billingContext;
-            _billingIntegrationEventService = billingIntegrationEventService;
+            _dbContext = dbContextProvider();
+            _integrationEventService = integrationEventService;
         }
 
         public async Task<TResponse> Handle
@@ -46,15 +45,15 @@ namespace VShop.Modules.Billing.API.Application.Decorators
             try
             {
                 // Handling retries
-                if (_billingContext.HasActiveTransaction) return await next();
+                if (_dbContext.HasActiveTransaction) return await next();
 
-                IExecutionStrategy strategy = _billingContext.Database.CreateExecutionStrategy();
+                IExecutionStrategy strategy = _dbContext.Database.CreateExecutionStrategy();
 
                 await strategy.ExecuteAsync(async () =>
                 {
                     Guid transactionId;
 
-                    await using (IDbContextTransaction transaction = await _billingContext.BeginTransactionAsync())
+                    await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync())
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         Logger.Information
@@ -71,12 +70,12 @@ namespace VShop.Modules.Billing.API.Application.Decorators
                             transaction.TransactionId, commandTypeName
                         );
 
-                        await _billingContext.CommitTransactionAsync(transaction, cancellationToken);
+                        await _dbContext.CommitTransactionAsync(transaction, cancellationToken);
 
                         transactionId = transaction.TransactionId;
                     }
 
-                    await _billingIntegrationEventService.PublishEventsAsync(transactionId, cancellationToken);
+                    await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
                 });
 
                 return response;
@@ -89,4 +88,6 @@ namespace VShop.Modules.Billing.API.Application.Decorators
             }
         }
     }
+    
+    public delegate DbContextBase DbContextProvider();
 }
