@@ -31,6 +31,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
                 .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register behaviors
+            builder.RegisterGeneric(typeof(ErrorCommandDecorator<>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));

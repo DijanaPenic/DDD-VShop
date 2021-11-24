@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 using MediatR;
 using Serilog;
 
-using VShop.SharedKernel.Infrastructure;
-
 namespace VShop.SharedKernel.Application.Decorators
 {
-    public class RetryPolicyCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
+    public class RetryPolicyCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
+        private static readonly ILogger Logger = Log.ForContext<RetryPolicyCommandDecorator<TCommand, TResponse>>();
         
-        public async Task<Result<TResponse>> Handle
+        public async Task<TResponse> Handle
         (
-            TRequest request,
+            TCommand command,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<Result<TResponse>> next
+            RequestHandlerDelegate<TResponse> next
         )
         {
             const int maxRetryAttempts = 3;
@@ -34,8 +32,8 @@ namespace VShop.SharedKernel.Application.Decorators
                         => Logger.Warning
                         (
                             ex,
-                            "Failed to execute handler for request {Request}, retrying after {RetryTimeSpan}s: {ExceptionMessage}",
-                            typeof(TRequest).Name, ts.TotalSeconds, ex.Message
+                            "Failed to execute handler for command {Command}, retrying after {RetryTimeSpan}s: {ExceptionMessage}",
+                            typeof(TCommand).Name, ts.TotalSeconds, ex.Message
                         )
                 );
 

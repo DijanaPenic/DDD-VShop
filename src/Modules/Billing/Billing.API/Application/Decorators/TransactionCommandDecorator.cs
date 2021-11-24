@@ -7,23 +7,22 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
 using Serilog.Context;
 
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Application.Decorators;
 using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Integration.Services;
+using VShop.SharedKernel.Application.Decorators;
 
 using ILogger = Serilog.ILogger;
 
 namespace VShop.Modules.Billing.API.Application.Decorators
 {
     // TODO - create decorator template class
-    public class TransactionCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
+    public class TransactionCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
         // TODO - rename all context parameters
         private readonly BillingContext _dbContext;
         private readonly IBillingIntegrationEventService _billingIntegrationEventService;
         
-        private static readonly ILogger Logger = Log.ForContext<TransactionCommandDecorator<TRequest, TResponse>>(); 
+        private static readonly ILogger Logger = Log.ForContext<TransactionCommandDecorator<TCommand, TResponse>>(); 
 
         public TransactionCommandDecorator
         (
@@ -35,15 +34,15 @@ namespace VShop.Modules.Billing.API.Application.Decorators
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
-        public async Task<Result<TResponse>> Handle
+        public async Task<TResponse> Handle
         (
-            TRequest request,
+            TCommand command,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<Result<TResponse>> next
+            RequestHandlerDelegate<TResponse> next
         )
         {
-            Result<TResponse> response = default;
-            string requestTypeName = request.GetType().FullName;
+            TResponse response = default;
+            string commandTypeName = command.GetType().FullName;
 
             try
             {
@@ -62,7 +61,7 @@ namespace VShop.Modules.Billing.API.Application.Decorators
                         Logger.Information
                         (
                             "Begin transaction {TransactionId} for {CommandName} ({@Command})",
-                            transaction.TransactionId, requestTypeName, request
+                            transaction.TransactionId, commandTypeName, command
                         );
 
                         response = await next();
@@ -70,7 +69,7 @@ namespace VShop.Modules.Billing.API.Application.Decorators
                         Logger.Information
                         (
                             "Commit transaction {TransactionId} for {CommandName}",
-                            transaction.TransactionId, requestTypeName
+                            transaction.TransactionId, commandTypeName
                         );
 
                         await _dbContext.CommitTransactionAsync(transaction, cancellationToken);
@@ -85,7 +84,7 @@ namespace VShop.Modules.Billing.API.Application.Decorators
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Error Handling transaction for {CommandName} ({@Command})", requestTypeName, request);
+                Logger.Error(ex, "Error Handling transaction for {CommandName} ({@Command})", commandTypeName, command);
 
                 throw;
             }

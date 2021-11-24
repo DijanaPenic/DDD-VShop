@@ -11,15 +11,15 @@ using VShop.SharedKernel.Infrastructure.Errors;
 
 namespace VShop.SharedKernel.Application.Decorators
 {
-    public class ErrorCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
+    public class ErrorCommandDecorator<TCommand> : ICommandDecorator<TCommand, Result>
     {
-        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
+        private static readonly ILogger Logger = Log.ForContext<ErrorCommandDecorator<TCommand>>();
         
-        public async Task<Result<TResponse>> Handle
+        public async Task<Result> Handle
         (
-            TRequest request,
+            TCommand command,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<Result<TResponse>> next
+            RequestHandlerDelegate<Result> next
         )
         {
             try
@@ -33,7 +33,35 @@ namespace VShop.SharedKernel.Application.Decorators
             catch (Exception ex)
             {
                 Logger.Error(ex, "Unhandled error has occurred");
-
+                
+                return InternalServerError.Create(JsonConvert.SerializeObject(ex));
+            }
+        }
+    }
+    
+    public class ErrorCommandDecorator<TCommand, TData> : ICommandDecorator<TCommand, Result<TData>>
+    {
+        private static readonly ILogger Logger = Log.ForContext<ErrorCommandDecorator<TCommand, TData>>();
+        
+        public async Task<Result<TData>> Handle
+        (
+            TCommand command,
+            CancellationToken cancellationToken,
+            RequestHandlerDelegate<Result<TData>> next
+        )
+        {
+            try
+            {
+                return await next();
+            }
+            catch (ValidationException ex)
+            {
+                return ValidationError.Create(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Unhandled error has occurred");
+                
                 return InternalServerError.Create(JsonConvert.SerializeObject(ex));
             }
         }

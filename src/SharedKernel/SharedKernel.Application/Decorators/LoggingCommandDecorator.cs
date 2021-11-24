@@ -3,28 +3,27 @@ using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Infrastructure;
-
 namespace VShop.SharedKernel.Application.Decorators
 {
-    public class LoggingCommandDecorator<TRequest, TResponse> : ICommandDecorator<TRequest, TResponse>
+    // TODO - test that this class is triggered when there is no response
+    public class LoggingCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TRequest, TResponse>>();
+        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TCommand, TResponse>>();
         
-        public async Task<Result<TResponse>> Handle
+        public async Task<TResponse> Handle
         (
-            TRequest request,
+            TCommand command,
             CancellationToken cancellationToken,
-            RequestHandlerDelegate<Result<TResponse>> next
+            RequestHandlerDelegate<TResponse> next
         )
         {
-            string requestTypeName = request.GetType().Name;
+            string commandTypeName = command.GetType().Name;
             
-            Logger.Information("Handling command {CommandName} ({@Command})", requestTypeName, request);
+            Logger.Information("Handling command {CommandName} ({@Command})", commandTypeName, command);
             
-            Result<TResponse> result = await next();
+            TResponse result = await next();
             
-            Logger.Information("Command {CommandName} handled - response: {@Result}", requestTypeName, result);
+            Logger.Information("Command {CommandName} handled - response: {@Result}", commandTypeName, result);
 
             return result;
         }
