@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -9,12 +9,12 @@ namespace VShop.SharedKernel.Integration.Database.Entities
 {
     public class IntegrationEventLog : DbBaseEntity
     {
-        public IntegrationEventLog() { }
+        public IntegrationEventLog() { } // Needed for database migrations
         public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
         {
             EventId = @event.MessageId;
-            EventTypeName = MessageTypeMapper.ToName(@event.GetType());                    
-            Content = JsonSerializer.Serialize(@event);
+            EventTypeName = MessageTypeMapper.ToName(@event.GetType());
+            Content = JsonConvert.SerializeObject(@event);
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;

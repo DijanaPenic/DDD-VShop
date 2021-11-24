@@ -10,7 +10,7 @@ namespace VShop.SharedKernel.Messaging
         public DateTime ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage() { }
+        protected ScheduledMessage() { } // Needs [JsonConstructor] attribute because parameterless constructor is protected
 
         public ScheduledMessage(IMessage message, DateTime scheduledTime)
         {
