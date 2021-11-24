@@ -33,8 +33,7 @@ namespace VShop.SharedKernel.Messaging
         {
             Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(messageTypeName.Replace("_", "."));
 
-            if (type is null)
-                throw new Exception($"Type map for '{messageTypeName}' wasn't found!");
+            if (type is null) return null;
 
             TypeNameMap.AddOrUpdate(type, messageTypeName, (_, _) => messageTypeName);
 

@@ -103,7 +103,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
             CancellationToken cancellationToken
         )
         {
-            if (IsEventWithEmptyData(resolvedEvent) || IsCheckpointEvent(resolvedEvent)) return;
+            if (IsEventWithEmptyData(resolvedEvent) || IsCheckpointEvent(resolvedEvent) || !IsSubscribedToEvent(resolvedEvent)) return;
 
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
             IMessage message = resolvedEvent.DeserializeData<IMessage>();
@@ -150,6 +150,17 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
             Logger.Information("Checkpoint event - ignoring");
             
             return true;
+        }
+
+        private static bool IsSubscribedToEvent(ResolvedEvent resolvedEvent)
+        {
+            Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
+
+            if (eventType is not null) return true;
+            
+            Logger.Information("Unknown event - ignoring");
+            
+            return false;
         }
 
         private void HandleDrop
