@@ -25,7 +25,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             ShoppingCart shoppingCart = new()
             {
                 CorrelationId = command.CorrelationId,
-                MessageId = command.MessageId,
+                CausationId = command.MessageId,
             };
             
             Result createShoppingCartResult = shoppingCart.Create

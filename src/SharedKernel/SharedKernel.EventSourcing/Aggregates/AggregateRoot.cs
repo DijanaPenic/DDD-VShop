@@ -15,7 +15,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
         public Guid CorrelationId { get; set; }
-        public Guid MessageId { get; set; }
+        public Guid CausationId { get; set; }
         
         protected abstract void ApplyEvent(IDomainEvent @event);
         
@@ -55,7 +55,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         
         private void SetEventIdentification(IBaseEvent @event)
         {
-            @event.CausationId = MessageId;
+            @event.CausationId = CausationId;
             @event.CorrelationId = CorrelationId;
         }
     }

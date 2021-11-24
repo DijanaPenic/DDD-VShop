@@ -67,7 +67,7 @@ namespace VShop.SharedKernel.EventStoreDb.Repositories
         public async Task<TAggregate> LoadAsync
         (
             TKey aggregateId,
-            Guid? messageId = null,
+            Guid? causationId = null,
             Guid? correlationId = null,
             CancellationToken cancellationToken = default
         )
@@ -87,7 +87,7 @@ namespace VShop.SharedKernel.EventStoreDb.Repositories
             if (aggregate is null)
                 throw new Exception($"Couldn't resolve {nameof(aggregate)} instance.");
             
-            if (messageId is not null) aggregate.MessageId = messageId.Value;
+            if (causationId is not null) aggregate.CausationId = causationId.Value;
             if (correlationId is not null) aggregate.CorrelationId = correlationId.Value;
             
             aggregate.Load(events);

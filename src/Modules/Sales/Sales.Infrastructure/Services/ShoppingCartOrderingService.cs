@@ -23,7 +23,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid messageId,
+            Guid causationId,
             Guid correlationId,
             CancellationToken cancellationToken = default
         )
@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
             (
                 shoppingCartId,
-                messageId,
+                causationId,
                 correlationId,
                 cancellationToken
             );
@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             Order order = new()
             {
                 CorrelationId = correlationId,
-                MessageId = messageId,
+                CausationId = causationId,
             };
             
             Result createOrderResult = order.Create

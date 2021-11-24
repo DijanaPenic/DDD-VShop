@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<Order>> Handle(PlaceOrderCommand command, CancellationToken cancellationToken)
         {
-            Result<Order> result = await _shoppingCartOrderingService.CreateOrderAsync
+            Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
             (
                 EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.OrderId),
@@ -40,9 +40,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             
-            if (result.IsError(out ApplicationError error)) return error;
+            if (createOrderResult.IsError(out ApplicationError error)) return error;
 
-            Order order = result.GetData();
+            Order order = createOrderResult.GetData();
             
             // NOTE: atomic operation
             // TODO - remove this integration event. 
