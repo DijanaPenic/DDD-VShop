@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Application.Decorators.Contracts;
 
 namespace VShop.SharedKernel.Application.Decorators
 {

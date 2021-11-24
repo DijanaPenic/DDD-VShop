@@ -3,9 +3,10 @@ using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Application.Decorators.Contracts;
+
 namespace VShop.SharedKernel.Application.Decorators
 {
-    // TODO - test that this class is triggered when there is no response
     public class LoggingCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
         private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TCommand, TResponse>>();

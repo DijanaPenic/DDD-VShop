@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using MediatR;
 using Serilog;
 
+using VShop.SharedKernel.Application.Decorators.Contracts;
+
 namespace VShop.SharedKernel.Application.Decorators
 {
     public class RetryPolicyCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
