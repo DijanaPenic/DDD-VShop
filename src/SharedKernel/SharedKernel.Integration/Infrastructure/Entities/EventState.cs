@@ -1,6 +1,5 @@
-﻿namespace VShop.SharedKernel.Integration.Database.Entities
+﻿namespace VShop.SharedKernel.Integration.Infrastructure.Entities
 {
-    // TODO - rename Database to Infrastructure
     public enum EventState
     {
         NotPublished = 0,

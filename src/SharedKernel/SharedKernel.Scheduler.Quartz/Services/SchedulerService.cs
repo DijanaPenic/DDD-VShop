@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Scheduler.Quartz.Jobs;
-using VShop.SharedKernel.Scheduler.Database.Entities;
+using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 using VShop.SharedKernel.Infrastructure.Helpers;
 
-using SchedulerContext = VShop.SharedKernel.Scheduler.Database.SchedulerContext;
+using SchedulerContext = VShop.SharedKernel.Scheduler.Infrastructure.SchedulerContext;
 
 namespace VShop.SharedKernel.Scheduler.Quartz.Services
 {

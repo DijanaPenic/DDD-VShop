@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Scheduler.Database.Entities;
-using VShop.SharedKernel.Scheduler.Database.EntityConfigurations;
+using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
+using VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations;
 
-// TODO - rename Database to Infrastructure
-namespace VShop.SharedKernel.Scheduler.Database
+namespace VShop.SharedKernel.Scheduler.Infrastructure
 {
     public class SchedulerContext : DbContextBase
     {

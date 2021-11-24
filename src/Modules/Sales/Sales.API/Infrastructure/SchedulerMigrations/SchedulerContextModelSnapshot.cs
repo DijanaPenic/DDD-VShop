@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.SharedKernel.Scheduler.Database;
+using VShop.SharedKernel.Scheduler.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Infrastructure.SchedulerMigrations
 {

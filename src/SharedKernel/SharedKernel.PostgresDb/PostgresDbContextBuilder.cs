@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Infrastructure.Database;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.SharedKernel.PostgresDb
 {

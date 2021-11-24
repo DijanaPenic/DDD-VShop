@@ -8,8 +8,8 @@ using Newtonsoft.Json;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Services;
-using VShop.SharedKernel.Integration.Database.Entities;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.Integration.Repositories;
+using VShop.SharedKernel.Integration.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure;
 
 using ILogger = Serilog.ILogger;

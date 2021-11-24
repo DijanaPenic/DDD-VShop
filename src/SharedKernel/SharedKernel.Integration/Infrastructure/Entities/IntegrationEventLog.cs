@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
 
-namespace VShop.SharedKernel.Integration.Database.Entities
+namespace VShop.SharedKernel.Integration.Infrastructure.Entities
 {
     public class IntegrationEventLog : DbBaseEntity
     {

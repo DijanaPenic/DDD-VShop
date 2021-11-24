@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Scheduler.Database;
-using VShop.SharedKernel.Scheduler.Database.Entities;
+using VShop.SharedKernel.Scheduler.Infrastructure;
+using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 
 using ILogger = Serilog.ILogger;
 

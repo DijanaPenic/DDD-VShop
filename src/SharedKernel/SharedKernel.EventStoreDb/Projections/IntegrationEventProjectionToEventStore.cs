@@ -6,7 +6,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.Messaging;
 using VShop.SharedKernel.EventSourcing.Projections;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.Integration.Repositories;
 
 using ILogger = Serilog.ILogger;
 

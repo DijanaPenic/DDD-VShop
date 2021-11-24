@@ -7,6 +7,7 @@ using VShop.SharedKernel.EventStoreDb.Projections;
 using VShop.SharedKernel.EventStoreDb.Repositories;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.PostgresDb.Projections;
+using VShop.SharedKernel.Integration.Repositories;
 using VShop.SharedKernel.EventSourcing.Projections;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
@@ -17,9 +18,9 @@ using VShop.Modules.Sales.API.Application;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
-    public static class EventSourcingExtensions
+    public static class EventStoreExtensions
     {
-        public static void AddEventSourcingServices(this IServiceCollection services, string connectionString)
+        public static void AddEventStoreServices(this IServiceCollection services, string connectionString)
         {
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Sales";

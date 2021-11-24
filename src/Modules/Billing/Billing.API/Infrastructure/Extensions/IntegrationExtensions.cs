@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.Modules.Billing.API.Application;
 using VShop.Modules.Billing.Integration.Services;
 using VShop.SharedKernel.Integration.Services;
+using VShop.SharedKernel.Integration.Repositories;
 using VShop.SharedKernel.EventStoreDb.Repositories;
-using VShop.SharedKernel.EventSourcing.Repositories; // TODO - should move this class to XY and rename
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {

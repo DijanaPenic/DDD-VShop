@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Storage;
 
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Integration.Database.Entities;
+using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Integration.Services
 {

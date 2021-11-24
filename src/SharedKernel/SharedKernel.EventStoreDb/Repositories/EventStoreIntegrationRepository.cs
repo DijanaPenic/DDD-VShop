@@ -6,8 +6,8 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.Integration.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.EventSourcing.Repositories;
 
 namespace VShop.SharedKernel.EventStoreDb.Repositories
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Infrastructure.Database;
-using VShop.SharedKernel.Integration.Database.Entities;
-using VShop.SharedKernel.Integration.Database.EntityConfigurations;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Integration.Infrastructure.Entities;
+using VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations;
 
-namespace VShop.SharedKernel.Integration.Database
+namespace VShop.SharedKernel.Integration.Infrastructure
 {
     public class IntegrationContext : DbContextBase
     {

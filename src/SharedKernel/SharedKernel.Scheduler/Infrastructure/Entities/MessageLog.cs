@@ -2,7 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 
-namespace VShop.SharedKernel.Scheduler.Database.Entities
+namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
 {
     public class MessageLog : DbBaseEntity
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.SharedKernel.Integration.Database;
+using VShop.SharedKernel.Integration.Infrastructure;
 
 namespace VShop.Modules.Billing.API.Infrastructure.IntegrationMigrations
 {

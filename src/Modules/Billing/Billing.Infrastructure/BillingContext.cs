@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Infrastructure.Database;
+using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.EntityConfigurations;
 

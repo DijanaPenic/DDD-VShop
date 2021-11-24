@@ -29,7 +29,7 @@ namespace VShop.Modules.Sales.API
             services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
-            services.AddEventSourcingServices(Configuration.GetConnectionString("EventStoreDb"));
+            services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             
             // Configure scheduler

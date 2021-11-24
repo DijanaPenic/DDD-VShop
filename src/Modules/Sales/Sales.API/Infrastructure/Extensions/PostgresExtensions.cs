@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.Modules.Sales.Infrastructure;
-using VShop.SharedKernel.Scheduler.Database;
+using VShop.SharedKernel.Scheduler.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace VShop.SharedKernel.Infrastructure.Database
+namespace VShop.SharedKernel.Infrastructure
 {
     public interface IDbContextBuilder
     {

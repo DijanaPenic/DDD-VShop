@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Integration.Database;
-using VShop.SharedKernel.Infrastructure.Database;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.Modules.Billing.Infrastructure;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
