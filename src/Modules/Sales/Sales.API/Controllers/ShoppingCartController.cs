@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Controllers
         public async Task<IActionResult> GetShoppingCartAsync([FromQuery] Guid customerId)
         {
             ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
-            if (shoppingCart == null) return NotFound();
+            if (shoppingCart is null) return NotFound();
 
             return Ok(shoppingCart);
         }
@@ -57,7 +57,7 @@ namespace VShop.Modules.Sales.API.Controllers
         {   
             // TODO - uncomment; should this check be performed by API gateway, command handler or bounded context API?
             // ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(request.CustomerId);
-            // if (shoppingCart != null)
+            // if (shoppingCart is not null)
             // {
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }

@@ -29,7 +29,7 @@ namespace VShop.SharedKernel.Integration.Services
                 .Where(ie => ie.TransactionId == transactionId && ie.State == EventState.NotPublished)
                 .ToListAsync(cancellationToken);
 
-            if (result != null && result.Any()) return result.OrderBy(ie => ie.DateCreatedUtc);
+            if (result is not null && result.Any()) return result.OrderBy(ie => ie.DateCreatedUtc);
 
             return Enumerable.Empty<IntegrationEventLog>();
         }

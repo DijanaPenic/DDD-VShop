@@ -19,14 +19,15 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
 {
     public class SubscribeToAllBackgroundService : ISubscribeBackgroundService
     {
-        private Task _executingTask;
         private CancellationTokenSource _cancellationTokenSource;
+        private Task _executingTask;
+        private readonly object _resubscribeLock = new();
+        
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICheckpointRepository _checkpointRepository;
         private readonly string _subscriptionId;
         private readonly ISubscription[] _subscriptionHandlers;
         private readonly SubscriptionFilterOptions _filterOptions;
-        private readonly object _resubscribeLock = new();
 
         private static readonly ILogger Logger = Log.ForContext<SubscribeToAllBackgroundService>();
 
@@ -40,7 +41,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
         )
         {
             _eventStoreClient = eventStoreClient;
-            _subscriptionId = $"{eventStoreClient.ConnectionName}{subscriptionId}";
+            _subscriptionId = $"{eventStoreClient.ConnectionName}-{subscriptionId}";
             _subscriptionHandlers = subscriptionHandlers;
             _checkpointRepository = checkpointRepository;
             _filterOptions = filterOptions ?? new SubscriptionFilterOptions(EventTypeFilter.ExcludeSystemEvents());
@@ -59,7 +60,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             // Stop called without start
-            if (_executingTask == null) return;
+            if (_executingTask is null) return;
 
             // Signal cancellation to the executing method
             _cancellationTokenSource.Cancel();
@@ -71,7 +72,6 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
             cancellationToken.ThrowIfCancellationRequested();
 
             Logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionId);
-            Logger.Information("External Event Consumer stopped");
         }
 
         private async Task SubscribeToAllAsync(CancellationToken cancellationToken)
@@ -136,7 +136,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
         
         private static bool IsEventWithEmptyData(ResolvedEvent resolvedEvent)
         {
-            if (resolvedEvent.Event.Data.Length != 0) return false;
+            if (resolvedEvent.Event.Data.Length is not 0) return false;
 
             Logger.Information("Event without data received");
             

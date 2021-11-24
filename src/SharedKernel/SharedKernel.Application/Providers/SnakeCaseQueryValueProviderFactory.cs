@@ -9,10 +9,7 @@ namespace VShop.SharedKernel.Application.Providers
     {
         public Task CreateValueProviderAsync(ValueProviderFactoryContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            if (context is null) throw new ArgumentNullException(nameof(context));
 
             SnakeCaseQueryValueProvider valueProvider = new(
                 BindingSource.Query,

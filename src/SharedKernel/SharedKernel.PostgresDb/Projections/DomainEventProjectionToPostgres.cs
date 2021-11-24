@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.PostgresDb.Projections
 
                 Func<Task> handler = _projector(dbContext, domainEvent);
             
-                if (handler == null) return;
+                if (handler is null) return;
             
                 Logger.Debug("Projecting domain event: {Message}", domainEvent);
 
