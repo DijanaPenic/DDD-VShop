@@ -8,9 +8,11 @@ namespace VShop.Modules.Billing.Integration.Events
     {
         public Guid OrderId { get; }
         
-        public PaymentSucceededIntegrationEvent(Guid orderId)
+        public PaymentSucceededIntegrationEvent(Guid orderId, Guid causationId, Guid correlationId)
         {
             OrderId = orderId;
+            CausationId = causationId;
+            CorrelationId = correlationId;
         }
     }
 }
