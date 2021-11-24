@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Database;
@@ -15,7 +14,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new PostgresDbContextBuilder
             (
                 connectionString,
-                Assembly.GetExecutingAssembly())
+                typeof(Startup).Assembly)
             );
             services.AddDbContext<BillingContext>();
             services.AddDbContext<IntegrationContext>();

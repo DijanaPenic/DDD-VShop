@@ -1,10 +1,11 @@
 ﻿using EventStore.Client;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.Modules.Billing.API.Application;
+using VShop.Modules.Billing.Integration.Services;
 using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.EventStoreDb.Repositories;
 using VShop.SharedKernel.EventSourcing.Repositories; // TODO - should move this class to XY and rename
-using VShop.Modules.Billing.Integration.Services;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {
@@ -20,6 +21,8 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             
             services.AddSingleton(_ => new EventStoreClient(eventStoreSettings));
             services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
+            
+            MessageMappings.MapMessageTypes();
         }
     }
 }

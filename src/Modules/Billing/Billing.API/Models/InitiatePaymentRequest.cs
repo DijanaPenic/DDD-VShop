@@ -6,7 +6,7 @@ namespace VShop.Modules.Billing.API.Models
     public record InitiatePaymentRequest
     {
         public Guid OrderId { get; init; }
-        public int CardTypeId { get; init; } // TODO - need to check this property
+        public int CardTypeId { get; init; }
         public string CardNumber { get; init; }
         public string CardSecurityNumber { get; init; }
         public string CardholderName { get; init; }
@@ -18,7 +18,7 @@ namespace VShop.Modules.Billing.API.Models
         public InitiatePaymentRequestValidator()
         {
             RuleFor(pr => pr.OrderId).NotEmpty();
-            RuleFor(pr => pr.CardTypeId).NotEmpty(); // TODO 
+            RuleFor(pr => pr.CardTypeId).NotEmpty();
             RuleFor(pr => pr.CardNumber).NotEmpty();
             RuleFor(pr => pr.CardSecurityNumber).NotEmpty();
             RuleFor(pr => pr.CardholderName).NotEmpty();
