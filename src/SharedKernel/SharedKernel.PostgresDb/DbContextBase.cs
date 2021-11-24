@@ -15,7 +15,7 @@ namespace VShop.SharedKernel.PostgresDb
         private IDbContextTransaction _currentTransaction;
         
         protected DbContextBase() { }
-        protected DbContextBase(DbContextOptions contextOptions) : base(contextOptions) { }
+        protected DbContextBase(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
         
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(DateTime.UtcNow, cancellationToken);
@@ -69,11 +69,7 @@ namespace VShop.SharedKernel.PostgresDb
             }
             finally
             {
-                if (_currentTransaction is not null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
+                DisposeCurrentTransaction();
             }
         }
         
@@ -85,12 +81,16 @@ namespace VShop.SharedKernel.PostgresDb
             }
             finally
             {
-                if (_currentTransaction is not null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
+                DisposeCurrentTransaction();
             }
+        }
+
+        private void DisposeCurrentTransaction()
+        {
+            if (_currentTransaction is null) return;
+            
+            _currentTransaction.Dispose();
+            _currentTransaction = null;
         }
     }
 }
