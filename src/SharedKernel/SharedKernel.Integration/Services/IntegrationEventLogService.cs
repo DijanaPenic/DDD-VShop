@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
+using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.SharedKernel.Integration.Services
 {

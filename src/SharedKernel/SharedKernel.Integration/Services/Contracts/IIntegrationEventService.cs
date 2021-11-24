@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging.Events;
 
-namespace VShop.Modules.Billing.Integration.Services
+namespace VShop.SharedKernel.Integration.Services.Contracts
 {
-    public interface IBillingIntegrationEventService
+    public interface IIntegrationEventService
     {
         Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default);
         Task AddAndSaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default);

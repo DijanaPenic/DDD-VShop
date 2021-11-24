@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
-namespace VShop.SharedKernel.Integration.Services
+namespace VShop.SharedKernel.Integration.Services.Contracts
 {
     public interface IIntegrationEventLogService
     {

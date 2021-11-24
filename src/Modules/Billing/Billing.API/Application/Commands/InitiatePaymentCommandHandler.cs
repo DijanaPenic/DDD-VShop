@@ -11,7 +11,8 @@ using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Integration.Events;
-using VShop.Modules.Billing.Integration.Services;
+
+using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
@@ -19,13 +20,13 @@ namespace VShop.Modules.Billing.API.Application.Commands
     {
         private readonly IPaymentService _paymentService;
         private readonly BillingContext _billingContext;
-        private readonly IBillingIntegrationEventService _billingIntegrationEventService;
+        private readonly IIntegrationEventService _billingIntegrationEventService;
 
         public InitiatePaymentCommandHandler
         (
             IPaymentService paymentService,
             BillingContext billingContext,
-            IBillingIntegrationEventService billingIntegrationEventService
+            IIntegrationEventService billingIntegrationEventService
         )
         {
             _paymentService = paymentService;

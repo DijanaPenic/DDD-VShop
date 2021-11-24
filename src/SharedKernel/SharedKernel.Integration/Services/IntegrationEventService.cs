@@ -7,32 +7,33 @@ using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Integration.Services;
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Repositories;
+using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
-using VShop.Modules.Billing.Infrastructure;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.Modules.Billing.Integration.Services
+namespace VShop.SharedKernel.Integration.Services
 {
-    public class BillingIntegrationEventService : IBillingIntegrationEventService
+    public class IntegrationEventService<TDbContext> : IIntegrationEventService
+        where TDbContext :  DbContextBase
     {
         private readonly IIntegrationRepository _eventBus;
-        private readonly BillingContext _billingContext;
+        private readonly TDbContext _dbContext;
         private readonly IIntegrationEventLogService _integrationEventLogService;
 
-        private static readonly ILogger Logger = Log.ForContext<BillingIntegrationEventService>(); 
+        private static readonly ILogger Logger = Log.ForContext<IntegrationEventService<TDbContext>>(); 
 
-        public BillingIntegrationEventService
+        public IntegrationEventService
         (
             IIntegrationRepository eventBus,
-            BillingContext billingContext,
+            TDbContext dbContext,
             IIntegrationEventLogService integrationEventLogService
         )
         {
             _eventBus = eventBus;
-            _billingContext = billingContext;
+            _dbContext = dbContext;
             _integrationEventLogService = integrationEventLogService;
         }
 
@@ -44,8 +45,8 @@ namespace VShop.Modules.Billing.Integration.Services
             {
                 Logger.Information
                 (
-                    "Publishing integration event: {IntegrationEventId} from {AppName} - ({IntegrationEvent})",
-                    pendingEvent.EventId, "Billing", pendingEvent.Content
+                    "Publishing integration event: {IntegrationEventId} - ({IntegrationEvent})",
+                    pendingEvent.EventId, pendingEvent.Content
                 );
 
                 try
@@ -62,8 +63,8 @@ namespace VShop.Modules.Billing.Integration.Services
                     Logger.Error
                     (
                         ex,
-                        "Error publishing integration event: {IntegrationEventId} from {AppName}",
-                        pendingEvent.EventId, "Billing"
+                        "Error publishing integration event: {IntegrationEventId}",
+                        pendingEvent.EventId
                     );
 
                     await _integrationEventLogService.MarkEventAsFailedAsync(pendingEvent.EventId, cancellationToken);
@@ -79,7 +80,7 @@ namespace VShop.Modules.Billing.Integration.Services
                 @event.MessageId, @event
             );
             
-            await _integrationEventLogService.SaveEventAsync(@event, _billingContext.GetCurrentTransaction(), cancellationToken);
+            await _integrationEventLogService.SaveEventAsync(@event, _dbContext.GetCurrentTransaction(), cancellationToken);
         }
     }
 }
