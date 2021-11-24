@@ -7,10 +7,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Billing.Infrastructure.Services;
+using VShop.Modules.Billing.API.Application;
 using VShop.Modules.Billing.API.Infrastructure.Automapper;
 using VShop.Modules.Billing.API.Infrastructure.Extensions;
 using VShop.Modules.Billing.API.Infrastructure.AutofacModules;
+using VShop.Modules.Billing.Infrastructure.Services;
 
 namespace VShop.Modules.Billing.API
 {
@@ -30,6 +31,7 @@ namespace VShop.Modules.Billing.API
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
 
             services.AddTransient<IPaymentService, FakePaymentService>();
+            MessageMappings.MapMessageTypes();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 
