@@ -17,14 +17,14 @@ namespace VShop.SharedKernel.Scheduler.Services
     public class MessagingService : IMessagingService
     {
         private readonly ICommandBus _commandBus;
-        private readonly SchedulerContext _dbContext;
+        private readonly SchedulerContext _schedulerContext;
         
         private static readonly ILogger Logger = Log.ForContext<MessagingService>();
 
-        public MessagingService(ICommandBus commandBus, SchedulerContext dbContext)
+        public MessagingService(ICommandBus commandBus, SchedulerContext schedulerContext)
         {
             _commandBus = commandBus;
-            _dbContext = dbContext;
+            _schedulerContext = schedulerContext;
         }
 
         public async Task SendMessageAsync(Guid messageId, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         }
 
         private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
-            => _dbContext.MessageLogs
+            => _schedulerContext.MessageLogs
                 .AsNoTracking()
                 .FirstOrDefaultAsync
                 (
@@ -61,15 +61,15 @@ namespace VShop.SharedKernel.Scheduler.Services
         
         private async Task SetMessageStatusAsync(MessageLog message, SchedulingStatus status, CancellationToken cancellationToken)
         {
-            _dbContext.Attach(message);
+            _schedulerContext.Attach(message);
             
             // Set the new Status
             message.Status = status;
 
             // Mark the Status as modified, so it is the only updated value
-            _dbContext.Entry(message).Property(m => m.Status).IsModified = true;
+            _schedulerContext.Entry(message).Property(m => m.Status).IsModified = true;
             
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _schedulerContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

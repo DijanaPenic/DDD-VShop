@@ -14,12 +14,12 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
     public class SchedulerService : ISchedulerService
     {
         private readonly ISchedulerFactory _schedulerFactory;
-        private readonly SchedulerContext _dbContext;
+        private readonly SchedulerContext _schedulerContext;
 
-        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerContext dbContext)
+        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerContext schedulerContext)
         {
             _schedulerFactory = schedulerFactory;
-            _dbContext = dbContext;
+            _schedulerContext = schedulerContext;
         }
 
         public async Task ScheduleMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
@@ -52,9 +52,9 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
                 ScheduledTime = message.ScheduledTime
             };
             
-            _dbContext.MessageLogs.Add(messageLog);
+            _schedulerContext.MessageLogs.Add(messageLog);
 
-            return _dbContext.SaveChangesAsync(cancellationToken);
+            return _schedulerContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

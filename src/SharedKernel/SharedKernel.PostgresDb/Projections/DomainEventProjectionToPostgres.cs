@@ -16,18 +16,18 @@ namespace VShop.SharedKernel.PostgresDb.Projections
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscription 
         where TDbContext : DbContextBase
     {
-        private readonly IServiceProvider _services;
+        private readonly IServiceProvider _serviceProvider;
         private readonly Projector _projector;
         
         private static readonly ILogger Logger = Log.ForContext<DomainEventProjectionToPostgres<TDbContext>>(); 
         
         public DomainEventProjectionToPostgres
         (
-            IServiceProvider services,
+            IServiceProvider serviceProvider,
             Projector projector
         )
         {
-            _services = services;
+            _serviceProvider = serviceProvider;
             _projector = projector;
         }
 
@@ -37,7 +37,7 @@ namespace VShop.SharedKernel.PostgresDb.Projections
             {
                 // Consuming a scoped service in a background task
                 // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task-1
-                using IServiceScope scope = _services.CreateScope();
+                using IServiceScope scope = _serviceProvider.CreateScope();
                 TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
                 Func<Task> handler = _projector(dbContext, domainEvent);

@@ -18,19 +18,18 @@ namespace VShop.Modules.Billing.API.Application.Decorators
     // TODO - create decorator template class
     public class TransactionCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        // TODO - rename all context parameters
-        private readonly BillingContext _dbContext;
+        private readonly BillingContext _billingContext;
         private readonly IBillingIntegrationEventService _billingIntegrationEventService;
         
         private static readonly ILogger Logger = Log.ForContext<TransactionCommandDecorator<TCommand, TResponse>>(); 
 
         public TransactionCommandDecorator
         (
-            BillingContext dbContext,
+            BillingContext billingContext,
             IBillingIntegrationEventService billingIntegrationEventService
         )
         {
-            _dbContext = dbContext;
+            _billingContext = billingContext;
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
@@ -47,15 +46,15 @@ namespace VShop.Modules.Billing.API.Application.Decorators
             try
             {
                 // Handling retries
-                if (_dbContext.HasActiveTransaction) return await next();
+                if (_billingContext.HasActiveTransaction) return await next();
 
-                IExecutionStrategy strategy = _dbContext.Database.CreateExecutionStrategy();
+                IExecutionStrategy strategy = _billingContext.Database.CreateExecutionStrategy();
 
                 await strategy.ExecuteAsync(async () =>
                 {
                     Guid transactionId;
 
-                    await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync())
+                    await using (IDbContextTransaction transaction = await _billingContext.BeginTransactionAsync())
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         Logger.Information
@@ -72,7 +71,7 @@ namespace VShop.Modules.Billing.API.Application.Decorators
                             transaction.TransactionId, commandTypeName
                         );
 
-                        await _dbContext.CommitTransactionAsync(transaction, cancellationToken);
+                        await _billingContext.CommitTransactionAsync(transaction, cancellationToken);
 
                         transactionId = transaction.TransactionId;
                     }
