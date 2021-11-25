@@ -78,9 +78,8 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            DeleteShoppingCartCommand command = new()
+            DeleteShoppingCartCommand command = new(shoppingCartId)
             {
-                ShoppingCartId = shoppingCartId,
                 CorrelationId = SequentialGuid.Create()
             };
 

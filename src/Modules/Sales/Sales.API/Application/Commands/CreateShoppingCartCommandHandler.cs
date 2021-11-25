@@ -57,9 +57,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CreateShoppingCartCommand : Command<ShoppingCart>
     {
-        public Guid ShoppingCartId { get; set; }
-        public Guid CustomerId { get; set; }
-        public int CustomerDiscount { get; set; }
-        public ShoppingCartItemCommandDto[] ShoppingCartItems { get; set; }
+        public Guid ShoppingCartId { get; init; }
+        public Guid CustomerId { get; init; }
+        public int CustomerDiscount { get; init; }
+        public ShoppingCartItemCommandDto[] ShoppingCartItems { get; init; }
     }
 }

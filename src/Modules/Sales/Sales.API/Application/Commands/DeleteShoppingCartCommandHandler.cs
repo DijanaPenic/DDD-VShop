@@ -42,6 +42,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record DeleteShoppingCartCommand : Command
     {
-        public Guid ShoppingCartId { get; set; }
+        public Guid ShoppingCartId { get; init; }
+
+        public DeleteShoppingCartCommand(Guid shoppingCartId)
+        {
+            ShoppingCartId = shoppingCartId;
+        }
     }
 }

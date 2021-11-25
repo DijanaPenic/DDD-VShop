@@ -50,11 +50,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public record SetContactInformationCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
-        public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public string LastName { get; set; }
-        public string EmailAddress { get; set; }
-        public string PhoneNumber { get; set; }
-        public GenderType Gender { get; set; }
+        public string FirstName { get; init; }
+        public string MiddleName { get; init; }
+        public string LastName { get; init; }
+        public string EmailAddress { get; init; }
+        public string PhoneNumber { get; init; }
+        public GenderType Gender { get; init; }
     }
 }

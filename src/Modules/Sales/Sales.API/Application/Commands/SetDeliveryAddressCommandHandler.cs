@@ -53,10 +53,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public record SetDeliveryAddressCommand : Command
     {
         public Guid ShoppingCartId { get; set; }
-        public string City { get; set; }
-        public string CountryCode { get; set; }
-        public string PostalCode { get; set; }
-        public string StateProvince { get; set; }
-        public string StreetAddress { get; set; }
+        public string City { get; init; }
+        public string CountryCode { get; init; }
+        public string PostalCode { get; init; }
+        public string StateProvince { get; init; }
+        public string StreetAddress { get; init; }
     }
 }

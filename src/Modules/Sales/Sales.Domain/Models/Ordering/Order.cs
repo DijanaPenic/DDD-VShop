@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         private readonly List<OrderLine> _orderLines = new();
         
         public Price DeliveryCost { get; private set; }
-        public Price ProductsCostWithoutDiscount => new(_orderLines.Sum(sci => sci.TotalAmount));
+        public Price ProductsCostWithoutDiscount => new(_orderLines.Sum(ol => ol.TotalAmount));
         public Price TotalDiscount { get; private set; }
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
@@ -84,7 +84,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public Result SetCancelledStatus()
         {
             if(Status is not OrderStatus.Processing)
-                return ValidationError.Create($"Changing status to 'Cancelled' is not allowed. Order Status: '{Status}'.");
+                return ValidationError.Create($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
             
@@ -94,7 +94,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public Result SetShippedStatus()
         {
             if(Status is not OrderStatus.Processing)
-                return ValidationError.Create($"Changing status to 'Shipped' is not allowed. Order Status: '{Status}'.");
+                return ValidationError.Create($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
             
