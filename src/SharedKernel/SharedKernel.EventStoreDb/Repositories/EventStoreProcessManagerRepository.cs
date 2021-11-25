@@ -8,7 +8,6 @@ using EventStore.Client;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Extensions;
@@ -27,22 +26,19 @@ namespace VShop.SharedKernel.EventStoreDb.Repositories
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
         private readonly ISchedulerService _messageSchedulerService;
-        private readonly IEventBus _eventBus;
-        
+
         private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
 
         public EventStoreProcessManagerRepository
         (
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
-            ISchedulerService messageSchedulerService,
-            IEventBus eventBus
+            ISchedulerService messageSchedulerService
         )
         {
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
             _messageSchedulerService = messageSchedulerService;
-            _eventBus = eventBus;
         }
         
         public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken)
@@ -77,17 +73,13 @@ namespace VShop.SharedKernel.EventStoreDb.Repositories
                         throw new Exception(error.ToString());
                 }
 
-                // Queue scheduled commands
+                // Schedule deferred commands
                 foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
-                {
                     await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
-                }
-                
-                // TODO - need to see if domain events can be created by process manager.
-                // FYI - integration events are being picked up by ES subscription (integration publisher).
-                // Publish domain events.
-                // foreach (IDomainEvent domainEvent in processManager.GetOutgoingDomainEvents())
-                //     await _eventBus.Publish(@domainEvent, PublishStrategy.SyncStopOnException);
+
+                // Schedule deferred events
+                foreach (IScheduledMessage scheduledEvent in processManager.Outbox.GetEventsForDeferredDispatch())
+                    await _messageSchedulerService.ScheduleMessageAsync(scheduledEvent, cancellationToken);
             }
             finally
             {

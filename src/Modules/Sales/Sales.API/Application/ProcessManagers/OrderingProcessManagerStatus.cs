@@ -4,9 +4,9 @@
     {
         CheckoutRequested = 1,
         OrderPlaced = 2,
-        OrderBilled = 3,
-        OrderCancelled = 4,
-        OrderShipped = 5,
-        Terminated = 6
+        OrderPaymentSucceeded = 3,
+        OrderPaymentFailed = 4,
+        OrderCancelled = 5,
+        OrderShipped = 6
     }
 }

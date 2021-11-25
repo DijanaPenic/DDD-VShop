@@ -31,7 +31,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         {
             ApplyEvent(@event);
             _inbox.Trigger = @event;
-            _inbox.EventHandlers[@event.GetType()](@event);
+
+            Type eventType = @event.GetType();
+            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event);
         }
         
         public void Execute(IBaseCommand command)
@@ -40,7 +42,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _inbox.CommandHandlers[command.GetType()](command);
         }
 
-        protected void RaiseEvent(IBaseEvent @event)
+        protected void RaiseIntegrationEvent(IIntegrationEvent @event)
         {
             SetMessageIdentification(@event);
             _outbox.Add(@event);
@@ -56,6 +58,12 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         {
             SetMessageIdentification(command);
             _outbox.Add(command, scheduledTime);
+        }
+        
+        protected void ScheduleDomainEvent(IDomainEvent @event, DateTime scheduledTime)
+        {
+            SetMessageIdentification(@event);
+            _outbox.Add(@event, scheduledTime);
         }
 
         public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory)

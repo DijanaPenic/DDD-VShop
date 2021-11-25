@@ -1,8 +1,9 @@
 ﻿using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.EventStoreDb.Repositories;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.SharedKernel.EventStoreDb.Repositories;
+using VShop.Modules.Billing.Integration.Events;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 
@@ -26,13 +27,20 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
             AddCustomMap<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
             AddCustomMap<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
+            AddCustomMap<PaymentGracePeriodExpiredDomainEvent>(nameof(PaymentGracePeriodExpiredDomainEvent));
+            AddCustomMap<ShippingGracePeriodExpiredDomainEvent>(nameof(ShippingGracePeriodExpiredDomainEvent));
 
-            // Configure integration events
+            // Configure integration events - local
             AddCustomMap<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
+            
+            // Configure integration events - remote
+            AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
+            AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
             
             // Configure commands
             AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));
             AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
+            AddCustomMap<CancelOrderCommand>(nameof(CancelOrderCommand));
 
             // Configure checkpoint
             AddCustomMap<Checkpoint>(nameof(Checkpoint));

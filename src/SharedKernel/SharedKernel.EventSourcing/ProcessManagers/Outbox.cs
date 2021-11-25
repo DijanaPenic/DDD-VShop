@@ -10,29 +10,32 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class Outbox : IOutbox
     {
-        private readonly List<IBaseEvent> _events = new();
+        private readonly List<IIntegrationEvent> _events = new();
         private readonly List<IBaseCommand> _commands = new();
         private readonly List<IScheduledMessage> _scheduledCommands = new();
+        private readonly List<IScheduledMessage> _scheduledEvents = new();
         
         public int Version { get; set; } = -1;
 
-        public void Add(IBaseEvent @event) => _events.Add(@event);
+        public void Add(IIntegrationEvent @event) => _events.Add(@event);
         public void Add(IBaseCommand command) => _commands.Add(command);
         public void Add(IBaseCommand command, DateTime scheduledTime)
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
-        public IEnumerable<TEvent> GetEvents<TEvent>() => _events.OfType<TEvent>();
+        public void Add(IDomainEvent command, DateTime scheduledTime)
+            => _scheduledEvents.Add(new ScheduledMessage(command, scheduledTime));
         public IEnumerable<IMessage> GetAllMessages()
-            => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands);
+            => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents);
         public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch() => _scheduledCommands;
+        public IEnumerable<IScheduledMessage> GetEventsForDeferredDispatch() => _scheduledEvents;
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
     }
     
     public interface IOutbox
     {
         public int Version { get; }
-        IEnumerable<TEvent> GetEvents<TEvent>();
         public IEnumerable<IMessage> GetAllMessages();
         public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch();
+        public IEnumerable<IScheduledMessage> GetEventsForDeferredDispatch();
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch();
     }
 }

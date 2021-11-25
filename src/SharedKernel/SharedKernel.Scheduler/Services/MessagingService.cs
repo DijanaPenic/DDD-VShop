@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Serilog;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
@@ -17,13 +21,15 @@ namespace VShop.SharedKernel.Scheduler.Services
     public class MessagingService : IMessagingService
     {
         private readonly ICommandBus _commandBus;
+        private readonly IEventBus _eventBus;
         private readonly SchedulerContext _schedulerContext;
         
         private static readonly ILogger Logger = Log.ForContext<MessagingService>();
 
-        public MessagingService(ICommandBus commandBus, SchedulerContext schedulerContext)
+        public MessagingService(ICommandBus commandBus, IEventBus eventBus, SchedulerContext schedulerContext)
         {
             _commandBus = commandBus;
+            _eventBus = eventBus;
             _schedulerContext = schedulerContext;
         }
 
@@ -37,10 +43,21 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.TypeName));                                                     
                                                                                                                                  
-            try                                                                                                                  
+            try
             {
-                await _commandBus.SendAsync(target, cancellationToken);
-                await SetMessageStatusAsync(message, SchedulingStatus.Finished, cancellationToken);                              
+                switch (target)
+                {
+                    case ICommand command:
+                        await _commandBus.SendAsync(command, cancellationToken);
+                        break;
+                    case IDomainEvent domainEvent:
+                        await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                        break;
+                    default:
+                        throw new Exception("Unknown target type.");
+                }
+
+                await SetMessageStatusAsync(message, SchedulingStatus.Finished, cancellationToken);
             }                                                                                                                    
             catch (Exception ex)                                                                                                  
             {                                                                                                                    
