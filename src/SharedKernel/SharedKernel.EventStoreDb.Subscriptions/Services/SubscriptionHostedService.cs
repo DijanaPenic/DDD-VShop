@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 
-namespace VShop.SharedKernel.EventStoreDb
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {
-    public class EventStoreHostedService : IHostedService
+    public class SubscriptionHostedService : IHostedService
     {
-        private readonly IEnumerable<ISubscribeBackgroundService> _subscribeBackgroundServices;
+        private readonly IEnumerable<ISubscriptionBackgroundService> _subscribeBackgroundServices;
 
-        public EventStoreHostedService(IEnumerable<ISubscribeBackgroundService> subscribeBackgroundServices)
+        public SubscriptionHostedService(IEnumerable<ISubscriptionBackgroundService> subscribeBackgroundServices)
             => _subscribeBackgroundServices = subscribeBackgroundServices;
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.EventStoreDb
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            foreach(ISubscribeBackgroundService esSubscriptionManager in _subscribeBackgroundServices)
+            foreach(ISubscriptionBackgroundService esSubscriptionManager in _subscribeBackgroundServices)
                 await esSubscriptionManager.StopAsync(cancellationToken);
         }
     }

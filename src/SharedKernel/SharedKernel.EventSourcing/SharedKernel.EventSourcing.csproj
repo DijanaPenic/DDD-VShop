@@ -9,16 +9,16 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+      <ProjectReference Include="..\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj" />
+      <ProjectReference Include="..\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
       <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
+      <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\SharedKernel.Scheduler.Quartz\SharedKernel.Scheduler.Quartz.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
       <PackageReference Include="Serilog" Version="2.10.0" />
-    </ItemGroup>
-
-    <ItemGroup>
     </ItemGroup>
 
 </Project>

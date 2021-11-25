@@ -3,17 +3,15 @@ using System.Reflection;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Infrastructure;
-
 namespace VShop.SharedKernel.PostgresDb
 {
-    public class PostgresDbContextBuilder : IDbContextBuilder
+    public class DbContextBuilder : IDbContextBuilder
     {
         private DbConnection _connection;
         private readonly Assembly _migrationAssembly;
         private readonly string _connectionString;
 
-        public PostgresDbContextBuilder(string connectionString, Assembly migrationAssembly)
+        public DbContextBuilder(string connectionString, Assembly migrationAssembly)
         {
             _connectionString = connectionString;
             _migrationAssembly = migrationAssembly;
@@ -30,5 +28,10 @@ namespace VShop.SharedKernel.PostgresDb
                 ob => ob.MigrationsAssembly(migrationAssemblyName)
             ).UseSnakeCaseNamingConvention();
         }
+    }
+    
+    public interface IDbContextBuilder
+    {
+        void ConfigureContext(DbContextOptionsBuilder optionsBuilder);
     }
 }

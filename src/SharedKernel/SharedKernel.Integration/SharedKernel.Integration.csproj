@@ -9,7 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj" />
       <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.10.0" />
     </ItemGroup>
 
 </Project>

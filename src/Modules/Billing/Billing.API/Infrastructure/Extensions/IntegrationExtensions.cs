@@ -6,7 +6,7 @@ using VShop.Modules.Billing.API.Application;
 using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Repositories;
-using VShop.SharedKernel.EventStoreDb.Repositories;
+using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {

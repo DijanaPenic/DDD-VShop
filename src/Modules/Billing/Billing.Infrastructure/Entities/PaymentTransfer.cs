@@ -4,7 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 
 namespace VShop.Modules.Billing.Infrastructure.Entities
 {
-    public class PaymentTransfer : DbBaseEntity
+    public class PaymentTransfer : DbEntityBase
     {
         public Guid OrderId { get; set; }
         public PaymentTransferStatus Status { get; set; }

@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.EventSourcing.Messaging;
+using VShop.SharedKernel.EventStoreDb.Messaging;
 
-namespace VShop.SharedKernel.EventSourcing.Projections
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions
 {
-    public interface ISubscription
+    public interface ISubscriptionHandler
     {
         Task ProjectAsync(IMessage message, IMessageMetadata metadata, CancellationToken cancellationToken = default);
     }

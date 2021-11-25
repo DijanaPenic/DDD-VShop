@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories
+namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
 {
     public interface IAggregateRepository<TA, TKey>
         where TKey : ValueObject

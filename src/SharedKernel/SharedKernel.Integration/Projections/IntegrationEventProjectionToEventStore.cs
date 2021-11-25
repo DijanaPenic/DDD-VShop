@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.EventSourcing.Messaging;
-using VShop.SharedKernel.EventSourcing.Projections;
-using VShop.SharedKernel.Integration.Repositories;
+using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
+using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStoreDb.Projections
+namespace VShop.SharedKernel.Integration.Projections
 {
-    public class IntegrationEventProjectionToEventStore : ISubscription
+    public class IntegrationEventProjectionToEventStore : ISubscriptionHandler
     {
         private readonly IIntegrationRepository _integrationRepository;
         

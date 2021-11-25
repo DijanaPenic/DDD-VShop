@@ -1,9 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-using VShop.SharedKernel.EventSourcing.Messaging;
-
-namespace VShop.SharedKernel.EventStoreDb
+namespace VShop.SharedKernel.EventStoreDb.Messaging
 {
     public record MessageMetadata : IMessageMetadata
     {

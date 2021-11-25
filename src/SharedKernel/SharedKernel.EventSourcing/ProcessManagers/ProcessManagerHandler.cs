@@ -6,7 +6,7 @@ using Serilog;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {

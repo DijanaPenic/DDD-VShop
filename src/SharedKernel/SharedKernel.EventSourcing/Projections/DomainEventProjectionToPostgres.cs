@@ -6,14 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.EventSourcing.Messaging;
-using VShop.SharedKernel.EventSourcing.Projections;
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.PostgresDb.Projections
+namespace VShop.SharedKernel.EventSourcing.Projections
 {
-    public class DomainEventProjectionToPostgres<TDbContext> : ISubscription 
+    public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler 
         where TDbContext : DbContextBase
     {
         private readonly IServiceProvider _serviceProvider;

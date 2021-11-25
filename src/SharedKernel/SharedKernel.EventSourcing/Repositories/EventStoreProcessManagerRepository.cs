@@ -13,12 +13,12 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Quartz.Services;
-using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStoreDb.Repositories
+namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class EventStoreProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager, new()

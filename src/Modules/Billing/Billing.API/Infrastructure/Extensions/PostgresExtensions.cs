@@ -11,7 +11,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
     {
         public static void AddPostgresServices(this IServiceCollection services, string connectionString)
         {
-            services.AddScoped<IDbContextBuilder>(_ => new PostgresDbContextBuilder
+            services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
                 typeof(Startup).Assembly)

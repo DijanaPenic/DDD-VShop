@@ -4,17 +4,19 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <AssemblyName>VShop.SharedKernel.Scheduler</AssemblyName>
-        <RootNamespace>VShop.SharedKernel.Scheduler</RootNamespace>
+        <AssemblyName>VShop.SharedKernel.EventStoreDb.Subscriptions</AssemblyName>
+        <RootNamespace>VShop.SharedKernel.EventStoreDb.Subscriptions</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
       <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="EventStore.Client.Grpc.Streams" Version="21.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
       <PackageReference Include="Serilog" Version="2.10.0" />
     </ItemGroup>
 

@@ -1,9 +1,10 @@
 ﻿using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.EventStoreDb.Repositories;
+
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Checkpoints;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 

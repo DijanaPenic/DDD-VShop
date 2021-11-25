@@ -23,11 +23,11 @@ namespace VShop.SharedKernel.PostgresDb
         public Task<int> SaveChangesAsync(DateTime effectiveTime, CancellationToken cancellationToken = default)
         {
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is DbBaseEntity && e.State is (EntityState.Added or EntityState.Modified));
+                .Where(e => e.Entity is DbEntityBase && e.State is (EntityState.Added or EntityState.Modified));
 
             foreach (EntityEntry entry in entries)
             {
-                DbBaseEntity baseEntity = (DbBaseEntity)entry.Entity;
+                DbEntityBase baseEntity = (DbEntityBase)entry.Entity;
 
                 baseEntity.DateUpdatedUtc = effectiveTime;
                 if (entry.State == EntityState.Added) baseEntity.DateCreatedUtc = effectiveTime;
@@ -36,11 +36,11 @@ namespace VShop.SharedKernel.PostgresDb
             return base.SaveChangesAsync(cancellationToken);
         }
         
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (_currentTransaction is not null) return null;
 
-            _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            _currentTransaction = await Database.BeginTransactionAsync(cancellationToken);
 
             return _currentTransaction;
         }

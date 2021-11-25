@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Domain.Enums;
 
 namespace VShop.Modules.Sales.Infrastructure.Entities
 {
-    public class ShoppingCartInfo : DbBaseEntity
+    public class ShoppingCartInfo : DbEntityBase
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }

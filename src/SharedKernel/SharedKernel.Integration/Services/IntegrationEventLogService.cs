@@ -26,13 +26,11 @@ namespace VShop.SharedKernel.Integration.Services
             CancellationToken cancellationToken = default
         )
         {
-            List<IntegrationEventLog> result = await _integrationContext.IntegrationEventLogs
+            List<IntegrationEventLog> result = await _integrationContext.IntegrationEventLogs.AsQueryable()
                 .Where(ie => ie.TransactionId == transactionId && ie.State == EventState.NotPublished)
                 .ToListAsync(cancellationToken);
 
-            if (result is not null && result.Any()) return result.OrderBy(ie => ie.DateCreatedUtc);
-
-            return Enumerable.Empty<IntegrationEventLog>();
+            return result.Any() ? result.OrderBy(ie => ie.DateCreatedUtc) : Enumerable.Empty<IntegrationEventLog>();
         }
 
         public Task SaveEventAsync

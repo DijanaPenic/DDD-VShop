@@ -2,19 +2,22 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.EventStoreDb.Projections;
-using VShop.SharedKernel.EventStoreDb.Repositories;
-using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.PostgresDb.Projections;
-using VShop.SharedKernel.Integration.Repositories;
-using VShop.SharedKernel.EventSourcing.Projections;
-using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;
+using VShop.SharedKernel.Integration.Projections;
+using VShop.SharedKernel.Integration.Repositories;
+using VShop.SharedKernel.Integration.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Projections;
+using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Checkpoints;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -37,15 +40,15 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
 
             // NOTE: Cannot use AddHostedService to register multiple workers: https://github.com/dotnet/runtime/issues/38751
-            services.AddHostedService<EventStoreHostedService>();
+            services.AddHostedService<SubscriptionHostedService>();
             
             // Read model projections
-            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
             (
                 eventStoreClient,
                 new EventStoreCheckpointRepository(eventStoreClient), // TODO - implement PostgresDb checkpoint (needed for atomic operation)
                 "ReadModels",
-                new ISubscription[]
+                new ISubscriptionHandler[]
                 {
                     new DomainEventProjectionToPostgres<SalesContext>(provider, ShoppingCartInfoProjection.ProjectAsync)
                 },
@@ -53,12 +56,12 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             ));
 
             // Publish integration events from the current bounded context
-            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
             (
                 eventStoreClient,
                 new EventStoreCheckpointRepository(eventStoreClient),
                 "IntegrationEventsPub",
-                new ISubscription[]
+                new ISubscriptionHandler[]
                 {
                     new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationRepository>())
                 },
@@ -69,14 +72,14 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             ));
 
             // Subscribe to all integration streams
-            services.AddSingleton<ISubscribeBackgroundService, SubscribeToAllBackgroundService>(provider => new SubscribeToAllBackgroundService
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
             (
                 eventStoreClient,
                 new EventStoreCheckpointRepository(eventStoreClient),
                 "IntegrationEventsSub",
-                new ISubscription[]
+                new ISubscriptionHandler[]
                 {
-                    new IntegrationEventProjectionPublisher(provider.GetRequiredService<IEventBus>())
+                    new IntegrationEventPublisher(provider.GetRequiredService<IEventBus>())
                 },
                 new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
             ));

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Messaging.Events;
 
-namespace VShop.SharedKernel.Integration.Repositories
+namespace VShop.SharedKernel.Integration.Repositories.Contracts
 {
     public interface IIntegrationRepository
     {

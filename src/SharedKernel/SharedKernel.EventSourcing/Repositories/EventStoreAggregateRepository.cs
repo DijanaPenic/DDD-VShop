@@ -11,12 +11,12 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventSourcing.Aggregates;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStoreDb.Repositories
+namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class EventStoreAggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
         where TKey : ValueObject

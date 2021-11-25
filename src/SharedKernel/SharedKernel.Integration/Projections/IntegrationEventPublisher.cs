@@ -6,20 +6,20 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
-using VShop.SharedKernel.EventSourcing.Messaging;
-using VShop.SharedKernel.EventSourcing.Projections;
+using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStoreDb.Projections
+namespace VShop.SharedKernel.Integration.Projections
 {
-    public class IntegrationEventProjectionPublisher : ISubscription
+    public class IntegrationEventPublisher : ISubscriptionHandler
     {
         private readonly IEventBus _eventBus;
         
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionPublisher>();
+        private static readonly ILogger Logger = Log.ForContext<IntegrationEventPublisher>();
 
-        public IntegrationEventProjectionPublisher(IEventBus eventBus)
+        public IntegrationEventPublisher(IEventBus eventBus)
             => _eventBus = eventBus;
 
         public Task ProjectAsync(IMessage message, IMessageMetadata _, CancellationToken cancellationToken)

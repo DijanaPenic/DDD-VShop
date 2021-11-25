@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VShop.SharedKernel.EventSourcing.Messaging
+namespace VShop.SharedKernel.EventStoreDb.Messaging
 {
     public interface IMessageMetadata
     {

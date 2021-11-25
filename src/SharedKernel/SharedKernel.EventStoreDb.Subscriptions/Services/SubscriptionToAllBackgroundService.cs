@@ -6,18 +6,18 @@ using Serilog;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.EventStoreDb.Repositories;
-using VShop.SharedKernel.EventSourcing.Messaging;
-using VShop.SharedKernel.EventSourcing.Projections;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Repositories;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Repositories.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Threading;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {
-    public class SubscribeToAllBackgroundService : ISubscribeBackgroundService
+    public class SubscriptionToAllBackgroundService : ISubscriptionBackgroundService
     {
         private CancellationTokenSource _cancellationTokenSource;
         private Task _executingTask;
@@ -26,17 +26,17 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICheckpointRepository _checkpointRepository;
         private readonly string _subscriptionId;
-        private readonly ISubscription[] _subscriptionHandlers;
+        private readonly ISubscriptionHandler[] _subscriptionHandlers;
         private readonly SubscriptionFilterOptions _filterOptions;
 
-        private static readonly ILogger Logger = Log.ForContext<SubscribeToAllBackgroundService>();
+        private static readonly ILogger Logger = Log.ForContext<SubscriptionToAllBackgroundService>();
 
-        public SubscribeToAllBackgroundService
+        public SubscriptionToAllBackgroundService
         (
             EventStoreClient eventStoreClient,
             ICheckpointRepository checkpointRepository,
             string subscriptionId,
-            ISubscription[] subscriptionHandlers,
+            ISubscriptionHandler[] subscriptionHandlers,
             SubscriptionFilterOptions filterOptions = default
         )
         {

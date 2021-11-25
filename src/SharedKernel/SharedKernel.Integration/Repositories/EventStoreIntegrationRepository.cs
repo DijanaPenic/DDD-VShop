@@ -6,10 +6,10 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.Integration.Repositories;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Integration.Repositories.Contracts;
 
-namespace VShop.SharedKernel.EventStoreDb.Repositories
+namespace VShop.SharedKernel.Integration.Repositories
 {
     public class EventStoreIntegrationRepository : IIntegrationRepository
     {
