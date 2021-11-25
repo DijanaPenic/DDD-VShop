@@ -33,7 +33,7 @@ namespace VShop.SharedKernel.Integration.Services
             return result.Any() ? result.OrderBy(ie => ie.DateCreatedUtc) : Enumerable.Empty<IntegrationEventLog>();
         }
 
-        public Task SaveEventAsync
+        public async Task SaveEventAsync
         (
             IIntegrationEvent @event,
             IDbContextTransaction transaction,
@@ -44,10 +44,10 @@ namespace VShop.SharedKernel.Integration.Services
 
             IntegrationEventLog eventLogEntry = new(@event, transaction.TransactionId);
 
-            _integrationContext.Database.UseTransaction(transaction.GetDbTransaction());
-            _integrationContext.IntegrationEventLogs.Add(eventLogEntry);
+            await _integrationContext.Database.UseTransactionAsync(transaction.GetDbTransaction(), cancellationToken);
+            await _integrationContext.IntegrationEventLogs.AddAsync(eventLogEntry, cancellationToken);
 
-            return _integrationContext.SaveChangesAsync(cancellationToken);
+            await _integrationContext.SaveChangesAsync(cancellationToken);
         }
 
         public Task MarkEventAsPublishedAsync(Guid eventId, CancellationToken cancellationToken = default)
@@ -59,17 +59,17 @@ namespace VShop.SharedKernel.Integration.Services
         public Task MarkEventAsFailedAsync(Guid eventId, CancellationToken cancellationToken = default)
             => UpdateEventStatusAsync(eventId, EventState.PublishedFailed, cancellationToken);
 
-        private Task UpdateEventStatusAsync(Guid eventId, EventState status, CancellationToken cancellationToken = default)
+        private async Task UpdateEventStatusAsync(Guid eventId, EventState status, CancellationToken cancellationToken = default)
         {
-            IntegrationEventLog eventLogEntry = _integrationContext.IntegrationEventLogs
-                .Single(ie => ie.EventId == eventId);
+            IntegrationEventLog eventLogEntry = await _integrationContext.IntegrationEventLogs
+                .SingleAsync(ie => ie.EventId == eventId, cancellationToken);
             eventLogEntry.State = status;
 
             if (status is EventState.InProgress) eventLogEntry.TimesSent++;
 
             _integrationContext.IntegrationEventLogs.Update(eventLogEntry);
 
-            return _integrationContext.SaveChangesAsync(cancellationToken);
+            await _integrationContext.SaveChangesAsync(cancellationToken);
         }
     }
 }
