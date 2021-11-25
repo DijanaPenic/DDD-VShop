@@ -103,7 +103,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             CancellationToken cancellationToken
         )
         {
-            if (IsEventWithEmptyData(resolvedEvent) || IsCheckpointEvent(resolvedEvent) || !IsSubscribedToEvent(resolvedEvent)) return;
+            if (IsMessageWithEmptyData(resolvedEvent) || IsCheckpointMessage(resolvedEvent) || !IsSubscribedToMessage(resolvedEvent)) return;
 
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
             IMessage message = resolvedEvent.DeserializeData<IMessage>();
@@ -134,7 +134,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             }
         }
         
-        private static bool IsEventWithEmptyData(ResolvedEvent resolvedEvent)
+        private static bool IsMessageWithEmptyData(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.Data.Length is not 0) return false;
 
@@ -143,7 +143,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             return true;
         }
 
-        private static bool IsCheckpointEvent(ResolvedEvent resolvedEvent)
+        private static bool IsCheckpointMessage(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName<Checkpoint>()) return false;
 
@@ -152,7 +152,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             return true;
         }
 
-        private static bool IsSubscribedToEvent(ResolvedEvent resolvedEvent)
+        private static bool IsSubscribedToMessage(ResolvedEvent resolvedEvent)
         {
             Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
 
