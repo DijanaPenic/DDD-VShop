@@ -179,7 +179,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
             );
             
             // Resubscribe if the client didn't stop the subscription
-            if (reason != SubscriptionDroppedReason.Disposed) Resubscribe();
+            if (reason is not SubscriptionDroppedReason.Disposed) Resubscribe();
         }
 
         private void Resubscribe()
@@ -191,6 +191,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
                 {
                     Monitor.Enter(_resubscribeLock);
 
+                    // Avoiding deadlocks: https://stackoverflow.com/questions/28305968/use-task-run-in-synchronous-method-to-avoid-deadlock-waiting-on-async-method
                     using (NoSynchronizationContextScope.Enter())
                     {
                         SubscribeToAllAsync(_cancellationTokenSource!.Token).Wait();
