@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +12,11 @@ namespace VShop.SharedKernel.PostgresDb
     public class DbContextBase : DbContext
     {
         private IDbContextTransaction _currentTransaction;
+
+        protected readonly IDbContextBuilder ContextBuilder;
         
         protected DbContextBase() { }
+        public DbContextBase(IDbContextBuilder contextBuilder) => ContextBuilder = contextBuilder;
         protected DbContextBase(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
         
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

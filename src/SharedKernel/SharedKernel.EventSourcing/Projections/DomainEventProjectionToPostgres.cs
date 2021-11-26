@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Messaging;
@@ -17,39 +19,35 @@ namespace VShop.SharedKernel.EventSourcing.Projections
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler 
         where TDbContext : DbContextBase
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly Projector _projector;
         
         private static readonly ILogger Logger = Log.ForContext<DomainEventProjectionToPostgres<TDbContext>>(); 
         
-        public DomainEventProjectionToPostgres
+        public DomainEventProjectionToPostgres(Projector projector) => _projector = projector;
+
+        public async Task ProjectAsync
         (
-            IServiceProvider serviceProvider,
-            Projector projector
+            IMessage message,
+            IMessageMetadata metadata,
+            IServiceScope scope,
+            IDbContextTransaction transaction,
+            CancellationToken cancellationToken = default
         )
         {
-            _serviceProvider = serviceProvider;
-            _projector = projector;
-        }
-
-        public async Task ProjectAsync(IMessage message, IMessageMetadata metadata, CancellationToken cancellationToken)
-        {
-            if(message is IDomainEvent domainEvent)
-            {
-                // Consuming a scoped service in a background task
-                // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task-1
-                using IServiceScope scope = _serviceProvider.CreateScope();
-                TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-
-                Func<Task> handler = _projector(dbContext, domainEvent);
+            if(message is not IDomainEvent domainEvent) return;
             
-                if (handler is null) return;
-            
-                Logger.Debug("Projecting domain event: {Message}", domainEvent);
+            TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
-                await handler();
-                await dbContext.SaveChangesAsync(metadata.EffectiveTime, cancellationToken);
-            }
+            Func<Task> handler = _projector(dbContext, domainEvent);
+        
+            if (handler is null) return;
+        
+            Logger.Debug("Projecting domain event: {Message}", domainEvent);
+
+            await handler();
+            
+            await dbContext.Database.UseTransactionAsync(transaction.GetDbTransaction(), cancellationToken);
+            await dbContext.SaveChangesAsync(metadata.EffectiveTime, cancellationToken);
         }
         
         public delegate Func<Task> Projector

@@ -9,15 +9,13 @@ namespace VShop.SharedKernel.Integration.Infrastructure
     public class IntegrationContext : DbContextBase
     {
         public const string IntegrationSchema = "integration";
-        private readonly IDbContextBuilder _contextBuilder;
 
         public DbSet<IntegrationEventLog> IntegrationEventLogs { get; set; }
         
-        public IntegrationContext(IDbContextBuilder contextBuilder)
-            => _contextBuilder = contextBuilder;
+        public IntegrationContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => _contextBuilder.ConfigureContext(optionsBuilder);
+            => ContextBuilder.ConfigureContext(optionsBuilder);
 
         protected override void OnModelCreating(ModelBuilder builder)
             => builder.ApplyConfiguration(new IntegrationEventLogEntityConfiguration());

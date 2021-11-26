@@ -4,7 +4,6 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Checkpoints;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 
@@ -43,9 +42,6 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
             AddCustomMap<CancelOrderCommand>(nameof(CancelOrderCommand));
 
-            // Configure checkpoint
-            AddCustomMap<Checkpoint>(nameof(Checkpoint));
-            
             // Configure scheduled message
             AddCustomMap<ScheduledMessage>(nameof(ScheduledMessage));
         }

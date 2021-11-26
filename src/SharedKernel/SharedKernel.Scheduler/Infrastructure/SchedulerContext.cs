@@ -12,7 +12,10 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure
 
         public DbSet<MessageLog> MessageLogs { get; set; }
 
-        public SchedulerContext(DbContextOptions<SchedulerContext> options) : base(options) { }
+        public SchedulerContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => ContextBuilder.ConfigureContext(optionsBuilder);
     
         protected override void OnModelCreating(ModelBuilder builder)
             => builder.ApplyConfiguration(new ScheduledCommandLogEntityConfiguration());

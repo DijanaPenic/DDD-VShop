@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using EventStore.Client;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Repositories;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Repositories.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Threading;
 
@@ -24,9 +26,9 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         private readonly object _resubscribeLock = new();
         
         private readonly EventStoreClient _eventStoreClient;
-        private readonly ICheckpointRepository _checkpointRepository;
+        private readonly IServiceProvider _serviceProvider;
         private readonly string _subscriptionId;
-        private readonly ISubscriptionHandler[] _subscriptionHandlers;
+        private readonly ISubscriptionHandler _subscriptionHandler;
         private readonly SubscriptionFilterOptions _filterOptions;
 
         private static readonly ILogger Logger = Log.ForContext<SubscriptionToAllBackgroundService>();
@@ -34,16 +36,16 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         public SubscriptionToAllBackgroundService
         (
             EventStoreClient eventStoreClient,
-            ICheckpointRepository checkpointRepository,
+            IServiceProvider serviceProvider,
             string subscriptionId,
-            ISubscriptionHandler[] subscriptionHandlers,
+            ISubscriptionHandler subscriptionHandler,
             SubscriptionFilterOptions filterOptions = default
         )
         {
             _eventStoreClient = eventStoreClient;
             _subscriptionId = $"{eventStoreClient.ConnectionName}-{subscriptionId}";
-            _subscriptionHandlers = subscriptionHandlers;
-            _checkpointRepository = checkpointRepository;
+            _subscriptionHandler = subscriptionHandler;
+            _serviceProvider = serviceProvider;
             _filterOptions = filterOptions ?? new SubscriptionFilterOptions(EventTypeFilter.ExcludeSystemEvents());
         }
 
@@ -78,11 +80,15 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         {
             Logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionId);
 
-            ulong? checkpoint = await _checkpointRepository.LoadAsync(_subscriptionId, cancellationToken);
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+            
+            Checkpoint checkpoint = await subscriptionContext.Checkpoints
+                .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionId, cancellationToken);
 
             await _eventStoreClient.SubscribeToAllAsync
             (
-                GetPosition(checkpoint),
+                GetPosition(checkpoint?.Position),
                 HandleEventAsync,
                 false,
                 HandleDrop,
@@ -105,23 +111,39 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         {
             if (IsMessageWithEmptyData(resolvedEvent) || IsCheckpointMessage(resolvedEvent) || !IsSubscribedToMessage(resolvedEvent)) return;
 
-            IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-            IMessage message = resolvedEvent.DeserializeData<IMessage>();
-
             try
             {
-                await Task.WhenAll(_subscriptionHandlers.Select(sh => sh.ProjectAsync
-                (
-                    message,
-                    metadata,
-                    cancellationToken
-                )));
-                await _checkpointRepository.SaveAsync
-                (
-                    _subscriptionId,
-                    resolvedEvent.Event.Position.CommitPosition,
-                    cancellationToken
-                );
+                IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
+                IMessage message = resolvedEvent.DeserializeData<IMessage>();
+                
+                // Consuming a scoped service in a background task
+                // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task-1
+                using IServiceScope scope = _serviceProvider.CreateScope();
+                SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+                
+                IExecutionStrategy strategy = subscriptionContext.Database.CreateExecutionStrategy();
+                await strategy.ExecuteAsync(async () =>
+                {
+                    await using IDbContextTransaction transaction = await subscriptionContext.BeginTransactionAsync(cancellationToken);
+                    await _subscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken);
+
+                    Checkpoint checkpoint = await subscriptionContext.Checkpoints
+                        .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionId, cancellationToken);
+                    ulong position = resolvedEvent.Event.Position.CommitPosition;
+
+                    if (checkpoint is not null) checkpoint.Position = position;
+                    else
+                    {
+                        subscriptionContext.Checkpoints.Add(new Checkpoint
+                        {
+                            SubscriptionId = _subscriptionId,
+                            Position = position
+                        });
+                    }
+
+                    await subscriptionContext.SaveChangesAsync(cancellationToken);
+                    await subscriptionContext.CommitTransactionAsync(transaction, cancellationToken);
+                });
             }
             catch (Exception ex)
             {
@@ -131,9 +153,11 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                     "Error consuming message: {ExceptionMessage}{ExceptionStackTrace}",
                     ex.Message, ex.StackTrace
                 );
+
+                throw;
             }
         }
-        
+
         private static bool IsMessageWithEmptyData(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.Data.Length is not 0) return false;
@@ -215,7 +239,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
                 if (resubscribed) break;
 
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
             }
         }
     }

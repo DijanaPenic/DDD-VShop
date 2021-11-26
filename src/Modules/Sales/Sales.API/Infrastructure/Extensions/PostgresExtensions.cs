@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.Infrastructure;
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
@@ -10,21 +11,14 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
     {
         public static void AddPostgresServices(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<SalesContext>(options => options.UseNpgsql
+            services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                // Target project needs to match migrations assembly
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name)
-            )
-            .UseSnakeCaseNamingConvention());
-
-            services.AddDbContext<SchedulerContext>(options => options.UseNpgsql
-            (
-                connectionString,
-                // Target project needs to match migrations assembly
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name)
-            )
-            .UseSnakeCaseNamingConvention());
+                typeof(Startup).Assembly
+            ));
+            services.AddDbContext<SalesContext>();
+            services.AddDbContext<SchedulerContext>();
+            services.AddDbContext<SubscriptionContext>();
         }
     }
 }

@@ -14,10 +14,10 @@ namespace VShop.Modules.Sales.Infrastructure
         public DbSet<ShoppingCartInfo> ShoppingCarts { get; set; }
         public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
 
-        public SalesContext(DbContextOptions<SalesContext> options) : base(options)
-        {
+        public SalesContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
 
-        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => ContextBuilder.ConfigureContext(optionsBuilder);
     
         protected override void OnModelCreating(ModelBuilder builder)
         {
