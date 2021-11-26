@@ -21,8 +21,7 @@ namespace VShop.SharedKernel.Integration.Projections
         
         private static readonly ILogger Logger = Log.ForContext<IntegrationEventPublisher>();
 
-        public IntegrationEventPublisher(IEventBus eventBus)
-            => _eventBus = eventBus;
+        public IntegrationEventPublisher(IEventBus eventBus) => _eventBus = eventBus;
 
         public Task ProjectAsync
         (

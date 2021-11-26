@@ -43,11 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             if (createOrderResult.IsError(out ApplicationError error)) return error;
 
             Order order = createOrderResult.GetData();
-            
-            // NOTE: atomic operation
-            // TODO - remove this integration event. 
-            order.RaiseEvent(new OrderPlacedIntegrationEvent{ OrderId = order.Id });
-            
+
             await _orderRepository.SaveAsync(order, cancellationToken);
 
             return order;
