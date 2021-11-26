@@ -53,7 +53,7 @@ namespace VShop.SharedKernel.Application.Decorators
                 {
                     Guid transactionId;
 
-                    await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync())
+                    await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync(cancellationToken))
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         Logger.Information
