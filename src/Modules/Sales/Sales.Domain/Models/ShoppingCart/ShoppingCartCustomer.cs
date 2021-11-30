@@ -33,8 +33,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         )
         {
             if (_isClosedForUpdates)
-                return ValidationError.Create(@"Updating contact information for the shopping cart is not allowed. 
-                                                            The shopping cart has been closed for updates.");
+                return Result.ValidationError(@"Updating contact information for the shopping cart is not allowed. 
+                                                          The shopping cart has been closed for updates.");
             RaiseEvent
             (
                 new ShoppingCartContactInformationSetDomainEvent
@@ -55,7 +55,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Result SetDeliveryAddress(Address deliveryAddress)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create(@"Updating delivery address for the shopping cart is not allowed. 
+                return Result.ValidationError(@"Updating delivery address for the shopping cart is not allowed. 
                                                             The shopping cart has been closed for updates.");
             RaiseEvent
             (

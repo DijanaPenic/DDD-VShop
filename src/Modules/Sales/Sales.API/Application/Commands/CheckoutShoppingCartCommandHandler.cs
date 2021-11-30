@@ -29,7 +29,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId,
                 cancellationToken
             );
-            if (shoppingCart is null) return NotFoundError.Create("Shopping cart not found.");
+            if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             
             // TODO - this will generate a new Id every time user submits the checkout request (problem!).
             // Potentially use the same Id for shopping cart and order.

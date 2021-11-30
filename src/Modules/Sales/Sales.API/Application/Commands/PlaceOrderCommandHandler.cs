@@ -10,7 +10,6 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
-using VShop.Modules.Sales.Integration.Events;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

@@ -2,7 +2,6 @@
 {
     public class NotFoundError : ApplicationErrorBase
     {
-        private NotFoundError(string message) : base(message){ }
-        public static ApplicationError Create(string message) => new NotFoundError(message);
+        public NotFoundError(string message) : base(message){ }
     }
 }

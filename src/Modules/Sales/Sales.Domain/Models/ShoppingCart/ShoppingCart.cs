@@ -53,7 +53,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Result AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Adding product for the shopping cart in '{Status}' status is not allowed.");
+                return Result.ValidationError($"Adding product for the shopping cart in '{Status}' status is not allowed.");
 
             ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.Id.Equals(productId));
 
@@ -73,7 +73,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             else
             {
                 if (!unitPrice.Equals(shoppingCartItem.UnitPrice))
-                    return ValidationError.Create(@$"Product's quantity cannot be increased - shopping cart already contains the 
+                    return Result.ValidationError(@$"Product's quantity cannot be increased - shopping cart already contains the 
                                                 requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
                 Result increaseProductQuantityResult = shoppingCartItem.IncreaseProductQuantity(quantity);
@@ -89,12 +89,12 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Result RemoveProduct(EntityId productId, ProductQuantity quantity)
         {
             if(_isClosedForUpdates)
-                return ValidationError.Create($"Removing product from the shopping cart in '{Status}' status is not allowed.");
+                return Result.ValidationError($"Removing product from the shopping cart in '{Status}' status is not allowed.");
             
             ShoppingCartItem shoppingCartItem = FindShoppingCartItem(productId);
 
             if (shoppingCartItem is null)
-                return ValidationError.Create($"Product with id `{productId}` was not found in shopping cart.");
+                return Result.ValidationError($"Product with id `{productId}` was not found in shopping cart.");
             
             if (shoppingCartItem.Quantity - quantity <= 0)
             {
@@ -122,13 +122,13 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Result RequestCheckout(EntityId orderId)
         {
             if(Status is not ShoppingCartStatus.AwaitingConfirmation)
-                return ValidationError.Create($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
+                return Result.ValidationError($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
 
             if(IsShoppingCartEmpty)
-                return ValidationError.Create($"Checkout is not allowed. At least one product must be added in the shopping cart.");
+                return Result.ValidationError($"Checkout is not allowed. At least one product must be added in the shopping cart.");
 
             if(ProductsCostWithDiscount < Settings.MinShoppingCartAmountForCheckout)
-                return ValidationError.Create(@$"Checkout is not allowed. Minimum required shopping cart amount 
+                return Result.ValidationError(@$"Checkout is not allowed. Minimum required shopping cart amount 
                                                             for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
             RaiseEvent
             (
@@ -146,7 +146,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Result RequestDelete()
         {
             if (Status is ShoppingCartStatus.Closed)
-                return ValidationError.Create($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
+                return Result.ValidationError($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
             RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent { ShoppingCartId = Id });
             

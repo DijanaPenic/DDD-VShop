@@ -19,6 +19,7 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly IEventBus _eventBus;
         
+        // TODO - ambient context anti-pattern
         private static readonly ILogger Logger = Log.ForContext<IntegrationEventPublisher>();
 
         public IntegrationEventPublisher(IEventBus eventBus) => _eventBus = eventBus;

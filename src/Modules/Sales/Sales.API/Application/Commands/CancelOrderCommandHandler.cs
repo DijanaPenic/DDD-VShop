@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId,
                 cancellationToken
             );
-            if (order is null) return NotFoundError.Create("Order not found.");
+            if (order is null) return Result.NotFoundError("Order not found.");
 
             Result cancelOrderResult = order.SetCancelledStatus();
 

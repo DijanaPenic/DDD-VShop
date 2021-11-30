@@ -29,13 +29,13 @@ namespace VShop.SharedKernel.Application.Decorators
             }
             catch (ValidationException ex)
             {
-                return ValidationError.Create(ex.Message);
+                return Result.ValidationError(ex.Message);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "Unhandled error has occurred");
                 
-                return InternalServerError.Create(JsonConvert.SerializeObject(ex));
+                return Result.InternalServerError(JsonConvert.SerializeObject(ex));
             }
         }
     }
@@ -55,15 +55,15 @@ namespace VShop.SharedKernel.Application.Decorators
             {
                 return await next();
             }
-            catch (ValidationException ex)
+            catch (ValidationException ex) // TODO - check if this can be addressed in value object classes
             {
-                return ValidationError.Create(ex.Message);
+                return Result.ValidationError(ex.Message);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "Unhandled error has occurred");
                 
-                return InternalServerError.Create(JsonConvert.SerializeObject(ex));
+                return Result.InternalServerError(JsonConvert.SerializeObject(ex));
             }
         }
     }
