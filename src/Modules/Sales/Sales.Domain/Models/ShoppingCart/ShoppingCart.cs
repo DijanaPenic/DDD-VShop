@@ -27,14 +27,15 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Price TotalDiscount => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
-        public bool IsShoppingCartEmpty => _shoppingCartItems.Count == 0;
-        public int TotalItemsCount() => _shoppingCartItems.Count;
+        public bool IsShoppingCartEmpty => _shoppingCartItems.Count is 0;
+        public int TotalItemsCount => _shoppingCartItems.Count;
+        public bool HasMinAmountForCheckout => ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForCheckout;
 
         public Result Create
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            int customerDiscount
+            int customerDiscount // TODO - create a value object to prevent negative numbers, number in range (0-100)
         )
         {
             RaiseEvent
@@ -127,7 +128,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if(IsShoppingCartEmpty)
                 return Result.ValidationError($"Checkout is not allowed. At least one product must be added in the shopping cart.");
 
-            if(ProductsCostWithDiscount < Settings.MinShoppingCartAmountForCheckout)
+            if(!HasMinAmountForCheckout)
                 return Result.ValidationError(@$"Checkout is not allowed. Minimum required shopping cart amount 
                                                             for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
             RaiseEvent
