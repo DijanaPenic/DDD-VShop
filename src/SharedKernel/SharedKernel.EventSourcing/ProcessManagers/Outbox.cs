@@ -10,7 +10,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class Outbox : IOutbox
     {
-        private readonly List<IIntegrationEvent> _events = new();
+        private readonly List<IIntegrationEvent> _events = new(); // TODO - BaseCommand vs. IntegrationEvent
         private readonly List<IBaseCommand> _commands = new();
         private readonly List<IScheduledMessage> _scheduledCommands = new();
         private readonly List<IScheduledMessage> _scheduledEvents = new();

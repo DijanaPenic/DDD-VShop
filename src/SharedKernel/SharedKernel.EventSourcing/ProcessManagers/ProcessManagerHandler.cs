@@ -13,7 +13,6 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     public abstract class ProcessManagerHandler<TProcess>
         where TProcess : ProcessManager
     {
-        private TProcess _processManager;
         private readonly IProcessManagerRepository<TProcess> _processManagerRepository;
 
         private static readonly ILogger Logger = Log.ForContext<ProcessManagerHandler<TProcess>>();
@@ -23,7 +22,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         protected async Task<Result> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
         {
-            _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
+            TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
             Logger.Information
             (
@@ -31,16 +30,16 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, command.GetType().Name
             );
             
-            _processManager.Execute(command);
+            processManager.Execute(command);
             
-            await _processManagerRepository.SaveAsync(_processManager, cancellationToken);
+            await _processManagerRepository.SaveAsync(processManager, cancellationToken);
 
             return Result.Success;
         }
         
         protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
         {
-            _processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
+            TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
             Logger.Information
             (
@@ -48,9 +47,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, @event.GetType().Name
             );
             
-            _processManager.Transition(@event);
+            processManager.Transition(@event);
             
-            await _processManagerRepository.SaveAsync(_processManager, cancellationToken);
+            await _processManagerRepository.SaveAsync(processManager, cancellationToken);
         }
     }
 }

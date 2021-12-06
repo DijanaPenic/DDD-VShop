@@ -125,7 +125,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                 await strategy.ExecuteAsync(async () =>
                 {
                     await using IDbContextTransaction transaction = await subscriptionContext.BeginTransactionAsync(cancellationToken);
-                    await _subscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken);
+                    await _subscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken); // TODO - refactoring needed
 
                     Checkpoint checkpoint = await subscriptionContext.Checkpoints
                         .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionId, cancellationToken);

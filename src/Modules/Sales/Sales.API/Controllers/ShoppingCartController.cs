@@ -96,9 +96,8 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            CheckoutShoppingCartCommand command = new()
+            CheckoutShoppingCartCommand command = new(shoppingCartId)
             {
-                ShoppingCartId = shoppingCartId,
                 CorrelationId = SequentialGuid.Create()
             };
 
