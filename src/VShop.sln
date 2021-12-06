@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventStoreDb.Subscriptions", "SharedKernel\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj", "{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Testing", "Modules\Sales\Sales.Testing\Sales.Testing.csproj", "{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,7 @@ Global
 		{C33E159F-EAF6-4F6B-9E00-87DCD24BD253} = {DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9}
 		{39455F91-CFA1-4D8D-83D4-B4F1EA649767} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
+		{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -144,5 +147,9 @@ Global
 		{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
