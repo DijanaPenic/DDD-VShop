@@ -22,6 +22,9 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         public static implicit operator decimal(Price self) 
             => self.Value;
         
+        public static Price operator ++(Price self)
+            => new(self.Value + 1);
+        
         public static Price operator +(Price self, Price increment)
             => new(self.Value + increment.Value);
         
