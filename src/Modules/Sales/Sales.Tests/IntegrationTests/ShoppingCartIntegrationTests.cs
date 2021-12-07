@@ -18,7 +18,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-using static VShop.Modules.Sales.Tests.SalesTestFixture;
+using static VShop.Modules.Sales.Tests.AppFixture;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {

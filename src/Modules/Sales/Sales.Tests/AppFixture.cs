@@ -7,11 +7,11 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Tests
 {
-    internal static class SalesTestFixture
+    internal static class AppFixture
     {
         public static readonly Fixture SalesFixture;
 
-        static SalesTestFixture()
+        static AppFixture()
         {
             SalesFixture = new Fixture();
             
