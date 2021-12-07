@@ -1,5 +1,7 @@
+using Xunit;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 
@@ -9,7 +11,7 @@ using VShop.Modules.Sales.API.Infrastructure.AutofacModules;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
-    public abstract class IntegrationTestsBase
+    public class IntegrationTestsBase : IAsyncLifetime
     {
         private readonly IConfiguration _configuration;
 
@@ -18,13 +20,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         protected IntegrationTestsBase()
         {
             // Init configuration
-            _configuration = InitConfiguration();
+            _configuration = InitializeConfiguration();
             
             // Container setup
             Container = InitializeDependencyInjectionContainer();
-            
-            // Restart EventStore database
-            RestartEventStoreDatabase();
         }
 
         private IContainer InitializeDependencyInjectionContainer()
@@ -38,22 +37,32 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             return builder.Build();
         }
+        
+        public Task InitializeAsync()
+        {
+            return RestartEventStoreDatabaseAsync();
+        }
 
         // Source: https://github.com/EventStore/EventStore/issues/1328
-        private void RestartEventStoreDatabase()
+        private async Task RestartEventStoreDatabaseAsync()
         {
             HttpClient client = new();
-            
-            HttpResponseMessage result = client.PostAsync($"{_configuration["EventStoreDb:AppUrl"]}/admin/shutdown", null)
-                .GetAwaiter().GetResult();
+
+            HttpResponseMessage result = await client.PostAsync($"{_configuration["EventStoreDb:AppUrl"]}/admin/shutdown", null);
 
             if (!result.IsSuccessStatusCode) throw new Exception("Event Store database restart failed.");
         }
         
-        private static IConfiguration InitConfiguration()
+        private static IConfiguration InitializeConfiguration()
             => new ConfigurationBuilder()
                 .AddJsonFile("appsettings.Test.json")
                 .AddEnvironmentVariables() 
                 .Build();
+
+        public Task DisposeAsync()
+        {
+            // ... clean up ...
+            return Task.CompletedTask;
+        }
     }
 }
