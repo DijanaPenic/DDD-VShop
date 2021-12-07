@@ -10,6 +10,6 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
         public string Body { get; set; }
         public string TypeName { get; set; }
         public DateTime ScheduledTime { get; set; }
-        public SchedulingStatus Status { get; set; }
+        public MessageStatus Status { get; set; }
     }
 }

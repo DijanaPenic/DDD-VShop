@@ -43,8 +43,5 @@ namespace VShop.SharedKernel.Infrastructure
             => new NotFoundError(message);
     }
 
-    public interface IResult : IOneOf
-    {
-
-    }
+    public interface IResult : IOneOf { }
 }

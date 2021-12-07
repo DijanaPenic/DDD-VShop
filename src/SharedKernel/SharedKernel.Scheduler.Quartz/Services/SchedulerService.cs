@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
 
         public async Task ScheduleMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
         {
-            await SaveJobAsync(message, cancellationToken);
+            await LogScheduledMessageAsync(message, cancellationToken);
                 
             IJobDetail job = JobBuilder.Create<ProcessMessageJob>()
                 .WithIdentity(SequentialGuid.Create().ToString())
@@ -41,13 +41,13 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
             await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
         
-        private Task SaveJobAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
+        private Task LogScheduledMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
         {
             MessageLog messageLog = new()
             {
                 Id = message.MessageId,
                 Body = message.Body,
-                Status = SchedulingStatus.Scheduled,
+                Status = MessageStatus.Scheduled,
                 TypeName = message.TypeName,
                 ScheduledTime = message.ScheduledTime
             };

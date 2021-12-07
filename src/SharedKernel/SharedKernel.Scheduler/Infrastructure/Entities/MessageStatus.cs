@@ -1,6 +1,6 @@
 ﻿namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
 {
-    public enum SchedulingStatus
+    public enum MessageStatus
     {
         Scheduled = 1,
         Finished = 2,
