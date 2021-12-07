@@ -18,6 +18,8 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
+using static VShop.Modules.Sales.Tests.SalesTestFixture;
+
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [CollectionDefinition("Shopping Cart Integration Tests", DisableParallelization = true)]
@@ -33,10 +35,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             CreateShoppingCartCommand command = new()
             {
-                ShoppingCartId = Fixture.Create<Guid>(),
-                CustomerId = Fixture.Create<Guid>(),
-                CustomerDiscount = Fixture.CreateInt(0, 100),
-                ShoppingCartItems = Fixture.Create<ShoppingCartItemCommandDto[]>()
+                ShoppingCartId = SalesFixture.Create<Guid>(),
+                CustomerId = SalesFixture.Create<Guid>(),
+                CustomerDiscount = SalesFixture.CreateInt(0, 100),
+                ShoppingCartItems = SalesFixture.Create<ShoppingCartItemCommandDto[]>()
             };
 
             // Act
@@ -61,7 +63,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             AddShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                ShoppingCartItem = Fixture.Create<ShoppingCartItemCommandDto>()
+                ShoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>()
             };
             
             // Act
@@ -118,10 +120,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
             
-            FullName fullName = Fixture.Create<FullName>();
-            GenderType gender = Fixture.Create<GenderType>();
-            EmailAddress emailAddress = Fixture.Create<EmailAddress>();
-            PhoneNumber phoneNumber = Fixture.Create<PhoneNumber>();
+            FullName fullName = SalesFixture.Create<FullName>();
+            GenderType gender = SalesFixture.Create<GenderType>();
+            EmailAddress emailAddress = SalesFixture.Create<EmailAddress>();
+            PhoneNumber phoneNumber = SalesFixture.Create<PhoneNumber>();
 
             SetContactInformationCommand command = new()
             {
@@ -156,7 +158,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
-            Address deliveryAddress = Fixture.Create<Address>();
+            Address deliveryAddress = SalesFixture.Create<Address>();
 
             SetDeliveryAddressCommand command = new()
             {
@@ -211,14 +213,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             shoppingCart.Create
             (
-                Fixture.Create<EntityId>(),
-                Fixture.Create<EntityId>(),
-                Fixture.CreateInt(0, 100)
+                SalesFixture.Create<EntityId>(),
+                SalesFixture.Create<EntityId>(),
+                SalesFixture.CreateInt(0, 100)
             );
             
             while(!shoppingCart.HasMinAmountForCheckout)
             {
-                ShoppingCartItemCommandDto shoppingCartItem = Fixture.Create<ShoppingCartItemCommandDto>();
+                ShoppingCartItemCommandDto shoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>();
                 shoppingCart.AddProduct
                 (
                     EntityId.Create(shoppingCartItem.ProductId),
@@ -227,13 +229,13 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 );
             };
             
-            shoppingCart.Customer.SetDeliveryAddress(Fixture.Create<Address>());
+            shoppingCart.Customer.SetDeliveryAddress(SalesFixture.Create<Address>());
             shoppingCart.Customer.SetContactInformation
             (
-                Fixture.Create<FullName>(),
-                Fixture.Create<EmailAddress>(),
-                Fixture.Create<PhoneNumber>(),
-                Fixture.Create<GenderType>()
+                SalesFixture.Create<FullName>(),
+                SalesFixture.Create<EmailAddress>(),
+                SalesFixture.Create<PhoneNumber>(),
+                SalesFixture.Create<GenderType>()
             );
 
             EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
