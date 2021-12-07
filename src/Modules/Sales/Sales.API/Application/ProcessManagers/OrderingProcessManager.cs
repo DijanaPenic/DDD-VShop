@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             => ScheduleDomainEvent
             (
                 new ShippingGracePeriodExpiredDomainEvent(Id, JsonConvert.SerializeObject(@event)),
-                DateTime.UtcNow.AddHours(24)
+                DateTime.UtcNow.AddHours(Settings.ShippingGracePeriodInHours)
             );
         
         public void Handle(ShippingGracePeriodExpiredDomainEvent @event)
@@ -55,7 +55,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
             // Cancelling the order as we already escalated the order request two times. Better alternative would be
             // to send out an email to the support team as we need to report a problem with the shipping department.
-            if (ShippingCheckCount >= 3)
+            if (ShippingCheckCount >= Settings.ShippingCheckThreshold)
             {
                 CancelOrderCommand cancelOrderCommand = new(Id);
                 RaiseCommand(cancelOrderCommand);
@@ -71,7 +71,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             => ScheduleDomainEvent
             (
                 new PaymentGracePeriodExpiredDomainEvent(Id),
-                DateTime.UtcNow.AddMinutes(30)
+                DateTime.UtcNow.AddMinutes(Settings.PaymentGracePeriodInMinutes)
             );
         
         public void Handle(PaymentGracePeriodExpiredDomainEvent _)
@@ -109,6 +109,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                     ShippingCheckCount++;
                     break;
             }
+        }
+        
+        public static class Settings
+        {
+            public const int ShippingCheckThreshold = 3;
+            public const int PaymentGracePeriodInMinutes = 30;
+            public const int ShippingGracePeriodInHours = 24;
         }
     }
 }
