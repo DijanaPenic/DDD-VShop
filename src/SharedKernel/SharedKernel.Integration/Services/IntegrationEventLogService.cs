@@ -17,6 +17,7 @@ namespace VShop.SharedKernel.Integration.Services
     {
         private readonly IntegrationContext _integrationContext;
 
+        // TODO - this should be repository class
         public IntegrationEventLogService(IntegrationContext integrationContext)
             => _integrationContext = integrationContext;
 

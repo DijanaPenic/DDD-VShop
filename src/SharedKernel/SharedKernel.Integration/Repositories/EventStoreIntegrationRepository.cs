@@ -11,6 +11,7 @@ using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 namespace VShop.SharedKernel.Integration.Repositories
 {
+    // TODO - potentially rename to bus
     public class EventStoreIntegrationRepository : IIntegrationRepository
     {
         private readonly EventStoreClient _eventStoreClient;
