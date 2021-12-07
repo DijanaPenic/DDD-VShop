@@ -10,9 +10,9 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-namespace VShop.Modules.Sales.Testing
+namespace VShop.Modules.Sales.Tests.UnitTests
 {
-    public class ShoppingCartUnitTests : UnitTests
+    public class ShoppingCartUnitTests : UnitTestsBase
     {
         [Fact]
         public void Product_insert_fails_when_shopping_cart_is_closed_for_updates()

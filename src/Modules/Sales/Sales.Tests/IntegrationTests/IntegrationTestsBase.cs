@@ -14,14 +14,14 @@ using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
-namespace VShop.Modules.Sales.Testing
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
-    public abstract class IntegrationTests
+    public abstract class IntegrationTestsBase
     {
         protected readonly Fixture Fixture;
         protected readonly IContainer Container;
 
-        protected IntegrationTests()
+        protected IntegrationTestsBase()
         {
             // Container setup
             Container = InitializeTestContainer();

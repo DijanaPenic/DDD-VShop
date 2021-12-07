@@ -4,13 +4,13 @@ using AutoFixture;
 
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.Modules.Sales.Testing
+namespace VShop.Modules.Sales.Tests.UnitTests
 {
-    public abstract class UnitTests
+    public abstract class UnitTestsBase
     {
         protected readonly Fixture Fixture;
 
-        protected UnitTests()
+        protected UnitTestsBase()
         {
             // Fixture configuration
             Fixture = InitializeTestFixtures();

@@ -6,9 +6,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>VShop.Modules.Sales.Testing</AssemblyName>
+        <AssemblyName>VShop.Modules.Sales.Tests</AssemblyName>
 
-        <RootNamespace>VShop.Modules.Sales.Testing</RootNamespace>
+        <RootNamespace>VShop.Modules.Sales.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

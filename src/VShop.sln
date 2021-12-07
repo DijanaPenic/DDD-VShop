@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventStoreDb.Subscriptions", "SharedKernel\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj", "{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Testing", "Modules\Sales\Sales.Testing\Sales.Testing.csproj", "{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Tests", "Modules\Sales\Sales.Tests\Sales.Tests.csproj", "{CEC94FA7-2BD4-44C8-BFF5-4DEB1D82BFB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

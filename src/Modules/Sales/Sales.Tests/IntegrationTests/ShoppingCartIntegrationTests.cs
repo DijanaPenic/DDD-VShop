@@ -18,10 +18,10 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-namespace VShop.Modules.Sales.Testing
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [CollectionDefinition("Shopping Cart Integration Tests", DisableParallelization = true)]
-    public class ShoppingCartIntegrationTests : IntegrationTests
+    public class ShoppingCartIntegrationTests : IntegrationTestsBase
     {
         [Fact]
         public async Task Crete_a_new_shopping_cart()
