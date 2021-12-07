@@ -1,50 +1,59 @@
-using Moq;
+using System;
+using System.Net.Http;
 using Autofac;
-using EventStore.Client;
+using Microsoft.Extensions.Configuration;
 
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.API.Infrastructure.AutofacModules;
-using VShop.SharedKernel.Scheduler.Quartz.Services;
-using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     public abstract class IntegrationTestsBase
     {
+        private readonly IConfiguration _configuration;
+        
         protected readonly IContainer Container;
 
         protected IntegrationTestsBase()
         {
+            // Init configuration
+            _configuration = InitConfiguration();
+            
             // Container setup
-            Container = InitializeTestContainer();
+            Container = InitializeDependencyInjectionContainer();
+            
+            // Restart EventStore database
+            RestartEventStoreDatabase();
         }
 
-        private static IContainer InitializeTestContainer()
+        private IContainer InitializeDependencyInjectionContainer()
         {
             ContainerBuilder builder = new();
             
             builder.RegisterModule<MediatorModule>();
-            builder.RegisterGeneric(typeof(EventStoreProcessManagerRepository<>))
-                .As(typeof(IProcessManagerRepository<>)).SingleInstance();
-            builder.RegisterGeneric(typeof(EventStoreAggregateRepository<,>))
-                .As(typeof(IAggregateRepository<,>)).SingleInstance();
-            
-            // TODO - need to fix as this is pointing to the existing database
-            // TODO - move configuration into the settings file
-            const string dbConnectionString = "esdb://admin:changeit@localhost:2113?tls=false&tlsVerifyCert=false";
-            EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(dbConnectionString);
-            eventStoreSettings.ConnectionName = "SalesIntegrationTests";
-            EventStoreClient eventStoreClient = new(eventStoreSettings);
-            builder.Register(_=> eventStoreClient).SingleInstance(); // TODO - single instance
-
-            Mock<ISchedulerService> schedulerServiceMock = new();
-            builder.Register(_=> schedulerServiceMock.Object);
-
+            builder.RegisterEventStore(_configuration["EventStoreDb:ConnectionString"]);
+            builder.RegisterScheduler();
             builder.RegisterType<ShoppingCartOrderingService>().As<IShoppingCartOrderingService>();
             
             return builder.Build();
         }
+
+        // Source: https://github.com/EventStore/EventStore/issues/1328
+        private void RestartEventStoreDatabase()
+        {
+            HttpClient client = new();
+            
+            HttpResponseMessage result = client.PostAsync($"{_configuration["EventStoreDb:AppUrl"]}/admin/shutdown", null)
+                .GetAwaiter().GetResult();
+
+            if (!result.IsSuccessStatusCode) throw new Exception("Event Store database restart failed.");
+        }
+        
+        private static IConfiguration InitConfiguration()
+            => new ConfigurationBuilder()
+                .AddJsonFile("appsettings.Test.json")
+                .AddEnvironmentVariables() 
+                .Build();
     }
 }

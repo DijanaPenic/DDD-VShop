@@ -25,4 +25,14 @@
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="IntegrationTests\appsettings.Test.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.Test.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
