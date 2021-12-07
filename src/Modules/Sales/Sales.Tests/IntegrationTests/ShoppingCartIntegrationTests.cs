@@ -11,7 +11,7 @@ using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.EventSourcing.Repositories;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -29,8 +29,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Crete_a_new_shopping_cart()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             CreateShoppingCartCommandHandler sut = new(shoppingCartRepository);
             
             CreateShoppingCartCommand command = new()
@@ -55,8 +55,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Add_a_product_to_the_shopping_cart()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             AddShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
             
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
@@ -83,8 +83,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Remove_a_product_from_the_shopping_cart()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             RemoveShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
@@ -114,8 +114,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Set_customer_contact_information()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             SetContactInformationCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
@@ -153,8 +153,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Set_customer_delivery_address()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
@@ -184,10 +184,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Checkout_the_shopping_cart()
         {
             // Arrange
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
-            EventStoreAggregateRepository<Order, EntityId> orderRepository = Container
-                .Resolve<EventStoreAggregateRepository<Order, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<Order, EntityId> orderRepository = Container
+                .Resolve<IAggregateRepository<Order, EntityId>>();
             CheckoutShoppingCartCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
@@ -238,8 +238,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 SalesFixture.Create<GenderType>()
             );
 
-            EventStoreAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<EventStoreAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
+                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
 
             return shoppingCart;
