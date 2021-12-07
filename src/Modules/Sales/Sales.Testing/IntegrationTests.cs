@@ -12,6 +12,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Scheduler.Quartz.Services;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Testing
 {
@@ -22,14 +23,22 @@ namespace VShop.Modules.Sales.Testing
 
         protected IntegrationTests()
         {
-            // Configure container builder
+            // Container setup
+            Container = InitializeTestContainer();
+
+            // Fixture configuration
+            Fixture = InitializeTestFixtures();
+        }
+
+        private static IContainer InitializeTestContainer()
+        {
             ContainerBuilder builder = new();
             
             builder.RegisterModule<MediatorModule>();
             builder.RegisterGeneric(typeof(EventStoreProcessManagerRepository<>))
-                   .As(typeof(IProcessManagerRepository<>)).SingleInstance();
+                .As(typeof(IProcessManagerRepository<>)).SingleInstance();
             builder.RegisterGeneric(typeof(EventStoreAggregateRepository<,>))
-                   .As(typeof(IAggregateRepository<,>)).SingleInstance();
+                .As(typeof(IAggregateRepository<,>)).SingleInstance();
             
             // TODO - need to fix as this is pointing to the existing database
             // TODO - move configuration into the settings file
@@ -43,37 +52,36 @@ namespace VShop.Modules.Sales.Testing
             builder.Register(_=> schedulerServiceMock.Object);
 
             builder.RegisterType<ShoppingCartOrderingService>().As<IShoppingCartOrderingService>();
-
-            // Build container
-            Container = builder.Build();
-
-            // Fixture configuration
-            Fixture = new Fixture();
-            Fixture.Register(() => EmailAddress.Create(Fixture.Create<MailAddress>().Address));
-            Fixture.Register(() => PhoneNumber.Create("+385929551178"));
-            Fixture.Register(() => FullName.Create
-            (
-                Fixture.Create<string>(),
-                Fixture.Create<string>(),
-                Fixture.Create<string>()
-            ));
-            Fixture.Register(() => Address.Create
-            (
-                Fixture.Create<string>(),
-                Fixture.Create<string>(),
-                Fixture.Create<string>(),
-                Fixture.Create<string>(),
-                Fixture.Create<string>()
-            ));
-            Fixture.Register(() => EntityId.Create(Fixture.Create<Guid>()));
             
-            // TODO - add type mapper for better ES preview
+            return builder.Build();
         }
-    }
-    
-    public static class FixtureExtensions // TODO - move to a new class
-    {
-        public static int CreateInt(this IFixture fixture, int min, int max) 
-            => fixture.Create<int>() % (max - min + 1) + min;
+            
+        private static Fixture InitializeTestFixtures()
+        {
+            // TODO - maybe some helper class?
+            Fixture fixture = new();
+            
+            fixture.Register(() => EmailAddress.Create(fixture.Create<MailAddress>().Address));
+            fixture.Register(() => PhoneNumber.Create("+385929551178"));
+            fixture.Register(() => FullName.Create
+            (
+                fixture.Create<string>(),
+                fixture.Create<string>(),
+                fixture.Create<string>()
+            ));
+            fixture.Register(() => Address.Create
+            (
+                fixture.Create<string>(),
+                fixture.Create<string>(),
+                fixture.Create<string>(),
+                fixture.Create<string>(),
+                fixture.Create<string>()
+            ));
+            fixture.Register(() => EntityId.Create(fixture.Create<Guid>()));
+            fixture.Register(() => ProductQuantity.Create(fixture.CreateInt(0, 10)));
+            fixture.Register(() => Price.Create(fixture.CreateDecimal(10, 100)));
+
+            return fixture;
+        }
     }
 }
