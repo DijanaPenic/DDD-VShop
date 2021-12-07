@@ -10,23 +10,25 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-using static VShop.Modules.Sales.Tests.AppFixture;
-
 namespace VShop.Modules.Sales.Tests.UnitTests
 {
-    public class ShoppingCartUnitTests : UnitTestsBase
+    public class ShoppingCartUnitTests : UnitTestsBase, IClassFixture<AppFixture>
     {
+        private readonly Fixture _autoFixture;
+
+        public ShoppingCartUnitTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        
         [Fact]
         public void Product_insert_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
             ShoppingCart sut = GetShoppingCartForCheckoutFixture();
             
-            sut.RequestCheckout(SalesFixture.Create<EntityId>()); // Checkout will prevent further updates
+            sut.RequestCheckout(_autoFixture.Create<EntityId>()); // Checkout will prevent further updates
             
-            EntityId productId = SalesFixture.Create<EntityId>();
-            ProductQuantity productQuantity = SalesFixture.Create<ProductQuantity>();
-            Price productPrice = SalesFixture.Create<Price>();
+            EntityId productId = _autoFixture.Create<EntityId>();
+            ProductQuantity productQuantity = _autoFixture.Create<ProductQuantity>();
+            Price productPrice = _autoFixture.Create<Price>();
             
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
@@ -43,14 +45,14 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
 
-            EntityId productId = SalesFixture.Create<EntityId>();
-            ProductQuantity productQuantity = SalesFixture.Create<ProductQuantity>();
-            Price productPrice = SalesFixture.Create<Price>();
+            EntityId productId = _autoFixture.Create<EntityId>();
+            ProductQuantity productQuantity = _autoFixture.Create<ProductQuantity>();
+            Price productPrice = _autoFixture.Create<Price>();
             
             sut.AddProduct(productId, productQuantity, productPrice);
 
@@ -70,12 +72,12 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
                 0
             );
 
-            EntityId productId = SalesFixture.Create<EntityId>();
+            EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = ProductQuantity.Create(1);
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1);
 
@@ -95,12 +97,12 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
                 0
             );
 
-            EntityId productId = SalesFixture.Create<EntityId>();
+            EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = ProductQuantity.Create(1);
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery);
 
@@ -118,7 +120,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             // Arrange
             ShoppingCart sut = GetShoppingCartForCheckoutFixture();
             
-            sut.RequestCheckout(SalesFixture.Create<EntityId>());
+            sut.RequestCheckout(_autoFixture.Create<EntityId>());
             
             ShoppingCartItem shoppingCartItem = sut.Items.First();
             
@@ -137,12 +139,12 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
                 0
             );
 
-            EntityId productId = SalesFixture.Create<EntityId>();
+            EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = ProductQuantity.Create(2);
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1);
             
@@ -179,13 +181,13 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
             // Act
-            Result result = sut.RequestCheckout(SalesFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -199,19 +201,19 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
-            EntityId productId = SalesFixture.Create<EntityId>();
+            EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = ProductQuantity.Create(1);
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1);
             
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(SalesFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -225,38 +227,38 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 
             sut.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
-            EntityId productId = SalesFixture.Create<EntityId>();
+            EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = ProductQuantity.Create(1);
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout);
             
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(SalesFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
         }
 
-        private static ShoppingCart GetShoppingCartForCheckoutFixture()
+        private ShoppingCart GetShoppingCartForCheckoutFixture()
         {
             ShoppingCart shoppingCart = new();
 
             shoppingCart.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
             while(!shoppingCart.HasMinAmountForCheckout)
             {
-                ShoppingCartItemCommandDto shoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>();
+                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
                 shoppingCart.AddProduct
                 (
                     EntityId.Create(shoppingCartItem.ProductId),
@@ -265,13 +267,13 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                 );
             };
             
-            shoppingCart.Customer.SetDeliveryAddress(SalesFixture.Create<Address>());
+            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
             shoppingCart.Customer.SetContactInformation
             (
-                SalesFixture.Create<FullName>(),
-                SalesFixture.Create<EmailAddress>(),
-                SalesFixture.Create<PhoneNumber>(),
-                SalesFixture.Create<GenderType>()
+                _autoFixture.Create<FullName>(),
+                _autoFixture.Create<EmailAddress>(),
+                _autoFixture.Create<PhoneNumber>(),
+                _autoFixture.Create<GenderType>()
             );
 
             return shoppingCart;

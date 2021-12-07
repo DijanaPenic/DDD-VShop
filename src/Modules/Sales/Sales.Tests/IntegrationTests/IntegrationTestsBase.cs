@@ -12,8 +12,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
     public abstract class IntegrationTestsBase
     {
         private readonly IConfiguration _configuration;
-        
-        protected readonly IContainer Container;
+
+        protected IContainer Container { get; }
 
         protected IntegrationTestsBase()
         {

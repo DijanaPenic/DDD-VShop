@@ -16,13 +16,15 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-using static VShop.Modules.Sales.Tests.AppFixture;
-
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [CollectionDefinition("Shopping Cart Integration Tests", DisableParallelization = true)]
-    public class ShoppingCartIntegrationTests : IntegrationTestsBase
+    public class ShoppingCartIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
     {
+        private readonly Fixture _autoFixture;
+
+        public ShoppingCartIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+
         [Fact]
         public async Task Crete_a_new_shopping_cart()
         {
@@ -33,10 +35,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             CreateShoppingCartCommand command = new()
             {
-                ShoppingCartId = SalesFixture.Create<Guid>(),
-                CustomerId = SalesFixture.Create<Guid>(),
-                CustomerDiscount = SalesFixture.CreateInt(0, 100),
-                ShoppingCartItems = SalesFixture.Create<ShoppingCartItemCommandDto[]>()
+                ShoppingCartId = _autoFixture.Create<Guid>(),
+                CustomerId = _autoFixture.Create<Guid>(),
+                CustomerDiscount = _autoFixture.CreateInt(0, 100),
+                ShoppingCartItems = _autoFixture.Create<ShoppingCartItemCommandDto[]>()
             };
 
             // Act
@@ -61,7 +63,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             AddShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                ShoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>()
+                ShoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>()
             };
             
             // Act
@@ -118,10 +120,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
             
-            FullName fullName = SalesFixture.Create<FullName>();
-            GenderType gender = SalesFixture.Create<GenderType>();
-            EmailAddress emailAddress = SalesFixture.Create<EmailAddress>();
-            PhoneNumber phoneNumber = SalesFixture.Create<PhoneNumber>();
+            FullName fullName = _autoFixture.Create<FullName>();
+            GenderType gender = _autoFixture.Create<GenderType>();
+            EmailAddress emailAddress = _autoFixture.Create<EmailAddress>();
+            PhoneNumber phoneNumber = _autoFixture.Create<PhoneNumber>();
 
             SetContactInformationCommand command = new()
             {
@@ -156,7 +158,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
-            Address deliveryAddress = SalesFixture.Create<Address>();
+            Address deliveryAddress = _autoFixture.Create<Address>();
 
             SetDeliveryAddressCommand command = new()
             {
@@ -184,14 +186,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             shoppingCart.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
             while(!shoppingCart.HasMinAmountForCheckout)
             {
-                ShoppingCartItemCommandDto shoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>();
+                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
                 shoppingCart.AddProduct
                 (
                     EntityId.Create(shoppingCartItem.ProductId),
@@ -200,13 +202,13 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 );
             };
             
-            shoppingCart.Customer.SetDeliveryAddress(SalesFixture.Create<Address>());
+            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
             shoppingCart.Customer.SetContactInformation
             (
-                SalesFixture.Create<FullName>(),
-                SalesFixture.Create<EmailAddress>(),
-                SalesFixture.Create<PhoneNumber>(),
-                SalesFixture.Create<GenderType>()
+                _autoFixture.Create<FullName>(),
+                _autoFixture.Create<EmailAddress>(),
+                _autoFixture.Create<PhoneNumber>(),
+                _autoFixture.Create<GenderType>()
             );
 
             IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container

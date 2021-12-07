@@ -7,33 +7,38 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Tests
 {
-    internal static class AppFixture
+    public class AppFixture //: IDisposable
     {
-        public static readonly Fixture SalesFixture;
+        public Fixture AutoFixture { get; }
 
-        static AppFixture()
+        public AppFixture()
         {
-            SalesFixture = new Fixture();
+            AutoFixture = new Fixture();
             
-            SalesFixture.Register(() => EmailAddress.Create(SalesFixture.Create<MailAddress>().Address));
-            SalesFixture.Register(() => PhoneNumber.Create("+385929551178"));
-            SalesFixture.Register(() => FullName.Create
+            AutoFixture.Register(() => EmailAddress.Create(AutoFixture.Create<MailAddress>().Address));
+            AutoFixture.Register(() => PhoneNumber.Create("+385929551178"));
+            AutoFixture.Register(() => FullName.Create
             (
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>()
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>()
             ));
-            SalesFixture.Register(() => Address.Create
+            AutoFixture.Register(() => Address.Create
             (
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>(),
-                SalesFixture.Create<string>()
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>(),
+                AutoFixture.Create<string>()
             ));
-            SalesFixture.Register(() => EntityId.Create(SalesFixture.Create<Guid>()));
-            SalesFixture.Register(() => ProductQuantity.Create(SalesFixture.CreateInt(1, 10)));
-            SalesFixture.Register(() => Price.Create(SalesFixture.CreateDecimal(10, 100)));
+            AutoFixture.Register(() => EntityId.Create(AutoFixture.Create<Guid>()));
+            AutoFixture.Register(() => ProductQuantity.Create(AutoFixture.CreateInt(1, 10)));
+            AutoFixture.Register(() => Price.Create(AutoFixture.CreateDecimal(10, 100)));
         }
+
+        // public void Dispose()
+        // {
+        //     // ... clean up test data ...
+        // }
     }
 }

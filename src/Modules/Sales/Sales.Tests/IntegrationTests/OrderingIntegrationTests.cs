@@ -16,13 +16,15 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
-using static VShop.Modules.Sales.Tests.AppFixture;
-
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [CollectionDefinition("Ordering Integration Tests", DisableParallelization = true)]
-    public class OrderingIntegrationTests : IntegrationTestsBase
+    public class OrderingIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
     {
+        private readonly Fixture _autoFixture;
+
+        public OrderingIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        
         [Fact]
         public async Task Checkout_the_shopping_cart()
         {
@@ -63,14 +65,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             shoppingCart.Create
             (
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.Create<EntityId>(),
-                SalesFixture.CreateInt(0, 100)
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.Create<EntityId>(),
+                _autoFixture.CreateInt(0, 100)
             );
             
             while(!shoppingCart.HasMinAmountForCheckout)
             {
-                ShoppingCartItemCommandDto shoppingCartItem = SalesFixture.Create<ShoppingCartItemCommandDto>();
+                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
                 shoppingCart.AddProduct
                 (
                     EntityId.Create(shoppingCartItem.ProductId),
@@ -79,13 +81,13 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 );
             };
             
-            shoppingCart.Customer.SetDeliveryAddress(SalesFixture.Create<Address>());
+            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
             shoppingCart.Customer.SetContactInformation
             (
-                SalesFixture.Create<FullName>(),
-                SalesFixture.Create<EmailAddress>(),
-                SalesFixture.Create<PhoneNumber>(),
-                SalesFixture.Create<GenderType>()
+                _autoFixture.Create<FullName>(),
+                _autoFixture.Create<EmailAddress>(),
+                _autoFixture.Create<PhoneNumber>(),
+                _autoFixture.Create<GenderType>()
             );
 
             IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
