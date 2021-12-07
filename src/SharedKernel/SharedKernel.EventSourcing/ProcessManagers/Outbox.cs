@@ -19,10 +19,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         public void Add(IIntegrationEvent @event) => _events.Add(@event);
         public void Add(IBaseCommand command) => _commands.Add(command);
+        public void Add(IDomainEvent @event, DateTime scheduledTime)
+            => _scheduledEvents.Add(new ScheduledMessage(@event, scheduledTime));
         public void Add(IBaseCommand command, DateTime scheduledTime)
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
-        public void Add(IDomainEvent command, DateTime scheduledTime)
-            => _scheduledEvents.Add(new ScheduledMessage(command, scheduledTime));
         public IEnumerable<IMessage> GetAllMessages()
             => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents);
         public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch() => _scheduledCommands;

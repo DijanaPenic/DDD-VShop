@@ -13,7 +13,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
     {
         public Guid ShoppingCartId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
-        public int ShippingRetryCount { get; private set; } = -1;
+        public int ShippingCheckCount { get; private set; }
 
         public OrderingProcessManager()
         {
@@ -55,7 +55,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
             // Cancelling the order as we already escalated the order request two times. Better alternative would be
             // to send out an email to the support team as we need to report a problem with the shipping department.
-            if (ShippingRetryCount >= 2)
+            if (ShippingCheckCount >= 3)
             {
                 CancelOrderCommand cancelOrderCommand = new(Id);
                 RaiseCommand(cancelOrderCommand);
@@ -76,6 +76,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         
         public void Handle(PaymentGracePeriodExpiredDomainEvent _)
         {
+            // User managed to successfully pay the order.
             if (Status is not OrderingProcessManagerStatus.OrderPaymentFailed) return;
 
             // User didn't manage to pay so we need to cancel the order.
@@ -105,7 +106,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                     Status = OrderingProcessManagerStatus.OrderCancelled;
                     break;
                 case ShippingGracePeriodExpiredDomainEvent _:
-                    ShippingRetryCount++;
+                    ShippingCheckCount++;
                     break;
             }
         }

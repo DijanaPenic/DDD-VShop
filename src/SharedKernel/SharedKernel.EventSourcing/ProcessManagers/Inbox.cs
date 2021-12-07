@@ -7,6 +7,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
+    // TODO - potentially rename
     public class Inbox : IInbox
     {
         public IMessage Trigger { get; set; }
