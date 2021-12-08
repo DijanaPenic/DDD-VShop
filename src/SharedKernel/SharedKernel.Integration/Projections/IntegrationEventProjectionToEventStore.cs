@@ -16,11 +16,11 @@ namespace VShop.SharedKernel.Integration.Projections
 {
     public class IntegrationEventProjectionToEventStore : ISubscriptionHandler
     {
-        private readonly IIntegrationRepository _integrationRepository;
+        private readonly IIntegrationEventRepository _integrationRepository;
         
         private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionToEventStore>(); 
         
-        public IntegrationEventProjectionToEventStore(IIntegrationRepository integrationRepository)
+        public IntegrationEventProjectionToEventStore(IIntegrationEventRepository integrationRepository)
             => _integrationRepository = integrationRepository;
 
         public Task ProjectAsync

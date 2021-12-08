@@ -19,27 +19,28 @@ namespace VShop.SharedKernel.Integration.Services
     public class IntegrationEventService<TDbContext> : IIntegrationEventService
         where TDbContext :  DbContextBase
     {
-        private readonly IIntegrationRepository _eventBus;
         private readonly TDbContext _dbContext;
-        private readonly IIntegrationEventLogService _integrationEventLogService;
-
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventService<TDbContext>>(); 
+        private readonly IIntegrationEventRepository _integrationEventRepository;
+        private readonly IIntegrationEventLogRepository _integrationEventLogRepository;
 
         public IntegrationEventService
         (
-            IIntegrationRepository eventBus,
             TDbContext dbContext,
-            IIntegrationEventLogService integrationEventLogService
+            IIntegrationEventRepository integrationEventRepository,
+            IIntegrationEventLogRepository integrationEventLogRepository
         )
         {
-            _eventBus = eventBus;
             _dbContext = dbContext;
-            _integrationEventLogService = integrationEventLogService;
+            _integrationEventRepository = integrationEventRepository;
+            _integrationEventLogRepository = integrationEventLogRepository;
         }
+
+        private static readonly ILogger Logger = Log.ForContext<IntegrationEventService<TDbContext>>();
 
         public async Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default)
         {
-            IEnumerable<IntegrationEventLog> pendingEvents = await _integrationEventLogService.RetrieveEventLogsPendingPublishAsync(transactionId, cancellationToken);
+            IEnumerable<IntegrationEventLog> pendingEvents = await _integrationEventLogRepository
+                .RetrieveEventsPendingPublishAsync(transactionId, cancellationToken);
 
             foreach (IntegrationEventLog pendingEvent in pendingEvents)
             {
@@ -51,12 +52,12 @@ namespace VShop.SharedKernel.Integration.Services
 
                 try
                 {
-                    await _integrationEventLogService.MarkEventAsInProgressAsync(pendingEvent.EventId, cancellationToken);
+                    await _integrationEventLogRepository.MarkEventAsInProgressAsync(pendingEvent.EventId, cancellationToken);
                     
                     object target = JsonConvert.DeserializeObject(pendingEvent.Content, MessageTypeMapper.ToType(pendingEvent.EventTypeName));
-                    await _eventBus.SaveAsync((IIntegrationEvent)target, cancellationToken);
+                    await _integrationEventRepository.SaveAsync((IIntegrationEvent)target, cancellationToken);
                     
-                    await _integrationEventLogService.MarkEventAsPublishedAsync(pendingEvent.EventId, cancellationToken);
+                    await _integrationEventLogRepository.MarkEventAsPublishedAsync(pendingEvent.EventId, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -67,7 +68,7 @@ namespace VShop.SharedKernel.Integration.Services
                         pendingEvent.EventId
                     );
 
-                    await _integrationEventLogService.MarkEventAsFailedAsync(pendingEvent.EventId, cancellationToken);
+                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEvent.EventId, cancellationToken);
                 }
             }
         }
@@ -80,7 +81,7 @@ namespace VShop.SharedKernel.Integration.Services
                 @event.MessageId, @event
             );
             
-            await _integrationEventLogService.SaveEventAsync(@event, _dbContext.GetCurrentTransaction(), cancellationToken);
+            await _integrationEventLogRepository.SaveEventAsync(@event, _dbContext.GetCurrentTransaction(), cancellationToken);
         }
     }
 }

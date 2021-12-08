@@ -17,9 +17,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             builder.Register(_=> new EventStoreClient(eventStoreSettings)).SingleInstance();
             
-            builder.RegisterGeneric(typeof(EventStoreProcessManagerRepository<>))
+            builder.RegisterGeneric(typeof(ProcessManagerRepository<>))
                 .As(typeof(IProcessManagerRepository<>)).SingleInstance();
-            builder.RegisterGeneric(typeof(EventStoreAggregateRepository<,>))
+            builder.RegisterGeneric(typeof(AggregateRepository<,>))
                 .As(typeof(IAggregateRepository<,>)).SingleInstance();
         }
         

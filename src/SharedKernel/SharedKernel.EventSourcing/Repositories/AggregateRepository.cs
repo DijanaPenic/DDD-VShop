@@ -18,16 +18,16 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
-    public class EventStoreAggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
+    public class AggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
         where TKey : ValueObject
         where TAggregate : AggregateRoot<TKey>
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
 
-        private static readonly ILogger Logger = Log.ForContext<EventStoreAggregateRepository<TAggregate, TKey>>();
+        private static readonly ILogger Logger = Log.ForContext<AggregateRepository<TAggregate, TKey>>();
 
-        public EventStoreAggregateRepository
+        public AggregateRepository
         (
             EventStoreClient eventStoreClient,
             IEventBus eventBus

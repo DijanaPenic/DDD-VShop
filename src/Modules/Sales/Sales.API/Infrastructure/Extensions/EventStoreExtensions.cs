@@ -29,9 +29,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             EventStoreClient eventStoreClient = new(eventStoreSettings);
             services.AddSingleton(eventStoreClient);
             
-            services.AddSingleton(typeof(IAggregateRepository<,>), typeof(EventStoreAggregateRepository<,>));
-            services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
-            services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(EventStoreProcessManagerRepository<>));
+            services.AddSingleton(typeof(IAggregateRepository<,>), typeof(AggregateRepository<,>));
+            services.AddSingleton(typeof(IIntegrationEventRepository), typeof(IntegrationEventRepository));
+            services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(ProcessManagerRepository<>));
 
             // Stream names
             string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
@@ -56,7 +56,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 eventStoreClient,
                 provider,
                 "IntegrationEventsPub",
-                new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationRepository>()),
+                new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationEventRepository>()),
                 // This will subscribe to these streams:
                 // * process manager outbox and
                 // * aggregate

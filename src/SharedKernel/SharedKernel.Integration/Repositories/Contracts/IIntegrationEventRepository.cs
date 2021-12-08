@@ -6,7 +6,7 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.SharedKernel.Integration.Repositories.Contracts
 {
-    public interface IIntegrationRepository
+    public interface IIntegrationEventRepository
     {
         Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default);
         Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default);

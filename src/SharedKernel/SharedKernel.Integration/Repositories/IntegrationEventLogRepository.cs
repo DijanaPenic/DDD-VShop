@@ -9,19 +9,18 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
-using VShop.SharedKernel.Integration.Services.Contracts;
+using VShop.SharedKernel.Integration.Repositories.Contracts;
 
-namespace VShop.SharedKernel.Integration.Services
+namespace VShop.SharedKernel.Integration.Repositories
 {
-    public class IntegrationEventLogService : IIntegrationEventLogService
+    public class IntegrationEventLogRepository : IIntegrationEventLogRepository
     {
         private readonly IntegrationContext _integrationContext;
-
-        // TODO - this should be repository class
-        public IntegrationEventLogService(IntegrationContext integrationContext)
+        
+        public IntegrationEventLogRepository(IntegrationContext integrationContext)
             => _integrationContext = integrationContext;
 
-        public async Task<IEnumerable<IntegrationEventLog>> RetrieveEventLogsPendingPublishAsync
+        public async Task<IEnumerable<IntegrationEventLog>> RetrieveEventsPendingPublishAsync
         (
             Guid transactionId,
             CancellationToken cancellationToken = default
@@ -62,13 +61,13 @@ namespace VShop.SharedKernel.Integration.Services
 
         private async Task UpdateEventStatusAsync(Guid eventId, EventState status, CancellationToken cancellationToken = default)
         {
-            IntegrationEventLog eventLogEntry = await _integrationContext.IntegrationEventLogs
+            IntegrationEventLog integrationEventLogEntry = await _integrationContext.IntegrationEventLogs
                 .SingleAsync(ie => ie.EventId == eventId, cancellationToken);
-            eventLogEntry.State = status;
+            
+            integrationEventLogEntry.State = status;
+            if (status is EventState.InProgress) integrationEventLogEntry.TimesSent++;
 
-            if (status is EventState.InProgress) eventLogEntry.TimesSent++;
-
-            _integrationContext.IntegrationEventLogs.Update(eventLogEntry);
+            _integrationContext.IntegrationEventLogs.Update(integrationEventLogEntry);
 
             await _integrationContext.SaveChangesAsync(cancellationToken);
         }

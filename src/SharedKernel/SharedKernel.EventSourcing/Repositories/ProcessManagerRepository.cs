@@ -20,16 +20,16 @@ using ILogger = Serilog.ILogger;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
-    public class EventStoreProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
+    public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager, new()
     {
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
         private readonly ISchedulerService _messageSchedulerService;
 
-        private static readonly ILogger Logger = Log.ForContext<EventStoreProcessManagerRepository<TProcess>>();
+        private static readonly ILogger Logger = Log.ForContext<ProcessManagerRepository<TProcess>>();
 
-        public EventStoreProcessManagerRepository
+        public ProcessManagerRepository
         (
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,

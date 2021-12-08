@@ -14,14 +14,14 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
     {
         public static void AddIntegrationServices(this IServiceCollection services, string connectionString)
         {
-            services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService>();
+            services.AddTransient<IIntegrationEventLogRepository, IntegrationEventLogRepository>();
             services.AddTransient<IIntegrationEventService, IntegrationEventService<BillingContext>>();
 
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Billing";
             
             services.AddSingleton(_ => new EventStoreClient(eventStoreSettings));
-            services.AddSingleton(typeof(IIntegrationRepository), typeof(EventStoreIntegrationRepository));
+            services.AddSingleton(typeof(IIntegrationEventRepository), typeof(IntegrationEventRepository));
             
             MessageMappings.MapMessageTypes();
         }

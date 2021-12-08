@@ -11,12 +11,11 @@ using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 namespace VShop.SharedKernel.Integration.Repositories
 {
-    // TODO - potentially rename to bus
-    public class EventStoreIntegrationRepository : IIntegrationRepository
+    public class IntegrationEventRepository : IIntegrationEventRepository
     {
         private readonly EventStoreClient _eventStoreClient;
 
-        public EventStoreIntegrationRepository(EventStoreClient eventStoreClient)
+        public IntegrationEventRepository(EventStoreClient eventStoreClient)
             => _eventStoreClient = eventStoreClient;
 
         public async Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
