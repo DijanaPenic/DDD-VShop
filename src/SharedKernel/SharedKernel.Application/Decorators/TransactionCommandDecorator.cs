@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
 using Serilog.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Services.Contracts;
@@ -39,14 +39,17 @@ namespace VShop.SharedKernel.Application.Decorators
             RequestHandlerDelegate<TResponse> next
         )
         {
-            TResponse response = default;
             string commandTypeName = command.GetType().FullName;
 
             try
             {
+                // TODO - need to test this. It might not work.
                 // Handling retries
                 if (_dbContext.HasActiveTransaction) return await next();
+                
+                TResponse response = default;
 
+                // Source: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency#execution-strategies-and-transactions
                 IExecutionStrategy strategy = _dbContext.Database.CreateExecutionStrategy();
 
                 await strategy.ExecuteAsync(async () =>
@@ -54,7 +57,7 @@ namespace VShop.SharedKernel.Application.Decorators
                     Guid transactionId;
 
                     await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync(cancellationToken))
-                    using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
+                    using (LogContext.PushProperty("TransactionContext", transaction.TransactionId)) // All messages written during a transaction will carry the id of that transaction
                     {
                         Logger.Information
                         (
@@ -82,7 +85,11 @@ namespace VShop.SharedKernel.Application.Decorators
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Error Handling transaction for {CommandName} ({@Command})", commandTypeName, command);
+                Logger.Error
+                (
+                    ex, "Error Handling transaction for {CommandName} ({@Command})",
+                    commandTypeName, command
+                );
 
                 throw;
             }
