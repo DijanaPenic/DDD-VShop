@@ -140,8 +140,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                             Position = position
                         });
                     }
-
-                    await subscriptionContext.SaveChangesAsync(cancellationToken);
+                    
                     await subscriptionContext.CommitTransactionAsync(transaction, cancellationToken);
                 });
             }
