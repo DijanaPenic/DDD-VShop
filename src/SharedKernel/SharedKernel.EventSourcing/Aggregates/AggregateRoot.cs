@@ -41,17 +41,13 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             }
         }
 
-        public IEnumerable<IDomainEvent> GetOutgoingDomainEvents()
-            => _outbox.OfType<IDomainEvent>();
+        public IEnumerable<IDomainEvent> GetDomainEvents() => _outbox.OfType<IDomainEvent>();
 
-        public IEnumerable<IBaseEvent> GetAllEvents()
-            => _outbox;
+        public IEnumerable<IBaseEvent> GetAllEvents() => _outbox;
 
-        public void Clear()
-            => _outbox.Clear();
+        public void Clear() => _outbox.Clear();
 
-        protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event)
-            => entity?.Handle(@event);
+        protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity.Handle(@event);
         
         private void SetEventIdentification(IBaseEvent @event)
         {

@@ -55,7 +55,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             try
             {
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-                foreach (IDomainEvent domainEvent in aggregate.GetOutgoingDomainEvents())
+                foreach (IDomainEvent domainEvent in aggregate.GetDomainEvents())
                     await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
