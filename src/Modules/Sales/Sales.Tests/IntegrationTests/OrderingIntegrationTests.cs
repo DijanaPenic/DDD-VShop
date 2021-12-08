@@ -5,25 +5,27 @@ using FluentAssertions;
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Domain.Enums;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [CollectionDefinition("Ordering Integration Tests", DisableParallelization = true)]
     public class OrderingIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
     {
+        private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
 
-        public OrderingIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        public OrderingIntegrationTests(AppFixture appFixture)
+        {
+            _appFixture = appFixture;
+            _autoFixture = appFixture.AutoFixture;
+        }
         
         [Fact]
         public async Task Checkout_the_shopping_cart()
@@ -33,9 +35,11 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             IAggregateRepository<Order, EntityId> orderRepository = Container
                 .Resolve<IAggregateRepository<Order, EntityId>>();
+            
             CheckoutShoppingCartCommandHandler sut = new(shoppingCartRepository);
 
-            ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
+            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
 
             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
             
@@ -56,45 +60,6 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public void Test()
         {
         
-        }
-
-        // TODO - move this to some shared class
-        private async Task<ShoppingCart> CreateShoppingCartInDatabaseAsync()
-        {
-            ShoppingCart shoppingCart = new();
-
-            shoppingCart.Create
-            (
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
-            );
-            
-            while(!shoppingCart.HasMinAmountForCheckout)
-            {
-                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
-                shoppingCart.AddProduct
-                (
-                    EntityId.Create(shoppingCartItem.ProductId),
-                    ProductQuantity.Create(shoppingCartItem.Quantity),
-                    Price.Create(shoppingCartItem.UnitPrice)
-                );
-            };
-            
-            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
-            shoppingCart.Customer.SetContactInformation
-            (
-                _autoFixture.Create<FullName>(),
-                _autoFixture.Create<EmailAddress>(),
-                _autoFixture.Create<PhoneNumber>(),
-                _autoFixture.Create<GenderType>()
-            );
-
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-
-            return shoppingCart;
         }
     }
 }

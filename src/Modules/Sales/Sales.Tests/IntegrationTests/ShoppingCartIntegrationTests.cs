@@ -21,9 +21,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
     [CollectionDefinition("Shopping Cart Integration Tests", DisableParallelization = true)]
     public class ShoppingCartIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
     {
+        private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
 
-        public ShoppingCartIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        public ShoppingCartIntegrationTests(AppFixture appFixture)
+        {
+            _appFixture = appFixture;
+            _autoFixture = appFixture.AutoFixture;
+        }
 
         [Fact]
         public async Task Crete_a_new_shopping_cart()
@@ -59,7 +64,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             AddShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
             
-            ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
+            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
+            
             AddShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
@@ -87,7 +94,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             RemoveShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
 
-            ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
+            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
             
             ShoppingCartItem shoppingCartItem = shoppingCart.Items.First();
             RemoveShoppingCartProductCommand command = new()
@@ -118,7 +126,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             SetContactInformationCommandHandler sut = new(shoppingCartRepository);
 
-            ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
+            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
             
             FullName fullName = _autoFixture.Create<FullName>();
             GenderType gender = _autoFixture.Create<GenderType>();
@@ -157,7 +166,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
             SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
 
-            ShoppingCart shoppingCart = await CreateShoppingCartInDatabaseAsync();
+            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
+            
             Address deliveryAddress = _autoFixture.Create<Address>();
 
             SetDeliveryAddressCommand command = new()
@@ -178,44 +189,6 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
             shoppingCartFromDb.Customer.DeliveryAddress.Should().Be(deliveryAddress);
-        }
-        
-        private async Task<ShoppingCart> CreateShoppingCartInDatabaseAsync()
-        {
-            ShoppingCart shoppingCart = new();
-
-            shoppingCart.Create
-            (
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
-            );
-            
-            while(!shoppingCart.HasMinAmountForCheckout)
-            {
-                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
-                shoppingCart.AddProduct
-                (
-                    EntityId.Create(shoppingCartItem.ProductId),
-                    ProductQuantity.Create(shoppingCartItem.Quantity),
-                    Price.Create(shoppingCartItem.UnitPrice)
-                );
-            };
-            
-            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
-            shoppingCart.Customer.SetContactInformation
-            (
-                _autoFixture.Create<FullName>(),
-                _autoFixture.Create<EmailAddress>(),
-                _autoFixture.Create<PhoneNumber>(),
-                _autoFixture.Create<GenderType>()
-            );
-
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-
-            return shoppingCart;
         }
     }
 }

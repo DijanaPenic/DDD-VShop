@@ -14,15 +14,20 @@ namespace VShop.Modules.Sales.Tests.UnitTests
 {
     public class ShoppingCartUnitTests : UnitTestsBase, IClassFixture<AppFixture>
     {
+        private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
 
-        public ShoppingCartUnitTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        public ShoppingCartUnitTests(AppFixture appFixture)
+        {
+            _appFixture = appFixture;
+            _autoFixture = appFixture.AutoFixture;
+        }
         
         [Fact]
         public void Product_insert_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
-            ShoppingCart sut = GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
             
             sut.RequestCheckout(_autoFixture.Create<EntityId>()); // Checkout will prevent further updates
             
@@ -118,7 +123,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
         public void Product_removal_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
-            ShoppingCart sut = GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
             
             sut.RequestCheckout(_autoFixture.Create<EntityId>());
             
@@ -162,7 +167,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
         public void Delete_fails_for_already_deleted_shopping_cart()
         {
             // Arrange
-            ShoppingCart sut = GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
 
             sut.RequestDelete();
 
@@ -243,40 +248,6 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             
             // Assert
             result.IsError(out _).Should().BeTrue();
-        }
-
-        private ShoppingCart GetShoppingCartForCheckoutFixture()
-        {
-            ShoppingCart shoppingCart = new();
-
-            shoppingCart.Create
-            (
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
-            );
-            
-            while(!shoppingCart.HasMinAmountForCheckout)
-            {
-                ShoppingCartItemCommandDto shoppingCartItem = _autoFixture.Create<ShoppingCartItemCommandDto>();
-                shoppingCart.AddProduct
-                (
-                    EntityId.Create(shoppingCartItem.ProductId),
-                    ProductQuantity.Create(shoppingCartItem.Quantity),
-                    Price.Create(shoppingCartItem.UnitPrice)
-                );
-            };
-            
-            shoppingCart.Customer.SetDeliveryAddress(_autoFixture.Create<Address>());
-            shoppingCart.Customer.SetContactInformation
-            (
-                _autoFixture.Create<FullName>(),
-                _autoFixture.Create<EmailAddress>(),
-                _autoFixture.Create<PhoneNumber>(),
-                _autoFixture.Create<GenderType>()
-            );
-
-            return shoppingCart;
         }
     }
 }
