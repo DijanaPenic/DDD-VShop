@@ -1,7 +1,8 @@
-﻿using EventStore.Client;
+﻿using Serilog;
+using EventStore.Client;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
+
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;
