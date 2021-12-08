@@ -14,9 +14,8 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
 using ILogger = Serilog.ILogger;
 
-namespace VShop.SharedKernel.EventSourcing.Projections
+namespace VShop.SharedKernel.Application.Projections
 {
-    // TODO - correct project for this class?
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler 
         where TDbContext : DbContextBase
     {
