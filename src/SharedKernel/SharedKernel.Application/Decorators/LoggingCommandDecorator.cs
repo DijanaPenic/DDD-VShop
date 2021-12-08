@@ -9,7 +9,9 @@ namespace VShop.SharedKernel.Application.Decorators
 {
     public class LoggingCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        private static readonly ILogger Logger = Log.ForContext<LoggingCommandDecorator<TCommand, TResponse>>();
+        private readonly ILogger _logger;
+
+        public LoggingCommandDecorator(ILogger logger) => _logger = logger;
         
         public async Task<TResponse> Handle
         (
@@ -20,11 +22,11 @@ namespace VShop.SharedKernel.Application.Decorators
         {
             string commandTypeName = command.GetType().Name;
             
-            Logger.Information("Handling command {CommandName} ({@Command})", commandTypeName, command);
+            _logger.Information("Handling command {CommandName} ({@Command})", commandTypeName, command);
             
             TResponse result = await next();
             
-            Logger.Information("Command {CommandName} handled - response: {@Result}", commandTypeName, result);
+            _logger.Information("Command {CommandName} handled - response: {@Result}", commandTypeName, result);
 
             return result;
         }

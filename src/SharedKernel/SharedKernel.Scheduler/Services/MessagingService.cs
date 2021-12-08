@@ -14,20 +14,18 @@ using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Scheduler.Services
 {
     public class MessagingService : IMessagingService
     {
+        private readonly ILogger _logger;
         private readonly ICommandBus _commandBus;
         private readonly IEventBus _eventBus;
         private readonly SchedulerContext _schedulerContext;
-        
-        private static readonly ILogger Logger = Log.ForContext<MessagingService>();
 
-        public MessagingService(ICommandBus commandBus, IEventBus eventBus, SchedulerContext schedulerContext)
+        public MessagingService(ILogger logger, ICommandBus commandBus, IEventBus eventBus, SchedulerContext schedulerContext)
         {
+            _logger = logger;
             _commandBus = commandBus;
             _eventBus = eventBus;
             _schedulerContext = schedulerContext;
@@ -61,7 +59,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             }                                                                                                                    
             catch (Exception ex)                                                                                                  
             {                                                                                                                    
-                Logger.Error(ex, "Unhandled error has occurred");
+                _logger.Error(ex, "Unhandled error has occurred");
                                                                                                                                  
                 await SetMessageStatusAsync(message, MessageStatus.Failed, cancellationToken);                                
             }

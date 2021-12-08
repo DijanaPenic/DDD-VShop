@@ -15,8 +15,6 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Threading;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {
     public class SubscriptionToAllBackgroundService : ISubscriptionBackgroundService
@@ -24,24 +22,25 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         private CancellationTokenSource _cancellationTokenSource;
         private Task _executingTask;
         private readonly object _resubscribeLock = new();
-        
+
+        private readonly ILogger _logger;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IServiceProvider _serviceProvider;
         private readonly string _subscriptionId;
         private readonly ISubscriptionHandler _subscriptionHandler;
         private readonly SubscriptionFilterOptions _filterOptions;
 
-        private static readonly ILogger Logger = Log.ForContext<SubscriptionToAllBackgroundService>();
-
         public SubscriptionToAllBackgroundService
         (
+            ILogger logger,
             EventStoreClient eventStoreClient,
             IServiceProvider serviceProvider,
             string subscriptionId,
-            ISubscriptionHandler subscriptionHandler,
+            ISubscriptionHandler subscriptionHandler, // TODO - many dependencies
             SubscriptionFilterOptions filterOptions = default
         )
         {
+            _logger = logger;
             _eventStoreClient = eventStoreClient;
             _subscriptionId = $"{eventStoreClient.ConnectionName}-{subscriptionId}";
             _subscriptionHandler = subscriptionHandler;
@@ -73,12 +72,12 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             // Throw if cancellation triggered
             cancellationToken.ThrowIfCancellationRequested();
 
-            Logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionId);
+            _logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionId);
         }
 
         private async Task SubscribeToAllAsync(CancellationToken cancellationToken)
         {
-            Logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionId);
+            _logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionId);
 
             using IServiceScope scope = _serviceProvider.CreateScope();
             SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
@@ -146,7 +145,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             }
             catch (Exception ex)
             {
-                Logger.Error
+                _logger.Error
                 (
                     ex,
                     "Error consuming message: {ExceptionMessage}{ExceptionStackTrace}",
@@ -157,31 +156,31 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             }
         }
 
-        private static bool IsMessageWithEmptyData(ResolvedEvent resolvedEvent)
+        private bool IsMessageWithEmptyData(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.Data.Length is not 0) return false;
 
-            Logger.Information("Event without data received");
+            _logger.Information("Event without data received");
             
             return true;
         }
 
-        private static bool IsCheckpointMessage(ResolvedEvent resolvedEvent)
+        private bool IsCheckpointMessage(ResolvedEvent resolvedEvent)
         {
             if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName<Checkpoint>()) return false;
 
-            Logger.Information("Checkpoint event - ignoring");
+            _logger.Information("Checkpoint event - ignoring");
             
             return true;
         }
 
-        private static bool IsSubscribedToMessage(ResolvedEvent resolvedEvent)
+        private bool IsSubscribedToMessage(ResolvedEvent resolvedEvent)
         {
             Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
 
             if (eventType is not null) return true;
             
-            Logger.Information("Unknown event - ignoring");
+            _logger.Information("Unknown event - ignoring");
             
             return false;
         }
@@ -193,7 +192,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             Exception exception
         )
         {
-            Logger.Warning
+            _logger.Warning
             (
                 exception,
                 "Subscription to all '{SubscriptionId}' dropped with '{Reason}'",
@@ -224,7 +223,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                 }
                 catch (Exception exception)
                 {
-                    Logger.Warning
+                    _logger.Warning
                     (
                         exception,
                         "Failed to resubscribe to all '{SubscriptionId}' dropped with '{ExceptionMessage}{ExceptionStackTrace}'",

@@ -10,18 +10,18 @@ using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.Integration.Repositories.Contracts;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Integration.Projections
 {
     public class IntegrationEventProjectionToEventStore : ISubscriptionHandler
     {
+        private readonly ILogger _logger;
         private readonly IIntegrationEventRepository _integrationRepository;
-        
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventProjectionToEventStore>(); 
-        
-        public IntegrationEventProjectionToEventStore(IIntegrationEventRepository integrationRepository)
-            => _integrationRepository = integrationRepository;
+
+        public IntegrationEventProjectionToEventStore(ILogger logger, IIntegrationEventRepository integrationRepository)
+        {
+            _logger = logger;
+            _integrationRepository = integrationRepository;
+        }
 
         public Task ProjectAsync
         (
@@ -34,7 +34,7 @@ namespace VShop.SharedKernel.Integration.Projections
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
-            Logger.Debug("Projecting integration event: {Message}", integrationEvent);
+            _logger.Debug("Projecting integration event: {Message}", integrationEvent);
 
             return _integrationRepository.SaveAsync(integrationEvent, cancellationToken);
         }

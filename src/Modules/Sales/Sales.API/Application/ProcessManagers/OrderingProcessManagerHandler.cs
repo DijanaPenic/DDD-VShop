@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using Serilog;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.Modules.Sales.Domain.Events;
@@ -21,8 +22,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             IDomainEventHandler<PaymentGracePeriodExpiredDomainEvent>,
             IDomainEventHandler<OrderStatusSetToCancelledDomainEvent>
     {
-        public OrderingProcessManagerHandler(IProcessManagerRepository<OrderingProcessManager> processManagerRepository)
-            : base(processManagerRepository) { }
+        public OrderingProcessManagerHandler(ILogger logger, IProcessManagerRepository<OrderingProcessManager> processManagerRepository)
+            : base(logger, processManagerRepository) { }
         
         public Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);

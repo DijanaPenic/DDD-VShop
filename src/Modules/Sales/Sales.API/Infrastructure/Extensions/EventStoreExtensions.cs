@@ -1,8 +1,7 @@
 ﻿using EventStore.Client;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
-
-
+using Serilog;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;
@@ -41,37 +40,52 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddHostedService<SubscriptionHostedService>();
 
             // Read model projections
-            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
-            (
-                eventStoreClient,
-                provider,
-                "ReadModels",
-                new DomainEventProjectionToPostgres<SalesContext>(ShoppingCartInfoProjection.ProjectAsync),
-                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
-            ));
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider =>
+            {
+                ILogger logger = provider.GetService<ILogger>();
+                return new SubscriptionToAllBackgroundService
+                (
+                    logger,
+                    eventStoreClient,
+                    provider,
+                    "ReadModels",
+                    new DomainEventProjectionToPostgres<SalesContext>(logger, ShoppingCartInfoProjection.ProjectAsync),
+                    new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+                );
+            });
 
             // Publish integration events from the current bounded context
-            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
-            (
-                eventStoreClient,
-                provider,
-                "IntegrationEventsPub",
-                new IntegrationEventProjectionToEventStore(provider.GetRequiredService<IIntegrationEventRepository>()),
-                // This will subscribe to these streams:
-                // * process manager outbox and
-                // * aggregate
-                new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
-            ));
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider =>
+            {
+                ILogger logger = provider.GetService<ILogger>();
+                return new SubscriptionToAllBackgroundService
+                (
+                    logger,
+                    eventStoreClient,
+                    provider,
+                    "IntegrationEventsPub",
+                    new IntegrationEventProjectionToEventStore(logger, provider.GetRequiredService<IIntegrationEventRepository>()),
+                    // This will subscribe to these streams:
+                    // * process manager outbox and
+                    // * aggregate
+                    new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
+                );
+            });
             
             // Subscribe to integration streams
-            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider => new SubscriptionToAllBackgroundService
-            (
-                eventStoreClient,
-                provider,
-                "IntegrationEventsSub",
-                new IntegrationEventPublisher(provider.GetRequiredService<IEventBus>()),
-                new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
-            ));
+            services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider =>
+            {
+                ILogger logger = provider.GetService<ILogger>();
+                return new SubscriptionToAllBackgroundService
+                (
+                    logger,
+                    eventStoreClient,
+                    provider,
+                    "IntegrationEventsSub",
+                    new IntegrationEventPublisher(logger, provider.GetRequiredService<IEventBus>()),
+                    new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
+                );
+            });
 
             MessageMappings.MapMessageTypes();
         }

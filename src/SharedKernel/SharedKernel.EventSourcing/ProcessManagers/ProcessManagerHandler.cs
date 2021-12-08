@@ -13,18 +13,20 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     public abstract class ProcessManagerHandler<TProcess>
         where TProcess : ProcessManager
     {
+        private readonly ILogger _logger;
         private readonly IProcessManagerRepository<TProcess> _processManagerRepository;
 
-        private static readonly ILogger Logger = Log.ForContext<ProcessManagerHandler<TProcess>>();
+        protected ProcessManagerHandler(ILogger logger, IProcessManagerRepository<TProcess> processManagerRepository)
+        {
+            _logger = logger;
+            _processManagerRepository = processManagerRepository;
+        }
 
-        protected ProcessManagerHandler(IProcessManagerRepository<TProcess> processManagerRepository)
-            => _processManagerRepository = processManagerRepository;
-        
         protected async Task<Result> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
         {
             TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
-            Logger.Information
+            _logger.Information
             (
                 "{Process}: handling {Command} command",
                 typeof(TProcess).Name, command.GetType().Name
@@ -41,7 +43,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         {
             TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             
-            Logger.Information
+            _logger.Information
             (
                 "{Process}: handling {Event} event",
                 typeof(TProcess).Name, @event.GetType().Name

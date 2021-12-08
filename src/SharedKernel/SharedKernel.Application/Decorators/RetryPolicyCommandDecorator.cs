@@ -12,7 +12,9 @@ namespace VShop.SharedKernel.Application.Decorators
 {
     public class RetryPolicyCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
-        private static readonly ILogger Logger = Log.ForContext<RetryPolicyCommandDecorator<TCommand, TResponse>>();
+        private readonly ILogger _logger;
+
+        public RetryPolicyCommandDecorator(ILogger logger) => _logger = logger;
         
         public async Task<TResponse> Handle
         (
@@ -31,7 +33,7 @@ namespace VShop.SharedKernel.Application.Decorators
                     maxRetryAttempts,
                     provider => TimeSpan.FromMilliseconds(provider * sleepDuration),
                     (ex, ts, _)
-                        => Logger.Warning
+                        => _logger.Warning
                         (
                             ex,
                             "Failed to execute handler for command {Command}, retrying after {RetryTimeSpan}s: {ExceptionMessage}",

@@ -11,18 +11,18 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Integration.Projections
 {
     public class IntegrationEventPublisher : ISubscriptionHandler
     {
+        private readonly ILogger _logger;
         private readonly IEventBus _eventBus;
-        
-        // TODO - ambient context anti-pattern
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventPublisher>();
 
-        public IntegrationEventPublisher(IEventBus eventBus) => _eventBus = eventBus;
+        public IntegrationEventPublisher(ILogger logger, IEventBus eventBus)
+        {
+            _logger = logger;
+            _eventBus = eventBus;
+        }
 
         public Task ProjectAsync
         (
@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.Integration.Projections
         {
             if (message is not IIntegrationEvent integrationEvent) return Task.CompletedTask;
             
-            Logger.Debug("Projecting integration event: {Message}", integrationEvent);
+            _logger.Debug("Projecting integration event: {Message}", integrationEvent);
             
             // TODO - need to figure out how to handle these exceptions. This will stop further integration projections.
             return _eventBus.Publish(integrationEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);

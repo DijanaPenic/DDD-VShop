@@ -13,8 +13,10 @@ namespace VShop.SharedKernel.Application.Decorators
 {
     public class ErrorCommandDecorator<TCommand> : ICommandDecorator<TCommand, Result>
     {
-        private static readonly ILogger Logger = Log.ForContext<ErrorCommandDecorator<TCommand>>();
-        
+        private readonly ILogger _logger;
+
+        public ErrorCommandDecorator(ILogger logger) => _logger = logger;
+
         public async Task<Result> Handle
         (
             TCommand command,
@@ -32,7 +34,7 @@ namespace VShop.SharedKernel.Application.Decorators
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Unhandled error has occurred");
+                _logger.Error(ex, "Unhandled error has occurred");
                 
                 return Result.InternalServerError(JsonConvert.SerializeObject(ex));
             }
@@ -41,7 +43,9 @@ namespace VShop.SharedKernel.Application.Decorators
     
     public class ErrorCommandDecorator<TCommand, TData> : ICommandDecorator<TCommand, Result<TData>>
     {
-        private static readonly ILogger Logger = Log.ForContext<ErrorCommandDecorator<TCommand, TData>>();
+        private readonly ILogger _logger;
+
+        public ErrorCommandDecorator(ILogger logger) => _logger = logger;
         
         public async Task<Result<TData>> Handle
         (
@@ -60,7 +64,7 @@ namespace VShop.SharedKernel.Application.Decorators
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Unhandled error has occurred");
+                _logger.Error(ex, "Unhandled error has occurred");
                 
                 return Result.InternalServerError(JsonConvert.SerializeObject(ex));
             }

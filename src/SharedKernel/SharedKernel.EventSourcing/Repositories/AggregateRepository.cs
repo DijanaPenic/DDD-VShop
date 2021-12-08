@@ -14,25 +14,24 @@ using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class AggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
         where TKey : ValueObject
         where TAggregate : AggregateRoot<TKey>
     {
+        private readonly ILogger _logger;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
 
-        private static readonly ILogger Logger = Log.ForContext<AggregateRepository<TAggregate, TKey>>();
-
         public AggregateRepository
         (
+            ILogger logger,
             EventStoreClient eventStoreClient,
             IEventBus eventBus
         )
         {
+            _logger = logger;
             _eventStoreClient = eventStoreClient;
             _eventBus = eventBus;
         }

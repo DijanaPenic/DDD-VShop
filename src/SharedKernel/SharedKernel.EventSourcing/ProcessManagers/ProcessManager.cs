@@ -79,7 +79,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         public void Clear()
         {
-            _outbox = default; // TODO - default vs. null?
+            _outbox = default;
             _inbox = default;
         }
         

@@ -16,26 +16,25 @@ using VShop.SharedKernel.Scheduler.Quartz.Services;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager, new()
     {
+        private readonly ILogger _logger;
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
         private readonly ISchedulerService _messageSchedulerService;
 
-        private static readonly ILogger Logger = Log.ForContext<ProcessManagerRepository<TProcess>>();
-
         public ProcessManagerRepository
         (
+            ILogger logger,
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
             ISchedulerService messageSchedulerService
         )
         {
+            _logger = logger;
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
             _messageSchedulerService = messageSchedulerService;

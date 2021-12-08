@@ -12,18 +12,19 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Application.Projections
 {
     public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler 
         where TDbContext : DbContextBase
     {
+        private readonly ILogger _logger;
         private readonly Projector _projector;
-        
-        private static readonly ILogger Logger = Log.ForContext<DomainEventProjectionToPostgres<TDbContext>>(); 
-        
-        public DomainEventProjectionToPostgres(Projector projector) => _projector = projector;
+
+        public DomainEventProjectionToPostgres(ILogger logger, Projector projector)
+        {
+            _logger = logger;
+            _projector = projector;
+        }
 
         public async Task ProjectAsync
         (
@@ -42,7 +43,7 @@ namespace VShop.SharedKernel.Application.Projections
         
             if (handler is null) return;
         
-            Logger.Debug("Projecting domain event: {Message}", domainEvent);
+            _logger.Debug("Projecting domain event: {Message}", domainEvent);
 
             await handler();
             

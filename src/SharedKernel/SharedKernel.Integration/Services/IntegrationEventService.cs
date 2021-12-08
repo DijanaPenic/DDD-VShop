@@ -12,30 +12,29 @@ using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Repositories.Contracts;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Integration.Services
 {
     public class IntegrationEventService<TDbContext> : IIntegrationEventService
         where TDbContext :  DbContextBase
     {
+        private readonly ILogger _logger;
         private readonly TDbContext _dbContext;
         private readonly IIntegrationEventRepository _integrationEventRepository;
         private readonly IIntegrationEventLogRepository _integrationEventLogRepository;
 
         public IntegrationEventService
         (
+            ILogger logger,
             TDbContext dbContext,
             IIntegrationEventRepository integrationEventRepository,
             IIntegrationEventLogRepository integrationEventLogRepository
         )
         {
+            _logger = logger;
             _dbContext = dbContext;
             _integrationEventRepository = integrationEventRepository;
             _integrationEventLogRepository = integrationEventLogRepository;
         }
-
-        private static readonly ILogger Logger = Log.ForContext<IntegrationEventService<TDbContext>>();
 
         public async Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default)
         {
@@ -44,7 +43,7 @@ namespace VShop.SharedKernel.Integration.Services
 
             foreach (IntegrationEventLog pendingEvent in pendingEvents)
             {
-                Logger.Information
+                _logger.Information
                 (
                     "Publishing integration event: {IntegrationEventId} - ({IntegrationEvent})",
                     pendingEvent.EventId, pendingEvent.Content
@@ -61,7 +60,7 @@ namespace VShop.SharedKernel.Integration.Services
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error
+                    _logger.Error
                     (
                         ex,
                         "Error publishing integration event: {IntegrationEventId}",
@@ -75,7 +74,7 @@ namespace VShop.SharedKernel.Integration.Services
 
         public async Task AddAndSaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
-            Logger.Information
+            _logger.Information
             (
                 "Enqueuing integration event {IntegrationEventId} to repository ({IntegrationEvent})",
                 @event.MessageId, @event

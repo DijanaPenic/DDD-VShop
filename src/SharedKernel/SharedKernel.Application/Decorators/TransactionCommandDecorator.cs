@@ -11,23 +11,22 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators.Contracts;
 
-using ILogger = Serilog.ILogger;
-
 namespace VShop.SharedKernel.Application.Decorators
 {
     public class TransactionCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
     {
+        private readonly ILogger _logger;
         private readonly DbContextBase _dbContext;
         private readonly IIntegrationEventService _integrationEventService;
-        
-        private static readonly ILogger Logger = Log.ForContext<TransactionCommandDecorator<TCommand, TResponse>>(); 
 
         public TransactionCommandDecorator
         (
+            ILogger logger,
             DbContextProvider dbContextProvider,
             IIntegrationEventService integrationEventService
         )
         {
+            _logger = logger;
             _dbContext = dbContextProvider();
             _integrationEventService = integrationEventService;
         }
@@ -59,7 +58,7 @@ namespace VShop.SharedKernel.Application.Decorators
                     await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync(cancellationToken))
                     using (LogContext.PushProperty("TransactionContext", transaction.TransactionId)) // All messages written during a transaction will carry the id of that transaction
                     {
-                        Logger.Information
+                        _logger.Information
                         (
                             "Begin transaction {TransactionId} for {CommandName} ({@Command})",
                             transaction.TransactionId, commandTypeName, command
@@ -67,7 +66,7 @@ namespace VShop.SharedKernel.Application.Decorators
 
                         response = await next();
 
-                        Logger.Information
+                        _logger.Information
                         (
                             "Commit transaction {TransactionId} for {CommandName}",
                             transaction.TransactionId, commandTypeName
@@ -85,7 +84,7 @@ namespace VShop.SharedKernel.Application.Decorators
             }
             catch (Exception ex)
             {
-                Logger.Error
+                _logger.Error
                 (
                     ex, "Error Handling transaction for {CommandName} ({@Command})",
                     commandTypeName, command
