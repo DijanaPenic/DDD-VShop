@@ -7,8 +7,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
-    // TODO - potentially rename
-    public class Inbox : IInbox
+    public class ProcessManagerInbox : IProcessManagerInbox
     {
         public IMessage Trigger { get; set; }
         public int Version { get; set; } = -1;
@@ -18,7 +17,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             = new Dictionary<Type, Action<IBaseCommand>>();
     }
     
-    public interface IInbox
+    public interface IProcessManagerInbox
     {
         public IMessage Trigger { get; }
         public int Version { get; }

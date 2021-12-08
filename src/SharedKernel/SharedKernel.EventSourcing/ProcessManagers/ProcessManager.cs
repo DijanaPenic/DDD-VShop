@@ -10,12 +10,12 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public abstract class ProcessManager
     {
-        private Inbox _inbox = new();
-        private Outbox _outbox = new();
+        private ProcessManagerInbox _inbox = new();
+        private ProcessManagerOutbox _outbox = new();
 
         public Guid Id { get; protected set; }
-        public IInbox Inbox => _inbox;
-        public IOutbox Outbox => _outbox;
+        public IProcessManagerInbox Inbox => _inbox;
+        public IProcessManagerOutbox Outbox => _outbox;
 
         protected abstract void ApplyEvent(IBaseEvent @event);
         

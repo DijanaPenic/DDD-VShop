@@ -8,13 +8,13 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
-    public class Outbox : IOutbox
+    public class ProcessManagerOutbox : IProcessManagerOutbox
     {
-        private readonly List<IIntegrationEvent> _events = new(); // TODO - BaseCommand vs. IntegrationEvent
+        private readonly List<IIntegrationEvent> _events = new();
         private readonly List<IBaseCommand> _commands = new();
-        private readonly List<IScheduledMessage> _scheduledCommands = new();
         private readonly List<IScheduledMessage> _scheduledEvents = new();
-        
+        private readonly List<IScheduledMessage> _scheduledCommands = new();
+
         public int Version { get; set; } = -1;
 
         public void Add(IIntegrationEvent @event) => _events.Add(@event);
@@ -30,7 +30,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
     }
     
-    public interface IOutbox
+    public interface IProcessManagerOutbox
     {
         public int Version { get; }
         public IEnumerable<IMessage> GetAllMessages();
