@@ -2,14 +2,15 @@
 using Quartz;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Scheduler.Services;
 using VShop.SharedKernel.Scheduler.Quartz.Jobs;
 using VShop.SharedKernel.Scheduler.Quartz.Services;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {
-    public static class QuartzExtensions
+    public static class SchedulerExtensions
     {
-        public static void AddQuartzServices(this IServiceCollection services, string connectionString)
+        public static void AddSchedulerServices(this IServiceCollection services, string connectionString)
         {
             services.Configure<QuartzOptions>(options =>
             {
@@ -43,6 +44,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 options.WaitForJobsToComplete = true;
             });
             services.AddTransient<ISchedulerService, SchedulerService>();
+            services.AddTransient<IMessagingService, MessagingService>();
             services.AddTransient<ProcessMessageJob>();
         }
     }

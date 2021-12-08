@@ -13,7 +13,6 @@ using VShop.Modules.Sales.API.Infrastructure.Extensions;
 using VShop.Modules.Sales.API.Infrastructure.Automapper;
 using VShop.Modules.Sales.API.Infrastructure.AutofacModules;
 using VShop.Modules.Sales.Infrastructure.Services;
-using VShop.SharedKernel.Scheduler.Services;
 
 namespace VShop.Modules.Sales.API
 {
@@ -31,10 +30,7 @@ namespace VShop.Modules.Sales.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
-
-            // Configure scheduler
-            services.AddTransient<IMessagingService, MessagingService>();
-            services.AddQuartzServices(Configuration.GetConnectionString("PostgresDb"));
+            services.AddSchedulerServices(Configuration.GetConnectionString("PostgresDb"));
             
             // Configure query services
             services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
