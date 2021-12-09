@@ -58,20 +58,24 @@ namespace VShop.Modules.Billing.API
                 .UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
-                    .Enrich.FromLogContext())
+                    .Enrich.FromLogContext()
+                )
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
         
         private static void RunDatabaseMigrations(IHost host)
         {
-            using IServiceScope serviceScope = host.Services
+            using IServiceScope scope = host.Services
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
 
-            using BillingContext billingContext = serviceScope.ServiceProvider.GetService<BillingContext>();
+            using BillingContext billingContext = scope.ServiceProvider.GetService<BillingContext>();
             billingContext?.Database.Migrate();
             
-            using IntegrationContext integrationContext = serviceScope.ServiceProvider.GetService<IntegrationContext>();
+            using IntegrationContext integrationContext = scope.ServiceProvider.GetService<IntegrationContext>();
             integrationContext?.Database.Migrate();
         }
     }

@@ -59,23 +59,27 @@ namespace VShop.Modules.Sales.API
                 .UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
-                    .Enrich.FromLogContext())
+                    .Enrich.FromLogContext()
+                )
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
         
         private static void RunDatabaseMigrations(IHost host)
         {
-            using IServiceScope serviceScope = host.Services
+            using IServiceScope scope = host.Services
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
 
-            using SalesContext salesContext = serviceScope.ServiceProvider.GetService<SalesContext>();
+            using SalesContext salesContext = scope.ServiceProvider.GetService<SalesContext>();
             salesContext?.Database.Migrate();
             
-            using SchedulerContext schedulerContext = serviceScope.ServiceProvider.GetService<SchedulerContext>();
+            using SchedulerContext schedulerContext = scope.ServiceProvider.GetService<SchedulerContext>();
             schedulerContext?.Database.Migrate();
             
-            using SubscriptionContext subscriptionContext = serviceScope.ServiceProvider.GetService<SubscriptionContext>();
+            using SubscriptionContext subscriptionContext = scope.ServiceProvider.GetService<SubscriptionContext>();
             subscriptionContext?.Database.Migrate();
         }
     }
