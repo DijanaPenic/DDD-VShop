@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  eventstore.db.default:
+  eventstore.db:
     image: eventstore/eventstore
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
@@ -47,6 +47,18 @@ services:
       POSTGRES_DB: VShop_Sales
       POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
       
+  postgres.db.sales.tests:
+    image: postgres
+    ports: 
+      - 5440:5432
+    restart: always
+    volumes:
+    - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_SalesIntegration
+      POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
+      
   postgres.db.billing:
     image: postgres
     ports: 
@@ -55,4 +67,14 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Billing
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+     
+  postgres.db.billing.tests:
+    image: postgres
+    ports: 
+      - 5441:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_BillingIntegration
       POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
