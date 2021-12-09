@@ -1,10 +1,14 @@
 using System;
 using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Autofac.Extensions.DependencyInjection;
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+using VShop.Modules.Billing.Infrastructure;
+using VShop.SharedKernel.Integration.Infrastructure;
 
 namespace VShop.Modules.Billing.API
 {
@@ -12,8 +16,6 @@ namespace VShop.Modules.Billing.API
     {
         public static int Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-            
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
@@ -22,7 +24,11 @@ namespace VShop.Modules.Billing.API
 
             try
             {
-                CreateHostBuilder(args).Build().Run();
+                IHost host = CreateHostBuilder(args).Build();
+
+                RunDatabaseMigrations(host);
+                
+                host.Run();
 
                 Log.Information("Stopped cleanly");
                 
@@ -55,5 +61,18 @@ namespace VShop.Modules.Billing.API
                     .Enrich.FromLogContext())
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        
+        private static void RunDatabaseMigrations(IHost host)
+        {
+            using IServiceScope serviceScope = host.Services
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            using BillingContext billingContext = serviceScope.ServiceProvider.GetService<BillingContext>();
+            billingContext?.Database.Migrate();
+            
+            using IntegrationContext integrationContext = serviceScope.ServiceProvider.GetService<IntegrationContext>();
+            integrationContext?.Database.Migrate();
+        }
     }
 }

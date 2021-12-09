@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+using VShop.Modules.Sales.Infrastructure;
+using VShop.SharedKernel.Scheduler.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Sales.API
 {
@@ -11,8 +17,6 @@ namespace VShop.Modules.Sales.API
     {
         public static int Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-            
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
@@ -21,7 +25,11 @@ namespace VShop.Modules.Sales.API
 
             try
             {
-                CreateHostBuilder(args).Build().Run();
+                IHost host = CreateHostBuilder(args).Build();
+
+                RunDatabaseMigrations(host);
+                
+                host.Run();
 
                 Log.Information("Stopped cleanly");
                 
@@ -54,5 +62,21 @@ namespace VShop.Modules.Sales.API
                     .Enrich.FromLogContext())
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        
+        private static void RunDatabaseMigrations(IHost host)
+        {
+            using IServiceScope serviceScope = host.Services
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            using SalesContext salesContext = serviceScope.ServiceProvider.GetService<SalesContext>();
+            salesContext?.Database.Migrate();
+            
+            using SchedulerContext schedulerContext = serviceScope.ServiceProvider.GetService<SchedulerContext>();
+            schedulerContext?.Database.Migrate();
+            
+            using SubscriptionContext subscriptionContext = serviceScope.ServiceProvider.GetService<SubscriptionContext>();
+            subscriptionContext?.Database.Migrate();
+        }
     }
 }
