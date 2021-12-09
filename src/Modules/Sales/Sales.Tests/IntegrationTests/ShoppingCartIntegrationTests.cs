@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
 using AutoFixture;
 using FluentAssertions;
 
@@ -34,8 +33,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Crete_a_new_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             CreateShoppingCartCommandHandler sut = new(shoppingCartRepository);
             
             CreateShoppingCartCommand command = new()
@@ -60,8 +58,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Add_a_product_to_the_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             AddShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
             
             ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
@@ -90,8 +87,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Remove_a_product_from_the_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             RemoveShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
@@ -122,8 +118,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Set_customer_contact_information()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             SetContactInformationCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
@@ -162,8 +157,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Set_customer_delivery_address()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
 
             ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();

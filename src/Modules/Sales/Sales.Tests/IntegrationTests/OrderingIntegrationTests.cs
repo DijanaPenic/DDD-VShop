@@ -1,13 +1,12 @@
 using Xunit;
-using Autofac;
 using AutoFixture;
 using FluentAssertions;
 using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -31,10 +30,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         public async Task Checkout_the_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = Container
-                .Resolve<IAggregateRepository<ShoppingCart, EntityId>>();
-            IAggregateRepository<Order, EntityId> orderRepository = Container
-                .Resolve<IAggregateRepository<Order, EntityId>>();
+            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
+            IAggregateRepository<Order, EntityId> orderRepository = GetService<IAggregateRepository<Order, EntityId>>();
             
             CheckoutShoppingCartCommandHandler sut = new(shoppingCartRepository);
 
