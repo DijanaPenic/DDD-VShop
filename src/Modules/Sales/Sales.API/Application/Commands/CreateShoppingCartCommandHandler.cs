@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             (
                 EntityId.Create(command.ShoppingCartId),
                 EntityId.Create(command.CustomerId),
-                command.CustomerDiscount
+                Discount.Create(command.CustomerDiscount)
             );
             
             if (createShoppingCartResult.IsError(out ApplicationError createShoppingCartError)) return createShoppingCartError;

@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            int customerDiscount // TODO - create a value object to prevent negative numbers, number in range (0-100)
+            Discount customerDiscount
         )
         {
             RaiseEvent

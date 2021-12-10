@@ -37,6 +37,7 @@ namespace VShop.Modules.Sales.Tests
             AutoFixture.Register(() => EntityId.Create(AutoFixture.Create<Guid>()));
             AutoFixture.Register(() => ProductQuantity.Create(AutoFixture.CreateInt(1, 10)));
             AutoFixture.Register(() => Price.Create(AutoFixture.CreateDecimal(10, 100)));
+            AutoFixture.Register(() => Discount.Create(AutoFixture.CreateInt(0, 100)));
         }
         
         public ShoppingCart GetShoppingCartForCheckoutFixture()
@@ -47,7 +48,7 @@ namespace VShop.Modules.Sales.Tests
             (
                 AutoFixture.Create<EntityId>(),
                 AutoFixture.Create<EntityId>(),
-                AutoFixture.CreateInt(0, 100)
+                AutoFixture.Create<Discount>()
             );
             
             while(!shoppingCart.HasMinAmountForCheckout)

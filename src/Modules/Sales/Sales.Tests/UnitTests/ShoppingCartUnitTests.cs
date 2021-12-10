@@ -51,7 +51,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
+                _autoFixture.Create<Discount>()
             );
 
             EntityId productId = _autoFixture.Create<EntityId>();
@@ -78,7 +78,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                0
+                Discount.Create(0)
             );
 
             EntityId productId = _autoFixture.Create<EntityId>();
@@ -103,7 +103,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                0
+                Discount.Create(0)
             );
 
             EntityId productId = _autoFixture.Create<EntityId>();
@@ -145,7 +145,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                0
+                Discount.Create(0)
             );
 
             EntityId productId = _autoFixture.Create<EntityId>();
@@ -187,7 +187,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
+                _autoFixture.Create<Discount>()
             );
             
             // Act
@@ -207,7 +207,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
+                _autoFixture.Create<Discount>()
             );
             
             EntityId productId = _autoFixture.Create<EntityId>();
@@ -233,7 +233,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             (
                 _autoFixture.Create<EntityId>(),
                 _autoFixture.Create<EntityId>(),
-                _autoFixture.CreateInt(0, 100)
+                _autoFixture.Create<Discount>()
             );
             
             EntityId productId = _autoFixture.Create<EntityId>();
