@@ -19,8 +19,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             return new ProductQuantity(value);
         }
 
-        public static implicit operator int(ProductQuantity self) 
-            => self.Value;
+        public static implicit operator int(ProductQuantity self) => self.Value;
         
         public static ProductQuantity operator +(ProductQuantity self, ProductQuantity increment)
             => new(self.Value + increment.Value);
@@ -28,8 +27,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         public static ProductQuantity operator -(ProductQuantity self, ProductQuantity decrement)
             => new(self.Value - decrement.Value);
 
-        public override string ToString()
-            => Value.ToString();
+        public override string ToString() => Value.ToString();
         
         protected override IEnumerable<object> GetEqualityComponents()
         {

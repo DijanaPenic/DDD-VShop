@@ -20,8 +20,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             return new EmailAddress(value);
         }
         
-        public static implicit operator string(EmailAddress self) 
-            => self.Value;
+        public static implicit operator string(EmailAddress self) => self.Value;
 
         public override string ToString() => Value;
         

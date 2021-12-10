@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -19,28 +20,17 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             return new Price(value);
         }
 
-        public static implicit operator decimal(Price self) 
-            => self.Value;
+        public static implicit operator decimal(Price self) => self.Value;
         
-        public static Price operator ++(Price self)
-            => new(self.Value + 1);
+        public static Price operator ++(Price self) => new(self.Value + 1);
         
-        public static Price operator +(Price self, Price increment)
-            => new(self.Value + increment.Value);
+        public static Price operator +(Price self, Price increment) => new(self.Value + increment.Value);
         
-        public static Price operator -(Price self, Price decrement)
-            => new(self.Value - decrement.Value);
+        public static Price operator -(Price self, Price decrement) => new(self.Value - decrement.Value);
 
-        public static Price operator *(Price self, decimal multiplier)
-            => new(self.Value * multiplier);
+        public static Price operator *(Price self, decimal multiplier) => new(self.Value * multiplier);
         
-        public void Deconstruct(out decimal value)
-        {
-            value = Value;
-        }
-
-        public override string ToString()
-            => Value.ToString();
+        public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
         
         protected override IEnumerable<object> GetEqualityComponents()
         {

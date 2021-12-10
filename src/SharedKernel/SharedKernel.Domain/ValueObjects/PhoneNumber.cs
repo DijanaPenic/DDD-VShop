@@ -20,8 +20,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             return new PhoneNumber(value);
         }
         
-        public static implicit operator string(PhoneNumber self) 
-            => self.Value;
+        public static implicit operator string(PhoneNumber self) => self.Value;
 
         public override string ToString() => Value;
         
