@@ -73,15 +73,10 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                     if (commandResult is IResult { Value: ApplicationError error })
                         throw new Exception(error.ToString());
                 }
-
-                // TODO - merge into one method.
-                // Schedule deferred commands
-                foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
+                
+                // Schedule deferred commands and events
+                foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetMessagesForDeferredDispatch())
                     await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
-
-                // Schedule deferred events
-                foreach (IScheduledMessage scheduledEvent in processManager.Outbox.GetEventsForDeferredDispatch())
-                    await _messageSchedulerService.ScheduleMessageAsync(scheduledEvent, cancellationToken);
             }
             finally
             {

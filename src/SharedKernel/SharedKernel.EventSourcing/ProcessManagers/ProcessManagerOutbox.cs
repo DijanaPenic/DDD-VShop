@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         private readonly List<IIntegrationEvent> _events = new();
         private readonly List<IBaseCommand> _commands = new();
-        private readonly List<IScheduledMessage> _scheduledEvents = new(); // Change type and return IScheduledMessage via method
+        private readonly List<IScheduledMessage> _scheduledEvents = new();
         private readonly List<IScheduledMessage> _scheduledCommands = new();
 
         public int Version { get; set; } = -1;
@@ -25,8 +25,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
         public IEnumerable<IMessage> GetAllMessages()
             => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents);
-        public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch() => _scheduledCommands;
-        public IEnumerable<IScheduledMessage> GetEventsForDeferredDispatch() => _scheduledEvents;
+        public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch() 
+            => _scheduledEvents.Concat(_scheduledCommands);
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
     }
     
@@ -34,8 +34,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         public int Version { get; }
         public IEnumerable<IMessage> GetAllMessages();
-        public IEnumerable<IScheduledMessage> GetCommandsForDeferredDispatch();
-        public IEnumerable<IScheduledMessage> GetEventsForDeferredDispatch();
+        public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch();
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch();
     }
 }
