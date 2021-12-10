@@ -157,7 +157,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         private void RecalculateDeliveryCost()
         {
-            decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForFreeDelivery) ? 0 : Settings.DefaultDeliveryCost;
+            decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForFreeDelivery) 
+                ? 0 : Settings.DefaultDeliveryCost;
             
             if (newDeliveryCost != DeliveryCost)
                 RaiseEvent
