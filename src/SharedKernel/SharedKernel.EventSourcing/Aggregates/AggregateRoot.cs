@@ -14,8 +14,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CorrelationId { get; private set; }
-        public Guid CausationId { get; private set; }
+        public Guid CorrelationId { get; set; } // Public setter when creating aggregate
+        public Guid CausationId { get; set; }
         
         protected abstract void ApplyEvent(IDomainEvent @event);
         
