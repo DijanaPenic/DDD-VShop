@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NodaTime;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -6,6 +6,7 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
@@ -20,7 +21,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public ShoppingCartCustomer Customer { get; private set; }
         public ShoppingCartStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
-        public DateTime ConfirmedAt { get; private set; }
+        public Instant ConfirmedAt { get; private set; }
         public IEnumerable<ShoppingCartItem> Items => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(sci => sci.TotalAmount));
@@ -120,7 +121,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Result.Success;
         }
 
-        public Result RequestCheckout(EntityId orderId)
+        public Result RequestCheckout(IClockService clockService, EntityId orderId)
         {
             if(Status is not ShoppingCartStatus.AwaitingConfirmation)
                 return Result.ValidationError($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
@@ -137,7 +138,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 {
                     ShoppingCartId = Id,
                     OrderId = orderId,
-                    ConfirmedAt = DateTime.UtcNow
+                    ConfirmedAt = clockService.Now
                 }
             );
             

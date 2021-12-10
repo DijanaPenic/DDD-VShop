@@ -13,6 +13,7 @@ using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
@@ -21,17 +22,20 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         where TAggregate : AggregateRoot<TKey>
     {
         private readonly ILogger _logger;
+        private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
 
         public AggregateRepository
         (
             ILogger logger,
+            IClockService clockService,
             EventStoreClient eventStoreClient,
             IEventBus eventBus
         )
         {
             _logger = logger;
+            _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _eventBus = eventBus;
         }
@@ -45,6 +49,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
+                _clockService,
                 streamName,
                 aggregate.Version,
                 aggregate.GetAllEvents(),

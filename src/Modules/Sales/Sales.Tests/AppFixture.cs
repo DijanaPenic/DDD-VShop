@@ -1,11 +1,12 @@
 using System;
 using System.Net.Mail;
 using AutoFixture;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.Tests
 {

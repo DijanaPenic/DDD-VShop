@@ -7,16 +7,21 @@ using EventStore.Client;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 namespace VShop.SharedKernel.Integration.Repositories
 {
     public class IntegrationEventRepository : IIntegrationEventRepository
     {
+        private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
 
-        public IntegrationEventRepository(EventStoreClient eventStoreClient)
-            => _eventStoreClient = eventStoreClient;
+        public IntegrationEventRepository(IClockService clockService, EventStoreClient eventStoreClient)
+        {
+            _clockService = clockService;
+            _eventStoreClient = eventStoreClient;
+        }
 
         public async Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
@@ -27,6 +32,7 @@ namespace VShop.SharedKernel.Integration.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
+                _clockService,
                 streamName,
                 StreamState.Any,
                 new[] { @event },

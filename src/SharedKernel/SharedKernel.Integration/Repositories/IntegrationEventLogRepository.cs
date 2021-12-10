@@ -30,7 +30,7 @@ namespace VShop.SharedKernel.Integration.Repositories
                 .Where(ie => ie.TransactionId == transactionId && ie.State == EventState.NotPublished)
                 .ToListAsync(cancellationToken);
 
-            return result.Any() ? result.OrderBy(ie => ie.DateCreatedUtc) : Enumerable.Empty<IntegrationEventLog>();
+            return result.Any() ? result.OrderBy(ie => ie.DateCreated) : Enumerable.Empty<IntegrationEventLog>();
         }
 
         public async Task SaveEventAsync

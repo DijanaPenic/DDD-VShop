@@ -1,4 +1,5 @@
 ﻿using System;
+using NodaTime;
 
 using VShop.SharedKernel.PostgresDb;
 
@@ -9,7 +10,7 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
         public Guid Id { get; set; }
         public string Body { get; set; }
         public string TypeName { get; set; }
-        public DateTime ScheduledTime { get; set; }
+        public Instant ScheduledTime { get; set; }
         public MessageStatus Status { get; set; }
     }
 }

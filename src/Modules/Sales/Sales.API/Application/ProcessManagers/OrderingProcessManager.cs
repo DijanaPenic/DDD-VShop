@@ -1,4 +1,5 @@
 ﻿using System;
+using NodaTime;
 using Newtonsoft.Json;
 
 using VShop.Modules.Sales.Domain.Events;
@@ -6,6 +7,7 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
@@ -25,7 +27,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
         }
 
-        public void Handle(ShoppingCartCheckoutRequestedDomainEvent _)
+        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, IClockService clockService)
         {
             PlaceOrderCommand placeOrderCommand = new()
             {
@@ -35,20 +37,20 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RaiseCommand(placeOrderCommand);
         }
 
-        public void Handle(OrderPlacedDomainEvent _)
+        public void Handle(OrderPlacedDomainEvent @event, IClockService clockService)
         {
             DeleteShoppingCartCommand deleteShoppingCartCommand = new(ShoppingCartId);
             RaiseCommand(deleteShoppingCartCommand);
         }
         
-        public void Handle(PaymentSucceededIntegrationEvent @event)
+        public void Handle(PaymentSucceededIntegrationEvent @event, IClockService clockService)
             => ScheduleDomainEvent
             (
                 new ShippingGracePeriodExpiredDomainEvent(Id, JsonConvert.SerializeObject(@event)),
-                DateTime.UtcNow.AddHours(Settings.ShippingGracePeriodInHours)
+                clockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
-        public void Handle(ShippingGracePeriodExpiredDomainEvent @event)
+        public void Handle(ShippingGracePeriodExpiredDomainEvent @event, IClockService clockService)
         {
             // The order is already shipped so there is nothing to address.
             if (Status is OrderingProcessManagerStatus.OrderShipped) return;
@@ -67,14 +69,14 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             }
         }
 
-        public void Handle(PaymentFailedIntegrationEvent _)
+        public void Handle(PaymentFailedIntegrationEvent @event, IClockService clockService)
             => ScheduleDomainEvent
             (
                 new PaymentGracePeriodExpiredDomainEvent(Id),
-                DateTime.UtcNow.AddMinutes(Settings.PaymentGracePeriodInMinutes)
+                clockService.Now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
             );
         
-        public void Handle(PaymentGracePeriodExpiredDomainEvent _)
+        public void Handle(PaymentGracePeriodExpiredDomainEvent @event, IClockService clockService)
         {
             // User managed to successfully pay the order.
             if (Status is not OrderingProcessManagerStatus.OrderPaymentFailed) return;

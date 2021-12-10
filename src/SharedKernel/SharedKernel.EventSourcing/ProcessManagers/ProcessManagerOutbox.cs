@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NodaTime;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -12,16 +12,16 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         private readonly List<IIntegrationEvent> _events = new();
         private readonly List<IBaseCommand> _commands = new();
-        private readonly List<IScheduledMessage> _scheduledEvents = new();
+        private readonly List<IScheduledMessage> _scheduledEvents = new(); // Change type and return IScheduledMessage via method
         private readonly List<IScheduledMessage> _scheduledCommands = new();
 
         public int Version { get; set; } = -1;
 
         public void Add(IIntegrationEvent @event) => _events.Add(@event);
         public void Add(IBaseCommand command) => _commands.Add(command);
-        public void Add(IDomainEvent @event, DateTime scheduledTime)
+        public void Add(IDomainEvent @event, Instant scheduledTime)
             => _scheduledEvents.Add(new ScheduledMessage(@event, scheduledTime));
-        public void Add(IBaseCommand command, DateTime scheduledTime)
+        public void Add(IBaseCommand command, Instant scheduledTime)
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
         public IEnumerable<IMessage> GetAllMessages()
             => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents);

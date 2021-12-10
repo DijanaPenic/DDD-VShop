@@ -3,6 +3,7 @@
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 using VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Infrastructure
 {
@@ -12,7 +13,8 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure
 
         public DbSet<MessageLog> MessageLogs { get; set; }
 
-        public SchedulerContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
+        public SchedulerContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+            : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => ContextBuilder.ConfigureContext(optionsBuilder);

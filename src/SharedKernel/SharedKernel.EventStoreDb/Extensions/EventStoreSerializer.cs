@@ -7,15 +7,13 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Messaging;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Serialization;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        private static readonly JsonSerializerSettings SerializerSettings = GetJsonSerializerSettings();
-        
         public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) 
             => (T)DeserializeData(resolvedEvent);
         
@@ -41,45 +39,34 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             
             return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
-        
-        public static EventData ToEventData(this object message) => new
-        (
-            Uuid.FromGuid(SequentialGuid.Create()),
-            MessageTypeMapper.ToName(message.GetType()),
-            Serialize(message, SerializerSettings),
-            Serialize(new { })
-        );
 
-        public static IEnumerable<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages)
+        public static IEnumerable<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages, IClockService clockService)
             where TMessage : IMessage
             => messages.Select(message => new EventData
             (
                 Uuid.FromGuid(message.MessageId),
                 MessageTypeMapper.ToName(message.GetType()),
-                Serialize(message, SerializerSettings),
-                Serialize(GetMetadata(message))
+                Serialize(message),
+                Serialize(GetMetadata(clockService, message))
             ));
 
-        private static byte[] Serialize(object data, JsonSerializerSettings serializerSettings)
-            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
-        
         private static byte[] Serialize(object data)
-            => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
-
-        private static JsonSerializerSettings GetJsonSerializerSettings()
         {
             PropertyIgnoreContractResolver jsonResolver = new();
             jsonResolver.Ignore(typeof(Message));
 
-            JsonSerializerSettings serializerSettings = new() { ContractResolver = jsonResolver };
+            JsonSerializerSettings serializerSettings = (JsonConvert.DefaultSettings is null) 
+                ? new JsonSerializerSettings() : JsonConvert.DefaultSettings();
 
-            return serializerSettings;
+            serializerSettings.ContractResolver = jsonResolver;
+
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
         }
-        
-        private static IMessageMetadata GetMetadata(IMessage message)
+
+        private static IMessageMetadata GetMetadata(IClockService clockService, IMessage message)
             => new MessageMetadata
             {
-                EffectiveTime = DateTime.UtcNow,
+                EffectiveTime = clockService.Now,
                 MessageId = message.MessageId,
                 CausationId = message.CausationId,
                 CorrelationId = message.CorrelationId

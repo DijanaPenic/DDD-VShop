@@ -3,12 +3,11 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 
-using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.Tests.UnitTests
 {
@@ -29,7 +28,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             // Arrange
             ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
             
-            sut.RequestCheckout(_autoFixture.Create<EntityId>()); // Checkout will prevent further updates
+            sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>()); // Checkout will prevent further updates
             
             EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = _autoFixture.Create<ProductQuantity>();
@@ -125,7 +124,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             // Arrange
             ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
             
-            sut.RequestCheckout(_autoFixture.Create<EntityId>());
+            sut.RequestCheckout(new ClockService(),_autoFixture.Create<EntityId>());
             
             ShoppingCartItem shoppingCartItem = sut.Items.First();
             
@@ -192,7 +191,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             
             // Act
-            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -218,7 +217,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -244,7 +243,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(_autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();

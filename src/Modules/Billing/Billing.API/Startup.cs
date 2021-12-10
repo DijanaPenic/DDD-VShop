@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.API.Infrastructure.Automapper;
 using VShop.Modules.Billing.API.Infrastructure.Extensions;
@@ -29,7 +31,11 @@ namespace VShop.Modules.Billing.API
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
 
+            // Configure payment service
             services.AddTransient<IPaymentService, FakePaymentService>();
+            
+            // Configure clock service
+            services.AddTransient<IClockService, ClockService>();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

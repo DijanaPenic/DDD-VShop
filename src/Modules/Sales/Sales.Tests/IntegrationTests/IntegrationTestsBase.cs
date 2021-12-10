@@ -2,7 +2,6 @@ using Xunit;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Autofac.Extensions.DependencyInjection;
 using Dapper;
 using Npgsql;
 using Serilog;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Autofac.Extensions.DependencyInjection;
 
 using VShop.Modules.Sales.API;
 using VShop.Modules.Sales.Infrastructure;

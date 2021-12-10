@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using NodaTime;
 
 using VShop.SharedKernel.Infrastructure;
 
@@ -20,7 +21,7 @@ namespace VShop.Modules.Billing.Infrastructure.Services
             string cardNumber,
             string cardSecurityNumber,
             string cardholderName,
-            DateTime cardExpiration,
+            Instant cardExpiration,
             CancellationToken cancellationToken = default
         )
         {

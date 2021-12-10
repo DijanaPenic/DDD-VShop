@@ -13,8 +13,8 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityCon
             
             builder.HasKey(c => c.SubscriptionId);
             builder.Property(sc => sc.Position);
-            builder.Property(c => c.DateCreatedUtc).IsRequired();
-            builder.Property(c => c.DateUpdatedUtc).IsRequired();
+            builder.Property(c => c.DateCreated).IsRequired();
+            builder.Property(c => c.DateUpdated).IsRequired();
         }
     }
 }

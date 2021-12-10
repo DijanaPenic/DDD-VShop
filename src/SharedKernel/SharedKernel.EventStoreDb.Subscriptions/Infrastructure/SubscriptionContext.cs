@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityConfigurations;
 
@@ -12,7 +13,8 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure
         
         public DbSet<Checkpoint> Checkpoints { get; set; }
 
-        public SubscriptionContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
+        public SubscriptionContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+            : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => ContextBuilder.ConfigureContext(optionsBuilder);

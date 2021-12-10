@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NodaTime;
 
 namespace VShop.SharedKernel.PostgresDb
 {
     public class DbEntityBase
     {
-        public DateTime DateCreatedUtc { get; set; }
-        public DateTime DateUpdatedUtc { get; set; }
+        public Instant DateCreated { get; set; }
+        public Instant DateUpdated { get; set; }
     }
 }

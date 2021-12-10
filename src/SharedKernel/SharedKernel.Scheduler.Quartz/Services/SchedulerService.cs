@@ -33,7 +33,7 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity(SequentialGuid.Create().ToString())
-                .StartAt(message.ScheduledTime)
+                .StartAt(message.ScheduledTime.ToDateTimeOffset())
                 .Build();
 
             IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);

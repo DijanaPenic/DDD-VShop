@@ -3,26 +3,36 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using NodaTime;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb
 {
     public class DbContextBase : DbContext
     {
         private IDbContextTransaction _currentTransaction;
-
+        private readonly IClockService _clockService;
+        
         protected readonly IDbContextBuilder ContextBuilder;
         
         protected DbContextBase() { }
-        public DbContextBase(IDbContextBuilder contextBuilder) => ContextBuilder = contextBuilder;
+
+        public DbContextBase(IClockService clockService, IDbContextBuilder contextBuilder)
+        {
+            _clockService = clockService;
+            ContextBuilder = contextBuilder;    
+        }
+        
         protected DbContextBase(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
         
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-            => SaveChangesAsync(DateTime.UtcNow, cancellationToken);
+            => SaveChangesAsync(_clockService.Now, cancellationToken);
 
-        public Task<int> SaveChangesAsync(DateTime effectiveTime, CancellationToken cancellationToken = default)
+        public Task<int> SaveChangesAsync(Instant effectiveTime, CancellationToken cancellationToken = default)
         {
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is DbEntityBase && e.State is (EntityState.Added or EntityState.Modified));
@@ -31,8 +41,8 @@ namespace VShop.SharedKernel.PostgresDb
             {
                 DbEntityBase baseEntity = (DbEntityBase)entry.Entity;
 
-                baseEntity.DateUpdatedUtc = effectiveTime;
-                if (entry.State == EntityState.Added) baseEntity.DateCreatedUtc = effectiveTime;
+                baseEntity.DateUpdated = effectiveTime;
+                if (entry.State == EntityState.Added) baseEntity.DateCreated = effectiveTime;
             }
 
             return base.SaveChangesAsync(cancellationToken);

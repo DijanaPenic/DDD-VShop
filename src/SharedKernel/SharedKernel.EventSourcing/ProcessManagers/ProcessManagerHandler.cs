@@ -3,9 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 
-using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
@@ -14,29 +13,19 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         where TProcess : ProcessManager
     {
         private readonly ILogger _logger;
+        private readonly IClockService _clockService;
         private readonly IProcessManagerRepository<TProcess> _processManagerRepository;
 
-        protected ProcessManagerHandler(ILogger logger, IProcessManagerRepository<TProcess> processManagerRepository)
+        protected ProcessManagerHandler
+        (
+            ILogger logger,
+            IClockService clockService,
+            IProcessManagerRepository<TProcess> processManagerRepository
+        )
         {
             _logger = logger;
+            _clockService = clockService;
             _processManagerRepository = processManagerRepository;
-        }
-
-        protected async Task<Result> ExecuteAsync(Guid processId, IBaseCommand command, CancellationToken cancellationToken)
-        {
-            TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
-            
-            _logger.Information
-            (
-                "{Process}: handling {Command} command",
-                typeof(TProcess).Name, command.GetType().Name
-            );
-            
-            processManager.Execute(command);
-            
-            await _processManagerRepository.SaveAsync(processManager, cancellationToken);
-
-            return Result.Success;
         }
         
         protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
@@ -49,7 +38,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, @event.GetType().Name
             );
             
-            processManager.Transition(@event);
+            processManager.Transition(@event, _clockService);
             
             await _processManagerRepository.SaveAsync(processManager, cancellationToken);
         }

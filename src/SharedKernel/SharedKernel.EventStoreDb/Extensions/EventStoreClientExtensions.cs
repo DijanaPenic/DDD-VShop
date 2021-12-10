@@ -6,6 +6,7 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Policies;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
@@ -14,6 +15,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
+            IClockService clockService,
             string streamName,
             int expectedRevision,
             IEnumerable<TMessage> messages,
@@ -24,7 +26,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             (
                 streamName,
                 StreamRevision.FromInt64(expectedRevision),
-                messages.ToEventData(),
+                messages.ToEventData(clockService),
                 cancellationToken: ct
             ), cancellationToken);
         }
@@ -32,6 +34,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
+            IClockService clockService,
             string streamName,
             StreamState expectedState,
             IEnumerable<TMessage> messages,
@@ -42,7 +45,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             (
                 streamName,
                 expectedState,
-                messages.ToEventData(),
+                messages.ToEventData(clockService),
                 cancellationToken: ct
             ), cancellationToken);
         }

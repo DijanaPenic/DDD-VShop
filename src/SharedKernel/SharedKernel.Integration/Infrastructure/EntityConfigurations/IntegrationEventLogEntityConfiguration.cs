@@ -17,8 +17,8 @@ namespace VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations
             builder.Property(sc => sc.TimesSent).IsRequired();
             builder.Property(sc => sc.Content).IsRequired();
             builder.Property(sc => sc.TransactionId).IsRequired();
-            builder.Property(sc => sc.DateCreatedUtc).IsRequired();
-            builder.Property(sc => sc.DateUpdatedUtc).IsRequired();
+            builder.Property(sc => sc.DateCreated).IsRequired();
+            builder.Property(sc => sc.DateUpdated).IsRequired();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using NodaTime;
 using FluentValidation;
 
 namespace VShop.Modules.Billing.API.Models
@@ -10,7 +11,7 @@ namespace VShop.Modules.Billing.API.Models
         public string CardNumber { get; init; }
         public string CardSecurityNumber { get; init; }
         public string CardholderName { get; init; }
-        public DateTime CardExpiration { get; init; }
+        public Instant CardExpiration { get; init; }
     }
     
     public class InitiatePaymentRequestValidator : AbstractValidator<InitiatePaymentRequest>

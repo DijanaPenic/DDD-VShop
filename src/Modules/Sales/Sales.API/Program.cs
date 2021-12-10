@@ -3,9 +3,9 @@ using Serilog;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Autofac.Extensions.DependencyInjection;
 
 using VShop.Modules.Sales.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure;
@@ -37,7 +37,7 @@ namespace VShop.Modules.Sales.API
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "An unhandled exception occured during bootstrapping");
+                Log.Fatal(ex, "An unhandled exception occured during host startup");
                 
                 return 1;
             }

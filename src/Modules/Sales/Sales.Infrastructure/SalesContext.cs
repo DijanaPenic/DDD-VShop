@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Infrastructure.EntityConfigurations;
 
@@ -14,7 +15,8 @@ namespace VShop.Modules.Sales.Infrastructure
         public DbSet<ShoppingCartInfo> ShoppingCarts { get; set; }
         public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
 
-        public SalesContext(IDbContextBuilder contextBuilder) : base(contextBuilder) { }
+        public SalesContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+            : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => ContextBuilder.ConfigureContext(optionsBuilder);

@@ -16,8 +16,8 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations
             builder.Property(sc => sc.TypeName).IsRequired();
             builder.Property(sc => sc.ScheduledTime).IsRequired();
             builder.Property(sc => sc.Status).IsRequired();
-            builder.Property(sc => sc.DateCreatedUtc).IsRequired();
-            builder.Property(sc => sc.DateUpdatedUtc).IsRequired();
+            builder.Property(sc => sc.DateCreated).IsRequired();
+            builder.Property(sc => sc.DateUpdated).IsRequired();
         }
     }
 }

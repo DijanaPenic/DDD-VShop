@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using NodaTime;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
@@ -19,27 +21,18 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected abstract void ApplyEvent(IBaseEvent @event);
         
-        protected void RegisterEvent<TEvent>(Action<TEvent> handler)
+        protected void RegisterEvent<TEvent>(Action<TEvent, IClockService> handler)
             where TEvent : class, IBaseEvent
-            => _inbox.EventHandlers[typeof(TEvent)] = (message) => handler(message as TEvent);
-        
-        protected void RegisterCommand<TCommand>(Action<TCommand> handler)
-            where TCommand : class, IBaseCommand
-            => _inbox.CommandHandlers[typeof(TCommand)] = (message) => handler(message as TCommand);
+            => _inbox.EventHandlers[typeof(TEvent)] = (message, clockService) 
+                => handler(message as TEvent, clockService);
 
-        public void Transition(IBaseEvent @event)
+        public void Transition(IBaseEvent @event, IClockService clockService)
         {
             ApplyEvent(@event);
             _inbox.Trigger = @event;
 
             Type eventType = @event.GetType();
-            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event);
-        }
-        
-        public void Execute(IBaseCommand command)
-        {
-            _inbox.Trigger = command;
-            _inbox.CommandHandlers[command.GetType()](command);
+            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event, clockService);
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)
@@ -54,13 +47,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(command);
         }
         
-        protected void ScheduleCommand(IBaseCommand command, DateTime scheduledTime)
+        protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime)
         {
             SetMessageIdentification(command);
             _outbox.Add(command, scheduledTime);
         }
         
-        protected void ScheduleDomainEvent(IDomainEvent @event, DateTime scheduledTime)
+        protected void ScheduleDomainEvent(IDomainEvent @event, Instant scheduledTime)
         {
             SetMessageIdentification(@event);
             _outbox.Add(@event, scheduledTime);

@@ -36,7 +36,7 @@ namespace VShop.Modules.Billing.API
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "An unhandled exception occured during bootstrapping");
+                Log.Fatal(ex, "An unhandled exception occured during host startup");
                 
                 return 1;
             }

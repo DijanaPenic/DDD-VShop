@@ -14,8 +14,8 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
             builder.HasKey(sci => sci.ProductId);
             builder.Property(sci => sci.Quantity).IsRequired();
             builder.Property(sci => sci.UnitPrice).IsRequired();
-            builder.Property(sci => sci.DateCreatedUtc).IsRequired();
-            builder.Property(sci => sci.DateUpdatedUtc).IsRequired();
+            builder.Property(sci => sci.DateCreated).IsRequired();
+            builder.Property(sci => sci.DateUpdated).IsRequired();
             
             builder.HasOne(sci => sci.ShoppingCartInfo)
                    .WithMany(sc => sc.Items)

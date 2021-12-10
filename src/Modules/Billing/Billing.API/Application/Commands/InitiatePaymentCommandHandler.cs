@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using NodaTime;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -75,6 +76,6 @@ namespace VShop.Modules.Billing.API.Application.Commands
         public string CardNumber { get; set; }
         public string CardSecurityNumber { get; set; }
         public string CardholderName { get; set; }
-        public DateTime CardExpiration { get; set; }
+        public Instant CardExpiration { get; set; }
     }
 }

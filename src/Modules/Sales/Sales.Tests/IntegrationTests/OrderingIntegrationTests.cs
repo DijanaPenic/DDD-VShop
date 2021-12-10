@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
@@ -32,8 +33,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             // Arrange
             IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             IAggregateRepository<Order, EntityId> orderRepository = GetService<IAggregateRepository<Order, EntityId>>();
+            IClockService clockService = GetService<IClockService>();
             
-            CheckoutShoppingCartCommandHandler sut = new(shoppingCartRepository);
+            CheckoutShoppingCartCommandHandler sut = new(clockService, shoppingCartRepository);
 
             ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
             await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);

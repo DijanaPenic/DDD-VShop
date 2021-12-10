@@ -11,6 +11,7 @@ using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Quartz.Services;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
@@ -22,6 +23,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         where TProcess : ProcessManager, new()
     {
         private readonly ILogger _logger;
+        private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
         private readonly ISchedulerService _messageSchedulerService;
@@ -29,12 +31,14 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         public ProcessManagerRepository
         (
             ILogger logger,
+            IClockService clockService,
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
             ISchedulerService messageSchedulerService
         )
         {
             _logger = logger;
+            _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
             _messageSchedulerService = messageSchedulerService;
@@ -47,6 +51,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
+                _clockService,
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
                 new[]{ processManager.Inbox.Trigger },
@@ -55,6 +60,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             
             await _eventStoreClient.AppendToStreamAsync
             (
+                _clockService,
                 GetOutboxStreamName(processManager.Id),
                 processManager.Outbox.Version,
                 processManager.Outbox.GetAllMessages(),
@@ -72,6 +78,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                         throw new Exception(error.ToString());
                 }
 
+                // TODO - merge into one method
                 // Schedule deferred commands
                 foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
                     await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);

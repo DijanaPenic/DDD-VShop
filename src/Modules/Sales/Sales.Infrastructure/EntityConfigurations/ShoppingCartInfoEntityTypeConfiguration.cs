@@ -14,8 +14,8 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
             builder.HasKey(sc => sc.Id);
             builder.Property(sc => sc.CustomerId).IsRequired();
             builder.Property(sc => sc.Status).IsRequired();
-            builder.Property(sc => sc.DateCreatedUtc).IsRequired();
-            builder.Property(sc => sc.DateUpdatedUtc).IsRequired();
+            builder.Property(sc => sc.DateCreated).IsRequired();
+            builder.Property(sc => sc.DateUpdated).IsRequired();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -15,10 +16,14 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, CheckoutOrder>
     {
+        private readonly IClockService _clockService;
         private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
 
-        public CheckoutShoppingCartCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
-            => _shoppingCartRepository = shoppingCartRepository;
+        public CheckoutShoppingCartCommandHandler(IClockService clockService, IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        {
+            _clockService = clockService;
+            _shoppingCartRepository = shoppingCartRepository;
+        }
 
         public async Task<Result<CheckoutOrder>> Handle(CheckoutShoppingCartCommand command, CancellationToken cancellationToken)
         {
@@ -35,7 +40,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             // Potentially use the same Id for shopping cart and order.
             EntityId orderId = EntityId.Create(SequentialGuid.Create());
 
-            Result checkoutResult = shoppingCart.RequestCheckout(orderId);
+            Result checkoutResult = shoppingCart.RequestCheckout(_clockService, orderId);
             
             if (checkoutResult.IsError(out ApplicationError error)) return error;
 

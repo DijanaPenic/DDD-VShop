@@ -1,11 +1,12 @@
 ﻿using System;
+using NodaTime;
 using Newtonsoft.Json;
 
 namespace VShop.SharedKernel.EventStoreDb.Messaging
 {
     public record MessageMetadata : IMessageMetadata
     {
-        public DateTime EffectiveTime { get; init; }
+        public Instant EffectiveTime { get; init; }
         public Guid MessageId { get; init; }
                 
         [JsonProperty("$correlationId")]
