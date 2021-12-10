@@ -11,11 +11,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
     public class ShoppingCartItem : Entity<EntityId>
     {
-        public static class Settings
-        {
-            public const decimal MaxQuantityPerProduct = 10;
-        }
-        
         public EntityId ShoppingCartId { get; private set; }
 
         public ProductQuantity Quantity { get; private set; }
@@ -79,6 +74,11 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Quantity -= new ProductQuantity(e.Quantity);
                     break;
             }
+        }
+        
+        public static class Settings
+        {
+            public const decimal MaxQuantityPerProduct = 10;
         }
     }
 }

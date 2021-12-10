@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         (
             EntityId orderId,
             Price deliveryCost,
-            Price totalDiscount,
+            Price totalDiscount, // TODO - missing total payment amount
             EntityId customerId,
             FullName fullName,
             EmailAddress emailAddress,
