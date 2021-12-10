@@ -12,6 +12,6 @@ namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
         where TA : AggregateRoot<TKey>
     {
         Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default);
-        Task<TA> LoadAsync(TKey aggregateId, Guid? causationId = default, Guid? correlationId = default, CancellationToken cancellationToken = default);
+        Task<TA> LoadAsync(TKey aggregateId, Guid? messageId = default, Guid? correlationId = default, CancellationToken cancellationToken = default);
     }
 }

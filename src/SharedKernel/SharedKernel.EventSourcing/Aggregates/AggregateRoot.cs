@@ -14,8 +14,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public TKey Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CorrelationId { get; set; }
-        public Guid CausationId { get; set; }
+        public Guid CorrelationId { get; private set; }
+        public Guid CausationId { get; private set; }
         
         protected abstract void ApplyEvent(IDomainEvent @event);
         
@@ -32,8 +32,11 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             _outbox.Add(@event);
         }
 
-        public void Load(IEnumerable<IBaseEvent> history)
+        public void Load(IEnumerable<IBaseEvent> history, Guid? messageId, Guid? correlationId)
         {
+            CausationId = messageId?? Guid.Empty;
+            CorrelationId = correlationId?? Guid.Empty;
+
             foreach (IBaseEvent @event in history)
             {
                 if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);

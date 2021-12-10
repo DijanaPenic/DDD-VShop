@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Serilog;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -18,23 +17,20 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class AggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
+        where TAggregate : AggregateRoot<TKey>, new()
         where TKey : ValueObject
-        where TAggregate : AggregateRoot<TKey>
     {
-        private readonly ILogger _logger;
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
 
         public AggregateRepository
         (
-            ILogger logger,
             IClockService clockService,
             EventStoreClient eventStoreClient,
             IEventBus eventBus
         )
         {
-            _logger = logger;
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _eventBus = eventBus;
@@ -71,8 +67,8 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         public async Task<TAggregate> LoadAsync
         (
             TKey aggregateId,
-            Guid? causationId = null,
-            Guid? correlationId = null,
+            Guid? messageId = default,
+            Guid? correlationId = default,
             CancellationToken cancellationToken = default
         )
         {
@@ -86,15 +82,9 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             );
 
             if (events.Count is 0) return default;
-                
-            TAggregate aggregate = (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
-            if (aggregate is null)
-                throw new Exception($"Couldn't resolve {nameof(aggregate)} instance.");
-            
-            if (causationId is not null) aggregate.CausationId = causationId.Value;
-            if (correlationId is not null) aggregate.CorrelationId = correlationId.Value;
-            
-            aggregate.Load(events);
+
+            TAggregate aggregate = new();
+            aggregate.Load(events, messageId, correlationId);
 
             return aggregate;
         }
