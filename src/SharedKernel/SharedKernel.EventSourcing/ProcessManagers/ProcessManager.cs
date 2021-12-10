@@ -12,6 +12,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public abstract class ProcessManager
     {
+        protected readonly IClockService ClockService;
+        protected ProcessManager(IClockService clockService) => ClockService = clockService;
+        
         private ProcessManagerInbox _inbox = new();
         private ProcessManagerOutbox _outbox = new();
 
@@ -21,18 +24,17 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected abstract void ApplyEvent(IBaseEvent @event);
         
-        protected void RegisterEvent<TEvent>(Action<TEvent, IClockService> handler)
+        protected void RegisterEvent<TEvent>(Action<TEvent> handler)
             where TEvent : class, IBaseEvent
-            => _inbox.EventHandlers[typeof(TEvent)] = (message, clockService) 
-                => handler(message as TEvent, clockService);
+            => _inbox.EventHandlers[typeof(TEvent)] = (message) => handler(message as TEvent);
 
-        public void Transition(IBaseEvent @event, IClockService clockService)
+        public void Transition(IBaseEvent @event)
         {
             ApplyEvent(@event);
             _inbox.Trigger = @event;
 
             Type eventType = @event.GetType();
-            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event, clockService);
+            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event);
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)
@@ -72,8 +74,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         public void Clear()
         {
-            _outbox = default;
             _inbox = default;
+            _outbox = default;
         }
         
         private void SetMessageIdentification(IMessage message)

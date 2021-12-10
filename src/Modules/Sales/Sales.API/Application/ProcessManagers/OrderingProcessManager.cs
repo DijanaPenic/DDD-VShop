@@ -11,13 +11,13 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
-    internal class OrderingProcessManager : ProcessManager
+    public class OrderingProcessManager : ProcessManager
     {
         public Guid ShoppingCartId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
         public int ShippingCheckCount { get; private set; }
 
-        public OrderingProcessManager()
+        public OrderingProcessManager(IClockService clockService): base(clockService)
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
@@ -27,7 +27,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
         }
 
-        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, IClockService clockService)
+        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
         {
             PlaceOrderCommand placeOrderCommand = new()
             {
@@ -37,20 +37,20 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RaiseCommand(placeOrderCommand);
         }
 
-        public void Handle(OrderPlacedDomainEvent @event, IClockService clockService)
+        public void Handle(OrderPlacedDomainEvent @event)
         {
             DeleteShoppingCartCommand deleteShoppingCartCommand = new(ShoppingCartId);
             RaiseCommand(deleteShoppingCartCommand);
         }
         
-        public void Handle(PaymentSucceededIntegrationEvent @event, IClockService clockService)
+        public void Handle(PaymentSucceededIntegrationEvent @event)
             => ScheduleDomainEvent
             (
                 new ShippingGracePeriodExpiredDomainEvent(Id, JsonConvert.SerializeObject(@event)),
-                clockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
+                ClockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
-        public void Handle(ShippingGracePeriodExpiredDomainEvent @event, IClockService clockService)
+        public void Handle(ShippingGracePeriodExpiredDomainEvent @event)
         {
             // The order is already shipped so there is nothing to address.
             if (Status is OrderingProcessManagerStatus.OrderShipped) return;
@@ -69,14 +69,14 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             }
         }
 
-        public void Handle(PaymentFailedIntegrationEvent @event, IClockService clockService)
+        public void Handle(PaymentFailedIntegrationEvent @event)
             => ScheduleDomainEvent
             (
                 new PaymentGracePeriodExpiredDomainEvent(Id),
-                clockService.Now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
+                ClockService.Now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
             );
         
-        public void Handle(PaymentGracePeriodExpiredDomainEvent @event, IClockService clockService)
+        public void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {
             // User managed to successfully pay the order.
             if (Status is not OrderingProcessManagerStatus.OrderPaymentFailed) return;

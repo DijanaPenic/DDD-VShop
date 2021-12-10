@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Serilog;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
@@ -20,9 +19,8 @@ using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
-        where TProcess : ProcessManager, new()
+        where TProcess : ProcessManager
     {
-        private readonly ILogger _logger;
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
         private readonly ICommandBus _commandBus;
@@ -30,14 +28,12 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
         public ProcessManagerRepository
         (
-            ILogger logger,
             IClockService clockService,
             EventStoreClient eventStoreClient,
             ICommandBus commandBus,
             ISchedulerService messageSchedulerService
         )
         {
-            _logger = logger;
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _commandBus = commandBus;
@@ -78,7 +74,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                         throw new Exception(error.ToString());
                 }
 
-                // TODO - merge into one method
+                // TODO - merge into one method.
                 // Schedule deferred commands
                 foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetCommandsForDeferredDispatch())
                     await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
@@ -109,7 +105,11 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                 cancellationToken
             );
 
-            TProcess processManager = new();
+            // TODO - think about this - code smell!!
+            TProcess processManager = (TProcess)Activator.CreateInstance(typeof(TProcess), _clockService);
+            if (processManager is null)
+                throw new Exception($"Couldn't resolve {nameof(processManager)} instance.");
+            
             processManager.Load(inboxMessages, outboxMessages);
 
             return processManager;
