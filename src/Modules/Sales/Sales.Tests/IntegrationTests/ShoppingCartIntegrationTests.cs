@@ -17,9 +17,8 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
-    // TODO - can I disable parallel execution with other classes
-    [CollectionDefinition("Shopping Cart Integration Tests", DisableParallelization = true)]
-    public class ShoppingCartIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
+    [Collection("Integration Tests Collection")]
+    public class ShoppingCartIntegrationTests : IntegrationTestsBase
     {
         private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;

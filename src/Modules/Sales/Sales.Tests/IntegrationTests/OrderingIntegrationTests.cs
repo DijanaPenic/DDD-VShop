@@ -15,8 +15,8 @@ using VShop.Modules.Sales.API.Application.Commands;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
-    [CollectionDefinition("Ordering Integration Tests", DisableParallelization = true)]
-    public class OrderingIntegrationTests : IntegrationTestsBase, IClassFixture<AppFixture>
+    [Collection("Integration Tests Collection")]
+    public class OrderingIntegrationTests : IntegrationTestsBase
     {
         private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
