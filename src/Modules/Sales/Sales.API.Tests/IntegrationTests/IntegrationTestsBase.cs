@@ -12,12 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.API;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
-namespace VShop.Modules.Sales.Tests.IntegrationTests
+namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     public abstract class IntegrationTestsBase : IAsyncLifetime
     {

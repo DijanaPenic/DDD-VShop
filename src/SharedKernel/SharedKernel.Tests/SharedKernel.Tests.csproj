@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.SharedKernel.Tests</AssemblyName>
+        <RootNamespace>VShop.SharedKernel.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoFixture" Version="4.17.0" />
+      <PackageReference Include="FluentAssertions" Version="6.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

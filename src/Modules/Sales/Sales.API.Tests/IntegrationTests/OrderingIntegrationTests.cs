@@ -4,6 +4,7 @@ using FluentAssertions;
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -13,20 +14,15 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 
-namespace VShop.Modules.Sales.Tests.IntegrationTests
+namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     [Collection("Integration Tests Collection")]
     public class OrderingIntegrationTests : IntegrationTestsBase
     {
-        private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
 
-        public OrderingIntegrationTests(AppFixture appFixture)
-        {
-            _appFixture = appFixture;
-            _autoFixture = appFixture.AutoFixture;
-        }
-        
+        public OrderingIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+
         [Fact]
         public async Task Checkout_the_shopping_cart()
         {
@@ -37,7 +33,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             CheckoutShoppingCartCommandHandler sut = new(clockService, shoppingCartRepository);
 
-            ShoppingCart shoppingCart = _appFixture.GetShoppingCartForCheckoutFixture();
+            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
             await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
 
             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
@@ -55,10 +51,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             orderFromDb.Should().NotBeNull(); // The order should have been created.
         }
         
-        [Fact]
-        public void Test()
-        {
-        
-        }
+        // [Fact]
+        // public void Test()
+        // {
+        //
+        // }
     }
 }

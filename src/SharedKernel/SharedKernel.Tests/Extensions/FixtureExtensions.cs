@@ -1,6 +1,6 @@
 using AutoFixture;
 
-namespace VShop.SharedKernel.Infrastructure.Extensions
+namespace VShop.SharedKernel.Tests.Extensions
 {
     public static class FixtureExtensions
     {

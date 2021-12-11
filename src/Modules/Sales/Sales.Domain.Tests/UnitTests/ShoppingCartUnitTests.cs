@@ -3,30 +3,25 @@ using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 
+using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Tests.UnitTests
+namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 {
-    public class ShoppingCartUnitTests : UnitTestsBase, IClassFixture<AppFixture>
+    public class ShoppingCartUnitTests : IClassFixture<AppFixture>
     {
-        private readonly AppFixture _appFixture;
         private readonly Fixture _autoFixture;
 
-        public ShoppingCartUnitTests(AppFixture appFixture)
-        {
-            _appFixture = appFixture;
-            _autoFixture = appFixture.AutoFixture;
-        }
-        
+        public ShoppingCartUnitTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+
         [Fact]
         public void Product_insert_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
-            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
             
             sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>()); // Checkout will prevent further updates
             
@@ -122,7 +117,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
         public void Product_removal_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
-            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
             
             sut.RequestCheckout(new ClockService(),_autoFixture.Create<EntityId>());
             
@@ -166,7 +161,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
         public void Delete_fails_for_already_deleted_shopping_cart()
         {
             // Arrange
-            ShoppingCart sut = _appFixture.GetShoppingCartForCheckoutFixture();
+            ShoppingCart sut = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
 
             sut.RequestDelete();
 
