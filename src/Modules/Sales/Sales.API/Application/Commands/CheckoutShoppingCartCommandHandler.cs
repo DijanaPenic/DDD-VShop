@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record CheckoutShoppingCartCommand : Command<CheckoutOrder>
     {
-        public Guid ShoppingCartId { get; init; }
+        public Guid ShoppingCartId { get; }
         
         public CheckoutShoppingCartCommand(Guid shoppingCartId)
         {

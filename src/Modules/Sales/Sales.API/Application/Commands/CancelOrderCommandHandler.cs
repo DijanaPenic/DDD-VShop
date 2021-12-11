@@ -39,10 +39,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
             return Result.Success;
         }
     }
-
+    
+    // TODO - should this be record? 
     public record CancelOrderCommand : Command
     {
-        public Guid OrderId { get; init; }
+        public Guid OrderId { get; }
 
         public CancelOrderCommand(Guid orderId)
         {

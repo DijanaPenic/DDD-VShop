@@ -48,6 +48,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
     {
         public Guid ShoppingCartId { get; set; }
         public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
+        public int Quantity { get; init; }
     }
 }
