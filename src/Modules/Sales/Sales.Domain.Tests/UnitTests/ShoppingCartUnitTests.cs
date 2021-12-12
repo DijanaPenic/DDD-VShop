@@ -7,6 +7,7 @@ using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Domain.Tests.UnitTests
@@ -21,9 +22,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Product_insert_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
+            IClockService clockService = new ClockService();
             ShoppingCart sut = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
             
-            sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>()); // Checkout will prevent further updates
+            sut.RequestCheckout(clockService, _autoFixture.Create<EntityId>()); // Checkout will prevent further updates
             
             EntityId productId = _autoFixture.Create<EntityId>();
             ProductQuantity productQuantity = _autoFixture.Create<ProductQuantity>();
@@ -117,9 +119,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Product_removal_fails_when_shopping_cart_is_closed_for_updates()
         {
             // Arrange
+            IClockService clockService = new ClockService();
             ShoppingCart sut = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
             
-            sut.RequestCheckout(new ClockService(),_autoFixture.Create<EntityId>());
+            sut.RequestCheckout(clockService,_autoFixture.Create<EntityId>());
             
             ShoppingCartItem shoppingCartItem = sut.Items.First();
             
@@ -176,6 +179,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Checkout_fails_when_shopping_cart_is_empty()
         {
             // Arrange
+            IClockService clockService = new ClockService();
             ShoppingCart sut = new();
 
             sut.Create
@@ -186,7 +190,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             );
             
             // Act
-            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(clockService, _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -196,6 +200,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Checkout_fails_when_not_enough_amount()
         {
             // Arrange
+            IClockService clockService = new ClockService();
             ShoppingCart sut = new();
 
             sut.Create
@@ -212,7 +217,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(clockService, _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -222,6 +227,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Checkout_fails_when_not_in_awaiting_confirmation_status()
         {
             // Arrange
+            IClockService clockService = new ClockService();
             ShoppingCart sut = new();
 
             sut.Create
@@ -238,7 +244,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(new ClockService(), _autoFixture.Create<EntityId>());
+            Result result = sut.RequestCheckout(clockService, _autoFixture.Create<EntityId>());
             
             // Assert
             result.IsError(out _).Should().BeTrue();
