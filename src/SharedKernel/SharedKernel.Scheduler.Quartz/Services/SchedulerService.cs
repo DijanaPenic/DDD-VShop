@@ -27,12 +27,11 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Services
             await LogScheduledMessageAsync(message, cancellationToken);
                 
             IJobDetail job = JobBuilder.Create<ProcessMessageJob>()
-                .WithIdentity(SequentialGuid.Create().ToString())
-                .UsingJobData(ProcessMessageJob.JobDataKey, message.MessageId.ToString())
+                .WithIdentity(message.MessageId.ToString())
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity(SequentialGuid.Create().ToString())
+                .WithIdentity(message.MessageId.ToString())
                 .StartAt(message.ScheduledTime.ToDateTimeOffset())
                 .Build();
 

@@ -9,8 +9,6 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
 {
     public class ProcessMessageJob : IJob
     {
-        public const string JobDataKey = "MESSAGE_KEY";
-
         private readonly ILogger _logger;
         private readonly IMessagingService _messagingService;
 
@@ -22,18 +20,11 @@ namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            Guid messageId = GetMessageId(context);
+            Guid messageId = Guid.Parse(context.JobDetail.Key.Name);
             
             _logger.Information("Sending scheduled message: {Message}", messageId);
 
             return _messagingService.SendMessageAsync(messageId, context.CancellationToken);
-        }
-
-        private static Guid GetMessageId(IJobExecutionContext context)
-        {
-            JobDataMap jobDataMap = context.JobDetail.JobDataMap;
-
-            return jobDataMap.GetGuidValue(JobDataKey);
         }
     }
 }
