@@ -60,10 +60,15 @@ namespace VShop.Modules.Billing.API.Application.Commands
             await _billingContext.SaveChangesAsync(cancellationToken);
 
             IIntegrationEvent integrationEvent = hasPaymentTransferFailed 
-                ? new PaymentFailedIntegrationEvent(command.OrderId, command.MessageId, command.CorrelationId)
-                : new PaymentSucceededIntegrationEvent(command.OrderId, command.MessageId, command.CorrelationId);
-            
-            await _billingIntegrationEventService.AddAndSaveEventAsync(integrationEvent, cancellationToken);
+                ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
+
+            await _billingIntegrationEventService.AddAndSaveEventAsync
+            (
+                integrationEvent,
+                command.MessageId,
+                command.CorrelationId,
+                cancellationToken
+            );
             
             return hasPaymentTransferFailed ? paymentTransferError : Result.Success;
         }
