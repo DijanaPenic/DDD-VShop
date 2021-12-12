@@ -12,9 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.Infrastructure;
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
@@ -71,16 +72,17 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         private Task RunPostgresDatabaseMigrationsAsync()
         {
-            using SalesContext salesContext = _scope.ServiceProvider.GetService<SalesContext>();
-            salesContext?.Database.Migrate();
-            
-            using SchedulerContext schedulerContext = _scope.ServiceProvider.GetService<SchedulerContext>();
-            schedulerContext?.Database.Migrate();
-            
-            using SubscriptionContext subscriptionContext = _scope.ServiceProvider.GetService<SubscriptionContext>();
-            subscriptionContext?.Database.Migrate();
+            MigrateDatabase<SalesContext>();
+            MigrateDatabase<SchedulerContext>();
+            MigrateDatabase<SubscriptionContext>();
             
             return Task.CompletedTask;
+        }
+
+        private void MigrateDatabase<TDbContext>() where TDbContext : DbContextBase
+        {
+            TDbContext dbContext = GetService<TDbContext>();
+            dbContext.Database.Migrate();
         }
         
         private async Task ClearPostgresDatabaseAsync()
@@ -89,11 +91,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             await connection.OpenAsync();
 
-            const string sql = @"DELETE FROM ""scheduler"".""qrtz_job_details""; " +
-                               @"DELETE FROM ""scheduler"".""qrtz_triggers""; " +
-                               @"DELETE FROM ""scheduler"".""qrtz_simple_triggers""; " +
-                               @"DELETE FROM ""scheduler"".""qrtz_simprop_triggers""; " +
+            const string sql = @"DELETE FROM ""scheduler"".""message_log""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_cron_triggers""; " +
+                               @"DELETE FROM ""scheduler"".""qrtz_simple_triggers""; " +
+                               @"DELETE FROM ""scheduler"".""qrtz_triggers""; " +
+                               @"DELETE FROM ""scheduler"".""qrtz_job_details""; " +
+                               @"DELETE FROM ""scheduler"".""qrtz_simprop_triggers""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_blob_triggers""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_calendars""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_paused_trigger_grps""; " +
