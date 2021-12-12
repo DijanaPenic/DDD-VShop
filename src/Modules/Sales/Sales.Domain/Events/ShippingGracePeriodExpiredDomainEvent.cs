@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging.Events;
 
@@ -9,10 +10,10 @@ namespace VShop.Modules.Sales.Domain.Events
         public Guid OrderId { get; }
         public string Content { get; }
         
-        public ShippingGracePeriodExpiredDomainEvent(Guid orderId, string content)
+        public ShippingGracePeriodExpiredDomainEvent(Guid orderId, IBaseEvent @event)
         {
             OrderId = orderId;
-            Content = content;
+            Content = JsonConvert.SerializeObject(@event);
         }
     }
 }

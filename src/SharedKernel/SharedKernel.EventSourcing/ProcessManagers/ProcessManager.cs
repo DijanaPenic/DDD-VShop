@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using NodaTime;
 
 using VShop.SharedKernel.Messaging;
@@ -42,7 +43,11 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             SetMessageIdentification(@event);
             _outbox.Add(@event);
         }
-        
+
+        protected void RaiseIntegrationEvent<TEvent>(string @event)
+            where TEvent : IIntegrationEvent 
+            => RaiseIntegrationEvent(JsonConvert.DeserializeObject<TEvent>(@event));
+
         protected void RaiseCommand(IBaseCommand command)
         {
             SetMessageIdentification(command);

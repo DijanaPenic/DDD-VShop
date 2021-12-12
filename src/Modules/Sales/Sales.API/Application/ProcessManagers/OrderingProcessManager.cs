@@ -1,6 +1,5 @@
 ﻿using System;
 using NodaTime;
-using Newtonsoft.Json;
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
@@ -27,26 +26,20 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
         }
 
-        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event)
-        {
-            PlaceOrderCommand placeOrderCommand = new()
+        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event) 
+            => RaiseCommand(new PlaceOrderCommand
             {
                 OrderId = Id,
                 ShoppingCartId = ShoppingCartId
-            };
-            RaiseCommand(placeOrderCommand);
-        }
+            });
 
-        public void Handle(OrderPlacedDomainEvent @event)
-        {
-            DeleteShoppingCartCommand deleteShoppingCartCommand = new(ShoppingCartId);
-            RaiseCommand(deleteShoppingCartCommand);
-        }
-        
+        public void Handle(OrderPlacedDomainEvent @event) 
+            => RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
+
         public void Handle(PaymentSucceededIntegrationEvent @event)
             => ScheduleDomainEvent
             (
-                new ShippingGracePeriodExpiredDomainEvent(Id, JsonConvert.SerializeObject(@event)),
+                new ShippingGracePeriodExpiredDomainEvent(Id, @event),
                 ClockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
@@ -59,16 +52,16 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             // to send out an email to the support team as we need to report a problem with the shipping department.
             if (ShippingCheckCount >= Settings.ShippingCheckThreshold)
             {
-                CancelOrderCommand cancelOrderCommand = new(Id);
-                RaiseCommand(cancelOrderCommand);
+                RaiseCommand(new CancelOrderCommand(Id));
             }
             // Resend the payment status message to the shipping department (kind of a reminder message).
             else
             {
-                RaiseIntegrationEvent(JsonConvert.DeserializeObject<PaymentSucceededIntegrationEvent>(@event.Content));
+                RaiseIntegrationEvent<PaymentSucceededIntegrationEvent>(@event.Content);
             }
         }
 
+        // TODO - can these methods be private? They can't be used outside!
         public void Handle(PaymentFailedIntegrationEvent @event)
             => ScheduleDomainEvent
             (
@@ -78,12 +71,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         
         public void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {
-            // User managed to successfully pay the order.
+            // User managed to successfully pay the order - nothing to do.
             if (Status is not OrderingProcessManagerStatus.OrderPaymentFailed) return;
 
             // User didn't manage to pay so we need to cancel the order.
-            CancelOrderCommand cancelOrderCommand = new(Id);
-            RaiseCommand(cancelOrderCommand);
+            RaiseCommand(new CancelOrderCommand(Id));
         }
 
         protected override void ApplyEvent(IBaseEvent @event)
