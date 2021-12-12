@@ -40,17 +40,19 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             _messageSchedulerService = messageSchedulerService;
         }
         
-        public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken)
+        public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default)
         {
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
+
+            if (processManager.Inbox.Trigger is null) return;
 
             await _eventStoreClient.AppendToStreamAsync
             (
                 _clockService,
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                new[]{ processManager.Inbox.Trigger },
+                new[]{ processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
                 cancellationToken
             );
             
@@ -84,21 +86,10 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             }
         }
         
-        public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken)
+        public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default)
         {
-            IList<IMessage> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
-            (
-                GetInboxStreamName(processManagerId),
-                StreamPosition.Start,
-                cancellationToken
-            );
-            
-            IList<IMessage> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
-            (
-                GetOutboxStreamName(processManagerId),
-                StreamPosition.Start,
-                cancellationToken
-            );
+            IList<IMessage> inboxMessages = await LoadInboxAsync(processManagerId, cancellationToken);
+            IList<IMessage> outboxMessages = await LoadOutboxAsync(processManagerId, cancellationToken);
 
             // TODO - think about this - code smell!!
             TProcess processManager = (TProcess)Activator.CreateInstance(typeof(TProcess), _clockService);
@@ -109,18 +100,34 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             return processManager;
         }
-
-        private string GetStreamPrefix(Guid processManagerId)
-        {
-            string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
-            
-            return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}";
-        }
+        
+        public Task<IList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
+            => _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            (
+                GetInboxStreamName(processManagerId),
+                StreamPosition.Start,
+                cancellationToken
+            );
+        
+        public Task<IList<IMessage>> LoadOutboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
+            => _eventStoreClient.ReadStreamForwardAsync<IMessage>
+                (
+                    GetOutboxStreamName(processManagerId),
+                    StreamPosition.Start,
+                    cancellationToken
+                );
 
         private string GetInboxStreamName(Guid processManagerId)
             => $"{GetStreamPrefix(processManagerId)}/inbox".ToSnakeCase();
         
         private string GetOutboxStreamName(Guid processManagerId)
             => $"{GetStreamPrefix(processManagerId)}/outbox".ToSnakeCase();
+        
+        private string GetStreamPrefix(Guid processManagerId)
+        {
+            string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
+            
+            return $"{_eventStoreClient.ConnectionName}/process_manager/{processManagerName}/{processManagerId}";
+        }
     }
 }
