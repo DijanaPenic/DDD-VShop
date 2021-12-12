@@ -2,9 +2,9 @@
 using Quartz;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services;
-using VShop.SharedKernel.Scheduler.Quartz.Jobs;
-using VShop.SharedKernel.Scheduler.Quartz.Services;
+using VShop.SharedKernel.Scheduler.Services.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

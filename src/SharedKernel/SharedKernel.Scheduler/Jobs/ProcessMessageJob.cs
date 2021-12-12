@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Quartz;
 using Serilog;
 
-using VShop.SharedKernel.Scheduler.Services;
+using VShop.SharedKernel.Scheduler.Services.Contracts;
 
-namespace VShop.SharedKernel.Scheduler.Quartz.Jobs
+namespace VShop.SharedKernel.Scheduler.Jobs
 {
     public class ProcessMessageJob : IJob
     {

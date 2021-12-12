@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Scheduler.Quartz.Jobs;
+using VShop.SharedKernel.Scheduler.Jobs;
+using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
-using VShop.SharedKernel.Infrastructure.Helpers;
 
 using SchedulerContext = VShop.SharedKernel.Scheduler.Infrastructure.SchedulerContext;
 
-namespace VShop.SharedKernel.Scheduler.Quartz.Services
+namespace VShop.SharedKernel.Scheduler.Services
 {
     public class SchedulerService : ISchedulerService
     {

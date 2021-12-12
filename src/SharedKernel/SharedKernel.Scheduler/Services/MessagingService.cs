@@ -13,6 +13,7 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
+using VShop.SharedKernel.Scheduler.Services.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
 
-namespace VShop.SharedKernel.Scheduler.Quartz.Services
+namespace VShop.SharedKernel.Scheduler.Services.Contracts
 {
     public interface ISchedulerService
     {

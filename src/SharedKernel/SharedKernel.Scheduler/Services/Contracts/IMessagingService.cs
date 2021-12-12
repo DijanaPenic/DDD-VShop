@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VShop.SharedKernel.Scheduler.Services
+namespace VShop.SharedKernel.Scheduler.Services.Contracts
 {
     public interface IMessagingService
     {
