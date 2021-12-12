@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using System;
+using NodaTime;
 using Newtonsoft.Json;
 
 namespace VShop.SharedKernel.Messaging
@@ -15,11 +16,13 @@ namespace VShop.SharedKernel.Messaging
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
             Body = JsonConvert.SerializeObject(message);
-            TypeName = MessageTypeMapper.ToName(message.GetType());
+            TypeName = GetMessageTypeName(message.GetType());
             ScheduledTime = scheduledTime;
             CausationId = message.CausationId;
             CorrelationId = message.CorrelationId;
         }
+
+        public static string GetMessageTypeName(Type type) => MessageTypeMapper.ToName(type);
     }
     
     public interface IScheduledMessage : IMessage
