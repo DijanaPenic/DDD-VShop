@@ -37,7 +37,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
             string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
 
-            // NOTE: Cannot use AddHostedService to register multiple workers: https://github.com/dotnet/runtime/issues/38751
+            // NOTE: Cannot use AddHostedService to register individual workers of the same type.
+            // Source: https://github.com/dotnet/runtime/issues/38751
             services.AddHostedService<SubscriptionHostedService>();
 
             // Read model projections
