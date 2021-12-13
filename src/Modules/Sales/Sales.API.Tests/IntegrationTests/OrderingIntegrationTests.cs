@@ -1,10 +1,9 @@
 using Xunit;
-using Quartz;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Serilog;
 using AutoFixture;
 using FluentAssertions;
@@ -15,17 +14,16 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
-
-using SchedulerContext = VShop.SharedKernel.Scheduler.Infrastructure.SchedulerContext;
+using VShop.Modules.Billing.Integration.Events;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
@@ -44,8 +42,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 GetService<IAggregateRepository<ShoppingCart, EntityId>>();
             IAggregateRepository<Order, EntityId> orderRepository = 
                 GetService<IAggregateRepository<Order, EntityId>>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
             IClockService clockService = GetService<IClockService>();
             
             CheckoutShoppingCartCommandHandler sut = new(clockService, shoppingCartRepository);
@@ -68,17 +64,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             Order orderFromDb = await orderRepository.LoadAsync(orderId);
             orderFromDb.Should().NotBeNull(); // The order should have been created.
-
-            OrderingProcessManager processManagerFromDb = await processManagerRepository.LoadAsync(orderId);
-            processManagerFromDb.Should().NotBeNull(); // The process manager should have been created.
         }
         
         [Fact]
-        public async Task Payment_failure_triggers_a_reminder_message()
+        public async Task Payment_failure_schedules_a_reminder_message()
         {
             // Arrange
             SchedulerContext schedulerContext = GetService<SchedulerContext>();
-            IScheduler scheduler = await GetService<ISchedulerFactory>().GetScheduler();
             ILogger logger = GetService<ILogger>();
             IClockService clockService = GetService<IClockService>();
             IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
@@ -104,12 +96,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             MessageLog messageLog = await schedulerContext.MessageLogs.SingleOrDefaultAsync(ml =>
                 ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent)));
             messageLog.Should().NotBeNull();
-            
-            IJobDetail job = await scheduler.GetJobDetail(new JobKey(messageLog!.Id.ToString()));
-            job.Should().NotBeNull();
-
-            IReadOnlyCollection<ITrigger> triggers = await scheduler.GetTriggersOfJob(job!.Key);
-            triggers.Should().HaveCount(1);
         }
         
         [Fact]
@@ -168,11 +154,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         }
         
         [Fact]
-        public async Task Payment_success_triggers_a_reminder_message()
+        public async Task Payment_success_schedules_a_reminder_message()
         {
             // Arrange
             SchedulerContext schedulerContext = GetService<SchedulerContext>();
-            IScheduler scheduler = await GetService<ISchedulerFactory>().GetScheduler();
             ILogger logger = GetService<ILogger>();
             IClockService clockService = GetService<IClockService>();
             IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
@@ -198,12 +183,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             MessageLog messageLog = await schedulerContext.MessageLogs.SingleOrDefaultAsync(ml =>
                 ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(ShippingGracePeriodExpiredDomainEvent)));
             messageLog.Should().NotBeNull();
-            
-            IJobDetail job = await scheduler.GetJobDetail(new JobKey(messageLog!.Id.ToString()));
-            job.Should().NotBeNull();
-
-            IReadOnlyCollection<ITrigger> triggers = await scheduler.GetTriggersOfJob(job!.Key);
-            triggers.Should().HaveCount(1);
         }
         
         [Fact]
