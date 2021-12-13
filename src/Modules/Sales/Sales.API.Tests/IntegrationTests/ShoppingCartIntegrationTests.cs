@@ -37,7 +37,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             {
                 ShoppingCartId = _autoFixture.Create<Guid>(),
                 CustomerId = _autoFixture.Create<Guid>(),
-                CustomerDiscount = _autoFixture.CreateInt(0, 100),
+                CustomerDiscount = _autoFixture.Create<Discount>(),
                 ShoppingCartItems = _autoFixture.Create<ShoppingCartItemCommandDto[]>()
             };
 

@@ -138,7 +138,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
 
             OrderingProcessManager processManager = await PlacedOrderAsync();
-            processManager.Transition(new PaymentFailedIntegrationEvent(processManager.Id));
             processManager.Transition(new PaymentSucceededIntegrationEvent(processManager.Id));
             
             await processManagerRepository.SaveAsync(processManager);
@@ -226,7 +225,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         // }
 
         [Fact]
-        public async Task Payment_success_reminder_is_sent_after_shipping_grace_period_expires()
+        public async Task Payment_success_reminder_is_resent_after_shipping_grace_period_expires()
         {
             // Arrange
             ILogger logger = GetService<ILogger>();

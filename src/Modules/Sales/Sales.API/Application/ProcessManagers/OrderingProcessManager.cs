@@ -71,11 +71,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         
         public void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {
-            // User managed to successfully pay the order - nothing to do.
-            if (Status is not OrderingProcessManagerStatus.OrderPaymentFailed) return;
-
             // User didn't manage to pay so we need to cancel the order.
-            RaiseCommand(new CancelOrderCommand(Id));
+            if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) RaiseCommand(new CancelOrderCommand(Id));
         }
 
         protected override void ApplyEvent(IBaseEvent @event)
