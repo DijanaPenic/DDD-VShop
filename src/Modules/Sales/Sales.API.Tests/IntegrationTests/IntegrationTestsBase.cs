@@ -15,6 +15,7 @@ using Autofac.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Sales.Infrastructure;
 
@@ -49,6 +50,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         }
 
         protected TService GetService<TService>() => _scope.ServiceProvider.GetService<TService>();
+        
+        protected SubscriptionHostedService GetSubscriptionHostedService()
+            => _scope.ServiceProvider.GetServices<IHostedService>().OfType<SubscriptionHostedService>().Single();
 
         public async Task InitializeAsync()
         {
