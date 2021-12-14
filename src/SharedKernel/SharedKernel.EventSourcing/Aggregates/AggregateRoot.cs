@@ -48,7 +48,11 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public IEnumerable<IBaseEvent> GetAllEvents() => _outbox;
 
-        public void Clear() => _outbox.Clear();
+        public void Clear()
+        {
+            Version += _outbox.Count;
+            _outbox.Clear();
+        }
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity.Handle(@event);
         
