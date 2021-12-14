@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.API.Tests", "Modules\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Tests", "SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj", "{4BE640F3-AC4F-482B-A97F-92C4F135CBC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Tests", "Modules\Sales\Sales.Tests\Sales.Tests.csproj", "{1D799B4A-51EC-41A4-98B6-DFB2364394F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,7 @@ Global
 		{F740D164-0C29-4542-B2E6-4D2DB9D3ED10} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 		{E588336A-C1A3-4109-92B8-3295128FDE0E} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 		{4BE640F3-AC4F-482B-A97F-92C4F135CBC9} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
+		{1D799B4A-51EC-41A4-98B6-DFB2364394F5} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -158,5 +161,9 @@ Global
 		{4BE640F3-AC4F-482B-A97F-92C4F135CBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BE640F3-AC4F-482B-A97F-92C4F135CBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BE640F3-AC4F-482B-A97F-92C4F135CBC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D799B4A-51EC-41A4-98B6-DFB2364394F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D799B4A-51EC-41A4-98B6-DFB2364394F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D799B4A-51EC-41A4-98B6-DFB2364394F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D799B4A-51EC-41A4-98B6-DFB2364394F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

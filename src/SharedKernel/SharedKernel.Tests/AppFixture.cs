@@ -7,34 +7,34 @@ using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.SharedKernel.Tests
 {
-    public class AppFixture
+    public static class AppFixture
     {
-        public Fixture AutoFixture { get; }
+        public static Fixture CommonFixture { get; }
 
-        public AppFixture()
+        static AppFixture()
         {
-            AutoFixture = new Fixture();
+            CommonFixture = new Fixture();
             
-            AutoFixture.Register(() => EmailAddress.Create(AutoFixture.Create<MailAddress>().Address));
-            AutoFixture.Register(() => PhoneNumber.Create("+385929551178"));
-            AutoFixture.Register(() => FullName.Create
+            CommonFixture.Register(() => EmailAddress.Create(CommonFixture.Create<MailAddress>().Address));
+            CommonFixture.Register(() => PhoneNumber.Create("+385929551178"));
+            CommonFixture.Register(() => FullName.Create
             (
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>()
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>()
             ));
-            AutoFixture.Register(() => Address.Create
+            CommonFixture.Register(() => Address.Create
             (
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>(),
-                AutoFixture.Create<string>()
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>(),
+                CommonFixture.Create<string>()
             ));
-            AutoFixture.Register(() => EntityId.Create(AutoFixture.Create<Guid>()));
-            AutoFixture.Register(() => ProductQuantity.Create(AutoFixture.CreateInt(1, 10)));
-            AutoFixture.Register(() => Price.Create(AutoFixture.CreateDecimal(10, 100)));
-            AutoFixture.Register(() => Discount.Create(AutoFixture.CreateInt(0, 100)));
+            CommonFixture.Register(() => EntityId.Create(CommonFixture.Create<Guid>()));
+            CommonFixture.Register(() => ProductQuantity.Create(CommonFixture.CreateInt(1, 10)));
+            CommonFixture.Register(() => Price.Create(CommonFixture.CreateDecimal(10, 100)));
+            CommonFixture.Register(() => Discount.Create(CommonFixture.CreateInt(0, 100)));
         } 
     }
 }

@@ -2,11 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
@@ -15,6 +13,7 @@ using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
@@ -25,24 +24,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     [Collection("Integration Tests Collection")]
     public class SchedulerIntegrationTests : ResetDatabaseLifetime
     {
-        private readonly Fixture _autoFixture;
-        private readonly ShoppingCartHelper _shoppingCartHelper;
-
-        public SchedulerIntegrationTests(AppFixture appFixture)
-        {
-            _autoFixture = appFixture.AutoFixture;
-            _shoppingCartHelper = new ShoppingCartHelper(_autoFixture);
-        }
-
-        [Fact]
-        public async Task Scheduled_command_is_published_in_defined_time()
+        [Theory]
+        [CustomizedAutoData]
+        public async Task Scheduled_command_is_published_in_defined_time(Guid orderId, ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
-            Guid orderId = _autoFixture.Create<Guid>();
             
-            // TODO - maybe move to attribute
-            ShoppingCart shoppingCart = await _shoppingCartHelper.CheckoutShoppingCartAsync(clockService, orderId);
+            await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
@@ -65,14 +54,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             });
         }
         
-        [Fact]
-        public async Task Scheduled_domain_event_is_published_in_defined_time()
+        [Theory]
+        [CustomizedAutoData]
+        public async Task Scheduled_domain_event_is_published_in_defined_time(Guid orderId, ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
-            Guid orderId = _autoFixture.Create<Guid>();
-            
-            await _shoppingCartHelper.CheckoutShoppingCartAsync(clockService, orderId);
+
+            await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
 
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (

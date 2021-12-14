@@ -2,32 +2,20 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
-
-        <IsPackable>false</IsPackable>
-
         <AssemblyName>VShop.Modules.Sales.Tests</AssemblyName>
-
         <RootNamespace>VShop.Modules.Sales.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
-      <PackageReference Include="Dapper" Version="2.0.123" />
-      <PackageReference Include="FluentAssertions" Version="6.2.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-      <PackageReference Include="Moq" Version="4.16.1" />
-      <PackageReference Include="xunit" Version="2.4.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj" />
-      <ProjectReference Include="..\Sales.API\Sales.API.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="IntegrationTests\appsettings.Test.json" />
     </ItemGroup>
 
 </Project>
