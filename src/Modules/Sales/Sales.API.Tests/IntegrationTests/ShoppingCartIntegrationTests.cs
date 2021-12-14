@@ -1,7 +1,6 @@
 using Xunit;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -10,29 +9,30 @@ using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Tests.Extensions;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     [Collection("Integration Tests Collection")]
-    public class ShoppingCartIntegrationTests : IntegrationTestsBase
+    public class ShoppingCartIntegrationTests : ResetDatabaseLifetime
     {
         private readonly Fixture _autoFixture;
+        private readonly ShoppingCartHelper _shoppingCartHelper;
 
-        public ShoppingCartIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        public ShoppingCartIntegrationTests(AppFixture appFixture)
+        {
+            _autoFixture = appFixture.AutoFixture;
+            _shoppingCartHelper = new ShoppingCartHelper(_autoFixture);
+        }
 
         [Fact]
         public async Task Crete_a_new_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            CreateShoppingCartCommandHandler sut = new(shoppingCartRepository);
-            
             CreateShoppingCartCommand command = new()
             {
                 ShoppingCartId = _autoFixture.Create<Guid>(),
@@ -42,12 +42,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
 
             // Act
-            Result<ShoppingCart> result = await sut.Handle(command, CancellationToken.None);
+            Result<ShoppingCart> result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
         }
         
@@ -55,13 +55,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Add_a_product_to_the_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            AddShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
-            
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-            
+            ShoppingCart shoppingCart = await _shoppingCartHelper.PrepareShoppingCartForCheckoutAsync();
+
             AddShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
@@ -69,13 +64,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
             
             // Act
-            Result result = await sut.Handle(command, CancellationToken.None);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
-            
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
                 .SingleOrDefault(sci => sci.Id == command.ShoppingCartItem.ProductId);
             shoppingCartItemFromDb.Should().NotBeNull();
@@ -85,14 +79,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Remove_a_product_from_the_shopping_cart()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            RemoveShoppingCartProductCommandHandler sut = new(shoppingCartRepository);
-
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-            
+            ShoppingCart shoppingCart = await _shoppingCartHelper.PrepareShoppingCartForCheckoutAsync();
             ShoppingCartItem shoppingCartItem = shoppingCart.Items.First();
+            
             RemoveShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
@@ -101,34 +90,28 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
             
             // Act
-            Result result = await sut.Handle(command, CancellationToken.None);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
-            
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
                 .SingleOrDefault(sci => sci.Id == command.ProductId);
             shoppingCartItemFromDb.Should().BeNull();
         }
-
+        
         [Fact]
         public async Task Set_customer_contact_information()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            SetContactInformationCommandHandler sut = new(shoppingCartRepository);
+            ShoppingCart shoppingCart = await _shoppingCartHelper.PrepareShoppingCartForCheckoutAsync();
 
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-            
             FullName fullName = _autoFixture.Create<FullName>();
             GenderType gender = _autoFixture.Create<GenderType>();
             EmailAddress emailAddress = _autoFixture.Create<EmailAddress>();
             PhoneNumber phoneNumber = _autoFixture.Create<PhoneNumber>();
-
+        
             SetContactInformationCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
@@ -141,12 +124,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
             
             // Act
-            Result result = await sut.Handle(command, CancellationToken.None);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
-            
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Customer.FullName.Should().Be(fullName);
             shoppingCartFromDb.Customer.Gender.Should().Be(gender);
             shoppingCartFromDb.Customer.EmailAddress.Should().Be(emailAddress);
@@ -157,15 +140,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Set_customer_delivery_address()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            SetDeliveryAddressCommandHandler sut = new(shoppingCartRepository);
+            ShoppingCart shoppingCart = await _shoppingCartHelper.PrepareShoppingCartForCheckoutAsync();
 
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
-            
             Address deliveryAddress = _autoFixture.Create<Address>();
-
+        
             SetDeliveryAddressCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
@@ -177,12 +155,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
             
             // Act
-            Result result = await sut.Handle(command, CancellationToken.None);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Customer.DeliveryAddress.Should().Be(deliveryAddress);
         }
     }

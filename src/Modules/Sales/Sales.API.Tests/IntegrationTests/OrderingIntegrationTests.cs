@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Serilog;
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -12,57 +11,57 @@ using Microsoft.EntityFrameworkCore;
 using VShop.SharedKernel.Tests;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
+using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
 using VShop.Modules.Billing.Integration.Events;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     [Collection("Integration Tests Collection")]
-    public class OrderingIntegrationTests : IntegrationTestsBase
+    public class OrderingIntegrationTests : ResetDatabaseLifetime
     {
         private readonly Fixture _autoFixture;
+        private readonly ShoppingCartHelper _shoppingCartHelper;
+        private readonly OrderHelper _orderHelper;
 
-        public OrderingIntegrationTests(AppFixture appFixture) => _autoFixture = appFixture.AutoFixture;
+        public OrderingIntegrationTests(AppFixture appFixture)
+        {
+            _autoFixture = appFixture.AutoFixture;
+            _shoppingCartHelper = new ShoppingCartHelper(_autoFixture);
+            _orderHelper = new OrderHelper(_autoFixture, _shoppingCartHelper);
+        }
 
         [Fact]
         public async Task Shopping_cart_checkout_places_an_order()
         {
             // Arrange
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-            IAggregateRepository<Order, EntityId> orderRepository = 
-                GetService<IAggregateRepository<Order, EntityId>>();
-            IClockService clockService = GetService<IClockService>();
-            
-            CheckoutShoppingCartCommandHandler sut = new(clockService, shoppingCartRepository);
-
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            await shoppingCartRepository.SaveAsync(shoppingCart, CancellationToken.None);
+            ShoppingCart shoppingCart = await _shoppingCartHelper.PrepareShoppingCartForCheckoutAsync();
 
             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
             
             // Act
-            Result<CheckoutOrder> result = await sut.Handle(command, CancellationToken.None);
+            Result<CheckoutOrder> result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError(out _).Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await shoppingCartRepository.LoadAsync(EntityId.Create(command.ShoppingCartId));
+            ShoppingCart shoppingCartFromDb = await _shoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been deleted.
             
             EntityId orderId = EntityId.Create(result.GetData().OrderId);
-            
-            Order orderFromDb = await orderRepository.LoadAsync(orderId);
+
+            Order orderFromDb = await _orderHelper.GetOrderAsync(orderId);
             orderFromDb.Should().NotBeNull(); // The order should have been created.
         }
         
@@ -70,58 +69,46 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Payment_failure_schedules_a_reminder_message()
         {
             // Arrange
-            SchedulerContext schedulerContext = GetService<SchedulerContext>();
-            ILogger logger = GetService<ILogger>();
-            IClockService clockService = GetService<IClockService>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
-
+            IClockService clockService = new ClockService();
             Guid orderId = _autoFixture.Create<Guid>();
             
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            shoppingCart.RequestCheckout(clockService, EntityId.Create(orderId));
-            
-            await shoppingCartRepository.SaveAsync(shoppingCart);
-
+            await _shoppingCartHelper.CheckoutShoppingCartAsync(clockService, orderId);
+        
             PaymentFailedIntegrationEvent failedPaymentIntegrationEvent = new(orderId);
-
+        
             // Act
-            await sut.Handle(failedPaymentIntegrationEvent, CancellationToken.None);
-            
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(failedPaymentIntegrationEvent, CancellationToken.None));
+
             // Assert
-            MessageLog messageLog = await schedulerContext.MessageLogs.SingleOrDefaultAsync(ml =>
-                ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent)));
-            messageLog.Should().NotBeNull();
+            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
+            {
+                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync(ml =>
+                    ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent)));
+                messageLog.Should().NotBeNull();
+            });
         }
         
         [Fact]
         public async Task Unpaid_order_is_cancelled_after_payment_grace_period_expires()
         {
             // Arrange
-            ILogger logger = GetService<ILogger>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<Order, EntityId> orderRepository = 
-                GetService<IAggregateRepository<Order, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
-
-            OrderingProcessManager processManager = await PlacedOrderAsync();
-            processManager.Transition(new PaymentFailedIntegrationEvent(processManager.Id));
+            IClockService clockService = new ClockService();
+            Guid orderId = _autoFixture.Create<Guid>();
             
-            await processManagerRepository.SaveAsync(processManager);
+            OrderingProcessManager processManager = await _orderHelper.PlaceOrderAsync(clockService, orderId);
+            processManager.Transition(new PaymentFailedIntegrationEvent(orderId));
             
-            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(processManager.Id);
-
+            await _orderHelper.SaveProcessManagerAsync(processManager);
+            
+            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(orderId);
+        
             // Act
-            await sut.Handle(paymentGracePeriodExpired, CancellationToken.None);
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(paymentGracePeriodExpired, CancellationToken.None));
             
             // Assert
-            Order orderFromDb = await orderRepository.LoadAsync(EntityId.Create(processManager.Id));
+            Order orderFromDb = await _orderHelper.GetOrderAsync(orderId);
             orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
         }
         
@@ -129,26 +116,22 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Paid_order_is_not_cancelled_after_payment_grace_period_expires()
         {
             // Arrange
-            ILogger logger = GetService<ILogger>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<Order, EntityId> orderRepository = 
-                GetService<IAggregateRepository<Order, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
-
-            OrderingProcessManager processManager = await PlacedOrderAsync();
-            processManager.Transition(new PaymentSucceededIntegrationEvent(processManager.Id));
+            IClockService clockService = new ClockService();
+            Guid orderId = _autoFixture.Create<Guid>();
             
-            await processManagerRepository.SaveAsync(processManager);
+            OrderingProcessManager processManager = await _orderHelper.PlaceOrderAsync(clockService, orderId);
+            processManager.Transition(new PaymentSucceededIntegrationEvent(orderId));
             
-            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(processManager.Id);
-
+            await _orderHelper.SaveProcessManagerAsync(processManager);
+            
+            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(orderId);
+        
             // Act
-            await sut.Handle(paymentGracePeriodExpired, CancellationToken.None);
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(paymentGracePeriodExpired, CancellationToken.None));
             
             // Assert
-            Order orderFromDb = await orderRepository.LoadAsync(EntityId.Create(processManager.Id));
+            Order orderFromDb = await _orderHelper.GetOrderAsync(orderId);
             orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
         }
         
@@ -156,64 +139,52 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Payment_success_schedules_a_reminder_message()
         {
             // Arrange
-            SchedulerContext schedulerContext = GetService<SchedulerContext>();
-            ILogger logger = GetService<ILogger>();
-            IClockService clockService = GetService<IClockService>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
-
+            IClockService clockService = new ClockService();
             Guid orderId = _autoFixture.Create<Guid>();
             
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            shoppingCart.RequestCheckout(clockService, EntityId.Create(orderId));
-            
-            await shoppingCartRepository.SaveAsync(shoppingCart);
-
+            await _shoppingCartHelper.CheckoutShoppingCartAsync(clockService, orderId);
+        
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
-
+        
             // Act
-            await sut.Handle(paymentSucceededIntegrationEvent, CancellationToken.None);
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(paymentSucceededIntegrationEvent, CancellationToken.None));
             
             // Assert
-            MessageLog messageLog = await schedulerContext.MessageLogs.SingleOrDefaultAsync(ml =>
-                ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(ShippingGracePeriodExpiredDomainEvent)));
-            messageLog.Should().NotBeNull();
+            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
+            {
+                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync(ml =>
+                    ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(ShippingGracePeriodExpiredDomainEvent)));
+                messageLog.Should().NotBeNull();
+            });
         }
         
         [Fact]
         public async Task Order_pending_shipping_is_cancelled_after_too_many_shipping_check_tries()
         {
             // Arrange
-            ILogger logger = GetService<ILogger>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<Order, EntityId> orderRepository = 
-                GetService<IAggregateRepository<Order, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
+            IClockService clockService = new ClockService();
+            Guid orderId = _autoFixture.Create<Guid>();
             
-            OrderingProcessManager processManager = await PlacedOrderAsync();
+            OrderingProcessManager processManager = await _orderHelper.PlaceOrderAsync(clockService, orderId);
             
             ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new 
             (
-                processManager.Id,
-                new PaymentSucceededIntegrationEvent(processManager.Id)
+                orderId,
+                new PaymentSucceededIntegrationEvent(orderId)
             );
             
             while (processManager.ShippingCheckCount < OrderingProcessManager.Settings.ShippingCheckThreshold)
                 processManager.Transition(shippingGracePeriodExpiredDomainEvent);
             
-            await processManagerRepository.SaveAsync(processManager);
-
+            await _orderHelper.SaveProcessManagerAsync(processManager);
+        
             // Act
-            await sut.Handle(shippingGracePeriodExpiredDomainEvent, CancellationToken.None);
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(shippingGracePeriodExpiredDomainEvent, CancellationToken.None));
             
             // Assert
-            Order orderFromDb = await orderRepository.LoadAsync(EntityId.Create(processManager.Id));
+            Order orderFromDb = await _orderHelper.GetOrderAsync(orderId);
             orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
         }
         
@@ -223,56 +194,32 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         //     // TODO - ShippingGracePeriodExpiredDomainEvent handler - check when status = OrderShipped
         //     // This can be addressed with development of the Shipping bounded context
         // }
-
+        
         [Fact]
         public async Task Payment_success_reminder_is_resent_after_shipping_grace_period_expires()
         {
             // Arrange
-            ILogger logger = GetService<ILogger>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<Order, EntityId> orderRepository = 
-                GetService<IAggregateRepository<Order, EntityId>>();
-
-            OrderingProcessManagerHandler sut = new(logger, processManagerRepository);
-            
-            OrderingProcessManager processManager = await PlacedOrderAsync();
-
-            ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new 
-            (
-                processManager.Id,
-                new PaymentSucceededIntegrationEvent(processManager.Id)
-            );
-
-            // Act
-            await sut.Handle(shippingGracePeriodExpiredDomainEvent, CancellationToken.None);
-            
-            // Assert
-            Order orderFromDb = await orderRepository.LoadAsync(EntityId.Create(processManager.Id));
-            orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
-            
-            IList<IMessage> outboxMessages = await processManagerRepository.LoadOutboxAsync(processManager.Id);
-            outboxMessages.OfType<PaymentSucceededIntegrationEvent>().Count().Should().Be(1);
-        }
-
-        private async Task<OrderingProcessManager> PlacedOrderAsync()
-        {
-            IClockService clockService = GetService<IClockService>();
-            IProcessManagerRepository<OrderingProcessManager> processManagerRepository = 
-                GetService<IProcessManagerRepository<OrderingProcessManager>>();
-            IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository = 
-                GetService<IAggregateRepository<ShoppingCart, EntityId>>();
-
+            IClockService clockService = new ClockService();
             Guid orderId = _autoFixture.Create<Guid>();
             
-            ShoppingCart shoppingCart = ShoppingCartFixture.GetShoppingCartForCheckoutFixture(_autoFixture);
-            shoppingCart.RequestCheckout(clockService, EntityId.Create(orderId));
+            OrderingProcessManager processManager = await _orderHelper.PlaceOrderAsync(clockService, orderId);
+        
+            ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new 
+            (
+                orderId,
+                new PaymentSucceededIntegrationEvent(orderId)
+            );
+        
+            // Act
+            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
+                sut.Handle(shippingGracePeriodExpiredDomainEvent, CancellationToken.None));
             
-            await shoppingCartRepository.SaveAsync(shoppingCart);
-
-            OrderingProcessManager processManager = await processManagerRepository.LoadAsync(orderId);
-
-            return processManager;
+            // Assert
+            Order orderFromDb = await _orderHelper.GetOrderAsync(orderId);
+            orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
+            
+            IList<IMessage> outboxMessages = await _orderHelper.GetProcessManagerOutboxAsync(processManager.Id);
+            outboxMessages.OfType<PaymentSucceededIntegrationEvent>().Count().Should().Be(1);
         }
     }
 }
