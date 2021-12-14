@@ -73,13 +73,15 @@ namespace VShop.Modules.Sales.API
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
 
-            using SalesContext salesContext = scope.ServiceProvider.GetService<SalesContext>();
+            IServiceProvider serviceProvider = scope.ServiceProvider;
+
+            using SalesContext salesContext = serviceProvider.GetService<SalesContext>();
             salesContext?.Database.Migrate();
             
-            using SchedulerContext schedulerContext = scope.ServiceProvider.GetService<SchedulerContext>();
+            using SchedulerContext schedulerContext = serviceProvider.GetService<SchedulerContext>();
             schedulerContext?.Database.Migrate();
             
-            using SubscriptionContext subscriptionContext = scope.ServiceProvider.GetService<SubscriptionContext>();
+            using SubscriptionContext subscriptionContext = serviceProvider.GetService<SubscriptionContext>();
             subscriptionContext?.Database.Migrate();
         }
     }

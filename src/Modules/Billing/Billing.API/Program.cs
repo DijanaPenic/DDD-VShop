@@ -72,10 +72,12 @@ namespace VShop.Modules.Billing.API
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
 
-            using BillingContext billingContext = scope.ServiceProvider.GetService<BillingContext>();
+            IServiceProvider serviceProvider = scope.ServiceProvider;
+            
+            using BillingContext billingContext = serviceProvider.GetService<BillingContext>();
             billingContext?.Database.Migrate();
             
-            using IntegrationContext integrationContext = scope.ServiceProvider.GetService<IntegrationContext>();
+            using IntegrationContext integrationContext = serviceProvider.GetService<IntegrationContext>();
             integrationContext?.Database.Migrate();
         }
     }

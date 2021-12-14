@@ -68,22 +68,17 @@ namespace VShop.SharedKernel.Scheduler.Services
 
         private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
             => _schedulerContext.MessageLogs
-                .AsNoTracking()
                 .FirstOrDefaultAsync
                 (
-                    m => m.Status == MessageStatus.Scheduled && m.Id == messageId,
+                    ml => ml.Status == MessageStatus.Scheduled && ml.Id == messageId,
                     cancellationToken
                 );
         
         private async Task SetMessageStatusAsync(MessageLog message, MessageStatus status, CancellationToken cancellationToken)
         {
-            _schedulerContext.Attach(message);
-            
-            // Set the new Status
             message.Status = status;
-
-            // Mark the Status as modified, so it is the only updated value
-            _schedulerContext.Entry(message).Property(m => m.Status).IsModified = true;
+            
+            _schedulerContext.Entry(message).Property(ml => ml.Status).IsModified = true;
             
             await _schedulerContext.SaveChangesAsync(cancellationToken);
         }
