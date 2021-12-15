@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Serilog;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
@@ -40,8 +40,8 @@ namespace VShop.SharedKernel.Scheduler.Services
         
         private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)
         {
-            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.TypeName));                                                     
-                                                                                                                                 
+            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.TypeName)); 
+
             try
             {
                 switch (target)

@@ -35,7 +35,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
-                new DeleteShoppingCartCommand(shoppingCart.Id), // TODO - for some reason command mapping is not working
+                new DeleteShoppingCartCommand(shoppingCart.Id),
                 clockService.Now
             );
         
