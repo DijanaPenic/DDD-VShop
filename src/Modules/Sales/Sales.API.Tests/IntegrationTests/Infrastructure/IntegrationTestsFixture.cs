@@ -8,13 +8,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Autofac.Extensions.DependencyInjection;
+
+using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
-    public static class IntegrationTestsFixture // TODO - potentially use as collection fixture
+    public static class IntegrationTestsFixture
     {
         private static readonly IServiceScopeFactory ServiceScopeFactory;
         private static readonly IConfiguration Configuration;
@@ -37,8 +38,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                     webBuilder.UseStartup<Startup>();
                 })
                 .Build();
-            
-            //host.Start(); // TODO - problem with this, EventStore database is not clean so all events are picked up by subscriptions
 
             ServiceScopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
             Configuration = host.Services.GetRequiredService<IConfiguration>();

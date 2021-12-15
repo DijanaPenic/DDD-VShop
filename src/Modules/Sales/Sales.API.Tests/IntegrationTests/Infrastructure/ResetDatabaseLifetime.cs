@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             await ClearRelationalDatabaseAsync();
             
             // EventStore database
-            //await RestartEventStoreDatabaseAsync();
+            await RestartEventStoreDatabaseAsync();
         }
         
         private static async Task RunRelationalDatabaseMigrationsAsync()
@@ -66,11 +66,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         {
             try
             {
-                // TODO - I'm randomly getting the following error:
-                // Status(StatusCode="Internal", Detail="Error starting gRPC call. HttpRequestException: An error occurred
-                // while sending the request. IOException: The request was aborted. IOException: An HTTP/2 connection could
-                // not be established because the server did not complete the HTTP/2 handshake. IOException: The response
-                // ended prematurely while waiting for the next frame from the server.", DebugException="System.Net.Http
                 HttpClient client = new();
 
                 HttpResponseMessage result = await client
