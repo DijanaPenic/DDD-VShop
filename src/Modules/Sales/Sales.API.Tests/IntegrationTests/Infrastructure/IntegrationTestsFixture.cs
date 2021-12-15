@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
 using MediatR;
@@ -12,7 +13,7 @@ using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
-    public static class IntegrationTestsFixture
+    public static class IntegrationTestsFixture // TODO - potentially use as collection fixture
     {
         private static readonly IServiceScopeFactory ServiceScopeFactory;
         private static readonly IConfiguration Configuration;
@@ -45,6 +46,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
         public static string EventStorePortalUrl => Configuration.GetConnectionString("EventStoreDbPortalUrl");
         public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
+
+        public static Task ExecuteHostedServiceAsync(Func<IHostedService, Task> action, string hostedServiceName)
+            => ExecuteScopeAsync(sp =>
+            {
+                IHostedService service = sp.GetServices<IHostedService>()
+                    .FirstOrDefault(s => s.GetType().Name == hostedServiceName);
+
+                return action(service);
+            });
 
         public static Task ExecuteServiceAsync<TService>(Func<TService, Task> action)
             => ExecuteScopeAsync(sp =>

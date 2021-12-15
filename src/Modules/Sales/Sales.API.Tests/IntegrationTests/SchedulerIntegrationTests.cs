@@ -20,9 +20,8 @@ using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
-    // TODO - work in progress
     [Collection("Integration Tests Collection")]
-    public class SchedulerIntegrationTests : ResetDatabaseLifetime
+    public class SchedulerIntegrationTests : ResetDatabaseLifetime, IClassFixture<SchedulerFixture>
     {
         [Theory]
         [CustomizedAutoData]
@@ -44,7 +43,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 sut.ScheduleMessageAsync(scheduledMessage));
         
             // Assert
-            Thread.Sleep(3000); // TODO - timeout
+            Thread.Sleep(500); // TODO - timeout
             
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
             {
@@ -74,7 +73,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 sut.ScheduleMessageAsync(scheduledMessage));
 
             // Assert
-            Thread.Sleep(3000);
+            Thread.Sleep(500);
 
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
             {
