@@ -1,8 +1,6 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
-using FluentAssertions;
+using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Messaging;
@@ -11,6 +9,7 @@ using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Tests.Customizations;
@@ -43,14 +42,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 sut.ScheduleMessageAsync(scheduledMessage));
         
             // Assert
-            Thread.Sleep(500); // TODO - timeout
-            
-            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
-            {
-                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync();
-                messageLog.Should().NotBeNull();
-                messageLog!.Status.Should().Be(MessageStatus.Finished);
-            });
+            await IntegrationTestsFixture.AssertEventuallyAsync
+            (
+                clockService,
+                new GetScheduledMessageStatusProbe(),
+                50000
+            );
         }
         
         [Theory]
@@ -73,14 +70,27 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 sut.ScheduleMessageAsync(scheduledMessage));
 
             // Assert
-            Thread.Sleep(500);
+            await IntegrationTestsFixture.AssertEventuallyAsync
+            (
+                clockService,
+                new GetScheduledMessageStatusProbe(),
+                50000
+            );
+        }
+        
+        private class GetScheduledMessageStatusProbe : IProbe
+        {
+            private MessageLog _messageLog;
 
-            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
-            {
-                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync();
-                messageLog.Should().NotBeNull();
-                messageLog!.Status.Should().Be(MessageStatus.Finished); 
-            });
+            public bool IsSatisfied() 
+                => _messageLog is { Status: MessageStatus.Finished };
+
+            public async Task SampleAsync()
+                => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext, MessageLog>
+                    (dbContext => dbContext.MessageLogs.SingleOrDefaultAsync());
+
+            public string DescribeFailureTo() 
+                => "Finished message log cannot be found!";
         }
     }
 }
