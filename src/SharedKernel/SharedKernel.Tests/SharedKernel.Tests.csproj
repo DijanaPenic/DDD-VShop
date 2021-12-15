@@ -12,6 +12,7 @@
       <PackageReference Include="AutoFixture" Version="4.17.0" />
       <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
       <PackageReference Include="FluentAssertions" Version="6.2.0" />
+      <PackageReference Include="NodaTime" Version="3.0.9" />
     </ItemGroup>
 
     <ItemGroup>

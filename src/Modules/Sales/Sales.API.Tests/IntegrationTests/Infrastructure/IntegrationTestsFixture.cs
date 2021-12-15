@@ -8,8 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Autofac.Extensions.DependencyInjection;
-
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
@@ -46,6 +47,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
         public static string EventStorePortalUrl => Configuration.GetConnectionString("EventStoreDbPortalUrl");
         public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
+        
+        public static Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
+            => new Poller(clockService, timeout).CheckAsync(probe);
 
         public static Task ExecuteHostedServiceAsync(Func<IHostedService, Task> action, string hostedServiceName)
             => ExecuteScopeAsync(sp =>
