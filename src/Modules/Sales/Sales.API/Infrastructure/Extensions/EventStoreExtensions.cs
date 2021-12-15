@@ -12,6 +12,7 @@ using VShop.SharedKernel.Integration.Repositories;
 using VShop.SharedKernel.Integration.Repositories.Contracts;
 using VShop.SharedKernel.EventSourcing.Repositories;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
@@ -50,9 +51,13 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     logger,
                     eventStoreClient,
                     provider,
-                    "ReadModels",
-                    new DomainEventProjectionToPostgres<SalesContext>(logger, ShoppingCartInfoProjection.ProjectAsync),
-                    new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+                    new SubscriptionConfig
+                    (
+                        eventStoreClient.ConnectionName,
+                        "ReadModels",
+                        new DomainEventProjectionToPostgres<SalesContext>(logger, ShoppingCartInfoProjection.ProjectAsync),
+                        new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+                    )
                 );
             });
 
@@ -65,12 +70,16 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     logger,
                     eventStoreClient,
                     provider,
-                    "IntegrationEventsPub",
-                    new IntegrationEventProjectionToEventStore(logger, provider.GetRequiredService<IIntegrationEventRepository>()),
-                    // This will subscribe to these streams:
-                    // * process manager outbox and
-                    // * aggregate
-                    new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
+                    new SubscriptionConfig
+                    (
+                        eventStoreClient.ConnectionName,
+                        "IntegrationEventsPub",
+                        new IntegrationEventProjectionToEventStore(logger, provider.GetRequiredService<IIntegrationEventRepository>()),
+                        // This will subscribe to these streams:
+                        // * process manager outbox and
+                        // * aggregate
+                        new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
+                    )
                 );
             });
             
@@ -83,9 +92,13 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     logger,
                     eventStoreClient,
                     provider,
-                    "IntegrationEventsSub",
-                    new IntegrationEventPublisher(logger, provider.GetRequiredService<IEventBus>()),
-                    new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
+                    new SubscriptionConfig
+                    (
+                        eventStoreClient.ConnectionName,
+                        "IntegrationEventsSub",
+                        new IntegrationEventPublisher(logger, provider.GetRequiredService<IEventBus>()),
+                        new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
+                    )
                 );
             });
 

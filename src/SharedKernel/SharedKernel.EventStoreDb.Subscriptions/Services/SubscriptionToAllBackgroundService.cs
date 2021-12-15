@@ -26,26 +26,20 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         private readonly ILogger _logger;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IServiceProvider _serviceProvider;
-        private readonly string _subscriptionId;
-        private readonly ISubscriptionHandler _subscriptionHandler;
-        private readonly SubscriptionFilterOptions _filterOptions;
+        private readonly SubscriptionConfig _subscriptionConfig;
 
         public SubscriptionToAllBackgroundService
         (
             ILogger logger,
             EventStoreClient eventStoreClient,
             IServiceProvider serviceProvider,
-            string subscriptionId,
-            ISubscriptionHandler subscriptionHandler, // TODO - many dependencies
-            SubscriptionFilterOptions filterOptions = default
+            SubscriptionConfig subscriptionConfig
         )
         {
             _logger = logger;
             _eventStoreClient = eventStoreClient;
-            _subscriptionId = $"{eventStoreClient.ConnectionName}-{subscriptionId}";
-            _subscriptionHandler = subscriptionHandler;
             _serviceProvider = serviceProvider;
-            _filterOptions = filterOptions ?? new SubscriptionFilterOptions(EventTypeFilter.ExcludeSystemEvents());
+            _subscriptionConfig = subscriptionConfig;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -72,18 +66,18 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             // Throw if cancellation triggered
             cancellationToken.ThrowIfCancellationRequested();
 
-            _logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionId);
+            _logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionConfig.SubscriptionName);
         }
 
         private async Task SubscribeToAllAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionId);
+            _logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionConfig.SubscriptionName);
 
             using IServiceScope scope = _serviceProvider.CreateScope();
             SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
             
             Checkpoint checkpoint = await subscriptionContext.Checkpoints
-                .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionId, cancellationToken);
+                .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionConfig.SubscriptionName, cancellationToken);
 
             await _eventStoreClient.SubscribeToAllAsync
             (
@@ -91,7 +85,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                 HandleEventAsync,
                 false,
                 HandleDrop,
-                _filterOptions,
+                _subscriptionConfig.SubscriptionFilterOptions,
                 cancellationToken: cancellationToken
             );
         }
@@ -124,10 +118,10 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                 await strategy.ExecuteAsync(async () =>
                 {
                     await using IDbContextTransaction transaction = await subscriptionContext.BeginTransactionAsync(cancellationToken);
-                    await _subscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken); // TODO - refactoring needed
+                    await _subscriptionConfig.SubscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken); // TODO - refactoring needed
 
                     Checkpoint checkpoint = await subscriptionContext.Checkpoints
-                        .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionId, cancellationToken);
+                        .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionConfig.SubscriptionName, cancellationToken);
                     ulong position = resolvedEvent.Event.Position.CommitPosition;
 
                     if (checkpoint is not null) checkpoint.Position = position;
@@ -135,7 +129,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                     {
                         subscriptionContext.Checkpoints.Add(new Checkpoint
                         {
-                            SubscriptionId = _subscriptionId,
+                            SubscriptionId = _subscriptionConfig.SubscriptionName,
                             Position = position
                         });
                     }
@@ -196,7 +190,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             (
                 exception,
                 "Subscription to all '{SubscriptionId}' dropped with '{Reason}'",
-                _subscriptionId,
+                _subscriptionConfig.SubscriptionName,
                 reason
             );
             
@@ -227,7 +221,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
                     (
                         exception,
                         "Failed to resubscribe to all '{SubscriptionId}' dropped with '{ExceptionMessage}{ExceptionStackTrace}'",
-                        _subscriptionId, exception.Message, exception.StackTrace
+                        _subscriptionConfig.SubscriptionName, exception.Message, exception.StackTrace
                     );
                 }
                 finally
