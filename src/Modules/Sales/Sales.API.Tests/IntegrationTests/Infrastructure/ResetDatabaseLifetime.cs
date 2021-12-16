@@ -15,8 +15,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
     public class ResetDatabaseLifetime : IAsyncLifetime
     {
-        public async Task InitializeAsync()
-        {
+        public Task InitializeAsync() => StartResetAsync();
+
+        public static async Task StartResetAsync()
+        {   
             // Postgres database
             await RunRelationalDatabaseMigrationsAsync();
             await ClearRelationalDatabaseAsync();
@@ -34,15 +36,17 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         
         private static Task MigratePostgresDatabaseAsync<TDbContext>() 
             where TDbContext : DbContextBase
-             => IntegrationTestsFixture.ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
+            => IntegrationTestsFixture.ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
 
         private static async Task ClearRelationalDatabaseAsync()
         {
             await using NpgsqlConnection connection = new(IntegrationTestsFixture.RelationalDbConnectionString);
-            
             await connection.OpenAsync();
 
-            const string sql = @"DELETE FROM ""scheduler"".""message_log""; " +
+            const string sql = @"DELETE FROM ""shopping_cart"".""shopping_cart_info_product_item""; " +
+                               @"DELETE FROM ""shopping_cart"".""shopping_cart_info""; " +
+                               @"DELETE FROM ""subscription"".""checkpoint""; " +
+                               @"DELETE FROM ""scheduler"".""message_log""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_cron_triggers""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_simple_triggers""; " +
                                @"DELETE FROM ""scheduler"".""qrtz_triggers""; " +
@@ -56,7 +60,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                                @"DELETE FROM ""scheduler"".""qrtz_locks""; ";
 
             await connection.ExecuteScalarAsync(sql);
-            
             await connection.CloseAsync();
         }
         
