@@ -7,10 +7,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
     public class SchedulerFixture : IAsyncLifetime
     {
         private const string HostedServiceName = "QuartzHostedService";
-        
-        public Task InitializeAsync() 
-            => IntegrationTestsFixture.ExecuteHostedServiceAsync
+
+        public async Task InitializeAsync()
+        {
+            await ResetDatabaseLifetime.StartResetAsync();
+            
+            await IntegrationTestsFixture.ExecuteHostedServiceAsync
                 (hostedService => hostedService.StartAsync(CancellationToken.None), HostedServiceName);
+        }
         
         public Task DisposeAsync()
             => IntegrationTestsFixture.ExecuteHostedServiceAsync
