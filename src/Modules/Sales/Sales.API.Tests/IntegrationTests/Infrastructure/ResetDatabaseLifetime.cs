@@ -1,42 +1,28 @@
 using Xunit;
 using System;
-using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
 using Dapper;
 using Npgsql;
-using Microsoft.EntityFrameworkCore;
-
-using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Scheduler.Infrastructure;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
-using VShop.Modules.Sales.Infrastructure;
+using Docker.DotNet;
+using Docker.DotNet.Models;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
     public class ResetDatabaseLifetime : IAsyncLifetime
     {
-        public Task InitializeAsync() => StartResetAsync();
+        public Task InitializeAsync() => StartDatabaseResetAsync();
 
-        public static async Task StartResetAsync()
+        public static async Task StartDatabaseResetAsync()
         {   
             // Postgres database
-            await RunRelationalDatabaseMigrationsAsync();
             await ClearRelationalDatabaseAsync();
             
             // EventStore database
             await RestartEventStoreDatabaseAsync();
         }
-        
-        private static async Task RunRelationalDatabaseMigrationsAsync()
-        {
-            await MigratePostgresDatabaseAsync<SalesContext>();
-            await MigratePostgresDatabaseAsync<SchedulerContext>();
-            await MigratePostgresDatabaseAsync<SubscriptionContext>();
-        }
-        
-        private static Task MigratePostgresDatabaseAsync<TDbContext>() 
-            where TDbContext : DbContextBase
-            => IntegrationTestsFixture.ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
 
         private static async Task ClearRelationalDatabaseAsync()
         {
@@ -69,19 +55,40 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         {
             try
             {
-                HttpClient client = new();
+                Uri address = Environment.OSVersion.Platform == PlatformID.Unix 
+                 ? new Uri("unix:///var/run/docker.sock")
+                 : new Uri("npipe://./pipe/docker_engine");
+             
+                DockerClientConfiguration dockerConfig = new(address); // TODO - refactor
+                DockerClient dockerClient = dockerConfig.CreateClient();
+                
+                IList<ContainerListResponse> eventStoreContainers = await dockerClient.Containers
+                    .ListContainersAsync(new ContainersListParameters { All = true });
+                ContainerListResponse testContainer = eventStoreContainers
+                    .SingleOrDefault(c => c.Names.Any(n => n.Contains("eventstore.db.tests")));
+                
+                await dockerClient.Containers.RestartContainerAsync(testContainer?.ID, new ContainerRestartParameters());
 
-                HttpResponseMessage result = await client
-                    .PostAsync($"{IntegrationTestsFixture.EventStorePortalUrl}/admin/shutdown", null);
+                // NOTE: 30% slower than Thread.Sleep.
+                // bool isContainerReady = false;
+                // while (!isContainerReady)
+                // {
+                //     ContainerInspectResponse containerStatus = await dockerClient.Containers
+                //         .InspectContainerAsync(testContainer?.ID, CancellationToken.None);
+                //
+                //     isContainerReady = containerStatus.State.Health.Status == "healthy";
+                // }
 
-                if (!result.IsSuccessStatusCode) throw new Exception("Event Store database restart failed.");
+                Thread.Sleep(1500);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.InnerException);
+                
+                throw;
             }
         }
-        
+
         public Task DisposeAsync() => Task.CompletedTask;
     }
 }

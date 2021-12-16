@@ -7,11 +7,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.Modules.Sales.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
@@ -41,10 +46,22 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 
             ServiceScopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
             Configuration = host.Services.GetRequiredService<IConfiguration>();
+
+            RunRelationalDatabaseMigrations();
         }
+        
+        private static void RunRelationalDatabaseMigrations()
+        {
+            MigratePostgresDatabase<SalesContext>();
+            MigratePostgresDatabase<SchedulerContext>();
+            MigratePostgresDatabase<SubscriptionContext>();
+        }
+        
+        private static void MigratePostgresDatabase<TDbContext>() 
+            where TDbContext : DbContextBase
+            => ExecuteService<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
 
         public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
-        public static string EventStorePortalUrl => Configuration.GetConnectionString("EventStoreDbPortalUrl");
         public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
         
         public static Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
@@ -57,6 +74,22 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                     .FirstOrDefault(s => s.GetType().Name == hostedServiceName);
 
                 return action(service);
+            });
+        
+        public static Task ExecuteHostedServiceAsync<TService>(Func<TService, Task> action)
+            where TService : IHostedService
+            => ExecuteScopeAsync(sp =>
+            {
+                TService service = sp.GetServices<IHostedService>().OfType<TService>().SingleOrDefault();
+
+                return action(service);
+            });
+        
+        public static void ExecuteService<TService>(Action<TService> action)
+            => ExecuteScope(sp =>
+            {
+                TService service = sp.GetRequiredService<TService>();
+                action(service);
             });
 
         public static Task ExecuteServiceAsync<TService>(Func<TService, Task> action)
@@ -90,6 +123,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         {
             using IServiceScope scope = ServiceScopeFactory.CreateScope();
             return await action(scope.ServiceProvider).ConfigureAwait(false);
+        }
+        
+        private static void ExecuteScope(Action<IServiceProvider> action)
+        {
+            using IServiceScope scope = ServiceScopeFactory.CreateScope();
+            action(scope.ServiceProvider);
         }
     }
 }

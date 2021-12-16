@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure;
@@ -28,7 +29,7 @@ using VShop.Modules.Billing.Integration.Events;
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     [Collection("Integration Tests Collection")]
-    public class OrderingIntegrationTests : ResetDatabaseLifetime
+    public class OrderingIntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
@@ -72,9 +73,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
             {
-                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync(ml =>
-                    ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent)));
+                string messageType = ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent));
+                MessageLog messageLog = await dbContext.MessageLogs
+                    .OrderByDescending(ml => ml.DateCreated)
+                    .FirstOrDefaultAsync(ml => ml.TypeName == messageType);
                 messageLog.Should().NotBeNull();
+
+                ScheduledMessage scheduledMessage = JsonConvert.DeserializeObject<ScheduledMessage>(messageLog!.Body);
+                scheduledMessage.Should().NotBeNull();
+                scheduledMessage!.CausationId.Should().Be(failedPaymentIntegrationEvent.MessageId);
             });
         }
         
@@ -154,9 +161,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
             {
-                MessageLog messageLog = await dbContext.MessageLogs.SingleOrDefaultAsync(ml =>
-                    ml.TypeName == ScheduledMessage.GetMessageTypeName(typeof(ShippingGracePeriodExpiredDomainEvent)));
+                string messageType = ScheduledMessage.GetMessageTypeName(typeof(ShippingGracePeriodExpiredDomainEvent));
+                MessageLog messageLog = await dbContext.MessageLogs
+                    .OrderByDescending(ml => ml.DateCreated)
+                    .FirstOrDefaultAsync(ml => ml.TypeName == messageType);
                 messageLog.Should().NotBeNull();
+
+                ScheduledMessage scheduledMessage = JsonConvert.DeserializeObject<ScheduledMessage>(messageLog!.Body);
+                scheduledMessage.Should().NotBeNull();
+                scheduledMessage!.CausationId.Should().Be(paymentSucceededIntegrationEvent.MessageId);
             });
         }
         
