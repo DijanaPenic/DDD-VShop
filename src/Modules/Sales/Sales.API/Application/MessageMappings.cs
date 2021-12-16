@@ -25,6 +25,7 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<ShoppingCartProductRemovedDomainEvent>(nameof(ShoppingCartProductRemovedDomainEvent));
             AddCustomMap<OrderStatusSetToCancelledDomainEvent>(nameof(OrderStatusSetToCancelledDomainEvent));
             AddCustomMap<OrderStatusSetToShippedDomainEvent>(nameof(OrderStatusSetToShippedDomainEvent));
+            AddCustomMap<OrderLineAddedDomainEvent>(nameof(OrderLineAddedDomainEvent));
             AddCustomMap<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
             AddCustomMap<PaymentGracePeriodExpiredDomainEvent>(nameof(PaymentGracePeriodExpiredDomainEvent));
             AddCustomMap<ShippingGracePeriodExpiredDomainEvent>(nameof(ShippingGracePeriodExpiredDomainEvent));
