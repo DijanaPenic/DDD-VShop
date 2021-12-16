@@ -55,7 +55,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             PropertyIgnoreContractResolver jsonResolver = new();
             jsonResolver.Ignore(typeof(Message));
 
-            JsonSerializerSettings serializerSettings = (JsonConvert.DefaultSettings is null) 
+            JsonSerializerSettings serializerSettings = JsonConvert.DefaultSettings is null
                 ? new JsonSerializerSettings() : JsonConvert.DefaultSettings();
 
             serializerSettings.ContractResolver = jsonResolver;

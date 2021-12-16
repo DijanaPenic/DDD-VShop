@@ -55,7 +55,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     (
                         eventStoreClient.ConnectionName,
                         "ReadModels",
-                        new DomainEventProjectionToPostgres<SalesContext>(logger, ShoppingCartInfoProjection.ProjectAsync),
+                        new DomainEventProjectionToPostgres<SalesContext>(logger, provider, ShoppingCartInfoProjection.ProjectAsync),
                         new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
                     )
                 );
@@ -74,7 +74,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     (
                         eventStoreClient.ConnectionName,
                         "IntegrationEventsPub",
-                        new IntegrationEventProjectionToEventStore(logger, provider.GetRequiredService<IIntegrationEventRepository>()),
+                        new IntegrationEventProjectionToEventStore(logger, provider, provider.GetRequiredService<IIntegrationEventRepository>()),
                         // This will subscribe to these streams:
                         // * process manager outbox and
                         // * aggregate
@@ -96,7 +96,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     (
                         eventStoreClient.ConnectionName,
                         "IntegrationEventsSub",
-                        new IntegrationEventPublisher(logger, provider.GetRequiredService<IEventBus>()),
+                        new IntegrationEventPublisher(logger, provider, provider.GetRequiredService<IEventBus>()),
                         new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
                     )
                 );

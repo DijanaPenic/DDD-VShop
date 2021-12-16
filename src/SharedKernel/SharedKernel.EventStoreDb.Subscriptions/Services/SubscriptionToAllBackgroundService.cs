@@ -44,7 +44,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // Create a linked token so we can trigger cancellation outside of this token's cancellation
+            // Create a linked token so we can trigger cancellation outside of this token's cancellation.
             _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
             _executingTask = SubscribeToAllAsync(_cancellationTokenSource.Token);
@@ -54,16 +54,16 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            // Stop called without start
+            // Stop called without start.
             if (_executingTask is null) return;
 
-            // Signal cancellation to the executing method
+            // Signal cancellation to the executing method.
             _cancellationTokenSource.Cancel();
 
-            // Wait until the issue completes or the stop token triggers
+            // Wait until the issue completes or the stop token triggers.
             await Task.WhenAny(_executingTask, Task.Delay(-1, cancellationToken));
 
-            // Throw if cancellation triggered
+            // Throw if cancellation triggered.
             cancellationToken.ThrowIfCancellationRequested();
 
             _logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionConfig.SubscriptionName);
@@ -106,36 +106,27 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
             try
             {
-                IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-                IMessage message = resolvedEvent.DeserializeData<IMessage>();
-                
-                // Consuming a scoped service in a background task
-                // https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task-1
-                using IServiceScope scope = _serviceProvider.CreateScope();
-                SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
-                
-                IExecutionStrategy strategy = subscriptionContext.Database.CreateExecutionStrategy();
-                await strategy.ExecuteAsync(async () =>
+                async Task CheckpointUpdate(SubscriptionContext subscriptionContext)
                 {
-                    await using IDbContextTransaction transaction = await subscriptionContext.BeginTransactionAsync(cancellationToken);
-                    await _subscriptionConfig.SubscriptionHandler.ProjectAsync(message, metadata, scope, transaction, cancellationToken); // TODO - refactoring needed
-
                     Checkpoint checkpoint = await subscriptionContext.Checkpoints
                         .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionConfig.SubscriptionName, cancellationToken);
+            
                     ulong position = resolvedEvent.Event.Position.CommitPosition;
 
-                    if (checkpoint is not null) checkpoint.Position = position;
+                    if (checkpoint is not null)
+                        checkpoint.Position = position;
                     else
                     {
                         subscriptionContext.Checkpoints.Add(new Checkpoint
                         {
-                            SubscriptionId = _subscriptionConfig.SubscriptionName,
+                            SubscriptionId = _subscriptionConfig.SubscriptionName, 
                             Position = position
                         });
                     }
-                    
-                    await subscriptionContext.CommitTransactionAsync(transaction, cancellationToken);
-                });
+
+                    await subscriptionContext.SaveChangesAsync(cancellationToken);
+                }
+                await _subscriptionConfig.SubscriptionHandler.ProjectAsync(resolvedEvent, CheckpointUpdate, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -170,9 +161,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
         private bool IsSubscribedToMessage(ResolvedEvent resolvedEvent)
         {
-            Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
-
-            if (eventType is not null) return true;
+            if (MessageTypeMapper.ToType(resolvedEvent.Event.EventType) is not null) return true;
             
             _logger.Information("Unknown event - ignoring");
             
