@@ -19,6 +19,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     [Collection("Non-Parallel Tests Collection")]
     public class ShoppingCartProjectionIntegrationTests : ResetDatabaseLifetime, IClassFixture<SubscriptionFixture>
     {
+        private const int TimeoutMillis = 3000;
+            
         [Theory]
         [CustomizedAutoData]
         public async Task Projecting_ShoppingCartCreatedDomainEvent
@@ -53,7 +55,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -96,7 +98,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -135,7 +137,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -165,13 +167,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
-                => shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.AwaitingConfirmation);
+            {
+                shoppingCartInfo.Should().NotBeNull();
+                shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.AwaitingConfirmation);
+            }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -197,13 +202,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
-                => shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.PendingCheckout);
+            {
+                shoppingCartInfo.Should().NotBeNull();
+                shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.PendingCheckout);
+            }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -225,13 +233,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
-                => shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.Closed);
+            {
+                shoppingCartInfo.Should().NotBeNull();
+                shoppingCartInfo.Status.Should().Be(ShoppingCartStatus.Closed);
+            }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -262,14 +273,17 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 => await dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
-            void Validation(ShoppingCartInfoItem shoppingCartInfoItem) 
-                => shoppingCartInfoItem.Quantity.Should().Be(3);
+            void Validation(ShoppingCartInfoItem shoppingCartInfoItem)
+            {
+                shoppingCartInfoItem.Should().NotBeNull();
+                shoppingCartInfoItem.Quantity.Should().Be(3);
+            }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
         
@@ -300,14 +314,17 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 => await dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
-            void Validation(ShoppingCartInfoItem shoppingCartInfoItem) 
-                => shoppingCartInfoItem.Quantity.Should().Be(8);
+            void Validation(ShoppingCartInfoItem shoppingCartInfoItem)
+            {
+                shoppingCartInfoItem.Should().NotBeNull();
+                shoppingCartInfoItem.Quantity.Should().Be(8);
+            }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
-                2000
+                TimeoutMillis
             );
         }
     }
