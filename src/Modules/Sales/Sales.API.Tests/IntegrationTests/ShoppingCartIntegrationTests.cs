@@ -16,6 +16,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
+    [Collection("Non-Parallel Tests Collection")]
     public class ShoppingCartIntegrationTests
     {
         [Theory]
