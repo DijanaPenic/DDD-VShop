@@ -40,9 +40,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCarts
-                    .FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
+            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCarts.FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
             { 
@@ -82,8 +81,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCartItems
+            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
             void Validation(ShoppingCartInfoItem shoppingCartInfoItem)
@@ -126,8 +125,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCartItems
+            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
             void Validation(ShoppingCartInfoItem shoppingCartInfoItem) 
@@ -162,8 +161,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCarts
+            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
@@ -197,8 +196,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCarts
+            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
@@ -228,8 +227,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCarts
+            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
@@ -269,8 +268,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCartItems
+            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
             void Validation(ShoppingCartInfoItem shoppingCartInfoItem)
@@ -310,8 +309,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
-                => await dbContext.ShoppingCartItems
+            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+                => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
             void Validation(ShoppingCartInfoItem shoppingCartInfoItem)
