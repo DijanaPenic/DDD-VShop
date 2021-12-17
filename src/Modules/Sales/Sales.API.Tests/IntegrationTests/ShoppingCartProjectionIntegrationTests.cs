@@ -17,13 +17,13 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
-    public class ShoppingCartProjectionIntegrationTests : ResetDatabaseLifetime, IClassFixture<SubscriptionFixture>
+    public class ShoppingCartProjectionIntegrationTests : IClassFixture<SubscriptionFixture>
     {
         private const int TimeoutMillis = 3000;
             
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartCreatedDomainEvent
+        public async Task Projecting_ShoppingCartCreatedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -60,7 +60,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartProductAddedDomainEvent
+        public async Task Projecting_ShoppingCartProductAddedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -103,7 +103,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartProductRemovedDomainEvent
+        public async Task Projecting_ShoppingCartProductRemovedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -142,7 +142,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartDeliveryAddressSetDomainEvent
+        public async Task Projecting_ShoppingCartDeliveryAddressSetDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -181,7 +181,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartCheckoutRequestedDomainEvent
+        public async Task Projecting_ShoppingCartCheckoutRequestedDomainEvent_to_read_model
         (
             ShoppingCart shoppingCart,
             EntityId orderId
@@ -216,7 +216,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartDeletionRequestedDomainEvent(ShoppingCart shoppingCart)
+        public async Task Projecting_ShoppingCartDeletionRequestedDomainEvent_to_read_model(ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -247,7 +247,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartItemQuantityIncreasedDomainEvent
+        public async Task Projecting_ShoppingCartItemQuantityIncreasedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -288,7 +288,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartItemQuantityDecreasedDomainEvent
+        public async Task Projecting_ShoppingCartItemQuantityDecreasedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
