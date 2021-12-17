@@ -29,10 +29,20 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             
             EventStoreClient eventStoreClient = new(eventStoreSettings);
             services.AddSingleton(eventStoreClient);
-            
-            services.AddSingleton(typeof(IAggregateRepository<,>), typeof(AggregateRepository<,>));
-            services.AddSingleton(typeof(IIntegrationEventRepository), typeof(IntegrationEventRepository));
-            services.AddSingleton(typeof(IProcessManagerRepository<>), typeof(ProcessManagerRepository<>));
+
+            services.AddSingleton
+            (
+                typeof(IAggregateRepository<,>),
+                typeof(AggregateRepository<,>)
+            );
+            services.AddSingleton
+            (typeof(IIntegrationEventRepository),
+                typeof(IntegrationEventRepository)
+            );
+            services.AddSingleton
+            (typeof(IProcessManagerRepository<>),
+                typeof(ProcessManagerRepository<>)
+            );
 
             // Stream names
             string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
@@ -53,9 +63,13 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     provider,
                     new SubscriptionConfig
                     (
-                        eventStoreClient.ConnectionName,
                         "ReadModels",
-                        new DomainEventProjectionToPostgres<SalesContext>(logger, provider, ShoppingCartInfoProjection.ProjectAsync),
+                        new DomainEventProjectionToPostgres<SalesContext>
+                        (
+                            logger,
+                            provider,
+                            ShoppingCartInfoProjection.ProjectAsync
+                        ),
                         new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
                     )
                 );
@@ -72,17 +86,22 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     provider,
                     new SubscriptionConfig
                     (
-                        eventStoreClient.ConnectionName,
                         "IntegrationEventsPub",
-                        new IntegrationEventProjectionToEventStore(logger, provider, provider.GetRequiredService<IIntegrationEventRepository>()),
+                        new IntegrationEventProjectionToEventStore
+                        (
+                            logger,
+                            provider,
+                            provider.GetRequiredService<IIntegrationEventRepository>()
+                        ),
                         // This will subscribe to these streams:
                         // * process manager outbox and
                         // * aggregate
-                        new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
+                        new SubscriptionFilterOptions(StreamFilter.RegularExpression
+                            (new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
                     )
                 );
             });
-            
+
             // Subscribe to integration streams
             services.AddSingleton<ISubscriptionBackgroundService, SubscriptionToAllBackgroundService>(provider =>
             {
@@ -94,10 +113,15 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     provider,
                     new SubscriptionConfig
                     (
-                        eventStoreClient.ConnectionName,
                         "IntegrationEventsSub",
-                        new IntegrationEventPublisher(logger, provider, provider.GetRequiredService<IEventBus>()),
-                        new SubscriptionFilterOptions(StreamFilter.RegularExpression(new Regex(@".*\/integration$")))
+                        new IntegrationEventPublisher
+                        (
+                            logger,
+                            provider,
+                            provider.GetRequiredService<IEventBus>()
+                        ),
+                        new SubscriptionFilterOptions(StreamFilter.RegularExpression
+                            (new Regex(@".*\/integration$")))
                     )
                 );
             });
