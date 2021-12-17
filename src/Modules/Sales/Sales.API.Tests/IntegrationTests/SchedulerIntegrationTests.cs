@@ -19,7 +19,7 @@ using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
-    [Collection("Integration Tests Collection")]
+    [Collection("Non-Parallel Tests Collection")]
     public class SchedulerIntegrationTests : ResetDatabaseLifetime, IClassFixture<SchedulerFixture>
     {
         [Theory]
