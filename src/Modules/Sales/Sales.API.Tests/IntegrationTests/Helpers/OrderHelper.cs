@@ -23,7 +23,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
         )
         {
             shoppingCart.RequestCheckout(clockService, EntityId.Create(orderId));
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             return await GetProcessManagerAsync(orderId);
         }
@@ -36,7 +36,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>, IList<IMessage>>
                 (repository => repository.LoadOutboxAsync(EntityId.Create(processManagerId)));
         
-        public static Task SaveProcessManagerAsync(OrderingProcessManager processManager)
+        public static Task SaveAndPublishAsync(OrderingProcessManager processManager)
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>>
+                (repository => repository.SaveAndPublishAsync(processManager));
+        
+        public static Task SaveAsync(OrderingProcessManager processManager)
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>>
                 (repository => repository.SaveAsync(processManager));
 

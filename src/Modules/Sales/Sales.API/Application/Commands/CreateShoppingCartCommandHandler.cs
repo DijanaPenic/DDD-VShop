@@ -49,7 +49,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (addProductResult.IsError(out ApplicationError addProductError)) return addProductError;
             }
 
-            await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
+            await _shoppingCartRepository.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return shoppingCart;
         }

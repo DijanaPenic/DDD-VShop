@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Order order = createOrderResult.GetData();
 
-            await _orderRepository.SaveAsync(order, cancellationToken);
+            await _orderRepository.SaveAndPublishAsync(order, cancellationToken);
 
             return order;
         }

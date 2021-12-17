@@ -93,7 +93,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                             provider,
                             provider.GetRequiredService<IIntegrationEventRepository>()
                         ),
-                        // This will subscribe to these streams:
+                        // Subscription will be made to these streams:
                         // * process manager outbox and
                         // * aggregate
                         new SubscriptionFilterOptions(StreamFilter.RegularExpression

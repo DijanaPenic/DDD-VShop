@@ -41,7 +41,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (addProductResult.IsError(out ApplicationError error)) return error;
         
-            await _shoppingCartRepository.SaveAsync(shoppingCart, cancellationToken);
+            await _shoppingCartRepository.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return Result.Success;
         }

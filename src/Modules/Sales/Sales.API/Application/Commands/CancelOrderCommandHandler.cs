@@ -34,7 +34,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (cancelOrderResult.IsError(out ApplicationError error)) return error;
             
-            await _orderRepository.SaveAsync(order, cancellationToken);
+            await _orderRepository.SaveAndPublishAsync(order, cancellationToken);
 
             return Result.Success;
         }

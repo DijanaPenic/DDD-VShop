@@ -77,7 +77,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Version = outboxHistory.Count() - 1;
         }
         
-        public void Clear()
+        public void Clear() // TODO - reset is not correct
         {
             _inbox = default;
             _outbox = default;

@@ -36,21 +36,9 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             _eventBus = eventBus;
         }
 
-        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        public async Task SaveAndPublishAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
         {
-            if (aggregate is null)
-                throw new ArgumentNullException(nameof(aggregate));
-
-            string streamName = GetStreamName(aggregate.Id);
-
-            await _eventStoreClient.AppendToStreamAsync
-            (
-                _clockService,
-                streamName,
-                aggregate.Version,
-                aggregate.GetAllEvents(),
-                cancellationToken
-            );
+            await AppendMessagesToStreamAsync(aggregate, cancellationToken);
 
             try
             {
@@ -62,6 +50,12 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             {
                 aggregate.Clear();
             }
+        }
+        
+        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        {
+            await AppendMessagesToStreamAsync(aggregate, cancellationToken);
+            aggregate.Clear();
         }
 
         public async Task<TAggregate> LoadAsync
@@ -88,6 +82,24 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             return aggregate;
         }
+        
+        private async Task AppendMessagesToStreamAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        {
+            if (aggregate is null)
+                throw new ArgumentNullException(nameof(aggregate));
+
+            string streamName = GetStreamName(aggregate.Id);
+
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                _clockService,
+                streamName,
+                aggregate.Version,
+                aggregate.GetAllEvents(),
+                cancellationToken
+            );
+        }
+
 
         private string GetStreamName(TKey aggregateId)
             => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();

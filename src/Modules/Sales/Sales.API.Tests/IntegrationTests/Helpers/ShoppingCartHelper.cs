@@ -14,7 +14,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<ShoppingCart, EntityId>, ShoppingCart>
                 (repository => repository.LoadAsync(EntityId.Create(shoppingCartId)));
         
-        public static Task SaveShoppingCartAsync(ShoppingCart shoppingCart)
+        public static Task SaveAndPublishAsync(ShoppingCart shoppingCart)
+            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<ShoppingCart, EntityId>>
+                (repository => repository.SaveAndPublishAsync(shoppingCart));
+        
+        public static Task SaveAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<ShoppingCart, EntityId>>
                 (repository => repository.SaveAsync(shoppingCart));
     }

@@ -56,7 +56,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         )
         {
             // Arrange
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             AddShoppingCartProductCommand command = new()
             {
@@ -81,7 +81,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Remove_a_product_from_the_shopping_cart(ShoppingCart shoppingCart)
         {
             // Arrange
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             ShoppingCartItem shoppingCartItem = shoppingCart.Items.First();
             
             RemoveShoppingCartProductCommand command = new()
@@ -115,7 +115,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         )
         {
             // Arrange
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             SetContactInformationCommand command = new()
             {
@@ -146,7 +146,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Set_customer_delivery_address(ShoppingCart shoppingCart, Address deliveryAddress)
         {
             // Arrange
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             SetDeliveryAddressCommand command = new()
             {

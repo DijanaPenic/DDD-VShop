@@ -35,7 +35,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Shopping_cart_checkout_places_an_order(ShoppingCart shoppingCart)
         {
             // Arrange
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
             
@@ -98,7 +98,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
             processManager.Transition(new PaymentFailedIntegrationEvent(orderId));
             
-            await OrderHelper.SaveProcessManagerAsync(processManager);
+            await OrderHelper.SaveAndPublishAsync(processManager);
             
             PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(orderId);
         
@@ -125,7 +125,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
             processManager.Transition(new PaymentSucceededIntegrationEvent(orderId));
             
-            await OrderHelper.SaveProcessManagerAsync(processManager);
+            await OrderHelper.SaveAndPublishAsync(processManager);
             
             PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpired = new(orderId);
         
@@ -194,7 +194,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             while (processManager.ShippingCheckCount < OrderingProcessManager.Settings.ShippingCheckThreshold)
                 processManager.Transition(shippingGracePeriodExpiredDomainEvent);
             
-            await OrderHelper.SaveProcessManagerAsync(processManager);
+            await OrderHelper.SaveAndPublishAsync(processManager);
         
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>

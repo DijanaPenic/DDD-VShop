@@ -33,9 +33,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             ShoppingCart shoppingCart = new();
             shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
-
+            
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
@@ -77,7 +77,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.AddProduct(productId, productQuantity, productPrice);
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
@@ -121,7 +121,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.RemoveProduct(productId, productQuantity);
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
@@ -157,7 +157,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.Customer.SetDeliveryAddress(deliveryAddress);
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
@@ -189,7 +189,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.RequestCheckout(clockService, orderId);
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
@@ -217,7 +217,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.RequestDelete();
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
@@ -255,7 +255,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.AddProduct(productId, ProductQuantity.Create(2), productPrice);
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
@@ -293,7 +293,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.RemoveProduct(productId, ProductQuantity.Create(2));
 
             // Act
-            await ShoppingCartHelper.SaveShoppingCartAsync(shoppingCart);
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
             async Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 

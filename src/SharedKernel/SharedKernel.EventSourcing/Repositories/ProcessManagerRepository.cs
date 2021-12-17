@@ -18,6 +18,7 @@ using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
+    // TODO - rename to Store (or something) since this class also contains publishing logic
     public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager
     {
@@ -40,30 +41,9 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             _messageSchedulerService = messageSchedulerService;
         }
         
-        public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default)
+        public async Task SaveAndPublishAsync(TProcess processManager, CancellationToken cancellationToken = default)
         {
-            if (processManager is null)
-                throw new ArgumentNullException(nameof(processManager));
-
-            if (processManager.Inbox.Trigger is null) return;
-
-            await _eventStoreClient.AppendToStreamAsync
-            (
-                _clockService,
-                GetInboxStreamName(processManager.Id),
-                processManager.Inbox.Version,
-                new[]{ processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
-                cancellationToken
-            );
-            
-            await _eventStoreClient.AppendToStreamAsync
-            (
-                _clockService,
-                GetOutboxStreamName(processManager.Id),
-                processManager.Outbox.Version,
-                processManager.Outbox.GetAllMessages(),
-                cancellationToken
-            );
+            await AppendMessagesToStreamAsync(processManager, cancellationToken);
 
             try
             {
@@ -84,6 +64,12 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             {
                 processManager.Clear();
             }
+        }
+        
+        public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default)
+        {
+            await AppendMessagesToStreamAsync(processManager, cancellationToken);
+            processManager.Clear();
         }
         
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default)
@@ -117,6 +103,32 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                     cancellationToken
                 );
 
+        public async Task AppendMessagesToStreamAsync(TProcess processManager, CancellationToken cancellationToken = default)
+        {
+            if (processManager is null)
+                throw new ArgumentNullException(nameof(processManager));
+
+            if (processManager.Inbox.Trigger is null) return;
+
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                _clockService,
+                GetInboxStreamName(processManager.Id),
+                processManager.Inbox.Version,
+                new[]{ processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
+                cancellationToken
+            );
+            
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                _clockService,
+                GetOutboxStreamName(processManager.Id),
+                processManager.Outbox.Version,
+                processManager.Outbox.GetAllMessages(),
+                cancellationToken
+            );
+        }
+        
         private string GetInboxStreamName(Guid processManagerId)
             => $"{GetStreamPrefix(processManagerId)}/inbox".ToSnakeCase();
         

@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
             processManager.Transition(@event);
             
-            await _processManagerRepository.SaveAsync(processManager, cancellationToken);
+            await _processManagerRepository.SaveAndPublishAsync(processManager, cancellationToken);
         }
     }
 }

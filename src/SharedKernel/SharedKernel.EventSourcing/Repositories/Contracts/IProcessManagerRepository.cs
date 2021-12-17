@@ -11,6 +11,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
     public interface IProcessManagerRepository<TProcess>
         where TProcess : ProcessManager
     {
+        Task SaveAndPublishAsync(TProcess processManager, CancellationToken cancellationToken = default);
         Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default);
         Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default);
         Task<IList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default);
