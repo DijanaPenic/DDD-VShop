@@ -32,7 +32,7 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult>  RequestPaymentAsync([FromBody]InitiatePaymentRequest request)
+        public async Task<IActionResult> RequestPaymentAsync([FromBody]InitiatePaymentRequest request)
         {
             InitiatePaymentCommand command = _mapper.Map<InitiatePaymentCommand>(request);
             command.CorrelationId = SequentialGuid.Create();

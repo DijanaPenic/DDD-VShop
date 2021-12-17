@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using NodaTime.Serialization.JsonNet;
 
 using VShop.SharedKernel.Application.Providers;
 
@@ -12,20 +14,25 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
         public static void AddControllersServices(this IServiceCollection services)
         {
             services.AddControllers(options =>
+            {
+                options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
+                options.ModelBinderProviders.Insert(0, new GuidEntityBinderProvider());
+            })
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.Converters = new List<JsonConverter>
                 {
-                    options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
-                    options.ModelBinderProviders.Insert(0, new GuidEntityBinderProvider());
-                })
-                .AddNewtonsoftJson(options =>
+                    new StringEnumConverter(),
+                    NodaConverters.InstantConverter
+                };
+                options.SerializerSettings.DateParseHandling = DateParseHandling.None;
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Formatting = Formatting.Indented;
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver
                 {
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.Formatting = Formatting.Indented;
-                    options.SerializerSettings.ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
-                });
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                };
+            });
         }
     }
 }

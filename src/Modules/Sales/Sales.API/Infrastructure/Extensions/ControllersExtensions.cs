@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using NodaTime.Serialization.JsonNet;
 
 using VShop.SharedKernel.Application.Providers;
 
@@ -18,7 +20,12 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             })
             .AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.Converters = new List<JsonConverter>
+                {
+                    new StringEnumConverter(),
+                    NodaConverters.InstantConverter
+                };
+                options.SerializerSettings.DateParseHandling = DateParseHandling.None;
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.Formatting = Formatting.Indented;
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver
