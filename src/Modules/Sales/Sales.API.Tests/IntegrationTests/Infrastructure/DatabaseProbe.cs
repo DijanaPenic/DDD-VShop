@@ -6,15 +6,14 @@ using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
-    public class DatabaseProbe<TDbContext, TSample> : IProbe
-        where TDbContext : DbContextBase
+    public class DatabaseProbe<TDatabase, TSample> : IProbe
     {
-        private readonly Func<TDbContext, Task<TSample>> _sampling;
+        private readonly Func<TDatabase, Task<TSample>> _sampling;
         private readonly Action<TSample> _validation;
         private TSample _sample;
         private string _validationError;
 
-        public DatabaseProbe(Func<TDbContext, Task<TSample>> sampling, Action<TSample> validation)
+        public DatabaseProbe(Func<TDatabase, Task<TSample>> sampling, Action<TSample> validation)
         {
             _sampling = sampling;
             _validation = validation;
@@ -35,7 +34,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         }
 
         public async Task SampleAsync()
-            => _sample = await IntegrationTestsFixture.ExecuteServiceAsync<TDbContext, TSample>
+            => _sample = await IntegrationTestsFixture.ExecuteServiceAsync<TDatabase, TSample>
                 (dbContext => _sampling(dbContext));
 
         public string DescribeFailureTo() => _validationError;
