@@ -46,7 +46,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new GetScheduledMessageStatusProbe(),
-                50000
+                3000
             );
         }
         
@@ -74,7 +74,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new GetScheduledMessageStatusProbe(),
-                50000
+                3000
             );
         }
         

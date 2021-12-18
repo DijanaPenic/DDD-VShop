@@ -78,7 +78,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     .OrderByDescending(ml => ml.DateCreated)
                     .FirstOrDefaultAsync(ml => ml.TypeName == messageType);
                 messageLog.Should().NotBeNull();
-
+                
                 ScheduledMessage scheduledMessage = JsonConvert.DeserializeObject<ScheduledMessage>(messageLog!.Body);
                 scheduledMessage.Should().NotBeNull();
                 scheduledMessage!.CausationId.Should().Be(failedPaymentIntegrationEvent.MessageId);
@@ -109,6 +109,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
+            orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
         }
         
@@ -136,6 +137,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
+            orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
         }
         
@@ -203,6 +205,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
+            orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
         }
         
@@ -238,6 +241,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
+            orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
             
             IList<IMessage> outboxMessages = await OrderHelper.GetProcessManagerOutboxAsync(processManager.Id);

@@ -72,6 +72,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError(out _).Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            shoppingCartFromDb.Should().NotBeNull();
+            
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
                 .SingleOrDefault(sci => sci.Id == command.ShoppingCartItem.ProductId);
             shoppingCartItemFromDb.Should().NotBeNull();
@@ -99,6 +101,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError(out _).Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            shoppingCartFromDb.Should().NotBeNull();
+            
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
                 .SingleOrDefault(sci => sci.Id == command.ProductId);
             shoppingCartItemFromDb.Should().BeNull();
@@ -136,6 +140,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError(out _).Should().BeFalse();
 
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Customer.FullName.Should().Be(fullName);
             shoppingCartFromDb.Customer.Gender.Should().Be(gender);
             shoppingCartFromDb.Customer.EmailAddress.Should().Be(emailAddress);
@@ -166,6 +171,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError(out _).Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Customer.DeliveryAddress.Should().Be(deliveryAddress);
         }
     }

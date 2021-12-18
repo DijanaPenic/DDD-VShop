@@ -24,11 +24,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     [Collection("Non-Parallel Tests Collection")]
     public class IntegrationEventProjectionIntegrationTests : ResetDatabaseLifetime, IClassFixture<SubscriptionFixture>
     {
-        private const int TimeoutMillis = 3000;
+        private const int TimeoutInMillis = 3000;
             
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_PaymentSucceededIntegrationEvent_from_process_manager_stream_to_integration_stream
+        public async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
         (
             Guid orderId,
             ShoppingCart shoppingCart
@@ -51,26 +51,26 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await OrderHelper.SaveAsync(processManager);
         
             // Assert
-            async Task<IList<IIntegrationEvent>> Sampling(IIntegrationEventRepository integrationEventRepository) 
-                => (await integrationEventRepository.LoadAsync(CancellationToken.None)).ToList();
+            async Task<IList<IIntegrationEvent>> Sampling(IIntegrationEventRepository repository) 
+                => (await repository.LoadAsync(CancellationToken.None)).ToList();
 
             void Validation(IList<IIntegrationEvent> integrationEvents)
             {
                 integrationEvents.Count.Should().Be(1);
-                integrationEvents.FirstOrDefault().Should().BeOfType<PaymentSucceededIntegrationEvent>();
+                integrationEvents.SingleOrDefault().Should().BeOfType<PaymentSucceededIntegrationEvent>();
             }
 
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
                 new DatabaseProbe<IIntegrationEventRepository, IList<IIntegrationEvent>>(Sampling, Validation),
-                TimeoutMillis
+                TimeoutInMillis
             );
         }
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Publishing_PaymentSucceededIntegrationEvent
+        public async Task Publishing_integration_event_from_the_integration_stream
         (
             Guid orderId,
             ShoppingCart shoppingCart
@@ -84,12 +84,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
             
             // Act
-            await IntegrationTestsFixture.ExecuteServiceAsync<IIntegrationEventRepository>(integrationEventRepository =>
-                integrationEventRepository.SaveAsync(paymentSucceededIntegrationEvent, CancellationToken.None));
+            await IntegrationTestsFixture.ExecuteServiceAsync<IIntegrationEventRepository>(repository =>
+                repository.SaveAsync(paymentSucceededIntegrationEvent, CancellationToken.None));
             
             // Assert
-            Task<OrderingProcessManager> Sampling(IProcessManagerRepository<OrderingProcessManager> processManagerRepository)
-                => processManagerRepository.LoadAsync(orderId);
+            Task<OrderingProcessManager> Sampling(IProcessManagerRepository<OrderingProcessManager> repository)
+                => repository.LoadAsync(orderId);
 
             void Validation(OrderingProcessManager processManager)
             {
@@ -101,7 +101,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 clockService,
                 new DatabaseProbe<IProcessManagerRepository<OrderingProcessManager>, OrderingProcessManager>(Sampling, Validation),
-                TimeoutMillis
+                TimeoutInMillis
             );
         }
     }
