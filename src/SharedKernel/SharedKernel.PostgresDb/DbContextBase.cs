@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.PostgresDb
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(_clockService.Now, cancellationToken);
 
-        public Task<int> SaveChangesAsync(Instant effectiveTime, CancellationToken cancellationToken = default)
+        public Task<int> SaveChangesAsync(Instant now, CancellationToken cancellationToken = default)
         {
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is DbEntityBase && e.State is (EntityState.Added or EntityState.Modified));
@@ -41,8 +41,8 @@ namespace VShop.SharedKernel.PostgresDb
             {
                 DbEntityBase baseEntity = (DbEntityBase)entry.Entity;
 
-                baseEntity.DateUpdated = effectiveTime;
-                if (entry.State == EntityState.Added) baseEntity.DateCreated = effectiveTime;
+                baseEntity.DateUpdated = now;
+                if (entry.State == EntityState.Added) baseEntity.DateCreated = now;
             }
 
             return base.SaveChangesAsync(cancellationToken);
@@ -73,15 +73,13 @@ namespace VShop.SharedKernel.PostgresDb
             {
                 await SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
+                
+                DisposeCurrentTransaction();
             }
             catch
             {
                 await RollbackTransactionAsync(cancellationToken);
                 throw;
-            }
-            finally
-            {
-                DisposeCurrentTransaction();
             }
         }
         
