@@ -12,7 +12,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
     {
         public static Task<ShoppingCart> GetShoppingCartAsync(Guid shoppingCartId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<ShoppingCart, EntityId>, ShoppingCart>
-                (repository => repository.LoadAsync(EntityId.Create(shoppingCartId)));
+                (repository => repository.LoadAsync(EntityId.Create(shoppingCartId)));  // TODO - should internal be visible to test projects?
         
         public static Task SaveAndPublishAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<ShoppingCart, EntityId>>

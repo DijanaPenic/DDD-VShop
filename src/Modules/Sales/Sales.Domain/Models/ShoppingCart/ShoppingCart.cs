@@ -6,7 +6,6 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;

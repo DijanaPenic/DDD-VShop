@@ -16,6 +16,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public OrderingProcessManagerStatus Status { get; private set; }
         public int ShippingCheckCount { get; private set; }
 
+        // TODO - inject value (preferred approach)
         public OrderingProcessManager(IClockService clockService): base(clockService)
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);

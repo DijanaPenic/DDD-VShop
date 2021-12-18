@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
 {
     public interface IAggregateRepository<TA, in TKey>
         where TKey : ValueObject
-        where TA : AggregateRoot<TKey>
+        where TA : AggregateRoot<TKey> // TODO - use directly EntityId
     {
         Task SaveAndPublishAsync(TA aggregate, CancellationToken cancellationToken = default);
         Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default);
