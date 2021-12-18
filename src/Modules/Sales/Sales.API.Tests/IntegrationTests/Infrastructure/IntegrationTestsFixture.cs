@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Sales.Infrastructure;
 
@@ -106,7 +107,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 return action(service);
             });
 
-        public static Task<TResult> SendAsync<TResult>(IRequest<TResult> command)
+        public static Task<Result> SendAsync(ICommand command)
+            => ExecuteScopeAsync(sp =>
+            {
+                ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
+                return commandBus.SendAsync(command);
+            });
+        
+        public static Task<Result<TData>> SendAsync<TData>(ICommand<TData> command)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
