@@ -112,19 +112,19 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
-                _clockService,
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                new[]{ processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
+                new[] { processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
+                _clockService.Now,
                 cancellationToken
             );
             
             await _eventStoreClient.AppendToStreamAsync
             (
-                _clockService,
                 GetOutboxStreamName(processManager.Id),
                 processManager.Outbox.Version,
                 processManager.Outbox.GetAllMessages(),
+                _clockService.Now,
                 cancellationToken
             );
         }

@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using NodaTime;
 using Newtonsoft.Json;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
@@ -40,14 +40,18 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
 
-        public static IEnumerable<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages, IClockService clockService)
+        public static IEnumerable<EventData> ToEventData<TMessage>
+        (
+            this IEnumerable<TMessage> messages,
+            Instant now
+        )
             where TMessage : IMessage
             => messages.Select(message => new EventData
             (
                 Uuid.FromGuid(message.MessageId),
                 MessageTypeMapper.ToName(message.GetType()),
                 Serialize(message),
-                Serialize(GetMetadata(clockService, message))
+                Serialize(GetMetadata(message, now))
             ));
 
         private static byte[] Serialize(object data)
@@ -63,10 +67,10 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
         }
 
-        private static IMessageMetadata GetMetadata(IClockService clockService, IMessage message)
+        private static IMessageMetadata GetMetadata(IMessage message, Instant now)
             => new MessageMetadata
             {
-                EffectiveTime = clockService.Now,
+                EffectiveTime = now,
                 MessageId = message.MessageId,
                 CausationId = message.CausationId,
                 CorrelationId = message.CorrelationId

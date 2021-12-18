@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using NodaTime;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Policies;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
@@ -15,10 +15,10 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
-            IClockService clockService,
             string streamName,
             int expectedRevision,
             IEnumerable<TMessage> messages,
+            Instant now,
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
@@ -26,7 +26,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             (
                 streamName,
                 StreamRevision.FromInt64(expectedRevision),
-                messages.ToEventData(clockService),
+                messages.ToEventData(now),
                 cancellationToken: ct
             ), cancellationToken);
         }
@@ -34,10 +34,10 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static async Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
-            IClockService clockService,
             string streamName,
             StreamState expectedState,
             IEnumerable<TMessage> messages,
+            Instant now,
             CancellationToken cancellationToken = default
         ) where TMessage : IMessage
         {
@@ -45,7 +45,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             (
                 streamName,
                 expectedState,
-                messages.ToEventData(clockService),
+                messages.ToEventData(now),
                 cancellationToken: ct
             ), cancellationToken);
         }

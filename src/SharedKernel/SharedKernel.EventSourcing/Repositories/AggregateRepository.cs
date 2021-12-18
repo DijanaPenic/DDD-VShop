@@ -92,10 +92,10 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
-                _clockService,
                 streamName,
                 aggregate.Version,
                 aggregate.GetAllEvents(),
+                _clockService.Now,
                 cancellationToken
             );
         }

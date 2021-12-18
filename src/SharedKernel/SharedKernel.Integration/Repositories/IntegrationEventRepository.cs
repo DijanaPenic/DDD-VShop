@@ -32,10 +32,10 @@ namespace VShop.SharedKernel.Integration.Repositories
 
             await _eventStoreClient.AppendToStreamAsync
             (
-                _clockService,
                 streamName,
                 StreamState.Any,
                 new[] { @event },
+                _clockService.Now,
                 cancellationToken
             );
         }
