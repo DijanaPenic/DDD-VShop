@@ -190,7 +190,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            shoppingCart.RequestCheckout(clockService, orderId);
+            shoppingCart.RequestCheckout(orderId, clockService.Now);
 
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);

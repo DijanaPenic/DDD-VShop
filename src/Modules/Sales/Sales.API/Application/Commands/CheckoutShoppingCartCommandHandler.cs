@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             // Potentially use the same Id for shopping cart and order.
             EntityId orderId = EntityId.Create(SequentialGuid.Create());
 
-            Result checkoutResult = shoppingCart.RequestCheckout(_clockService, orderId);
+            Result checkoutResult = shoppingCart.RequestCheckout(orderId, _clockService.Now);
             
             if (checkoutResult.IsError(out ApplicationError error)) return error;
 

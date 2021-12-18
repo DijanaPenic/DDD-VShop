@@ -29,7 +29,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
+            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
@@ -57,7 +57,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
+            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (

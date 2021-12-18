@@ -37,7 +37,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
+            OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
             ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new 
             (
@@ -79,7 +79,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            await OrderHelper.PlaceOrderAsync(clockService, shoppingCart, orderId);
+            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
             

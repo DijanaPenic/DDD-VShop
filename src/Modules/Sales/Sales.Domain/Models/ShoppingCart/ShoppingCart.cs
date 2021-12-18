@@ -120,8 +120,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             return Result.Success;
         }
-
-        public Result RequestCheckout(IClockService clockService, EntityId orderId)
+        
+        public Result RequestCheckout(EntityId orderId, Instant now)
         {
             if(Status is not ShoppingCartStatus.AwaitingConfirmation)
                 return Result.ValidationError($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
@@ -138,7 +138,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 {
                     ShoppingCartId = Id,
                     OrderId = orderId,
-                    ConfirmedAt = clockService.Now
+                    ConfirmedAt = now
                 }
             );
             

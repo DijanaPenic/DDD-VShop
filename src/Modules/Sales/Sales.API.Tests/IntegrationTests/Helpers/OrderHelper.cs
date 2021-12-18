@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NodaTime;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -17,12 +17,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
     {
         public static async Task<OrderingProcessManager> PlaceOrderAsync
         (
-            IClockService clockService,
             ShoppingCart shoppingCart,
-            Guid orderId
+            Guid orderId,
+            Instant now
         )
         {
-            shoppingCart.RequestCheckout(clockService, EntityId.Create(orderId));
+            shoppingCart.RequestCheckout(EntityId.Create(orderId), now);
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             return await GetProcessManagerAsync(orderId);

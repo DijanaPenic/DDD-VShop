@@ -27,7 +27,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            sut.RequestCheckout(clockService, orderId); // Checkout will prevent further updates
+            sut.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
 
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
@@ -119,7 +119,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            sut.RequestCheckout(clockService, orderId);
+            sut.RequestCheckout(orderId, clockService.Now);
             
             ShoppingCartItem shoppingCartItem = sut.Items.First();
             
@@ -188,7 +188,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.Create(shoppingCartId, customerId, customerDiscount);
             
             // Act
-            Result result = sut.RequestCheckout(clockService, orderId);
+            Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -217,7 +217,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(clockService, orderId);
+            Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
             result.IsError(out _).Should().BeTrue();
@@ -246,7 +246,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(clockService, orderId);
+            Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
             result.IsError(out _).Should().BeTrue();
