@@ -16,6 +16,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private ProcessManagerOutbox _outbox = new();
 
         public Guid Id { get; protected set; }
+        public Guid CorrelationId { get; private set; }
+        public Guid CausationId { get; private set; }
         public IProcessManagerInbox Inbox => _inbox;
         public IProcessManagerOutbox Outbox => _outbox;
 
@@ -33,13 +35,19 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public void Transition(IBaseEvent @event, Instant now)
         {
             ApplyEvent(@event);
-            _inbox.Trigger = @event;
+            _inbox.Add(@event);
+
+            CausationId = @event.MessageId;
+            CorrelationId = @event.CorrelationId;
 
             Type eventType = @event.GetType();
             
-            if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event);
-            else if (_inbox.ScheduledEventHandlers.ContainsKey(eventType)) _inbox.ScheduledEventHandlers[eventType](@event, now);
-            else throw new Exception($"ProcessManager: missing event handler for {eventType.Name}");
+            if (_inbox.EventHandlers.ContainsKey(eventType)) 
+                _inbox.EventHandlers[eventType](@event);
+            else if (_inbox.ScheduledEventHandlers.ContainsKey(eventType))
+                _inbox.ScheduledEventHandlers[eventType](@event, now);
+            // else - don't need to have event handler events for all events. Some events can only trigger 
+            // process manager status change.
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)
@@ -83,14 +91,14 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         public void Clear()
         {
-            _inbox = new ProcessManagerInbox(_inbox.Version + 1);
+            _inbox = new ProcessManagerInbox(_inbox.Version + _inbox.Count());
             _outbox = new ProcessManagerOutbox(_outbox.Version + _outbox.Count());
         }
         
         private void SetMessageIdentification(IMessage message)
         {
-            message.CausationId = Inbox.Trigger.MessageId;
-            message.CorrelationId = Inbox.Trigger.CorrelationId;
+            message.CausationId = CausationId;
+            message.CorrelationId = CorrelationId;
         }
     }
 }

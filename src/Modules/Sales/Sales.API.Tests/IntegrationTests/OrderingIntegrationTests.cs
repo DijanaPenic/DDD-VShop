@@ -194,11 +194,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 new PaymentSucceededIntegrationEvent(orderId)
             );
             
-            while (processManager.ShippingCheckCount < OrderingProcessManager.Settings.ShippingCheckThreshold)
+            while (processManager.ShippingCheckCount < OrderingProcessManager.Settings.ShippingCheckThreshold - 1)
                 processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
             
             await OrderHelper.SaveAndPublishAsync(processManager);
-        
+
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
                 sut.Handle(shippingGracePeriodExpiredDomainEvent, CancellationToken.None));

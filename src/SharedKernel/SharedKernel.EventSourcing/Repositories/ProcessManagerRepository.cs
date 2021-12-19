@@ -50,6 +50,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
                 // Dispatch immediate commands
                 foreach (IBaseCommand command in processManager.Outbox.GetCommandsForImmediateDispatch())
                 {
+                    // TODO - non-timeout errors are retried. Why?
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
                     if (commandResult is IResult { Value: ApplicationError error })
@@ -104,13 +105,11 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
 
-            if (processManager.Inbox.Trigger is null) return;
-
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                new[] { processManager.Inbox.Trigger }, // TODO - potentially create method for a single element
+                processManager.Inbox.GetAllEvents(),
                 _clockService.Now,
                 cancellationToken
             );

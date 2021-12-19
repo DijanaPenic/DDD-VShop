@@ -39,5 +39,6 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public IEnumerable<IMessage> GetAllMessages();
         public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch();
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch();
+        int Count();
     }
 }
