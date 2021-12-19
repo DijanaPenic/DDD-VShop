@@ -6,7 +6,6 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
@@ -15,9 +14,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public Guid ShoppingCartId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
         public int ShippingCheckCount { get; private set; }
-
-        // TODO - inject value (preferred approach)
-        public OrderingProcessManager(IClockService clockService): base(clockService)
+        
+        public OrderingProcessManager()
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
@@ -37,11 +35,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         private void Handle(OrderPlacedDomainEvent @event) 
             => RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
 
-        private void Handle(PaymentSucceededIntegrationEvent @event)
+        private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
             => ScheduleDomainEvent
             (
                 new ShippingGracePeriodExpiredDomainEvent(Id, @event),
-                ClockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
+                now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
         private void Handle(ShippingGracePeriodExpiredDomainEvent @event)
@@ -62,11 +60,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             }
         }
         
-        private void Handle(PaymentFailedIntegrationEvent @event)
+        private void Handle(PaymentFailedIntegrationEvent @event, Instant now)
             => ScheduleDomainEvent
             (
                 new PaymentGracePeriodExpiredDomainEvent(Id),
-                ClockService.Now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
+                now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
             );
         
         private void Handle(PaymentGracePeriodExpiredDomainEvent @event)

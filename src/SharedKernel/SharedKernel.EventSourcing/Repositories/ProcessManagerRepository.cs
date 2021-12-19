@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 {
     // TODO - rename to Store (or something) since this class also contains publishing logic
     public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
-        where TProcess : ProcessManager
+        where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -76,12 +76,8 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         {
             IList<IMessage> inboxMessages = await LoadInboxAsync(processManagerId, cancellationToken);
             IList<IMessage> outboxMessages = await LoadOutboxAsync(processManagerId, cancellationToken);
-
-            // TODO - think about this - code smell!!
-            TProcess processManager = (TProcess)Activator.CreateInstance(typeof(TProcess), _clockService);
-            if (processManager is null)
-                throw new Exception($"Couldn't resolve {nameof(processManager)} instance.");
             
+            TProcess processManager = new();
             processManager.Load(inboxMessages, outboxMessages);
 
             return processManager;

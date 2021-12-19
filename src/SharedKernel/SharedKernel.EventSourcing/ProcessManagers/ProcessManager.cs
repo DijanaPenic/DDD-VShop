@@ -7,15 +7,11 @@ using Newtonsoft.Json;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public abstract class ProcessManager
     {
-        protected readonly IClockService ClockService;
-        protected ProcessManager(IClockService clockService) => ClockService = clockService;
-        
         private ProcessManagerInbox _inbox = new();
         private ProcessManagerOutbox _outbox = new();
 
@@ -28,14 +24,22 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected void RegisterEvent<TEvent>(Action<TEvent> handler)
             where TEvent : class, IBaseEvent
             => _inbox.EventHandlers[typeof(TEvent)] = (message) => handler(message as TEvent);
+        
+        protected void RegisterEvent<TEvent>(Action<TEvent, Instant> handler)
+            where TEvent : class, IBaseEvent
+            => _inbox.ScheduledEventHandlers[typeof(TEvent)] = 
+                (message, now) => handler(message as TEvent, now);
 
-        public void Transition(IBaseEvent @event)
+        public void Transition(IBaseEvent @event, Instant now)
         {
             ApplyEvent(@event);
             _inbox.Trigger = @event;
 
             Type eventType = @event.GetType();
+            
             if (_inbox.EventHandlers.ContainsKey(eventType)) _inbox.EventHandlers[eventType](@event);
+            else if (_inbox.ScheduledEventHandlers.ContainsKey(eventType)) _inbox.ScheduledEventHandlers[eventType](@event, now);
+            else throw new Exception($"ProcessManager: missing event handler for {eventType.Name}");
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)

@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 new PaymentSucceededIntegrationEvent(orderId)
             );
             
-            processManager.Transition(shippingGracePeriodExpiredDomainEvent);
+            processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
 
             // Act
             await OrderHelper.SaveAsync(processManager);

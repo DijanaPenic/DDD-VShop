@@ -97,7 +97,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             IClockService clockService = new ClockService();
 
             OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            processManager.Transition(new PaymentFailedIntegrationEvent(orderId));
+            processManager.Transition(new PaymentFailedIntegrationEvent(orderId), clockService.Now);
             
             await OrderHelper.SaveAndPublishAsync(processManager);
             
@@ -125,7 +125,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             IClockService clockService = new ClockService();
 
             OrderingProcessManager processManager = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            processManager.Transition(new PaymentSucceededIntegrationEvent(orderId));
+            processManager.Transition(new PaymentSucceededIntegrationEvent(orderId), clockService.Now);
             
             await OrderHelper.SaveAndPublishAsync(processManager);
             
@@ -195,7 +195,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             );
             
             while (processManager.ShippingCheckCount < OrderingProcessManager.Settings.ShippingCheckThreshold)
-                processManager.Transition(shippingGracePeriodExpiredDomainEvent);
+                processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
             
             await OrderHelper.SaveAndPublishAsync(processManager);
         
