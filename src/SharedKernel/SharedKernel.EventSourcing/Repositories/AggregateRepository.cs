@@ -16,9 +16,8 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Repositories
 {
-    public class AggregateRepository<TAggregate, TKey> : IAggregateRepository<TAggregate, TKey>
-        where TAggregate : AggregateRoot<TKey>, new()
-        where TKey : ValueObject
+    public class AggregateRepository<TAggregate> : IAggregateRepository<TAggregate>
+        where TAggregate : AggregateRoot, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -60,8 +59,8 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
         public async Task<TAggregate> LoadAsync
         (
-            TKey aggregateId,
-            Guid? messageId = default,
+            EntityId aggregateId,
+            Guid? causationId = default,
             Guid? correlationId = default,
             CancellationToken cancellationToken = default
         )
@@ -77,8 +76,12 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
 
             if (events.Count is 0) return default;
 
-            TAggregate aggregate = new();
-            aggregate.Load(events, messageId, correlationId);
+            TAggregate aggregate = new()
+            {
+                CorrelationId = correlationId,
+                CausationId = causationId,
+            };
+            aggregate.Load(events);
 
             return aggregate;
         }
@@ -101,7 +104,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         }
 
 
-        private string GetStreamName(TKey aggregateId)
+        private string GetStreamName(EntityId aggregateId)
             => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
     }
 }

@@ -10,7 +10,7 @@ using VShop.SharedKernel.EventSourcing.Aggregates;
 
 namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
-    public class Order : AggregateRoot<EntityId>
+    public class Order : AggregateRoot
     {
         private readonly List<OrderLine> _orderLines = new();
         

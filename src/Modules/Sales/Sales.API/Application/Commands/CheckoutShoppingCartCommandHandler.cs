@@ -17,9 +17,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, CheckoutOrder>
     {
         private readonly IClockService _clockService;
-        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
 
-        public CheckoutShoppingCartCommandHandler(IClockService clockService, IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public CheckoutShoppingCartCommandHandler(IClockService clockService, IAggregateRepository<ShoppingCart> shoppingCartRepository)
         {
             _clockService = clockService;
             _shoppingCartRepository = shoppingCartRepository;

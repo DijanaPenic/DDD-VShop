@@ -15,9 +15,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand>
     {
-        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
 
-        public SetContactInformationCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public SetContactInformationCommandHandler(IAggregateRepository<ShoppingCart> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
         
         public async Task<Result> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)

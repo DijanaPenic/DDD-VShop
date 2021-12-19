@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
                 (repository => repository.SaveAsync(processManager));
 
         public static Task<Order> GetOrderAsync(Guid orderId)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<Order, EntityId>, Order>
+            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<Order>, Order>
                 (repository => repository.LoadAsync(EntityId.Create(orderId)));
     }
 }

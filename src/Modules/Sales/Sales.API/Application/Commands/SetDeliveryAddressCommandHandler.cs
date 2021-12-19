@@ -14,9 +14,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class SetDeliveryAddressCommandHandler : ICommandHandler<SetDeliveryAddressCommand>
     {
-        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
         
-        public SetDeliveryAddressCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public SetDeliveryAddressCommandHandler(IAggregateRepository<ShoppingCart> shoppingCartRepository)
         => _shoppingCartRepository = shoppingCartRepository;
         
         public async Task<Result> Handle(SetDeliveryAddressCommand command, CancellationToken cancellationToken)

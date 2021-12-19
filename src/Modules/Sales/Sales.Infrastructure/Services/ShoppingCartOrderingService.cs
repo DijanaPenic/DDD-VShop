@@ -14,9 +14,9 @@ namespace VShop.Modules.Sales.Infrastructure.Services
 {
     public class ShoppingCartOrderingService : IShoppingCartOrderingService
     {
-        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
 
-        public ShoppingCartOrderingService(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public ShoppingCartOrderingService(IAggregateRepository<ShoppingCart> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
 
         public async Task<Result<Order>> CreateOrderAsync

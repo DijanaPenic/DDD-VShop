@@ -14,9 +14,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand>
     {
-        private readonly IAggregateRepository<Order, EntityId> _orderRepository;
+        private readonly IAggregateRepository<Order> _orderRepository;
 
-        public CancelOrderCommandHandler(IAggregateRepository<Order, EntityId> orderRepository)
+        public CancelOrderCommandHandler(IAggregateRepository<Order> orderRepository)
             => _orderRepository = orderRepository;
 
         public async Task<Result> Handle(CancelOrderCommand command, CancellationToken cancellationToken)

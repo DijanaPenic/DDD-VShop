@@ -7,15 +7,14 @@ using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
-    public abstract class AggregateRoot<TKey>
-        where TKey : ValueObject
+    public abstract class AggregateRoot
     {
         private readonly List<IBaseEvent> _outbox = new();
 
-        public TKey Id { get; protected set; }
+        public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CorrelationId { get; set; } // Public - will be set when creating a new aggregate
-        public Guid CausationId { get; set; }
+        public Guid? CorrelationId { get; init; }
+        public Guid? CausationId { get; init; }
         
         protected abstract void ApplyEvent(IDomainEvent @event);
         
@@ -32,11 +31,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             _outbox.Add(@event);
         }
 
-        public void Load(IEnumerable<IBaseEvent> history, Guid? messageId, Guid? correlationId)
+        public void Load(IEnumerable<IBaseEvent> history)
         {
-            CausationId = messageId?? Guid.Empty;
-            CorrelationId = correlationId?? Guid.Empty;
-
             foreach (IBaseEvent @event in history)
             {
                 if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
@@ -58,8 +54,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         
         private void SetEventIdentification(IBaseEvent @event)
         {
-            @event.CausationId = CausationId;
-            @event.CorrelationId = CorrelationId;
+            @event.CausationId = CausationId?? Guid.Empty;
+            @event.CorrelationId = CorrelationId?? Guid.Empty;
         }
     }
 }

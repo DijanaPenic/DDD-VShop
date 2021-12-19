@@ -14,9 +14,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand>
     {
-        private readonly IAggregateRepository<ShoppingCart, EntityId> _shoppingCartRepository;
+        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
         
-        public RemoveShoppingCartProductCommandHandler(IAggregateRepository<ShoppingCart, EntityId> shoppingCartRepository)
+        public RemoveShoppingCartProductCommandHandler(IAggregateRepository<ShoppingCart> shoppingCartRepository)
             => _shoppingCartRepository = shoppingCartRepository;
         
         public async Task<Result> Handle(RemoveShoppingCartProductCommand command, CancellationToken cancellationToken)

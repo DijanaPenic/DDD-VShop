@@ -32,8 +32,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
             services.AddSingleton
             (
-                typeof(IAggregateRepository<,>),
-                typeof(AggregateRepository<,>)
+                typeof(IAggregateRepository<>),
+                typeof(AggregateRepository<>)
             );
             services.AddSingleton
             (typeof(IIntegrationEventRepository),

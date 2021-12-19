@@ -15,12 +15,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Order>
     {
-        private readonly IAggregateRepository<Order, EntityId> _orderRepository;
+        private readonly IAggregateRepository<Order> _orderRepository;
         private readonly IShoppingCartOrderingService _shoppingCartOrderingService;
 
         public PlaceOrderCommandHandler
         (
-            IAggregateRepository<Order, EntityId> orderRepository,
+            IAggregateRepository<Order> orderRepository,
             IShoppingCartOrderingService shoppingCartOrderingService
         )
         {
