@@ -15,7 +15,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IScheduledMessage> _scheduledEvents = new();
         private readonly List<IScheduledMessage> _scheduledCommands = new();
 
-        public int Version { get; set; } = -1;
+        public int Version { get; set; }
+        
+        public ProcessManagerOutbox(int version = -1) => Version = version;
 
         public void Add(IIntegrationEvent @event) => _events.Add(@event);
         public void Add(IBaseCommand command) => _commands.Add(command);
@@ -28,6 +30,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch() 
             => _scheduledEvents.Concat(_scheduledCommands);
         public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
+        public int Count() => GetAllMessages().Count();
     }
     
     public interface IProcessManagerOutbox

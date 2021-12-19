@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using NodaTime;
+using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -77,10 +77,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Version = outboxHistory.Count() - 1;
         }
         
-        public void Clear() // TODO - reset is not correct
+        public void Clear()
         {
-            _inbox = default;
-            _outbox = default;
+            _inbox = new ProcessManagerInbox(_inbox.Version + 1);
+            _outbox = new ProcessManagerOutbox(_outbox.Version + _outbox.Count());
         }
         
         private void SetMessageIdentification(IMessage message)
