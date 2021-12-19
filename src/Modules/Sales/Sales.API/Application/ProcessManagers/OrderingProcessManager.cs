@@ -27,24 +27,24 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
         }
 
-        public void Handle(ShoppingCartCheckoutRequestedDomainEvent @event) 
+        private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event) 
             => RaiseCommand(new PlaceOrderCommand
             {
                 OrderId = Id,
                 ShoppingCartId = ShoppingCartId
             });
 
-        public void Handle(OrderPlacedDomainEvent @event) 
+        private void Handle(OrderPlacedDomainEvent @event) 
             => RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
 
-        public void Handle(PaymentSucceededIntegrationEvent @event)
+        private void Handle(PaymentSucceededIntegrationEvent @event)
             => ScheduleDomainEvent
             (
                 new ShippingGracePeriodExpiredDomainEvent(Id, @event),
                 ClockService.Now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
-        public void Handle(ShippingGracePeriodExpiredDomainEvent @event)
+        private void Handle(ShippingGracePeriodExpiredDomainEvent @event)
         {
             // The order is already shipped so there is nothing to address.
             if (Status is OrderingProcessManagerStatus.OrderShipped) return;
@@ -61,16 +61,15 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 RaiseIntegrationEvent<PaymentSucceededIntegrationEvent>(@event.Content);
             }
         }
-
-        // TODO - can these methods be private? They can't be used outside!
-        public void Handle(PaymentFailedIntegrationEvent @event)
+        
+        private void Handle(PaymentFailedIntegrationEvent @event)
             => ScheduleDomainEvent
             (
                 new PaymentGracePeriodExpiredDomainEvent(Id),
                 ClockService.Now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
             );
         
-        public void Handle(PaymentGracePeriodExpiredDomainEvent @event)
+        private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {
             // User didn't manage to pay so we need to cancel the order.
             if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) RaiseCommand(new CancelOrderCommand(Id));

@@ -74,8 +74,7 @@ namespace VShop.Modules.Sales.API
                 .CreateScope();
 
             IServiceProvider serviceProvider = scope.ServiceProvider;
-
-            // TODO - create helper method
+            
             using SalesContext salesContext = serviceProvider.GetService<SalesContext>();
             salesContext?.Database.Migrate();
             
