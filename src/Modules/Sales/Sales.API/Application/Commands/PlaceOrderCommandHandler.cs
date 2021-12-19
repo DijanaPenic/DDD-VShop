@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
@@ -15,16 +15,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Order>
     {
-        private readonly IAggregateRepository<Order> _orderRepository;
+        private readonly IAggregateStore<Order> _orderStore;
         private readonly IShoppingCartOrderingService _shoppingCartOrderingService;
 
         public PlaceOrderCommandHandler
         (
-            IAggregateRepository<Order> orderRepository,
+            IAggregateStore<Order> orderStore,
             IShoppingCartOrderingService shoppingCartOrderingService
         )
         {
-            _orderRepository = orderRepository;
+            _orderStore = orderStore;
             _shoppingCartOrderingService = shoppingCartOrderingService;
         }
 
@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Order order = createOrderResult.GetData();
 
-            await _orderRepository.SaveAndPublishAsync(order, cancellationToken);
+            await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
             return order;
         }

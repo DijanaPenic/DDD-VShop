@@ -12,12 +12,12 @@ using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Billing.Integration.Events;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
-using VShop.Modules.Billing.Integration.Events;
+using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
@@ -51,8 +51,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await OrderHelper.SaveAsync(processManager);
         
             // Assert
-            async Task<IList<IIntegrationEvent>> Sampling(IIntegrationEventRepository repository) 
-                => (await repository.LoadAsync(CancellationToken.None)).ToList();
+            async Task<IList<IIntegrationEvent>> Sampling(IIntegrationEventStore store) 
+                => (await store.LoadAsync(CancellationToken.None)).ToList();
 
             void Validation(IList<IIntegrationEvent> integrationEvents)
             {
@@ -63,7 +63,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<IIntegrationEventRepository, IList<IIntegrationEvent>>(Sampling, Validation),
+                new DatabaseProbe<IIntegrationEventStore, IList<IIntegrationEvent>>(Sampling, Validation),
                 TimeoutInMillis
             );
         }
@@ -84,12 +84,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
             
             // Act
-            await IntegrationTestsFixture.ExecuteServiceAsync<IIntegrationEventRepository>(repository =>
-                repository.SaveAsync(paymentSucceededIntegrationEvent, CancellationToken.None));
+            await IntegrationTestsFixture.ExecuteServiceAsync<IIntegrationEventStore>(store =>
+                store.SaveAsync(paymentSucceededIntegrationEvent, CancellationToken.None));
             
             // Assert
-            Task<OrderingProcessManager> Sampling(IProcessManagerRepository<OrderingProcessManager> repository)
-                => repository.LoadAsync(orderId);
+            Task<OrderingProcessManager> Sampling(IProcessManagerStore<OrderingProcessManager> store)
+                => store.LoadAsync(orderId);
 
             void Validation(OrderingProcessManager processManager)
             {
@@ -100,7 +100,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<IProcessManagerRepository<OrderingProcessManager>, OrderingProcessManager>(Sampling, Validation),
+                new DatabaseProbe<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>(Sampling, Validation),
                 TimeoutInMillis
             );
         }

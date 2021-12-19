@@ -14,12 +14,11 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories
+namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    // TODO - rename to Store (or something) since this class also contains publishing logic
-    public class ProcessManagerRepository<TProcess> : IProcessManagerRepository<TProcess>
+    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess>
         where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
@@ -27,7 +26,7 @@ namespace VShop.SharedKernel.EventSourcing.Repositories
         private readonly ICommandBus _commandBus;
         private readonly ISchedulerService _messageSchedulerService;
 
-        public ProcessManagerRepository
+        public ProcessManagerStore
         (
             IClockService clockService,
             EventStoreClient eventStoreClient,

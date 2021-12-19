@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Serilog;
 
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
@@ -14,18 +14,18 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         private readonly IClockService _clockService;
         private readonly ILogger _logger;
-        private readonly IProcessManagerRepository<TProcess> _processManagerRepository;
+        private readonly IProcessManagerStore<TProcess> _processManagerStore;
 
         protected ProcessManagerHandler
         (
             IClockService clockService,
             ILogger logger,
-            IProcessManagerRepository<TProcess> processManagerRepository
+            IProcessManagerStore<TProcess> processManagerStore
         )
         {
             _clockService = clockService;
             _logger = logger;
-            _processManagerRepository = processManagerRepository;
+            _processManagerStore = processManagerStore;
         }
         
         protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
@@ -36,10 +36,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, @event.GetType().Name
             );
             
-            TProcess processManager = await _processManagerRepository.LoadAsync(processId, cancellationToken);
+            TProcess processManager = await _processManagerStore.LoadAsync(processId, cancellationToken);
             processManager.Transition(@event, _clockService.Now);
             
-            await _processManagerRepository.SaveAndPublishAsync(processManager, cancellationToken);
+            await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken);
         }
     }
 }

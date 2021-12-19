@@ -5,7 +5,7 @@ using NodaTime;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.ProcessManagers;
@@ -29,23 +29,23 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
         }
         
         public static Task<OrderingProcessManager> GetProcessManagerAsync(Guid processManagerId)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>, OrderingProcessManager>
-                (repository => repository.LoadAsync(EntityId.Create(processManagerId)));
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
+                (store => store.LoadAsync(EntityId.Create(processManagerId)));
         
         public static Task<IList<IMessage>> GetProcessManagerOutboxAsync(Guid processManagerId)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>, IList<IMessage>>
-                (repository => repository.LoadOutboxAsync(EntityId.Create(processManagerId)));
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, IList<IMessage>>
+                (store => store.LoadOutboxAsync(EntityId.Create(processManagerId)));
         
         public static Task SaveAndPublishAsync(OrderingProcessManager processManager)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>>
-                (repository => repository.SaveAndPublishAsync(processManager));
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>>
+                (store => store.SaveAndPublishAsync(processManager));
         
         public static Task SaveAsync(OrderingProcessManager processManager)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerRepository<OrderingProcessManager>>
-                (repository => repository.SaveAsync(processManager));
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>>
+                (store => store.SaveAsync(processManager));
 
         public static Task<Order> GetOrderAsync(Guid orderId)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateRepository<Order>, Order>
-                (repository => repository.LoadAsync(EntityId.Create(orderId)));
+            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<Order>, Order>
+                (store => store.LoadAsync(EntityId.Create(orderId)));
     }
 }

@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
-namespace VShop.SharedKernel.Integration.Repositories.Contracts
+namespace VShop.SharedKernel.Integration.Stores.Contracts
 {
-    public interface IIntegrationEventLogRepository
+    public interface IIntegrationEventLogStore
     {
         Task<IEnumerable<IntegrationEventLog>> RetrieveEventsPendingPublishAsync(Guid transactionId, CancellationToken cancellationToken = default);
         Task SaveEventAsync(IIntegrationEvent @event, IDbContextTransaction transaction, CancellationToken cancellationToken = default);

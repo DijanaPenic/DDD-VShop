@@ -59,7 +59,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                  ? new Uri("unix:///var/run/docker.sock")
                  : new Uri("npipe://./pipe/docker_engine");
              
-                DockerClientConfiguration dockerConfig = new(address); // TODO - refactor
+                DockerClientConfiguration dockerConfig = new(address);
                 DockerClient dockerClient = dockerConfig.CreateClient();
                 
                 IList<ContainerListResponse> eventStoreContainers = await dockerClient.Containers

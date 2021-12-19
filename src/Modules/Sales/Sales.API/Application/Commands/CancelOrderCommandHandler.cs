@@ -7,21 +7,21 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand>
     {
-        private readonly IAggregateRepository<Order> _orderRepository;
+        private readonly IAggregateStore<Order> _orderStore;
 
-        public CancelOrderCommandHandler(IAggregateRepository<Order> orderRepository)
-            => _orderRepository = orderRepository;
+        public CancelOrderCommandHandler(IAggregateStore<Order> orderStore)
+            => _orderStore = orderStore;
 
         public async Task<Result> Handle(CancelOrderCommand command, CancellationToken cancellationToken)
         {
-            Order order = await _orderRepository.LoadAsync
+            Order order = await _orderStore.LoadAsync
             (
                 EntityId.Create(command.OrderId),
                 command.MessageId,
@@ -34,13 +34,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (cancelOrderResult.IsError(out ApplicationError error)) return error;
             
-            await _orderRepository.SaveAndPublishAsync(order, cancellationToken);
+            await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
             return Result.Success;
         }
     }
     
-    // TODO - should this be record? 
     public record CancelOrderCommand : Command
     {
         public Guid OrderId { get; }

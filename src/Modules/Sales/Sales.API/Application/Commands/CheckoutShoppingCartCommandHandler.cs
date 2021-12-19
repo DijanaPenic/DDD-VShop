@@ -9,7 +9,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
@@ -17,17 +17,17 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, CheckoutOrder>
     {
         private readonly IClockService _clockService;
-        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
+        private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
 
-        public CheckoutShoppingCartCommandHandler(IClockService clockService, IAggregateRepository<ShoppingCart> shoppingCartRepository)
+        public CheckoutShoppingCartCommandHandler(IClockService clockService, IAggregateStore<ShoppingCart> shoppingCartStore)
         {
             _clockService = clockService;
-            _shoppingCartRepository = shoppingCartRepository;
+            _shoppingCartStore = shoppingCartStore;
         }
 
         public async Task<Result<CheckoutOrder>> Handle(CheckoutShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
+            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId),
                 command.MessageId,
@@ -44,7 +44,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (checkoutResult.IsError(out ApplicationError error)) return error;
 
-            await _shoppingCartRepository.SaveAndPublishAsync(shoppingCart, cancellationToken);
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
             
             CheckoutOrder order = new() { OrderId = orderId };
 

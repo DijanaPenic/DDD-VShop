@@ -8,21 +8,21 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand>
     {
-        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
+        private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
 
-        public SetContactInformationCommandHandler(IAggregateRepository<ShoppingCart> shoppingCartRepository)
-            => _shoppingCartRepository = shoppingCartRepository;
+        public SetContactInformationCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
+            => _shoppingCartStore = shoppingCartStore;
         
         public async Task<Result> Handle(SetContactInformationCommand command, CancellationToken cancellationToken)
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
+            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId),
                 command.MessageId,
@@ -41,7 +41,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (setContactInformationResult.IsError(out ApplicationError error)) return error;
 
-            await _shoppingCartRepository.SaveAndPublishAsync(shoppingCart, cancellationToken);
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return Result.Success;
         }

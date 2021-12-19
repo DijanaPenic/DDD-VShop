@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.API.Application;
+using VShop.SharedKernel.Integration.Stores;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.Integration.Services.Contracts;
-using VShop.SharedKernel.Integration.Repositories;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {
@@ -14,14 +14,14 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
     {
         public static void AddIntegrationServices(this IServiceCollection services, string connectionString)
         {
-            services.AddTransient<IIntegrationEventLogRepository, IntegrationEventLogRepository>();
+            services.AddTransient<IIntegrationEventLogStore, IntegrationEventLogStore>();
             services.AddTransient<IIntegrationEventService, IntegrationEventService<BillingContext>>();
 
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Billing";
             
             services.AddSingleton(_ => new EventStoreClient(eventStoreSettings));
-            services.AddSingleton(typeof(IIntegrationEventRepository), typeof(IntegrationEventRepository));
+            services.AddSingleton(typeof(IIntegrationEventStore), typeof(IntegrationEventStore));
             
             MessageMappings.MapMessageTypes();
         }

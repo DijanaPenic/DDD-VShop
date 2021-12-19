@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
@@ -15,10 +15,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
     {
-        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
+        private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         
-        public CreateShoppingCartCommandHandler(IAggregateRepository<ShoppingCart> shoppingCartRepository)
-            => _shoppingCartRepository = shoppingCartRepository;
+        public CreateShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
+            => _shoppingCartStore = shoppingCartStore;
 
         public async Task<Result<ShoppingCart>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
@@ -49,7 +49,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (addProductResult.IsError(out ApplicationError addProductError)) return addProductError;
             }
 
-            await _shoppingCartRepository.SaveAndPublishAsync(shoppingCart, cancellationToken);
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return shoppingCart;
         }

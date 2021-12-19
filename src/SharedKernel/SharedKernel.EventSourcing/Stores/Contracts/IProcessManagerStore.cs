@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories.Contracts
+namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 {
-    public interface IProcessManagerRepository<TProcess>
+    public interface IProcessManagerStore<TProcess>
         where TProcess : ProcessManager
     {
         Task SaveAndPublishAsync(TProcess processManager, CancellationToken cancellationToken = default);

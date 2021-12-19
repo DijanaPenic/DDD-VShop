@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -14,10 +14,10 @@ namespace VShop.Modules.Sales.Infrastructure.Services
 {
     public class ShoppingCartOrderingService : IShoppingCartOrderingService
     {
-        private readonly IAggregateRepository<ShoppingCart> _shoppingCartRepository;
+        private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
 
-        public ShoppingCartOrderingService(IAggregateRepository<ShoppingCart> shoppingCartRepository)
-            => _shoppingCartRepository = shoppingCartRepository;
+        public ShoppingCartOrderingService(IAggregateStore<ShoppingCart> shoppingCartStore)
+            => _shoppingCartStore = shoppingCartStore;
 
         public async Task<Result<Order>> CreateOrderAsync
         (
@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             CancellationToken cancellationToken = default
         )
         {
-            ShoppingCart shoppingCart = await _shoppingCartRepository.LoadAsync
+            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 shoppingCartId,
                 causationId,

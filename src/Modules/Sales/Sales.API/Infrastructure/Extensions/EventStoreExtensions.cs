@@ -7,11 +7,11 @@ using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.API.Projections;
 using VShop.Modules.Sales.API.Application;
 using VShop.SharedKernel.Application.Projections;
+using VShop.SharedKernel.EventSourcing.Stores;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.SharedKernel.Integration.Stores;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Projections;
-using VShop.SharedKernel.Integration.Repositories;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
-using VShop.SharedKernel.EventSourcing.Repositories;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
@@ -32,16 +32,16 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 
             services.AddSingleton
             (
-                typeof(IAggregateRepository<>),
-                typeof(AggregateRepository<>)
+                typeof(IAggregateStore<>),
+                typeof(AggregateStore<>)
             );
             services.AddSingleton
-            (typeof(IIntegrationEventRepository),
-                typeof(IntegrationEventRepository)
+            (typeof(IIntegrationEventStore),
+                typeof(IntegrationEventStore)
             );
             services.AddSingleton
-            (typeof(IProcessManagerRepository<>),
-                typeof(ProcessManagerRepository<>)
+            (typeof(IProcessManagerStore<>),
+                typeof(ProcessManagerStore<>)
             );
 
             // Stream names
@@ -91,7 +91,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                         (
                             logger,
                             provider,
-                            provider.GetRequiredService<IIntegrationEventRepository>()
+                            provider.GetRequiredService<IIntegrationEventStore>()
                         ),
                         // Subscription will be made to these streams:
                         // * process manager outbox and

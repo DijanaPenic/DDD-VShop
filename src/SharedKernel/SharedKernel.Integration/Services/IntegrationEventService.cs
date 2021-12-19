@@ -9,7 +9,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Services.Contracts;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Integration.Services
@@ -19,15 +19,15 @@ namespace VShop.SharedKernel.Integration.Services
     {
         private readonly ILogger _logger;
         private readonly TDbContext _dbContext;
-        private readonly IIntegrationEventRepository _integrationEventRepository;
-        private readonly IIntegrationEventLogRepository _integrationEventLogRepository;
+        private readonly IIntegrationEventStore _integrationEventRepository;
+        private readonly IIntegrationEventLogStore _integrationEventLogRepository;
 
         public IntegrationEventService
         (
             ILogger logger,
             TDbContext dbContext,
-            IIntegrationEventRepository integrationEventRepository,
-            IIntegrationEventLogRepository integrationEventLogRepository
+            IIntegrationEventStore integrationEventRepository,
+            IIntegrationEventLogStore integrationEventLogRepository
         )
         {
             _logger = logger;

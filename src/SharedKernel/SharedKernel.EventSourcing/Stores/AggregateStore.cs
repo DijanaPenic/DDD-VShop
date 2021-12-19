@@ -10,20 +10,20 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventSourcing.Aggregates;
-using VShop.SharedKernel.EventSourcing.Repositories.Contracts;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
-namespace VShop.SharedKernel.EventSourcing.Repositories
+namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class AggregateRepository<TAggregate> : IAggregateRepository<TAggregate>
+    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate>
         where TAggregate : AggregateRoot, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
 
-        public AggregateRepository
+        public AggregateStore
         (
             IClockService clockService,
             EventStoreClient eventStoreClient,

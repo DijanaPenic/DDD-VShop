@@ -10,7 +10,7 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -18,13 +18,13 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IIntegrationEventRepository _integrationRepository;
+        private readonly IIntegrationEventStore _integrationRepository;
 
         public IntegrationEventProjectionToEventStore
         (
             ILogger logger,
             IServiceProvider serviceProvider,
-            IIntegrationEventRepository integrationRepository
+            IIntegrationEventStore integrationRepository
         )
         {
             _logger = logger;

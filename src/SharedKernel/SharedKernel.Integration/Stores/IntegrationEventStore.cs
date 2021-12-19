@@ -8,16 +8,16 @@ using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 
-namespace VShop.SharedKernel.Integration.Repositories
+namespace VShop.SharedKernel.Integration.Stores
 {
-    public class IntegrationEventRepository : IIntegrationEventRepository
+    public class IntegrationEventStore : IIntegrationEventStore
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
 
-        public IntegrationEventRepository(IClockService clockService, EventStoreClient eventStoreClient)
+        public IntegrationEventStore(IClockService clockService, EventStoreClient eventStoreClient)
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;

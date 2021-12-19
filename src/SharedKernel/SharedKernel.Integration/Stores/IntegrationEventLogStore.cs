@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
-using VShop.SharedKernel.Integration.Repositories.Contracts;
+using VShop.SharedKernel.Integration.Stores.Contracts;
 
-namespace VShop.SharedKernel.Integration.Repositories
+namespace VShop.SharedKernel.Integration.Stores
 {
-    public class IntegrationEventLogRepository : IIntegrationEventLogRepository
+    public class IntegrationEventLogStore : IIntegrationEventLogStore
     {
         private readonly IntegrationContext _integrationContext;
         
-        public IntegrationEventLogRepository(IntegrationContext integrationContext)
+        public IntegrationEventLogStore(IntegrationContext integrationContext)
             => _integrationContext = integrationContext;
 
         public async Task<IEnumerable<IntegrationEventLog>> RetrieveEventsPendingPublishAsync
