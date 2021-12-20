@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreClientExtensions
     {
-        public static async Task AppendToStreamAsync<TMessage>
+        public static Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,
@@ -20,18 +20,17 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             IEnumerable<TMessage> messages,
             Instant now,
             CancellationToken cancellationToken = default
-        ) where TMessage : IMessage
-        {
-            await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
+        ) 
+            where TMessage : IMessage
+            => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
                 streamName,
                 StreamRevision.FromInt64(expectedRevision),
                 messages.ToEventData(now),
                 cancellationToken: ct
             ), cancellationToken);
-        }
         
-        public static async Task AppendToStreamAsync<TMessage>
+        public static Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,
@@ -39,18 +38,17 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             IEnumerable<TMessage> messages,
             Instant now,
             CancellationToken cancellationToken = default
-        ) where TMessage : IMessage
-        {
-            await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
+        ) 
+            where TMessage : IMessage
+            => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
                 streamName,
                 expectedState,
                 messages.ToEventData(now),
                 cancellationToken: ct
-            ), cancellationToken);
-        }
+            ), cancellationToken); 
 
-        public static async Task<IList<TMessage>> ReadStreamForwardAsync<TMessage>
+        public static async Task<IReadOnlyList<TMessage>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamName,

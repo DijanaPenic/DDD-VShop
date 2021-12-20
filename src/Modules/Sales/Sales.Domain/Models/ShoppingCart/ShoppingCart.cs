@@ -21,7 +21,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public ShoppingCartStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
         public Instant ConfirmedAt { get; private set; }
-        public IEnumerable<ShoppingCartItem> Items => _shoppingCartItems;
+        public IReadOnlyList<ShoppingCartItem> Items => _shoppingCartItems;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_shoppingCartItems.Sum(sci => sci.TotalAmount));
         public Price TotalDiscount => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);

@@ -40,9 +40,9 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             }
         }
 
-        public IEnumerable<IDomainEvent> GetDomainEvents() => _outbox.OfType<IDomainEvent>();
+        public IReadOnlyList<IDomainEvent> GetDomainEvents() => _outbox.OfType<IDomainEvent>().ToList();
 
-        public IEnumerable<IBaseEvent> GetAllEvents() => _outbox;
+        public IReadOnlyList<IBaseEvent> GetAllEvents() => _outbox;
 
         public void Clear()
         {

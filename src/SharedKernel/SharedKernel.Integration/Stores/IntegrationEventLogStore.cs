@@ -20,18 +20,15 @@ namespace VShop.SharedKernel.Integration.Stores
         public IntegrationEventLogStore(IntegrationContext integrationContext)
             => _integrationContext = integrationContext;
 
-        public async Task<IEnumerable<IntegrationEventLog>> RetrieveEventsPendingPublishAsync
+        public async Task<IReadOnlyList<IntegrationEventLog>> RetrieveEventsPendingPublishAsync
         (
             Guid transactionId,
             CancellationToken cancellationToken = default
         )
-        {
-            List<IntegrationEventLog> result = await _integrationContext.IntegrationEventLogs.AsQueryable()
+            => await _integrationContext.IntegrationEventLogs
                 .Where(ie => ie.TransactionId == transactionId && ie.State == EventState.NotPublished)
+                .OrderBy(ie => ie.DateCreated)
                 .ToListAsync(cancellationToken);
-
-            return result.Any() ? result.OrderBy(ie => ie.DateCreated) : Enumerable.Empty<IntegrationEventLog>();
-        }
 
         public async Task SaveEventAsync
         (

@@ -28,11 +28,9 @@ namespace VShop.SharedKernel.Integration.Stores
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
 
-            string streamName = GetStreamName();
-
             await _eventStoreClient.AppendToStreamAsync
             (
-                streamName,
+                GetStreamName(),
                 StreamState.Any,
                 new[] { @event },
                 _clockService.Now,
@@ -40,19 +38,13 @@ namespace VShop.SharedKernel.Integration.Stores
             );
         }
 
-        public async Task<IEnumerable<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
-        {
-            string streamName = GetStreamName();
-            
-            IList<IIntegrationEvent> messages = await _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
+        public Task<IReadOnlyList<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
+            => _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
             (
-                streamName,
+                GetStreamName(),
                 StreamPosition.Start,
                 cancellationToken
             );
-
-            return messages;
-        }
         
         private string GetStreamName()
             => $"{_eventStoreClient.ConnectionName}/integration".ToSnakeCase();

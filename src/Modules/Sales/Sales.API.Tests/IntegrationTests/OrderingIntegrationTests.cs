@@ -244,7 +244,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().NotBe(OrderStatus.Cancelled);
             
-            IList<IMessage> outboxMessages = await OrderHelper.GetProcessManagerOutboxAsync(processManager.Id);
+            IReadOnlyList<IMessage> outboxMessages = await OrderHelper.GetProcessManagerOutboxAsync(processManager.Id);
             outboxMessages.OfType<PaymentSucceededIntegrationEvent>().Count().Should().Be(1);
         }
     }

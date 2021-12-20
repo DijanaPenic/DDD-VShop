@@ -74,8 +74,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         
         public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default)
         {
-            IList<IMessage> inboxMessages = await LoadInboxAsync(processManagerId, cancellationToken);
-            IList<IMessage> outboxMessages = await LoadOutboxAsync(processManagerId, cancellationToken);
+            IReadOnlyList<IMessage> inboxMessages = await LoadInboxAsync(processManagerId, cancellationToken);
+            IReadOnlyList<IMessage> outboxMessages = await LoadOutboxAsync(processManagerId, cancellationToken);
             
             TProcess processManager = new();
             processManager.Load(inboxMessages, outboxMessages);
@@ -83,7 +83,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             return processManager;
         }
         
-        public Task<IList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
             => _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetInboxStreamName(processManagerId),
@@ -91,7 +91,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 cancellationToken
             );
         
-        public Task<IList<IMessage>> LoadOutboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<IMessage>> LoadOutboxAsync(Guid processManagerId, CancellationToken cancellationToken = default)
             => _eventStoreClient.ReadStreamForwardAsync<IMessage>
                 (
                     GetOutboxStreamName(processManagerId),

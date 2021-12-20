@@ -19,7 +19,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public Price TotalDiscount { get; private set; }
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
-        public IReadOnlyCollection<OrderLine> OrderLines => _orderLines;
+        public IReadOnlyList<OrderLine> OrderLines => _orderLines;
         public OrderStatus Status { get; private set; }
         public OrderCustomer Customer { get; private set; }
 

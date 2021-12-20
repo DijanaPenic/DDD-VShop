@@ -19,15 +19,15 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public ProcessManagerInbox(int version = -1) => Version = version;
 
         public void Add(IBaseEvent @event) => _events.Add(@event);
-        public IEnumerable<IBaseEvent> GetAllEvents() => _events;
-        public int Count() => GetAllEvents().Count();
+        public IReadOnlyList<IBaseEvent> GetAllEvents() => _events;
+        public int Count() => GetAllEvents().Count;
     }
     
     public interface IProcessManagerInbox
     {
         public int Version { get; }
 
-        IEnumerable<IBaseEvent> GetAllEvents();
+        IReadOnlyList<IBaseEvent> GetAllEvents();
 
         int Count();
     }

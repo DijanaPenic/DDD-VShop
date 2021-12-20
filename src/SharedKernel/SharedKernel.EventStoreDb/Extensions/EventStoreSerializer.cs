@@ -40,7 +40,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
         }
 
-        public static IEnumerable<EventData> ToEventData<TMessage>
+        public static IReadOnlyList<EventData> ToEventData<TMessage>
         (
             this IEnumerable<TMessage> messages,
             Instant now
@@ -52,7 +52,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 MessageTypeMapper.ToName(message.GetType()),
                 Serialize(message),
                 Serialize(GetMetadata(message, now))
-            ));
+            )).ToList();
 
         private static byte[] Serialize(object data)
         {

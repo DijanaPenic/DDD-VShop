@@ -32,8 +32,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
                 (store => store.LoadAsync(EntityId.Create(processManagerId)));
         
-        public static Task<IList<IMessage>> GetProcessManagerOutboxAsync(Guid processManagerId)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, IList<IMessage>>
+        public static Task<IReadOnlyList<IMessage>> GetProcessManagerOutboxAsync(Guid processManagerId)
+            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, IReadOnlyList<IMessage>>
                 (store => store.LoadOutboxAsync(EntityId.Create(processManagerId)));
         
         public static Task SaveAndPublishAsync(OrderingProcessManager processManager)

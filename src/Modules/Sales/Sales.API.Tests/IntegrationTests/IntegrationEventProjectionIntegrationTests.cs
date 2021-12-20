@@ -51,10 +51,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await OrderHelper.SaveAsync(processManager);
         
             // Assert
-            async Task<IList<IIntegrationEvent>> Sampling(IIntegrationEventStore store) 
+            async Task<IReadOnlyList<IIntegrationEvent>> Sampling(IIntegrationEventStore store) 
                 => (await store.LoadAsync(CancellationToken.None)).ToList();
 
-            void Validation(IList<IIntegrationEvent> integrationEvents)
+            void Validation(IReadOnlyList<IIntegrationEvent> integrationEvents)
             {
                 integrationEvents.Count.Should().Be(1);
                 integrationEvents.SingleOrDefault().Should().BeOfType<PaymentSucceededIntegrationEvent>();
@@ -63,7 +63,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<IIntegrationEventStore, IList<IIntegrationEvent>>(Sampling, Validation),
+                new DatabaseProbe<IIntegrationEventStore, IReadOnlyList<IIntegrationEvent>>(Sampling, Validation),
                 TimeoutInMillis
             );
         }

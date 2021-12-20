@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         Task SaveAndPublishAsync(TProcess processManager, CancellationToken cancellationToken = default);
         Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default);
         Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default);
-        Task<IList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default);
-        Task<IList<IMessage>> LoadOutboxAsync(Guid processManagerId, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<IMessage>> LoadInboxAsync(Guid processManagerId, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<IMessage>> LoadOutboxAsync(Guid processManagerId, CancellationToken cancellationToken = default);
     }
 }

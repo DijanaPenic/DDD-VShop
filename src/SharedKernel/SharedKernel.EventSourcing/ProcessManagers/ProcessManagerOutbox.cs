@@ -25,20 +25,20 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _scheduledEvents.Add(new ScheduledMessage(@event, scheduledTime));
         public void Add(IBaseCommand command, Instant scheduledTime)
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
-        public IEnumerable<IMessage> GetAllMessages()
-            => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents);
-        public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch() 
-            => _scheduledEvents.Concat(_scheduledCommands);
-        public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
-        public int Count() => GetAllMessages().Count();
+        public IReadOnlyList<IMessage> GetAllMessages()
+            => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents).ToList();
+        public IReadOnlyList<IScheduledMessage> GetMessagesForDeferredDispatch() 
+            => _scheduledEvents.Concat(_scheduledCommands).ToList();
+        public IReadOnlyList<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
+        public int Count() => GetAllMessages().Count;
     }
     
     public interface IProcessManagerOutbox
     {
         public int Version { get; }
-        public IEnumerable<IMessage> GetAllMessages();
-        public IEnumerable<IScheduledMessage> GetMessagesForDeferredDispatch();
-        public IEnumerable<IBaseCommand> GetCommandsForImmediateDispatch();
+        public IReadOnlyList<IMessage> GetAllMessages();
+        public IReadOnlyList<IScheduledMessage> GetMessagesForDeferredDispatch();
+        public IReadOnlyList<IBaseCommand> GetCommandsForImmediateDispatch();
         int Count();
     }
 }

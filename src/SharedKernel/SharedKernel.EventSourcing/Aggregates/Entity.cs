@@ -5,8 +5,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
-    public abstract class Entity<TId> : IInternalEventHandler
-        where TId : ValueObject
+    public abstract class Entity<TId> : IInternalEventHandler where TId : ValueObject
     {
         private readonly Action<IDomainEvent> _applier;
         
