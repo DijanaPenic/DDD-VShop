@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace VShop.Modules.Sales.API.Models
+﻿namespace VShop.Modules.Sales.API.Models
 {
     public record AddShoppingCartProductRequest
     {
@@ -8,11 +6,12 @@ namespace VShop.Modules.Sales.API.Models
         public int Quantity { get; init; }
     }
     
-    public class AddShoppingCartProductRequestValidator : AbstractValidator<AddShoppingCartProductRequest> {
-        public AddShoppingCartProductRequestValidator() 
-        {
-            RuleFor(sci => sci.UnitPrice).GreaterThan(0);
-            RuleFor(sci => sci.Quantity).GreaterThan(0);
-        }
-    }
+    // FluentValidation is not needed: https://enterprisecraftsmanship.com/posts/validate-commands-cqrs/
+    // public class AddShoppingCartProductRequestValidator : AbstractValidator<AddShoppingCartProductRequest> {
+    //     public AddShoppingCartProductRequestValidator() 
+    //     {
+    //         RuleFor(sci => sci.UnitPrice).GreaterThan(0);
+    //         RuleFor(sci => sci.Quantity).GreaterThan(0);
+    //     }
+    // }
 }

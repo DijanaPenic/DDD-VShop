@@ -25,7 +25,6 @@ namespace VShop.Modules.Billing.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersServices();
-            services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(PaymentAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));

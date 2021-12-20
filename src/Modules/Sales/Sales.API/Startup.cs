@@ -30,7 +30,6 @@ namespace VShop.Modules.Sales.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersServices();
-            services.AddFluentValidationServices();
             services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));

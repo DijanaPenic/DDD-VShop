@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-using VShop.SharedKernel.Domain.Enums;
+﻿using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Application.Extensions;
 
 namespace VShop.Modules.Sales.API.Models
@@ -13,17 +11,5 @@ namespace VShop.Modules.Sales.API.Models
         public string EmailAddress { get; init; }
         public string PhoneNumber { get; init; }
         public GenderType Gender { get; init; }
-    }
-    
-    public class SetContactInformationRequestValidator : AbstractValidator<SetContactInformationRequest> {
-        public SetContactInformationRequestValidator()
-        {
-            RuleFor(ci => ci.FirstName).NotEmpty().MaximumLength(50);
-            RuleFor(ci => ci.MiddleName).MaximumLength(50);
-            RuleFor(ci => ci.LastName).NotEmpty().MaximumLength(50);
-            RuleFor(ci => ci.EmailAddress).NotEmpty().EmailAddress();
-            RuleFor(ci => ci.PhoneNumber).NotEmpty().PhoneNumber();
-            RuleFor(ci => ci.Gender).NotEmpty();
-        }
     }
 }
