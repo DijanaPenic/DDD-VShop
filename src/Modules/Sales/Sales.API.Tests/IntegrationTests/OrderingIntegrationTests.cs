@@ -49,7 +49,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been deleted.
             
-            EntityId orderId = EntityId.Create(result.GetData().OrderId);
+            EntityId orderId = EntityId.Create(result.Data.OrderId);
 
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
             orderFromDb.Should().NotBeNull(); // The order should have been created.

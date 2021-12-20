@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.Infrastructure
         public static implicit operator Result<TData>(TData data) => new(new Success<TData>(data));
         public static implicit operator Result<TData>(ApplicationError error) => new(error);
         
-        public TData GetData() => AsT0.Value;
+        public TData Data => AsT0.Value;
     }
     
     public class Result : ResultBase<Success>
