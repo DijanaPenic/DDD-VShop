@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 
 using VShop.SharedKernel.Infrastructure;
@@ -18,9 +19,16 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(value))
                 return Result.ValidationError("The email address is required.");
-            // TODO - implement other email checks
+
+            string email = value.Trim();
+
+            if (email.Length > 256)
+                return Result.ValidationError("The email address is too long.");
+
+            if (!Regex.IsMatch(email, @"^(.+)@(.+)$"))
+                return Result.ValidationError("The email address format is not correct.");
             
-            return new EmailAddress(value);
+            return new EmailAddress(email);
         }
         
         public static implicit operator string(EmailAddress self) => self.Value;
