@@ -10,6 +10,13 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
     {
         Task SaveAndPublishAsync(TA aggregate, CancellationToken cancellationToken = default);
         Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default);
-        Task<TA> LoadAsync(EntityId aggregateId, Guid? causationId = default, Guid? correlationId = default, CancellationToken cancellationToken = default);
+
+        Task<TA> LoadAsync
+        (
+            EntityId aggregateId,
+            Guid? causationId = default,
+            Guid? correlationId = default,
+            CancellationToken cancellationToken = default
+        );
     }
 }

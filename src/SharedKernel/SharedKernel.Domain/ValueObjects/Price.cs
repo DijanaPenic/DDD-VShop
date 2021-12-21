@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 using System.Globalization;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+using VShop.SharedKernel.Infrastructure;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -10,12 +12,14 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     {
         public decimal Value { get; }
         
+        [JsonConstructor]
+
         internal Price(decimal value) => Value = value;
 
-        public static Price Create(decimal value)
+        public static Result<Price> Create(decimal value)
         {
             if (value < 0)
-                throw new ValidationException("Price must be larger than 0 or equal to 0.");
+                return Result.ValidationError("Price must be larger than 0 or equal to 0.");
 
             return new Price(value);
         }

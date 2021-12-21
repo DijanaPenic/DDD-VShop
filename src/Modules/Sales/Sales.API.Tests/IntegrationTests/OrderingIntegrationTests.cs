@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,12 +43,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Result<CheckoutOrder> result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been deleted.
             
-            EntityId orderId = EntityId.Create(result.Data.OrderId);
+            EntityId orderId = EntityId.Create(result.Data.OrderId).Data;
 
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
             orderFromDb.Should().NotBeNull(); // The order should have been created.
@@ -57,7 +56,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Payment_failure_schedules_a_reminder_message(Guid orderId, ShoppingCart shoppingCart)
+        public async Task Payment_failure_schedules_a_reminder_message(EntityId orderId, ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -89,7 +88,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Unpaid_order_is_cancelled_after_payment_grace_period_expires
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {
@@ -117,7 +116,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Paid_order_is_not_cancelled_after_payment_grace_period_expires
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {
@@ -145,7 +144,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Payment_success_schedules_a_reminder_message
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {
@@ -179,7 +178,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Order_pending_shipping_is_cancelled_after_too_many_shipping_check_tries
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {
@@ -220,7 +219,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Payment_success_reminder_is_resent_after_shipping_grace_period_expires
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {

@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -10,9 +9,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
 {
     public static class ShoppingCartHelper
     {
-        public static Task<ShoppingCart> GetShoppingCartAsync(Guid shoppingCartId)
+        public static Task<ShoppingCart> GetShoppingCartAsync(EntityId shoppingCartId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>, ShoppingCart>
-                (store => store.LoadAsync(EntityId.Create(shoppingCartId)));
+                (store => store.LoadAsync(shoppingCartId));
         
         public static Task SaveAndPublishAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>

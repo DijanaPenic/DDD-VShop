@@ -1,9 +1,9 @@
 using Xunit;
-using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_command_is_published_in_defined_time(Guid orderId, ShoppingCart shoppingCart)
+        public async Task Scheduled_command_is_published_in_defined_time(EntityId orderId, ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -52,7 +52,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_domain_event_is_published_in_defined_time(Guid orderId, ShoppingCart shoppingCart)
+        public async Task Scheduled_domain_event_is_published_in_defined_time(EntityId orderId, ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();

@@ -1,17 +1,15 @@
-﻿namespace VShop.Modules.Sales.API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+using VShop.SharedKernel.Application.ValidationAttributes;
+
+namespace VShop.Modules.Sales.API.Models
 {
     public record AddShoppingCartProductRequest
     {
+        [Required, Price]
         public decimal UnitPrice { get; init; }
+        
+        [Required, ProductQuantity]
         public int Quantity { get; init; }
     }
-    
-    // FluentValidation is not needed: https://enterprisecraftsmanship.com/posts/validate-commands-cqrs/
-    // public class AddShoppingCartProductRequestValidator : AbstractValidator<AddShoppingCartProductRequest> {
-    //     public AddShoppingCartProductRequestValidator() 
-    //     {
-    //         RuleFor(sci => sci.UnitPrice).GreaterThan(0);
-    //         RuleFor(sci => sci.Quantity).GreaterThan(0);
-    //     }
-    // }
 }

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+
+using VShop.SharedKernel.Infrastructure;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -16,6 +19,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
 
         public string StreetAddress { get; }
 
+        [JsonConstructor]
         internal Address
         (
             string city,
@@ -32,7 +36,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             StreetAddress = streetAddress;
         }
 
-        public static Address Create
+        public static Result<Address> Create
         (
             string city,
             string countryCode,

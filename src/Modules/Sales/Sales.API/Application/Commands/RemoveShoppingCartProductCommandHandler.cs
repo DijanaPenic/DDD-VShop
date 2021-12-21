@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -23,7 +21,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId),
+                command.ShoppingCartId,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -32,11 +30,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result removeProductResult = shoppingCart.RemoveProduct
             (
-                EntityId.Create(command.ProductId),
-                ProductQuantity.Create(command.Quantity)
+                command.ProductId,
+                command.Quantity
             );
             
-            if (removeProductResult.IsError(out ApplicationError error)) return error;
+            if (removeProductResult.IsError) return removeProductResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
@@ -46,8 +44,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record RemoveShoppingCartProductCommand : Command
     {
-        public Guid ShoppingCartId { get; set; }
-        public Guid ProductId { get; set; }
-        public int Quantity { get; init; }
+        public EntityId ShoppingCartId { get; init; }
+        public EntityId ProductId { get; init; }
+        public ProductQuantity Quantity { get; init; }
     }
 }

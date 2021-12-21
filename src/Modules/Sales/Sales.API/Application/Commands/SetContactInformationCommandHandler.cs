@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -24,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId),
+                command.ShoppingCartId,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -33,13 +31,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
             (
-                FullName.Create(command.FirstName, command.MiddleName, command.LastName),
-                EmailAddress.Create(command.EmailAddress),
-                PhoneNumber.Create(command.PhoneNumber),
+                command.FullName,
+                command.EmailAddress,
+                command.PhoneNumber,
                 command.Gender
             );
             
-            if (setContactInformationResult.IsError(out ApplicationError error)) return error;
+            if (setContactInformationResult.IsError) return setContactInformationResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
@@ -49,12 +47,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record SetContactInformationCommand : Command
     {
-        public Guid ShoppingCartId { get; set; }
-        public string FirstName { get; init; }
-        public string MiddleName { get; init; }
-        public string LastName { get; init; }
-        public string EmailAddress { get; init; }
-        public string PhoneNumber { get; init; }
+        public EntityId ShoppingCartId { get; init; }
+        public FullName FullName { get; init; }
+        public EmailAddress EmailAddress { get; init; }
+        public PhoneNumber PhoneNumber { get; init; }
         public GenderType Gender { get; init; }
     }
 }

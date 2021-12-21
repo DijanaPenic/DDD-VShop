@@ -1,9 +1,9 @@
-﻿using System;
-using NodaTime;
+﻿using NodaTime;
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
@@ -11,7 +11,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
     public class OrderingProcessManager : ProcessManager
     {
-        public Guid ShoppingCartId { get; private set; }
+        public EntityId ShoppingCartId { get; private set; }
+        public EntityId OrderId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
         public int ShippingCheckCount { get; private set; }
         
@@ -28,7 +29,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event) 
             => RaiseCommand(new PlaceOrderCommand
             {
-                OrderId = Id,
+                OrderId = OrderId,
                 ShoppingCartId = ShoppingCartId
             });
 
@@ -38,7 +39,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
             => ScheduleDomainEvent
             (
-                new ShippingGracePeriodExpiredDomainEvent(Id, @event),
+                new ShippingGracePeriodExpiredDomainEvent(OrderId, @event),
                 now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         
@@ -51,7 +52,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             // to send out an email to the support team as we need to report a problem with the shipping department.
             if (ShippingCheckCount >= Settings.ShippingCheckThreshold)
             {
-                RaiseCommand(new CancelOrderCommand(Id));
+                RaiseCommand(new CancelOrderCommand(OrderId));
             }
             // Resend the payment status message to the shipping department (kind of a reminder message).
             else
@@ -70,7 +71,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {
             // User didn't manage to pay so we need to cancel the order.
-            if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) RaiseCommand(new CancelOrderCommand(Id));
+            if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) 
+                RaiseCommand(new CancelOrderCommand(OrderId));
         }
 
         protected override void ApplyEvent(IBaseEvent @event)
@@ -79,7 +81,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             {
                 case ShoppingCartCheckoutRequestedDomainEvent e:
                     Id = e.OrderId;
-                    ShoppingCartId = e.ShoppingCartId;
+                    OrderId = EntityId.Create(e.OrderId).Data;
+                    ShoppingCartId = EntityId.Create(e.ShoppingCartId).Data;
                     Status = OrderingProcessManagerStatus.CheckoutRequested;
                     break;
                 case OrderPlacedDomainEvent _:

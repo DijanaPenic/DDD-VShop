@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 using MediatR;
 using Serilog;
 using Newtonsoft.Json;
@@ -28,10 +27,6 @@ namespace VShop.SharedKernel.Application.Decorators
             {
                 return await next();
             }
-            catch (ValidationException ex)
-            {
-                return Result.ValidationError(ex.Message);
-            }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Unhandled error has occurred");
@@ -57,10 +52,6 @@ namespace VShop.SharedKernel.Application.Decorators
             try
             {
                 return await next();
-            }
-            catch (ValidationException ex) // TODO - check if this can be addressed in value object classes
-            {
-                return Result.ValidationError(ex.Message);
             }
             catch (Exception ex)
             {

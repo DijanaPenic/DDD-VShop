@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -23,7 +21,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId),
+                command.ShoppingCartId,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -32,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Result deleteResult = shoppingCart.RequestDelete();
             
-            if (deleteResult.IsError(out ApplicationError error)) return error;
+            if (deleteResult.IsError) return deleteResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
@@ -42,9 +40,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record DeleteShoppingCartCommand : Command
     {
-        public Guid ShoppingCartId { get; }
+        public EntityId ShoppingCartId { get; }
 
-        public DeleteShoppingCartCommand(Guid shoppingCartId)
+        public DeleteShoppingCartCommand(EntityId shoppingCartId)
         {
             ShoppingCartId = shoppingCartId;
         }

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Commands;
@@ -29,7 +28,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId),
+                command.ShoppingCartId,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -38,11 +37,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             // TODO - this will generate a new Id every time user submits the checkout request (problem!).
             // Potentially use the same Id for shopping cart and order.
-            EntityId orderId = EntityId.Create(SequentialGuid.Create());
+            EntityId orderId = EntityId.Create(SequentialGuid.Create()).Data;
 
             Result checkoutResult = shoppingCart.RequestCheckout(orderId, _clockService.Now);
             
-            if (checkoutResult.IsError(out ApplicationError error)) return error;
+            if (checkoutResult.IsError) return checkoutResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
             
@@ -54,9 +53,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record CheckoutShoppingCartCommand : Command<CheckoutOrder>
     {
-        public Guid ShoppingCartId { get; }
+        public EntityId ShoppingCartId { get; }
         
-        public CheckoutShoppingCartCommand(Guid shoppingCartId)
+        public CheckoutShoppingCartCommand(EntityId shoppingCartId)
         {
             ShoppingCartId = shoppingCartId;
         }

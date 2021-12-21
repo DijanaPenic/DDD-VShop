@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
@@ -14,6 +14,7 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
@@ -22,18 +23,15 @@ namespace VShop.Modules.Sales.API.Controllers
     public class ShoppingCartController : ApplicationControllerBase
     {
         private readonly ICommandBus _commandBus;
-        private readonly IMapper _mapper;
         private readonly IShoppingCartQueryService _queryService;
 
         public ShoppingCartController
         (
             ICommandBus commandBus,
-            IMapper mapper,
             IShoppingCartQueryService queryService
         )
         {
             _commandBus = commandBus;
-            _mapper = mapper;
             _queryService = queryService;
         }
         
@@ -61,10 +59,26 @@ namespace VShop.Modules.Sales.API.Controllers
             // {
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
-            
-            CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
-            command.CorrelationId = SequentialGuid.Create();
-            
+
+            CreateShoppingCartCommand command = new()
+            {
+                ShoppingCartId = EntityId.Create(request.ShoppingCartId).Data,
+                CustomerId = EntityId.Create(request.CustomerId).Data,
+                CustomerDiscount = Discount.Create(request.CustomerDiscount).Data,
+                ShoppingCartItems = new List<ShoppingCartItemCommandDto>(),
+                CorrelationId = SequentialGuid.Create()
+            };
+
+            foreach (CreateShoppingCartProductRequest shoppingCartItem in request.ShoppingCartItems)
+            {
+                command.ShoppingCartItems.Add(new ShoppingCartItemCommandDto()
+                {
+                    ProductId = EntityId.Create(shoppingCartItem.ProductId).Data,
+                    UnitPrice = Price.Create(shoppingCartItem.UnitPrice).Data,
+                    Quantity = ProductQuantity.Create(shoppingCartItem.Quantity).Data,
+                });
+            }
+
             Result<ShoppingCart> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
@@ -78,7 +92,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            DeleteShoppingCartCommand command = new(shoppingCartId)
+            DeleteShoppingCartCommand command = new(EntityId.Create(shoppingCartId).Data)
             {
                 CorrelationId = SequentialGuid.Create()
             };
@@ -96,7 +110,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            CheckoutShoppingCartCommand command = new(shoppingCartId)
+            CheckoutShoppingCartCommand command = new(EntityId.Create(shoppingCartId).Data)
             {
                 CorrelationId = SequentialGuid.Create()
             };
@@ -122,12 +136,16 @@ namespace VShop.Modules.Sales.API.Controllers
         {
             AddShoppingCartProductCommand command = new()
             {
-                ShoppingCartItem = _mapper.Map<ShoppingCartItemCommandDto>(request),
-                ShoppingCartId = shoppingCartId,
+                ShoppingCartItem = new ShoppingCartItemCommandDto
+                {
+                    Quantity = ProductQuantity.Create(request.Quantity).Data,
+                    ProductId = EntityId.Create(productId).Data,
+                    UnitPrice = Price.Create(request.UnitPrice).Data
+                },
+                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
                 CorrelationId = SequentialGuid.Create()
             };
-            command.ShoppingCartItem.ProductId = productId;
-            
+
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
@@ -147,14 +165,17 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] RemoveShoppingCartProductRequest request
         )
         {
-            RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request);
-            command.ShoppingCartId = shoppingCartId;
-            command.ProductId = productId;
-            command.CorrelationId = SequentialGuid.Create();
+            RemoveShoppingCartProductCommand command = new()
+            {
+                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
+                ProductId = EntityId.Create(productId).Data,
+                Quantity = ProductQuantity.Create(request.Quantity).Data,
+                CorrelationId = SequentialGuid.Create()
+            };
             
-            Result result = await _commandBus.SendAsync(command);
+            Result commandResult = await _commandBus.SendAsync(command);
 
-            return HandleResult(result, NoContent);
+            return HandleResult(commandResult, NoContent);
         }
 
         [HttpPost]
@@ -170,10 +191,18 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] SetContactInformationRequest request
         )
         {
-            SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
-            command.ShoppingCartId = shoppingCartId;
-            command.CorrelationId = SequentialGuid.Create();
+            Result<FullName> fullNameResult = FullName.Create(request.FirstName, request.MiddleName, request.LastName);
+            if (fullNameResult.IsError) return HandleError(fullNameResult.Error);
 
+            SetContactInformationCommand command = new()
+            {
+                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
+                FullName = fullNameResult.Data,
+                PhoneNumber = PhoneNumber.Create(request.PhoneNumber).Data,
+                Gender = request.Gender,
+                CorrelationId = SequentialGuid.Create()
+            };
+            
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
@@ -192,9 +221,22 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] SetDeliveryAddressRequest request
         )
         {
-            SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
-            command.ShoppingCartId = shoppingCartId;
-            command.CorrelationId = SequentialGuid.Create();
+            Result<Address> addressResult = Address.Create
+            (
+                request.City,
+                request.CountryCode,
+                request.PostalCode,
+                request.StateProvince,
+                request.StreetAddress
+            );
+            if (addressResult.IsError) return HandleError(addressResult.Error);
+
+            SetDeliveryAddressCommand command = new()
+            {
+                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
+                Address = addressResult.Data,
+                CorrelationId = SequentialGuid.Create()
+            };
 
             Result result = await _commandBus.SendAsync(command);
 

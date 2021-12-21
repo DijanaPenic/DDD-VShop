@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 shoppingCart.Customer.DeliveryAddress
             );
             
-            if (createOrderResult.IsError(out ApplicationError createOrderError)) return createOrderError;
+            if (createOrderResult.IsError) return createOrderResult.Error;
             
             foreach (ShoppingCartItem item in shoppingCart.Items)
             {
@@ -65,7 +65,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                     item.UnitPrice
                 );
 
-                if (addOrderLineResult.IsError(out ApplicationError addOrderLineError)) return addOrderLineError;
+                if (addOrderLineResult.IsError) return addOrderLineResult.Error;
             }
 
             return order;

@@ -1,5 +1,4 @@
 ﻿using VShop.SharedKernel.Domain.Enums;
-using VShop.SharedKernel.Application.Extensions;
 
 namespace VShop.Modules.Sales.API.Models
 {

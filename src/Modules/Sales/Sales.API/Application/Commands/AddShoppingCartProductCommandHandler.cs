@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -24,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId),
+                command.ShoppingCartId,
                 command.MessageId,
                 command.CorrelationId, 
                 cancellationToken
@@ -34,12 +32,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result addProductResult = shoppingCart.AddProduct
             (
-                EntityId.Create(command.ShoppingCartItem.ProductId),
-                ProductQuantity.Create(command.ShoppingCartItem.Quantity),
-                Price.Create(command.ShoppingCartItem.UnitPrice)
+                command.ShoppingCartItem.ProductId,
+                command.ShoppingCartItem.Quantity,
+                command.ShoppingCartItem.UnitPrice
             );
             
-            if (addProductResult.IsError(out ApplicationError error)) return error;
+            if (addProductResult.IsError) return addProductResult.Error;
         
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
@@ -49,7 +47,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record AddShoppingCartProductCommand : Command
     {
-        public Guid ShoppingCartId { get; init; }
+        public EntityId ShoppingCartId { get; init; }
         public ShoppingCartItemCommandDto ShoppingCartItem { get; init; }
     }
 }

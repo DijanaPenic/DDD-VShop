@@ -33,7 +33,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
 
         [Theory]
@@ -55,11 +55,11 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProduct(productId, productQuantity, productPrice);
 
             // Act
-            Price newProductPrice = Price.Create(productPrice.Value + 1);
+            Price newProductPrice = Price.Create(productPrice.Value + 1).Data;
             Result result = sut.AddProduct(productId, productQuantity, newProductPrice);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
         
         [Theory]
@@ -74,16 +74,16 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0));
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1);
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1);
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
 
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             sut.DeliveryCost.Value.Should().Be(ShoppingCart.Settings.DefaultDeliveryCost);
         }
         
@@ -99,16 +99,16 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0));
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1);
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery);
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
 
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             sut.DeliveryCost.Value.Should().Be(0m);
         }
         
@@ -127,7 +127,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.RemoveProduct(shoppingCartItem.Id, shoppingCartItem.Quantity);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
         
         [Theory]
@@ -142,18 +142,18 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0));
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(2);
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1);
+            ProductQuantity productQuantity = ProductQuantity.Create(2).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
             
             sut.AddProduct(productId, productQuantity, productPrice);
 
             // Act
-            Result result = sut.RemoveProduct(productId, ProductQuantity.Create(1));
+            Result result = sut.RemoveProduct(productId, ProductQuantity.Create(1).Data);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             sut.DeliveryCost.Value.Should().Be(ShoppingCart.Settings.DefaultDeliveryCost);
         }
         
@@ -168,7 +168,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.RequestDelete();
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
 
         [Theory]
@@ -191,7 +191,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
         
         [Theory]
@@ -211,8 +211,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             ShoppingCart sut = new();
             sut.Create(shoppingCartId, customerId, customerDiscount);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1);
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1);
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Data;
             
             sut.AddProduct(productId, productQuantity, productPrice);
             
@@ -220,7 +220,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
         
         [Theory]
@@ -240,8 +240,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             ShoppingCart sut = new();
             sut.Create(shoppingCartId, customerId, customerDiscount);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1);
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout);
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout).Data;
             
             sut.AddProduct(productId, productQuantity, productPrice);
             
@@ -249,7 +249,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Result result = sut.RequestCheckout(orderId, clockService.Now);
             
             // Assert
-            result.IsError(out _).Should().BeTrue();
+            result.IsError.Should().BeTrue();
         }
     }
 }

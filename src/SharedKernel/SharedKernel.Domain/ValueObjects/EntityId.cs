@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
@@ -11,14 +12,15 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     public class EntityId : ValueObject
     {
         public Guid Value { get; }
-        
+
+        [JsonConstructor]
         internal EntityId(Guid value) => Value = value;
         
-        public static EntityId Create(Guid value)
+        public static Result<EntityId> Create(Guid value)
         {
             if (SequentialGuid.IsNullOrEmpty(value))
-                throw new ValidationException("The entity Id cannot be empty.");
-
+                return Result.ValidationError("The entity Id cannot be empty.");
+        
             return new EntityId(value);
         }
 

@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ using VShop.Modules.Sales.API.Application.ProcessManagers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
 using VShop.Modules.Billing.Integration.Events;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -30,7 +30,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {
@@ -72,7 +72,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Publishing_integration_event_from_the_integration_stream
         (
-            Guid orderId,
+            EntityId orderId,
             ShoppingCart shoppingCart
         )
         {

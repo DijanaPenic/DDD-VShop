@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+
+using VShop.SharedKernel.Infrastructure;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -9,12 +11,13 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     {
         public int Value { get; }
         
+        [JsonConstructor]
         internal ProductQuantity(int value) => Value = value;
 
-        public static ProductQuantity Create(int value)
+        public static Result<ProductQuantity> Create(int value)
         {
             if (value <= 0)
-                throw new ValidationException("Quantity value must be larger than 0.");
+                return Result.ValidationError("Quantity value must be larger than 0.");
 
             return new ProductQuantity(value);
         }

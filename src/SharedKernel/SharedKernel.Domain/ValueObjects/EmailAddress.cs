@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+
+using VShop.SharedKernel.Infrastructure;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -9,12 +11,13 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     {
         public string Value { get; }
 
+        [JsonConstructor]
         internal EmailAddress(string value) => Value = value;
 
-        public static EmailAddress Create(string value)
+        public static Result<EmailAddress> Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ValidationException("The email address is required.");
+                return Result.ValidationError("The email address is required.");
             // TODO - implement other email checks
             
             return new EmailAddress(value);

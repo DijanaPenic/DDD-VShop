@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using NodaTime;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
@@ -48,18 +47,16 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 cancellationToken
             );
 
-            bool hasPaymentTransferFailed = paymentTransferResult.IsError(out ApplicationError paymentTransferError);
-
             _billingContext.Payments.Add(new PaymentTransfer
             {
                 OrderId = command.OrderId,
-                Status = hasPaymentTransferFailed ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
-                Error = paymentTransferError?.ToString()
+                Status = paymentTransferResult.IsError ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
+                Error = paymentTransferResult.Error.ToString()
             });
 
             await _billingContext.SaveChangesAsync(cancellationToken);
 
-            IIntegrationEvent integrationEvent = hasPaymentTransferFailed 
+            IIntegrationEvent integrationEvent = paymentTransferResult.IsError 
                 ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
 
             await _billingIntegrationEventService.AddAndSaveEventAsync
@@ -70,7 +67,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 cancellationToken
             );
             
-            return hasPaymentTransferFailed ? paymentTransferError : Result.Success;
+            return paymentTransferResult.IsError ? paymentTransferResult.Error : Result.Success;
         }
     }
     

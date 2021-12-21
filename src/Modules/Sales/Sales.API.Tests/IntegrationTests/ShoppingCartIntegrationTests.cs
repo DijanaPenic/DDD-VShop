@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -23,8 +22,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         [CustomizedAutoData]
         public async Task Crete_a_new_shopping_cart
         (
-            Guid shoppingCartId,
-            Guid customerId,
+            EntityId shoppingCartId,
+            EntityId customerId,
             Discount customerDiscount,
             ShoppingCartItemCommandDto[] shoppingCartItems
         )
@@ -42,7 +41,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Result<ShoppingCart> result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
@@ -69,13 +68,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
             
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
-                .SingleOrDefault(sci => sci.Id == command.ShoppingCartItem.ProductId);
+                .SingleOrDefault(sci => Equals(sci.Id, command.ShoppingCartItem.ProductId));
             shoppingCartItemFromDb.Should().NotBeNull();
         }
         
@@ -85,7 +84,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
-            ShoppingCartItem shoppingCartItem = shoppingCart.Items.First();
+            ShoppingCartItem shoppingCartItem = shoppingCart.Items[0];
             
             RemoveShoppingCartProductCommand command = new()
             {
@@ -98,13 +97,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
             
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
-                .SingleOrDefault(sci => sci.Id == command.ProductId);
+                .SingleOrDefault(sci => Equals(sci.Id, command.ProductId));
             shoppingCartItemFromDb.Should().BeNull();
         }
         
@@ -125,9 +124,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             SetContactInformationCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                FirstName = fullName.FirstName,
-                MiddleName = fullName.MiddleName,
-                LastName = fullName.LastName,
+                FullName = fullName,
                 Gender = gender,
                 EmailAddress = emailAddress,
                 PhoneNumber = phoneNumber
@@ -137,7 +134,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
 
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
@@ -157,18 +154,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             SetDeliveryAddressCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                City = deliveryAddress.City,
-                CountryCode = deliveryAddress.CountryCode,
-                PostalCode = deliveryAddress.PostalCode,
-                StateProvince = deliveryAddress.StateProvince,
-                StreetAddress = deliveryAddress.StreetAddress
+                Address = deliveryAddress
             };
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
-            result.IsError(out _).Should().BeFalse();
+            result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();

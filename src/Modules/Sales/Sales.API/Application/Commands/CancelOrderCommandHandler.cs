@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -23,7 +21,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.OrderId),
+                command.OrderId,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -32,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Result cancelOrderResult = order.SetCancelledStatus();
 
-            if (cancelOrderResult.IsError(out ApplicationError error)) return error;
+            if (cancelOrderResult.IsError) return cancelOrderResult.Error;
             
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
@@ -42,9 +40,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CancelOrderCommand : Command
     {
-        public Guid OrderId { get; }
+        public EntityId OrderId { get; }
 
-        public CancelOrderCommand(Guid orderId)
+        public CancelOrderCommand(EntityId orderId)
         {
             OrderId = orderId;
         }

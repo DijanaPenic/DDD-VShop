@@ -13,7 +13,6 @@ using NodaTime.Serialization.JsonNet;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Infrastructure.Extensions;
-using VShop.Modules.Sales.API.Infrastructure.Automapper;
 using VShop.Modules.Sales.API.Infrastructure.AutofacModules;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services;
@@ -30,7 +29,7 @@ namespace VShop.Modules.Sales.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersServices();
-            services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
+            //services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Sales.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using MediatR;
 using Serilog;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Application.Decorators.Contracts;
 
 namespace VShop.SharedKernel.Application.Decorators
 {
     public class RetryPolicyCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
+        where TResponse : IResult
     {
         private readonly ILogger _logger;
 

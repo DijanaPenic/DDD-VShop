@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -30,23 +29,23 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result createShoppingCartResult = shoppingCart.Create
             (
-                EntityId.Create(command.ShoppingCartId),
-                EntityId.Create(command.CustomerId),
-                Discount.Create(command.CustomerDiscount)
+                command.ShoppingCartId,
+                command.CustomerId,
+                command.CustomerDiscount
             );
             
-            if (createShoppingCartResult.IsError(out ApplicationError createShoppingCartError)) return createShoppingCartError;
+            if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
             foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
             {
                 Result addProductResult = shoppingCart.AddProduct
                 (
-                    EntityId.Create(shoppingCartItem.ProductId),
-                    ProductQuantity.Create(shoppingCartItem.Quantity),
-                    Price.Create(shoppingCartItem.UnitPrice)
+                    shoppingCartItem.ProductId,
+                    shoppingCartItem.Quantity,
+                    shoppingCartItem.UnitPrice
                 );
 
-                if (addProductResult.IsError(out ApplicationError addProductError)) return addProductError;
+                if (addProductResult.IsError) return addProductResult.Error;
             }
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
@@ -57,9 +56,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CreateShoppingCartCommand : Command<ShoppingCart>
     {
-        public Guid ShoppingCartId { get; init; }
-        public Guid CustomerId { get; init; }
-        public int CustomerDiscount { get; init; }
-        public ShoppingCartItemCommandDto[] ShoppingCartItems { get; init; }
+        public EntityId ShoppingCartId { get; init; }
+        public EntityId CustomerId { get; init; }
+        public Discount CustomerDiscount { get; init; }
+        public IList<ShoppingCartItemCommandDto> ShoppingCartItems { get; init; }
     }
 }

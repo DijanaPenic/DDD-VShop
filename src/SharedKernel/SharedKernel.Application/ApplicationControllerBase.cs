@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.Application
         
         protected IActionResult Created() 
             => StatusCode(StatusCodes.Status201Created);
-
+        
         protected IActionResult HandleResult<TData>
         (
             Result<TData> result,

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+
+using VShop.SharedKernel.Infrastructure;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
@@ -9,12 +11,13 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     {
         public int Value { get; }
         
+        [JsonConstructor]
         internal Discount(int value) => Value = value;
 
-        public static Discount Create(int value)
+        public static Result<Discount> Create(int value)
         {
             if (value is < 0 or > 100)
-                throw new ValidationException("Discount must be larger than 0 and less than 100.");
+                return Result.ValidationError("Discount must be larger than 0 and less than 100.");
 
             return new Discount(value);
         }
