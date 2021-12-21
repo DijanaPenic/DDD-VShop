@@ -54,8 +54,9 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.Create(shoppingCartId, customerId, customerDiscount);
             sut.AddProduct(productId, productQuantity, productPrice);
 
-            // Act
             Price newProductPrice = Price.Create(productPrice.Value + 1).Value;
+            
+            // Act
             Result result = sut.AddProduct(productId, productQuantity, newProductPrice);
             
             // Assert
@@ -231,6 +232,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             EntityId customerId,
             Discount customerDiscount,
             EntityId productId,
+            ProductQuantity productQuantity,
+            Price productPrice,
             EntityId orderId
         )
         {
@@ -239,10 +242,6 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             
             ShoppingCart sut = new();
             sut.Create(shoppingCartId, customerId, customerDiscount);
-            
-            ProductQuantity productQuantity = ProductQuantity.Create(1).Value;
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout).Value;
-            
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
