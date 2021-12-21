@@ -48,19 +48,19 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             ServiceScopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
             Configuration = host.Services.GetRequiredService<IConfiguration>();
 
-            RunRelationalDatabaseMigrations();
+            RunRelationalDatabaseMigrationsAsync().GetAwaiter();
         }
         
-        private static void RunRelationalDatabaseMigrations()
-        {
-            MigratePostgresDatabase<SalesContext>();
-            MigratePostgresDatabase<SchedulerContext>();
-            MigratePostgresDatabase<SubscriptionContext>();
+        private static async Task RunRelationalDatabaseMigrationsAsync()
+        { 
+            await MigratePostgresDatabaseAsync<SalesContext>();
+            await MigratePostgresDatabaseAsync<SchedulerContext>();
+            await MigratePostgresDatabaseAsync<SubscriptionContext>();
         }
         
-        private static void MigratePostgresDatabase<TDbContext>() 
+        private static Task MigratePostgresDatabaseAsync<TDbContext>() 
             where TDbContext : DbContextBase
-            => ExecuteService<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
+            => ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
 
         public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
         public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
@@ -84,13 +84,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 TService service = sp.GetServices<IHostedService>().OfType<TService>().SingleOrDefault();
 
                 return action(service);
-            });
-        
-        public static void ExecuteService<TService>(Action<TService> action)
-            => ExecuteScope(sp =>
-            {
-                TService service = sp.GetRequiredService<TService>();
-                action(service);
             });
 
         public static Task ExecuteServiceAsync<TService>(Func<TService, Task> action)
