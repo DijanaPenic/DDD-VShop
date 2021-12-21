@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -21,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                command.ShoppingCartId,
+                EntityId.Create(command.ShoppingCartId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -40,9 +41,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record DeleteShoppingCartCommand : Command
     {
-        public EntityId ShoppingCartId { get; }
+        public Guid ShoppingCartId { get; }
 
-        public DeleteShoppingCartCommand(EntityId shoppingCartId)
+        public DeleteShoppingCartCommand(Guid shoppingCartId)
         {
             ShoppingCartId = shoppingCartId;
         }

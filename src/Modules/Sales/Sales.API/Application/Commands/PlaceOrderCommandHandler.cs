@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (createOrderResult.IsError) return createOrderResult.Error;
 
-            Order order = createOrderResult.Data;
+            Order order = createOrderResult.Value;
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -21,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             Order order = await _orderStore.LoadAsync
             (
-                command.OrderId,
+                EntityId.Create(command.OrderId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -40,9 +41,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CancelOrderCommand : Command
     {
-        public EntityId OrderId { get; }
+        public Guid OrderId { get; }
 
-        public CancelOrderCommand(EntityId orderId)
+        public CancelOrderCommand(Guid orderId)
         {
             OrderId = orderId;
         }

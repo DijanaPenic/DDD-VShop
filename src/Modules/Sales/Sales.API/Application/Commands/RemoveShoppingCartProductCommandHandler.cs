@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -21,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                command.ShoppingCartId,
+                EntityId.Create(command.ShoppingCartId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -30,8 +31,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result removeProductResult = shoppingCart.RemoveProduct
             (
-                command.ProductId,
-                command.Quantity
+                EntityId.Create(command.ProductId).Value,
+                ProductQuantity.Create(command.Quantity).Value
             );
             
             if (removeProductResult.IsError) return removeProductResult.Error;
@@ -44,8 +45,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record RemoveShoppingCartProductCommand : Command
     {
-        public EntityId ShoppingCartId { get; init; }
-        public EntityId ProductId { get; init; }
-        public ProductQuantity Quantity { get; init; }
+        public Guid ShoppingCartId { get; init; }
+        public Guid ProductId { get; init; }
+        public int Quantity { get; init; }
     }
 }

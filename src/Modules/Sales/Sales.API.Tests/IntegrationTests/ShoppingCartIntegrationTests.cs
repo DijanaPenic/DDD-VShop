@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
         }
         
@@ -70,11 +70,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
-                .SingleOrDefault(sci => Equals(sci.Id, command.ShoppingCartItem.ProductId));
+                .SingleOrDefault(sci => sci.Id == command.ShoppingCartItem.ProductId);
             shoppingCartItemFromDb.Should().NotBeNull();
         }
         
@@ -99,11 +99,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
-                .SingleOrDefault(sci => Equals(sci.Id, command.ProductId));
+                .SingleOrDefault(sci => sci.Id == command.ProductId);
             shoppingCartItemFromDb.Should().BeNull();
         }
         
@@ -124,7 +124,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             SetContactInformationCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                FullName = fullName,
+                FirstName = fullName.FirstName,
+                MiddleName = fullName.MiddleName,
+                LastName = fullName.LastName,
                 Gender = gender,
                 EmailAddress = emailAddress,
                 PhoneNumber = phoneNumber
@@ -136,7 +138,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
 
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Customer.FullName.Should().Be(fullName);
             shoppingCartFromDb.Customer.Gender.Should().Be(gender);
@@ -154,7 +156,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             SetDeliveryAddressCommand command = new()
             {
                 ShoppingCartId = shoppingCart.Id,
-                Address = deliveryAddress
+                City = deliveryAddress.City,
+                CountryCode = deliveryAddress.CountryCode,
+                PostalCode = deliveryAddress.PostalCode,
+                StateProvince = deliveryAddress.StateProvince,
+                StreetAddress = deliveryAddress.StreetAddress
             };
             
             // Act
@@ -163,7 +169,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
             
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(command.ShoppingCartId);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Customer.DeliveryAddress.Should().Be(deliveryAddress);
         }

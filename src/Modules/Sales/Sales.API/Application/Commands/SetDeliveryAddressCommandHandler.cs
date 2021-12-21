@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -21,14 +22,24 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                command.ShoppingCartId,
+                EntityId.Create(command.ShoppingCartId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             
-            Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(command.Address);
+            Result<Address> addressResult = Address.Create
+            (
+                command.City,
+                command.CountryCode,
+                command.PostalCode,
+                command.StateProvince,
+                command.StreetAddress
+            );
+            if (addressResult.IsError) return addressResult.Error;
+            
+            Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Value);
             
             if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
 
@@ -40,7 +51,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record SetDeliveryAddressCommand : Command
     {
-        public EntityId ShoppingCartId { get; init; }
-        public Address Address { get; init; }
+        public Guid ShoppingCartId { get; init; }
+        public string City { get; init; }
+        public string CountryCode { get; init; }
+        public string PostalCode { get; init; }
+        public string StateProvince { get; init; }
+        public string StreetAddress { get; init; }
     }
 }

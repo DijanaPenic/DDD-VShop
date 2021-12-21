@@ -261,8 +261,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             ShoppingCart shoppingCart = new();
             shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
-            shoppingCart.AddProduct(productId, ProductQuantity.Create(1).Data, productPrice);
-            shoppingCart.AddProduct(productId, ProductQuantity.Create(2).Data, productPrice);
+            shoppingCart.AddProduct(productId, ProductQuantity.Create(1).Value, productPrice);
+            shoppingCart.AddProduct(productId, ProductQuantity.Create(2).Value, productPrice);
 
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);
@@ -302,8 +302,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             ShoppingCart shoppingCart = new();
             shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
-            shoppingCart.AddProduct(productId, ProductQuantity.Create(10).Data, productPrice);
-            shoppingCart.RemoveProduct(productId, ProductQuantity.Create(2).Data);
+            shoppingCart.AddProduct(productId, ProductQuantity.Create(10).Value, productPrice);
+            shoppingCart.RemoveProduct(productId, ProductQuantity.Create(2).Value);
 
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);

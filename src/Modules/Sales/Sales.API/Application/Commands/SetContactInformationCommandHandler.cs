@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Domain.Enums;
@@ -22,18 +23,21 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                command.ShoppingCartId,
+                EntityId.Create(command.ShoppingCartId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             
+            Result<FullName> fullNameResult = FullName.Create(command.FirstName, command.MiddleName, command.LastName);
+            if (fullNameResult.IsError) return fullNameResult.Error;
+            
             Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
             (
-                command.FullName,
-                command.EmailAddress,
-                command.PhoneNumber,
+                fullNameResult.Value,
+                EmailAddress.Create(command.EmailAddress).Value,
+                PhoneNumber.Create(command.PhoneNumber).Value,
                 command.Gender
             );
             
@@ -47,10 +51,12 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record SetContactInformationCommand : Command
     {
-        public EntityId ShoppingCartId { get; init; }
-        public FullName FullName { get; init; }
-        public EmailAddress EmailAddress { get; init; }
-        public PhoneNumber PhoneNumber { get; init; }
+        public Guid ShoppingCartId { get; init; }
+        public string FirstName { get; init; }
+        public string MiddleName { get; init; }
+        public string LastName { get; init; }
+        public string EmailAddress { get; init; }
+        public string PhoneNumber { get; init; }
         public GenderType Gender { get; init; }
     }
 }

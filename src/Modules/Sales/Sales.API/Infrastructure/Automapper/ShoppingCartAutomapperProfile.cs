@@ -3,7 +3,6 @@
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Automapper
 {
@@ -11,7 +10,12 @@ namespace VShop.Modules.Sales.API.Infrastructure.Automapper
     {
         public ShoppingCartAutomapperProfile()
         {
-
+            CreateMap<CreateShoppingCartRequest, CreateShoppingCartCommand>();
+            CreateMap<CreateShoppingCartProductRequest, ShoppingCartItemCommandDto>();
+            CreateMap<AddShoppingCartProductRequest, ShoppingCartItemCommandDto>();
+            CreateMap<RemoveShoppingCartProductRequest, RemoveShoppingCartProductCommand>();
+            CreateMap<SetContactInformationRequest, SetContactInformationCommand>();
+            CreateMap<SetDeliveryAddressRequest, SetDeliveryAddressCommand>();
         }
     }
 }

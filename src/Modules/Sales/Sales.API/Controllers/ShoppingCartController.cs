@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
@@ -23,15 +24,18 @@ namespace VShop.Modules.Sales.API.Controllers
     public class ShoppingCartController : ApplicationControllerBase
     {
         private readonly ICommandBus _commandBus;
+        private readonly IMapper _mapper;
         private readonly IShoppingCartQueryService _queryService;
 
         public ShoppingCartController
         (
             ICommandBus commandBus,
+            IMapper mapper,
             IShoppingCartQueryService queryService
         )
         {
             _commandBus = commandBus;
+            _mapper = mapper;
             _queryService = queryService;
         }
         
@@ -60,27 +64,10 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
 
-            // Are CQRS commands part of the domain model?
-            // https://enterprisecraftsmanship.com/posts/cqrs-commands-part-domain-model/
-            // https://enterprisecraftsmanship.com/posts/combining-asp-net-core-attributes-with-value-objects/
-            CreateShoppingCartCommand command = new()
+            CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request) with
             {
-                ShoppingCartId = EntityId.Create(request.ShoppingCartId).Data,
-                CustomerId = EntityId.Create(request.CustomerId).Data,
-                CustomerDiscount = Discount.Create(request.CustomerDiscount).Data,
-                ShoppingCartItems = new List<ShoppingCartItemCommandDto>(),
                 CorrelationId = SequentialGuid.Create()
             };
-
-            foreach (CreateShoppingCartProductRequest shoppingCartItem in request.ShoppingCartItems)
-            {
-                command.ShoppingCartItems.Add(new ShoppingCartItemCommandDto()
-                {
-                    ProductId = EntityId.Create(shoppingCartItem.ProductId).Data,
-                    UnitPrice = Price.Create(shoppingCartItem.UnitPrice).Data,
-                    Quantity = ProductQuantity.Create(shoppingCartItem.Quantity).Data,
-                });
-            }
 
             Result<ShoppingCart> result = await _commandBus.SendAsync(command);
 
@@ -95,7 +82,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            DeleteShoppingCartCommand command = new(EntityId.Create(shoppingCartId).Data)
+            DeleteShoppingCartCommand command = new(shoppingCartId)
             {
                 CorrelationId = SequentialGuid.Create()
             };
@@ -113,7 +100,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            CheckoutShoppingCartCommand command = new(EntityId.Create(shoppingCartId).Data)
+            CheckoutShoppingCartCommand command = new(shoppingCartId)
             {
                 CorrelationId = SequentialGuid.Create()
             };
@@ -139,13 +126,11 @@ namespace VShop.Modules.Sales.API.Controllers
         {
             AddShoppingCartProductCommand command = new()
             {
-                ShoppingCartItem = new ShoppingCartItemCommandDto
+                ShoppingCartId = shoppingCartId,
+                ShoppingCartItem = _mapper.Map<ShoppingCartItemCommandDto>(request) with
                 {
-                    Quantity = ProductQuantity.Create(request.Quantity).Data,
-                    ProductId = EntityId.Create(productId).Data,
-                    UnitPrice = Price.Create(request.UnitPrice).Data
+                    ProductId = productId
                 },
-                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
                 CorrelationId = SequentialGuid.Create()
             };
 
@@ -168,11 +153,10 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] RemoveShoppingCartProductRequest request
         )
         {
-            RemoveShoppingCartProductCommand command = new()
+            RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request) with
             {
-                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
-                ProductId = EntityId.Create(productId).Data,
-                Quantity = ProductQuantity.Create(request.Quantity).Data,
+                ShoppingCartId = shoppingCartId,
+                ProductId = productId,
                 CorrelationId = SequentialGuid.Create()
             };
             
@@ -194,16 +178,9 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] SetContactInformationRequest request
         )
         {
-            Result<FullName> fullNameResult = FullName.Create(request.FirstName, request.MiddleName, request.LastName);
-            if (fullNameResult.IsError) return HandleError(fullNameResult.Error);
-
-            SetContactInformationCommand command = new()
+            SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request) with
             {
-                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
-                FullName = fullNameResult.Data,
-                PhoneNumber = PhoneNumber.Create(request.PhoneNumber).Data,
-                EmailAddress = EmailAddress.Create(request.EmailAddress).Data,
-                Gender = request.Gender,
+                ShoppingCartId = shoppingCartId,
                 CorrelationId = SequentialGuid.Create()
             };
             
@@ -225,20 +202,9 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] SetDeliveryAddressRequest request
         )
         {
-            Result<Address> addressResult = Address.Create
-            (
-                request.City,
-                request.CountryCode,
-                request.PostalCode,
-                request.StateProvince,
-                request.StreetAddress
-            );
-            if (addressResult.IsError) return HandleError(addressResult.Error);
-
-            SetDeliveryAddressCommand command = new()
+            SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request) with
             {
-                ShoppingCartId = EntityId.Create(shoppingCartId).Data,
-                Address = addressResult.Data,
+                ShoppingCartId = shoppingCartId,
                 CorrelationId = SequentialGuid.Create()
             };
 

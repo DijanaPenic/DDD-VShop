@@ -11,8 +11,8 @@ namespace VShop.SharedKernel.Infrastructure
         private Result(OneOf<Success<TData>, ApplicationError> input) : base(input) { }
         public static implicit operator Result<TData>(TData data) => new(new Success<TData>(data));
         public static implicit operator Result<TData>(ApplicationError error) => new(error);
-        public TData Data => AsT0.Value;
-        public override string ToString() => IsError ? Error.ToString() : JsonConvert.SerializeObject(Data);
+        public TData Value => AsT0.Value;
+        public override string ToString() => IsError ? Error.ToString() : JsonConvert.SerializeObject(Value);
     }
     
     public class Result : ResultBase<Success>

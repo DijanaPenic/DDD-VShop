@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Commands;
@@ -29,9 +30,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result createShoppingCartResult = shoppingCart.Create
             (
-                command.ShoppingCartId,
-                command.CustomerId,
-                command.CustomerDiscount
+                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.CustomerId).Value,
+                Discount.Create(command.CustomerDiscount).Value
             );
             
             if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
@@ -40,9 +41,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 Result addProductResult = shoppingCart.AddProduct
                 (
-                    shoppingCartItem.ProductId,
-                    shoppingCartItem.Quantity,
-                    shoppingCartItem.UnitPrice
+                    EntityId.Create(shoppingCartItem.ProductId).Value,
+                    ProductQuantity.Create(shoppingCartItem.Quantity).Value,
+                    Price.Create(shoppingCartItem.UnitPrice).Value
                 );
 
                 if (addProductResult.IsError) return addProductResult.Error;
@@ -56,9 +57,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CreateShoppingCartCommand : Command<ShoppingCart>
     {
-        public EntityId ShoppingCartId { get; init; }
-        public EntityId CustomerId { get; init; }
-        public Discount CustomerDiscount { get; init; }
+        public Guid ShoppingCartId { get; init; }
+        public Guid CustomerId { get; init; }
+        public int CustomerDiscount { get; init; }
         public IList<ShoppingCartItemCommandDto> ShoppingCartItems { get; init; }
     }
 }
