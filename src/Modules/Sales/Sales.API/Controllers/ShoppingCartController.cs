@@ -199,6 +199,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = EntityId.Create(shoppingCartId).Data,
                 FullName = fullNameResult.Data,
                 PhoneNumber = PhoneNumber.Create(request.PhoneNumber).Data,
+                EmailAddress = EmailAddress.Create(request.EmailAddress).Data,
                 Gender = request.Gender,
                 CorrelationId = SequentialGuid.Create()
             };

@@ -7,7 +7,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 namespace VShop.SharedKernel.Application.ValidationAttributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class EmailAddressAttribute : ValidationAttribute
+    public sealed class EmailAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
