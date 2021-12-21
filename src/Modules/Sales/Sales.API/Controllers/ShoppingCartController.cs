@@ -60,6 +60,9 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
 
+            // Are CQRS commands part of the domain model?
+            // https://enterprisecraftsmanship.com/posts/cqrs-commands-part-domain-model/
+            // https://enterprisecraftsmanship.com/posts/combining-asp-net-core-attributes-with-value-objects/
             CreateShoppingCartCommand command = new()
             {
                 ShoppingCartId = EntityId.Create(request.ShoppingCartId).Data,

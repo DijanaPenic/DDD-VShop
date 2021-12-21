@@ -18,7 +18,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(value))
                 return Result.ValidationError("The phone number is required.");
-            // TODO - implement other email checks
+            // TODO - implement other phone number checks
             
             return new PhoneNumber(value);
         }
