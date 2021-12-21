@@ -125,11 +125,5 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             using IServiceScope scope = ServiceScopeFactory.CreateScope();
             return await action(scope.ServiceProvider).ConfigureAwait(false);
         }
-        
-        private static void ExecuteScope(Action<IServiceProvider> action)
-        {
-            using IServiceScope scope = ServiceScopeFactory.CreateScope();
-            action(scope.ServiceProvider);
-        }
     }
 }
