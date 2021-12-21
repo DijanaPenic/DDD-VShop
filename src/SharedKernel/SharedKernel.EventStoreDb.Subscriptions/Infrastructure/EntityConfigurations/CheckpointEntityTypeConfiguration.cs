@@ -15,6 +15,8 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityCon
             builder.Property(sc => sc.Position);
             builder.Property(c => c.DateCreated).IsRequired();
             builder.Property(c => c.DateUpdated).IsRequired();
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }

@@ -11,13 +11,15 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations
         {
             builder.ToTable("message_log", SchedulerContext.SchedulerSchema);
             
-            builder.HasKey(sc => sc.Id);
-            builder.Property(sc => sc.Body).IsRequired();
-            builder.Property(sc => sc.TypeName).IsRequired();
-            builder.Property(sc => sc.ScheduledTime).IsRequired();
-            builder.Property(sc => sc.Status).IsRequired();
-            builder.Property(sc => sc.DateCreated).IsRequired();
-            builder.Property(sc => sc.DateUpdated).IsRequired();
+            builder.HasKey(ml => ml.Id);
+            builder.Property(ml => ml.TypeName).IsRequired();
+            builder.Property(ml => ml.Body).IsRequired();
+            builder.Property(ml => ml.ScheduledTime).IsRequired();
+            builder.Property(ml => ml.Status).IsRequired();
+            builder.Property(ml => ml.DateCreated).IsRequired();
+            builder.Property(ml => ml.DateUpdated).IsRequired();
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +14,6 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.Modules.Sales.API.Controllers
 {

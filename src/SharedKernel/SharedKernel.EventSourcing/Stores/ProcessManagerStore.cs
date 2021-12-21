@@ -49,7 +49,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 // Dispatch immediate commands
                 foreach (IBaseCommand command in processManager.Outbox.GetCommandsForImmediateDispatch())
                 {
-                    // TODO - non-timeout errors are retried. Why?
                     object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
                     if (commandResult is IResult { Value: ApplicationError error })

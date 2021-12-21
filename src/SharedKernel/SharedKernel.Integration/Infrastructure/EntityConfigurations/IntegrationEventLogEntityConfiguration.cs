@@ -11,14 +11,16 @@ namespace VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations
         {
             builder.ToTable("integration_event_log", IntegrationContext.IntegrationSchema);
             
-            builder.HasKey(sc => sc.EventId);
-            builder.Property(sc => sc.EventTypeName).IsRequired();
-            builder.Property(sc => sc.State).IsRequired();
-            builder.Property(sc => sc.TimesSent).IsRequired();
-            builder.Property(sc => sc.Content).IsRequired();
-            builder.Property(sc => sc.TransactionId).IsRequired();
-            builder.Property(sc => sc.DateCreated).IsRequired();
-            builder.Property(sc => sc.DateUpdated).IsRequired();
+            builder.HasKey(el => el.EventId);
+            builder.Property(el => el.EventTypeName).IsRequired();
+            builder.Property(el => el.State).IsRequired();
+            builder.Property(el => el.TimesSent).IsRequired();
+            builder.Property(el => el.Content).IsRequired();
+            builder.Property(el => el.TransactionId).IsRequired();
+            builder.Property(el => el.DateCreated).IsRequired();
+            builder.Property(el => el.DateUpdated).IsRequired();
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }

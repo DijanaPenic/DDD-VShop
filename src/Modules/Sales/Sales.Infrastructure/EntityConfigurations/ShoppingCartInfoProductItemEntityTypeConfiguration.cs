@@ -22,6 +22,8 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
                    .HasForeignKey(sci => sci.ShoppingCartInfoId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }

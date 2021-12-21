@@ -11,11 +11,13 @@ namespace VShop.Modules.Billing.Infrastructure.EntityConfigurations
         {
             builder.ToTable("payment_transfer", BillingContext.PaymentSchema);
             
-            builder.HasKey(p => p.OrderId);
-            builder.Property(p => p.Status).IsRequired();
-            builder.Property(p => p.Error);
-            builder.Property(p => p.DateCreated).IsRequired();
-            builder.Property(p => p.DateUpdated).IsRequired();
+            builder.HasKey(pt => pt.OrderId);
+            builder.Property(pt => pt.Status).IsRequired();
+            builder.Property(pt => pt.Error);
+            builder.Property(pt => pt.DateCreated).IsRequired();
+            builder.Property(pt => pt.DateUpdated).IsRequired();
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }

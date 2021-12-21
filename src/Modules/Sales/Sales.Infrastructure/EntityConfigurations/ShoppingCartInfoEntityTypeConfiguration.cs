@@ -16,6 +16,8 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
             builder.Property(sc => sc.Status).IsRequired();
             builder.Property(sc => sc.DateCreated).IsRequired();
             builder.Property(sc => sc.DateUpdated).IsRequired();
+            
+            builder.UseXminAsConcurrencyToken();
         }
     }
 }
