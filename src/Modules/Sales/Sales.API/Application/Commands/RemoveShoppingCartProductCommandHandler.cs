@@ -34,7 +34,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 EntityId.Create(command.ProductId).Value,
                 ProductQuantity.Create(command.Quantity).Value
             );
-            
             if (removeProductResult.IsError) return removeProductResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);

@@ -28,7 +28,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId, 
                 cancellationToken
             );
-
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             
             Result addProductResult = shoppingCart.AddProduct
@@ -37,7 +36,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 ProductQuantity.Create(command.ShoppingCartItem.Quantity).Value,
                 Price.Create(command.ShoppingCartItem.UnitPrice).Value
             );
-            
             if (addProductResult.IsError) return addProductResult.Error;
         
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);

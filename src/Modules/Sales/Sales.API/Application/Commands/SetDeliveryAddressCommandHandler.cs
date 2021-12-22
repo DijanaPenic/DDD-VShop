@@ -40,7 +40,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             if (addressResult.IsError) return addressResult.Error;
             
             Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Value);
-            
             if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);

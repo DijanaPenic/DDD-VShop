@@ -30,7 +30,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             if (order is null) return Result.NotFoundError("Order not found.");
 
             Result cancelOrderResult = order.SetCancelledStatus();
-
             if (cancelOrderResult.IsError) return cancelOrderResult.Error;
             
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);

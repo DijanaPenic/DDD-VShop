@@ -34,7 +34,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 EntityId.Create(command.CustomerId).Value,
                 Discount.Create(command.CustomerDiscount).Value
             );
-            
             if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
             foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
@@ -45,7 +44,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     ProductQuantity.Create(shoppingCartItem.Quantity).Value,
                     Price.Create(shoppingCartItem.UnitPrice).Value
                 );
-
                 if (addProductResult.IsError) return addProductResult.Error;
             }
 

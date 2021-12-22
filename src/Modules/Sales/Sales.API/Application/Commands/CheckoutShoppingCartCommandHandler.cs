@@ -40,7 +40,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             EntityId orderId = EntityId.Create(SequentialGuid.Create()).Value;
 
             Result checkoutResult = shoppingCart.RequestCheckout(orderId, _clockService.Now);
-            
             if (checkoutResult.IsError) return checkoutResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);

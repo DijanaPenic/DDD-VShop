@@ -40,7 +40,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 PhoneNumber.Create(command.PhoneNumber).Value,
                 command.Gender
             );
-            
             if (setContactInformationResult.IsError) return setContactInformationResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);

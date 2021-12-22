@@ -36,7 +36,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.CorrelationId,
                 cancellationToken
             );
-            
             if (createOrderResult.IsError) return createOrderResult.Error;
 
             Order order = createOrderResult.Value;
