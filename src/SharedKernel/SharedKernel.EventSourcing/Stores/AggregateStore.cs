@@ -16,8 +16,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate>
-        where TAggregate : AggregateRoot, new()
+    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -78,8 +77,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             TAggregate aggregate = new()
             {
-                CorrelationId = correlationId,
-                CausationId = causationId,
+                CorrelationId = correlationId ?? Guid.Empty,
+                CausationId = causationId ?? Guid.Empty,
             };
             aggregate.Load(events);
 
@@ -97,7 +96,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 streamName,
                 aggregate.Version,
-                aggregate.GetAllEvents(),
+                aggregate.GetAllMessages(),
                 _clockService.Now,
                 cancellationToken
             );

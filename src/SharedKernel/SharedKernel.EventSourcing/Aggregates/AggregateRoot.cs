@@ -13,8 +13,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid? CorrelationId { get; init; }
-        public Guid? CausationId { get; init; }
+        public Guid CorrelationId { get; init; }
+        public Guid CausationId { get; init; }
         
         protected abstract void ApplyEvent(IDomainEvent @event);
         
@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public IReadOnlyList<IDomainEvent> GetDomainEvents() => _outbox.OfType<IDomainEvent>().ToList();
 
-        public IReadOnlyList<IBaseEvent> GetAllEvents() => _outbox;
+        public IReadOnlyList<IBaseEvent> GetAllMessages() => _outbox;
 
         public void Clear()
         {
@@ -54,8 +54,8 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         
         private void SetEventIdentification(IBaseEvent @event)
         {
-            @event.CausationId = CausationId?? Guid.Empty;
-            @event.CorrelationId = CorrelationId?? Guid.Empty;
+            @event.CausationId = CausationId;
+            @event.CorrelationId = CorrelationId;
         }
     }
 }
