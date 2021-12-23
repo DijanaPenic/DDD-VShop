@@ -112,8 +112,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             
                     ulong position = resolvedEvent.Event.Position.CommitPosition;
 
-                    if (checkpoint is not null)
-                        checkpoint.Position = position;
+                    if (checkpoint is not null) checkpoint.Position = position;
                     else
                     {
                         subscriptionContext.Checkpoints.Add(new Checkpoint

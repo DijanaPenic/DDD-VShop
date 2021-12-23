@@ -18,8 +18,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess>
-        where TProcess : ProcessManager, new()
+    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;

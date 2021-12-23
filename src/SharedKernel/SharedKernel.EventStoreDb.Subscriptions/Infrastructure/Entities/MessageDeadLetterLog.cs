@@ -1,0 +1,17 @@
+using System;
+
+using VShop.SharedKernel.PostgresDb;
+
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities
+{
+    public class MessageDeadLetterLog : DbEntityBase
+    {
+        public Guid Id { get; set; }
+        public string StreamId { get; set; }
+        public string MessageType { get; set; }
+        public Guid MessageId { get; set; }
+        public string MessageData { get; set; }
+        public MessageProcessingStatus Status { get; set; }
+        public string Error { get; set; }
+    }
+}

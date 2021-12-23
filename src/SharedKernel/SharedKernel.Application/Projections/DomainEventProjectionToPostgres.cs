@@ -52,7 +52,7 @@ namespace VShop.SharedKernel.Application.Projections
             IExecutionStrategy strategy = readDataContext.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
             {
-                await using IDbContextTransaction transaction = await readDataContext.BeginTransactionAsync(cancellationToken);
+                await readDataContext.BeginTransactionAsync(cancellationToken);
                 
                 Func<Task> handler = _projector(readDataContext, domainEvent);
         
