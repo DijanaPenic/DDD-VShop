@@ -26,8 +26,8 @@ namespace VShop.SharedKernel.Integration.Stores
             CancellationToken cancellationToken = default
         )
             => await _integrationContext.IntegrationEventLogs
-                .Where(ie => ie.TransactionId == transactionId && ie.State == EventState.NotPublished)
-                .OrderBy(ie => ie.DateCreated)
+                .Where(el => el.TransactionId == transactionId && el.State == EventState.NotPublished)
+                .OrderBy(el => el.DateCreated)
                 .ToListAsync(cancellationToken);
 
         public async Task SaveEventAsync
@@ -54,7 +54,7 @@ namespace VShop.SharedKernel.Integration.Stores
             => UpdateEventStatusAsync(eventId, EventState.InProgress, cancellationToken);
 
         public Task MarkEventAsFailedAsync(Guid eventId, CancellationToken cancellationToken = default)
-            => UpdateEventStatusAsync(eventId, EventState.PublishedFailed, cancellationToken);
+            => UpdateEventStatusAsync(eventId, EventState.PublishFailed, cancellationToken);
 
         private async Task UpdateEventStatusAsync(Guid eventId, EventState status, CancellationToken cancellationToken = default)
         {

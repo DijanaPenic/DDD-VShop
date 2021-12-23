@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
 {
     public class IntegrationEventLog : DbEntityBase
     {
-        public IntegrationEventLog() { } // Needed for database migrations
+        public IntegrationEventLog() { } // Needed for database migrations.
         public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
         {
             EventId = @event.MessageId;

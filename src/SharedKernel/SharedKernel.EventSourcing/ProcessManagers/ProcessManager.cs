@@ -72,7 +72,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(command, scheduledTime);
         }
         
-        protected void SendReminder(IDomainEvent @event, Instant scheduledTime)
+        protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
         {
             SetMessageIdentification(@event);
             _outbox.Add(@event, scheduledTime);
