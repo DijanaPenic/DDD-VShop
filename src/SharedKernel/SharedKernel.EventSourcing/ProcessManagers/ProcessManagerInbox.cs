@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using NodaTime;
 
@@ -11,6 +10,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         private readonly List<IBaseEvent> _events = new();
         public int Version { get; set; }
+        public int Count => GetMessages().Count;
         public IDictionary<Type, Action<IBaseEvent>> EventHandlers { get; }
             = new Dictionary<Type, Action<IBaseEvent>>();
         public IDictionary<Type, Action<IBaseEvent, Instant>> ScheduledEventHandlers { get; }
@@ -19,14 +19,12 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public ProcessManagerInbox(int version = -1) => Version = version;
 
         public void Add(IBaseEvent @event) => _events.Add(@event);
-        public IReadOnlyList<IBaseEvent> GetAllMessages() => _events;
-        public int Count() => GetAllMessages().Count;
+        public IReadOnlyList<IBaseEvent> GetMessages() => _events;
     }
     
     public interface IProcessManagerInbox
     {
         public int Version { get; }
-        IReadOnlyList<IBaseEvent> GetAllMessages();
-        int Count();
+        IReadOnlyList<IBaseEvent> GetMessages();
     }
 }

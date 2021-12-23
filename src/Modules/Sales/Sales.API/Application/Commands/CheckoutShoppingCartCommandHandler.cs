@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -9,7 +12,6 @@ using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -34,19 +36,29 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
+
+            Guid orderId;
+
+            if (shoppingCart.OutboxMessageCount is 0)
+            {
+                orderId = SequentialGuid.Create();
+                
+                Result checkoutResult = shoppingCart.RequestCheckout(EntityId.Create(orderId).Value, _clockService.Now);
+                if (checkoutResult.IsError) return checkoutResult.Error;
+            }
+            else
+            {
+                ShoppingCartCheckoutRequestedDomainEvent checkoutDomainEvent = shoppingCart
+                    .GetOutboxMessages<ShoppingCartCheckoutRequestedDomainEvent>()
+                    .SingleOrDefault();
+                if (checkoutDomainEvent is null) return Result.NotFoundError("ShoppingCartCheckoutRequestedDomainEvent not found.");
+                
+                orderId = checkoutDomainEvent.OrderId;
+            }
             
-            // TODO - this will generate a new Id every time user submits the checkout request (problem!).
-            // Potentially use the same Id for shopping cart and order.
-            EntityId orderId = EntityId.Create(SequentialGuid.Create()).Value;
-
-            Result checkoutResult = shoppingCart.RequestCheckout(orderId, _clockService.Now);
-            if (checkoutResult.IsError) return checkoutResult.Error;
-
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
-            
-            CheckoutOrder order = new() { OrderId = orderId };
 
-            return order;
+            return new CheckoutOrder(orderId);
         }
     }
 
@@ -62,6 +74,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CheckoutOrder
     {
-        public Guid OrderId { get; init; }
+        public Guid OrderId { get; }
+        
+        public CheckoutOrder(Guid orderId)
+        {
+            OrderId = orderId;
+        }
     }
 }

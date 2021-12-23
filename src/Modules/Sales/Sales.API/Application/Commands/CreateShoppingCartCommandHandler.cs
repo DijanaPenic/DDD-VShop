@@ -22,31 +22,42 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<ShoppingCart>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
         {
-            ShoppingCart shoppingCart = new()
-            {
-                CorrelationId = command.CorrelationId,
-                CausationId = command.MessageId,
-            };
-            
-            Result createShoppingCartResult = shoppingCart.Create
+            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Value,
-                EntityId.Create(command.CustomerId).Value,
-                Discount.Create(command.CustomerDiscount).Value
+                command.MessageId,
+                command.CorrelationId,
+                cancellationToken
             );
-            if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
-
-            foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
+            
+            if (shoppingCart is null)
             {
-                Result addProductResult = shoppingCart.AddProduct
+                shoppingCart = new ShoppingCart
+                {
+                    CorrelationId = command.CorrelationId,
+                    CausationId = command.MessageId,
+                };
+            
+                Result createShoppingCartResult = shoppingCart.Create
                 (
-                    EntityId.Create(shoppingCartItem.ProductId).Value,
-                    ProductQuantity.Create(shoppingCartItem.Quantity).Value,
-                    Price.Create(shoppingCartItem.UnitPrice).Value
+                    EntityId.Create(command.ShoppingCartId).Value,
+                    EntityId.Create(command.CustomerId).Value,
+                    Discount.Create(command.CustomerDiscount).Value
                 );
-                if (addProductResult.IsError) return addProductResult.Error;
-            }
+                if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
+                foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
+                {
+                    Result addProductResult = shoppingCart.AddProduct
+                    (
+                        EntityId.Create(shoppingCartItem.ProductId).Value,
+                        ProductQuantity.Create(shoppingCartItem.Quantity).Value,
+                        Price.Create(shoppingCartItem.UnitPrice).Value
+                    );
+                    if (addProductResult.IsError) return addProductResult.Error;
+                }
+            }
+            
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return shoppingCart;

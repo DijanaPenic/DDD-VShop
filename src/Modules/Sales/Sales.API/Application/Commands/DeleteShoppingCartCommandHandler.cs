@@ -29,8 +29,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
 
-            Result deleteResult = shoppingCart.RequestDelete();
-            if (deleteResult.IsError) return deleteResult.Error;
+            if (shoppingCart.OutboxMessageCount is 0)
+            {
+                Result deleteResult = shoppingCart.RequestDelete();
+                if (deleteResult.IsError) return deleteResult.Error;
+            }
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 

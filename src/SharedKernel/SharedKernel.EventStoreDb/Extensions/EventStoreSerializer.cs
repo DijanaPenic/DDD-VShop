@@ -8,14 +8,14 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) 
-            => (T)DeserializeData(resolvedEvent);
+        public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) => (T)DeserializeData(resolvedEvent);
         
         public static object DeserializeData(this ResolvedEvent resolvedEvent)
         {
@@ -46,10 +46,10 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             Instant now
         )
             where TMessage : IMessage
-            => messages.Select(message => new EventData
+            => messages.Select((message, index) => new EventData
             (
-                Uuid.FromGuid(message.MessageId),
-                MessageTypeMapper.ToName(message.GetType()),
+                GetDeterministicEventId(message, index),
+                GetMessageName(message),
                 Serialize(message),
                 Serialize(GetMetadata(message, now))
             )).ToList();
@@ -66,6 +66,21 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
         }
+
+        private static Uuid GetDeterministicEventId(IMessage message, int index)
+        {
+            string messageName = GetMessageName(message);
+            
+            Guid deterministicId = DeterministicGuid.Create
+            (
+                message.CausationId,
+                $"{messageName}-{index}"
+            );
+
+            return Uuid.FromGuid(deterministicId);
+        }
+
+        private static string GetMessageName(IMessage message) => MessageTypeMapper.ToName(message.GetType());
 
         private static IMessageMetadata GetMetadata(IMessage message, Instant now)
             => new MessageMetadata

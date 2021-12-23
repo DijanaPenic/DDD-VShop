@@ -107,7 +107,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                processManager.Inbox.GetAllMessages(),
+                processManager.Inbox.GetMessages(),
                 _clockService.Now,
                 cancellationToken
             );
@@ -116,7 +116,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 GetOutboxStreamName(processManager.Id),
                 processManager.Outbox.Version,
-                processManager.Outbox.GetAllMessages(),
+                processManager.Outbox.GetMessages(),
                 _clockService.Now,
                 cancellationToken
             );

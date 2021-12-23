@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
@@ -16,33 +17,33 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         public Guid CorrelationId { get; init; }
         public Guid CausationId { get; init; }
         
-        protected abstract void ApplyEvent(IDomainEvent @event);
-        
-        protected void RaiseEvent(IDomainEvent @event)
+        protected abstract void ApplyEvent(IBaseEvent @event);
+
+        protected void RaiseEvent(IBaseEvent @event)
         {
             ApplyEvent(@event);
             SetEventIdentification(@event);
             _outbox.Add(@event);
         }
         
-        public void RaiseEvent(IIntegrationEvent @event)
-        {
-            SetEventIdentification(@event);
-            _outbox.Add(@event);
-        }
-
         public void Load(IEnumerable<IBaseEvent> history)
         {
-            foreach (IBaseEvent @event in history)
+            (IEnumerable<IBaseEvent> pendingEvents, IEnumerable<IBaseEvent> processedEvents) = 
+                history.Split(e => e.CausationId == CausationId);
+            
+            foreach (IBaseEvent @event in processedEvents)
             {
-                if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
+                ApplyEvent(@event);
                 Version++;
             }
+            foreach (IBaseEvent @event in pendingEvents) RaiseEvent(@event);
         }
 
-        public IReadOnlyList<IDomainEvent> GetDomainEvents() => _outbox.OfType<IDomainEvent>().ToList();
+        public IReadOnlyList<TType> GetOutboxMessages<TType>() => _outbox.OfType<TType>().ToList();
 
-        public IReadOnlyList<IBaseEvent> GetAllMessages() => _outbox;
+        public IReadOnlyList<IBaseEvent> GetOutboxMessages() => _outbox;
+
+        public int OutboxMessageCount => _outbox.Count;
 
         public void Clear()
         {

@@ -4,16 +4,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Application;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
@@ -62,11 +61,7 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
 
-            CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request) with
-            {
-                CorrelationId = SequentialGuid.Create()
-            };
-
+            CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             Result<ShoppingCart> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
@@ -78,13 +73,14 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
+        public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
             DeleteShoppingCartCommand command = new(shoppingCartId)
             {
-                CorrelationId = SequentialGuid.Create()
+                MessageId = request.MessageId,
+                CorrelationId = request.CorrelationId
             };
-
+            
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, NoContent);
@@ -96,13 +92,14 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
+        public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
             CheckoutShoppingCartCommand command = new(shoppingCartId)
             {
-                CorrelationId = SequentialGuid.Create()
+                MessageId = request.MessageId,
+                CorrelationId = request.CorrelationId
             };
-
+            
             Result<CheckoutOrder> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
@@ -129,7 +126,8 @@ namespace VShop.Modules.Sales.API.Controllers
                 {
                     ProductId = productId
                 },
-                CorrelationId = SequentialGuid.Create()
+                MessageId = request.MessageId,
+                CorrelationId = request.CorrelationId
             };
 
             Result result = await _commandBus.SendAsync(command);
@@ -154,8 +152,7 @@ namespace VShop.Modules.Sales.API.Controllers
             RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request) with
             {
                 ShoppingCartId = shoppingCartId,
-                ProductId = productId,
-                CorrelationId = SequentialGuid.Create()
+                ProductId = productId
             };
             
             Result commandResult = await _commandBus.SendAsync(command);
@@ -178,8 +175,7 @@ namespace VShop.Modules.Sales.API.Controllers
         {
             SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request) with
             {
-                ShoppingCartId = shoppingCartId,
-                CorrelationId = SequentialGuid.Create()
+                ShoppingCartId = shoppingCartId
             };
             
             Result result = await _commandBus.SendAsync(command);
@@ -202,8 +198,7 @@ namespace VShop.Modules.Sales.API.Controllers
         {
             SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request) with
             {
-                ShoppingCartId = shoppingCartId,
-                CorrelationId = SequentialGuid.Create()
+                ShoppingCartId = shoppingCartId
             };
 
             Result result = await _commandBus.SendAsync(command);

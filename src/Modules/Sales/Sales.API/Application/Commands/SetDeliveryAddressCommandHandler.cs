@@ -28,19 +28,22 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
+
+            if (shoppingCart.OutboxMessageCount is 0)
+            {
+                Result<Address> addressResult = Address.Create
+                (
+                    command.City,
+                    command.CountryCode,
+                    command.PostalCode,
+                    command.StateProvince,
+                    command.StreetAddress
+                );
+                if (addressResult.IsError) return addressResult.Error;
             
-            Result<Address> addressResult = Address.Create
-            (
-                command.City,
-                command.CountryCode,
-                command.PostalCode,
-                command.StateProvince,
-                command.StreetAddress
-            );
-            if (addressResult.IsError) return addressResult.Error;
-            
-            Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Value);
-            if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
+                Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Value);
+                if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
+            }
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 

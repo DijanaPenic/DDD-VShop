@@ -29,14 +29,17 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
-            
-            Result addProductResult = shoppingCart.AddProduct
-            (
-                EntityId.Create(command.ShoppingCartItem.ProductId).Value,
-                ProductQuantity.Create(command.ShoppingCartItem.Quantity).Value,
-                Price.Create(command.ShoppingCartItem.UnitPrice).Value
-            );
-            if (addProductResult.IsError) return addProductResult.Error;
+
+            if (shoppingCart.OutboxMessageCount is 0)
+            {
+                Result addProductResult = shoppingCart.AddProduct
+                (
+                    EntityId.Create(command.ShoppingCartItem.ProductId).Value,
+                    ProductQuantity.Create(command.ShoppingCartItem.Quantity).Value,
+                    Price.Create(command.ShoppingCartItem.UnitPrice).Value
+                );
+                if (addProductResult.IsError) return addProductResult.Error;
+            }
         
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 

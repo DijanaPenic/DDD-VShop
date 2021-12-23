@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             try
             {
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-                foreach (IDomainEvent domainEvent in aggregate.GetDomainEvents())
+                foreach (IDomainEvent domainEvent in aggregate.GetOutboxMessages<IDomainEvent>())
                     await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
@@ -64,11 +64,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            string streamName = GetStreamName(aggregateId);
-            
             IReadOnlyList<IBaseEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
             (
-                streamName,
+                GetStreamName(aggregateId),
                 StreamPosition.Start,
                 cancellationToken
             );
@@ -96,7 +94,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 streamName,
                 aggregate.Version,
-                aggregate.GetAllMessages(),
+                aggregate.GetOutboxMessages(),
                 _clockService.Now,
                 cancellationToken
             );

@@ -4,7 +4,7 @@ using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record AddShoppingCartProductRequest
+    public record AddShoppingCartProductRequest : BaseRequest
     {
         [Required, Price]
         public decimal UnitPrice { get; init; }

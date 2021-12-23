@@ -5,7 +5,7 @@ using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record SetContactInformationRequest
+    public record SetContactInformationRequest : BaseRequest
     {
         [Required]
         public string FirstName { get; init; }

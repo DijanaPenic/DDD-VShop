@@ -91,8 +91,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         
         public void Clear()
         {
-            _inbox = new ProcessManagerInbox(_inbox.Version + _inbox.Count());
-            _outbox = new ProcessManagerOutbox(_outbox.Version + _outbox.Count());
+            _inbox = new ProcessManagerInbox(_inbox.Version + _inbox.Count);
+            _outbox = new ProcessManagerOutbox(_outbox.Version + _outbox.Count);
         }
         
         private void SetMessageIdentification(IMessage message)

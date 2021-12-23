@@ -28,17 +28,28 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<Order>> Handle(PlaceOrderCommand command, CancellationToken cancellationToken)
         {
-            Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
+            Order order = await _orderStore.LoadAsync
             (
-                command.ShoppingCartId,
-                command.OrderId,
+                EntityId.Create(command.OrderId).Value,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
             );
-            if (createOrderResult.IsError) return createOrderResult.Error;
 
-            Order order = createOrderResult.Value;
+            if (order is null)
+            {
+                Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
+                (
+                    command.ShoppingCartId,
+                    command.OrderId,
+                    command.MessageId,
+                    command.CorrelationId,
+                    cancellationToken
+                );
+                if (createOrderResult.IsError) return createOrderResult.Error;
+
+                order = createOrderResult.Value;
+            }
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 

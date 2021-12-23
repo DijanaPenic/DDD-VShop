@@ -16,6 +16,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IScheduledMessage> _scheduledCommands = new();
 
         public int Version { get; set; }
+        public int Count => GetMessages().Count;
         
         public ProcessManagerOutbox(int version = -1) => Version = version;
 
@@ -25,20 +26,18 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _scheduledEvents.Add(new ScheduledMessage(@event, scheduledTime));
         public void Add(IBaseCommand command, Instant scheduledTime)
             => _scheduledCommands.Add(new ScheduledMessage(command, scheduledTime));
-        public IReadOnlyList<IMessage> GetAllMessages()
+        public IReadOnlyList<IMessage> GetMessages()
             => _events.Concat<IMessage>(_commands).Concat(_scheduledCommands).Concat(_scheduledEvents).ToList();
         public IReadOnlyList<IScheduledMessage> GetMessagesForDeferredDispatch() 
             => _scheduledEvents.Concat(_scheduledCommands).ToList();
         public IReadOnlyList<IBaseCommand> GetCommandsForImmediateDispatch() => _commands;
-        public int Count() => GetAllMessages().Count;
     }
     
     public interface IProcessManagerOutbox
     {
         public int Version { get; }
-        public IReadOnlyList<IMessage> GetAllMessages();
+        public IReadOnlyList<IMessage> GetMessages();
         public IReadOnlyList<IScheduledMessage> GetMessagesForDeferredDispatch();
         public IReadOnlyList<IBaseCommand> GetCommandsForImmediateDispatch();
-        int Count();
     }
 }
