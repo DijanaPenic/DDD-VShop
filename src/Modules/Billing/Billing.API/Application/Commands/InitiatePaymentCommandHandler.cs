@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using NodaTime;
 
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Repositories;
-
-using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
@@ -36,6 +36,9 @@ namespace VShop.Modules.Billing.API.Application.Commands
 
         public async Task<Result> Handle(InitiatePaymentCommand command, CancellationToken cancellationToken)
         {
+            bool isPaid = await _paymentRepository.IsOrderPaidAsync(command.OrderId, cancellationToken);
+            if (isPaid) return Result.Success;
+            
             Result paymentTransferResult = await _paymentService.TransferAsync
             (
                 command.OrderId,
@@ -49,9 +52,10 @@ namespace VShop.Modules.Billing.API.Application.Commands
 
             PaymentTransfer payment = new()
             {
+                Id = SequentialGuid.Create(),
                 OrderId = command.OrderId,
                 Status = paymentTransferResult.IsError ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
-                Error = paymentTransferResult.Error.ToString()
+                Error = paymentTransferResult.IsError ? paymentTransferResult.Error.ToString() : string.Empty
             };
             await _paymentRepository.SaveAsync(payment, cancellationToken);
 

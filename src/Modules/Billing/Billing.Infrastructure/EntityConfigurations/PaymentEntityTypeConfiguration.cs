@@ -11,7 +11,8 @@ namespace VShop.Modules.Billing.Infrastructure.EntityConfigurations
         {
             builder.ToTable("payment_transfer", BillingContext.PaymentSchema);
             
-            builder.HasKey(pt => pt.OrderId);
+            builder.HasKey(pt => pt.Id);
+            builder.Property(pt => pt.OrderId).IsRequired();
             builder.Property(pt => pt.Status).IsRequired();
             builder.Property(pt => pt.Error);
             builder.Property(pt => pt.DateCreated).IsRequired();

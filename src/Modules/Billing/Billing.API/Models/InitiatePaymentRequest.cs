@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.Intrinsics.Arm;
 using NodaTime;
 using FluentValidation;
 
 namespace VShop.Modules.Billing.API.Models
 {
-    public record InitiatePaymentRequest
+    public record InitiatePaymentRequest : BaseRequest
     {
         public Guid OrderId { get; init; }
         public int CardTypeId { get; init; }
@@ -18,6 +19,8 @@ namespace VShop.Modules.Billing.API.Models
     {
         public InitiatePaymentRequestValidator()
         {
+            RuleFor(pr => pr.MessageId).NotEmpty();
+            RuleFor(pr => pr.CorrelationId).NotEmpty();
             RuleFor(pr => pr.OrderId).NotEmpty();
             RuleFor(pr => pr.CardTypeId).NotEmpty();
             RuleFor(pr => pr.CardNumber).NotEmpty();

@@ -35,8 +35,6 @@ namespace VShop.Modules.Billing.API.Controllers
         public async Task<IActionResult> RequestPaymentAsync([FromBody]InitiatePaymentRequest request)
         {
             InitiatePaymentCommand command = _mapper.Map<InitiatePaymentCommand>(request);
-            command.CorrelationId = SequentialGuid.Create();
-            
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
