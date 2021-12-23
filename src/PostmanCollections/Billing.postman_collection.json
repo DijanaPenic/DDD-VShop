@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "32e8f316-9835-43b7-8113-c7980fbce060",
+		"name": "Billing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Send Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message_id\": \"37913a12-28b2-49e6-86d9-103affe27575\",\r\n    \"correlation_id\": \"205ea77e-a9ef-4600-badf-d5d7d0c2f7a8\",\r\n    \"order_id\": \"e1aa23cd-ec34-4de9-58f9-08d9c0181e5d\",\r\n    \"card_type_id\": \"1\",\r\n    \"card_number\": \"8171 9999 2766 0000\",\r\n    \"card_security_number\": \"737\",\r\n    \"cardholder_name\": \"John Doe\",\r\n    \"card_expiration\": \"2023-07-26T16:45:20.1234567Z\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/payment",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5269"
+		}
+	]
+}
