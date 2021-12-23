@@ -9,12 +9,6 @@ namespace VShop.SharedKernel.Integration.Services.Contracts
     public interface IIntegrationEventService
     {
         Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default);
-
-        Task AddAndSaveEventAsync
-        (
-            IIntegrationEvent @event,
-            Guid messageId, Guid correlationId,
-            CancellationToken cancellationToken = default
-        );
+        Task AddAndSaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default);
     }
 }

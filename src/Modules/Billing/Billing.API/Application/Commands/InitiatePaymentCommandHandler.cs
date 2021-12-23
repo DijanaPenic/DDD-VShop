@@ -7,10 +7,10 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.Modules.Billing.Infrastructure;
+using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
-using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Billing.Infrastructure.Repositories;
 
 using VShop.SharedKernel.Integration.Services.Contracts;
 
@@ -19,18 +19,18 @@ namespace VShop.Modules.Billing.API.Application.Commands
     public class InitiatePaymentCommandHandler : ICommandHandler<InitiatePaymentCommand>
     {
         private readonly IPaymentService _paymentService;
-        private readonly BillingContext _billingContext;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly IIntegrationEventService _billingIntegrationEventService;
 
         public InitiatePaymentCommandHandler
         (
             IPaymentService paymentService,
-            BillingContext billingContext,
+            IPaymentRepository paymentRepository,
             IIntegrationEventService billingIntegrationEventService
         )
         {
             _paymentService = paymentService;
-            _billingContext = billingContext;
+            _paymentRepository = paymentRepository;
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
@@ -47,25 +47,21 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 cancellationToken
             );
 
-            _billingContext.Payments.Add(new PaymentTransfer
+            PaymentTransfer payment = new()
             {
                 OrderId = command.OrderId,
                 Status = paymentTransferResult.IsError ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
                 Error = paymentTransferResult.Error.ToString()
-            });
-
-            await _billingContext.SaveChangesAsync(cancellationToken);
+            };
+            await _paymentRepository.SaveAsync(payment, cancellationToken);
 
             IIntegrationEvent integrationEvent = paymentTransferResult.IsError 
                 ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
 
-            await _billingIntegrationEventService.AddAndSaveEventAsync
-            (
-                integrationEvent,
-                command.MessageId,
-                command.CorrelationId,
-                cancellationToken
-            );
+            integrationEvent.CausationId = command.CausationId;
+            integrationEvent.CorrelationId = command.CorrelationId;
+
+            await _billingIntegrationEventService.AddAndSaveEventAsync(integrationEvent, cancellationToken);
             
             return paymentTransferResult.IsError ? paymentTransferResult.Error : Result.Success;
         }

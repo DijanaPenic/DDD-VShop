@@ -23,9 +23,6 @@ namespace VShop.Modules.Billing.Infrastructure.Services
             string cardholderName,
             Instant cardExpiration,
             CancellationToken cancellationToken = default
-        )
-        {
-            return Task.FromResult<Result>(Result.Success);
-        }
+        ) => Task.FromResult<Result>(Result.Success);
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Services;
+using VShop.Modules.Billing.Infrastructure.Repositories;
 using VShop.Modules.Billing.API.Infrastructure.Automapper;
 using VShop.Modules.Billing.API.Infrastructure.Extensions;
 using VShop.Modules.Billing.API.Infrastructure.AutofacModules;
@@ -30,8 +31,11 @@ namespace VShop.Modules.Billing.API
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
 
-            // Configure payment service
+            // Configure billing services
             services.AddTransient<IPaymentService, FakePaymentService>();
+            
+            // Configure billing repositories
+            services.AddTransient<IPaymentRepository, PaymentRepository>();
             
             // Configure clock service
             services.AddTransient<IClockService, ClockService>();

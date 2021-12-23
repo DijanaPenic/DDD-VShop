@@ -72,17 +72,8 @@ namespace VShop.SharedKernel.Integration.Services
             }
         }
 
-        public async Task AddAndSaveEventAsync
-        (
-            IIntegrationEvent @event,
-            Guid messageId,
-            Guid correlationId,
-            CancellationToken cancellationToken = default
-        )
+        public async Task AddAndSaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
-            @event.CausationId = messageId;
-            @event.CorrelationId = correlationId;
-            
             _logger.Information
             (
                 "Enqueuing integration event {IntegrationEventId} to repository ({IntegrationEvent})",

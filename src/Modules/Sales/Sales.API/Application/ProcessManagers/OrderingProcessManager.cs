@@ -61,6 +61,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             }
         }
         
+        // TODO - this should probably be triggered in the OrderPlaced handler
         private void Handle(PaymentFailedIntegrationEvent @event, Instant now)
             => ScheduleDomainEvent
             (
