@@ -65,7 +65,7 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await readDataContext.Database.UseTransactionAsync
                 (
-                    subscriptionContext.GetCurrentTransaction().GetDbTransaction(),
+                    subscriptionContext.CurrentTransaction.GetDbTransaction(),
                     cancellationToken
                 );
                 

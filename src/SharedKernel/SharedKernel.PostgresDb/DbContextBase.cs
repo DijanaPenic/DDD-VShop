@@ -14,10 +14,12 @@ namespace VShop.SharedKernel.PostgresDb
 {
     public class DbContextBase : DbContext
     {
-        private IDbContextTransaction _currentTransaction;
         private readonly IClockService _clockService;
         
         protected readonly IDbContextBuilder ContextBuilder;
+        
+        public IDbContextTransaction CurrentTransaction { get; private set; }
+        public bool HasActiveTransaction => CurrentTransaction is not null;
         
         protected DbContextBase() { }
 
@@ -50,15 +52,12 @@ namespace VShop.SharedKernel.PostgresDb
         
         public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if (_currentTransaction is not null) return null;
+            if (CurrentTransaction is not null) return null;
 
-            _currentTransaction = await Database.BeginTransactionAsync(cancellationToken);
+            CurrentTransaction = await Database.BeginTransactionAsync(cancellationToken);
 
-            return _currentTransaction;
+            return CurrentTransaction;
         }
-        
-        public IDbContextTransaction GetCurrentTransaction() => _currentTransaction;
-        public bool HasActiveTransaction => _currentTransaction is not null;
 
         public async Task CommitTransactionAsync
         (
@@ -66,8 +65,11 @@ namespace VShop.SharedKernel.PostgresDb
             CancellationToken cancellationToken = default
         )
         {
-            if (transaction is null) throw new ArgumentNullException(nameof(transaction));
-            if (transaction != _currentTransaction) throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+            if (transaction is null) 
+                throw new ArgumentNullException(nameof(transaction));
+            
+            if (transaction != CurrentTransaction) 
+                throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
 
             try
             {
@@ -87,7 +89,7 @@ namespace VShop.SharedKernel.PostgresDb
         {
             try
             {
-                return _currentTransaction?.RollbackAsync(cancellationToken);
+                return CurrentTransaction?.RollbackAsync(cancellationToken);
             }
             finally
             {
@@ -97,10 +99,10 @@ namespace VShop.SharedKernel.PostgresDb
 
         private void DisposeCurrentTransaction()
         {
-            if (_currentTransaction is null) return;
+            if (CurrentTransaction is null) return;
             
-            _currentTransaction.Dispose();
-            _currentTransaction = null;
+            CurrentTransaction.Dispose();
+            CurrentTransaction = null;
         }
     }
 }

@@ -89,7 +89,7 @@ namespace VShop.SharedKernel.Integration.Services
                 @event.MessageId, @event
             );
             
-            await _integrationEventLogRepository.SaveEventAsync(@event, _dbContext.GetCurrentTransaction(), cancellationToken);
+            await _integrationEventLogRepository.SaveEventAsync(@event, _dbContext.CurrentTransaction, cancellationToken);
         }
     }
 }
