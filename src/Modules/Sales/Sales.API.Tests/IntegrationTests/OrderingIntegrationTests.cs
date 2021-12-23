@@ -45,32 +45,18 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Assert
             result.IsError.Should().BeFalse();
             
+            // The shopping cart should have been closed.
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(EntityId.Create(command.ShoppingCartId).Data);
             shoppingCartFromDb.Should().NotBeNull();
-            shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been closed.
+            shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed);
             
+            // The order should have been created.
             EntityId orderId = EntityId.Create(result.Data.OrderId).Data;
 
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
-            orderFromDb.Should().NotBeNull(); // The order should have been created.
-        }
-        
-        [Theory]
-        [CustomizedAutoData]
-        public async Task Payment_failure_schedules_a_reminder_message(EntityId orderId, ShoppingCart shoppingCart)
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-
-            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-        
-            PaymentFailedIntegrationEvent failedPaymentIntegrationEvent = new(orderId);
-        
-            // Act
-            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
-                sut.Handle(failedPaymentIntegrationEvent, CancellationToken.None));
-
-            // Assert
+            orderFromDb.Should().NotBeNull();
+            
+            // A reminder message should have been scheduled
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
             {
                 string messageType = ScheduledMessage.GetMessageTypeName(typeof(PaymentGracePeriodExpiredDomainEvent));
@@ -81,10 +67,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 
                 ScheduledMessage scheduledMessage = JsonConvert.DeserializeObject<ScheduledMessage>(messageLog!.Body);
                 scheduledMessage.Should().NotBeNull();
-                scheduledMessage!.CausationId.Should().Be(failedPaymentIntegrationEvent.MessageId);
             });
         }
-        
+
         [Theory]
         [CustomizedAutoData]
         public async Task Unpaid_order_is_cancelled_after_payment_grace_period_expires

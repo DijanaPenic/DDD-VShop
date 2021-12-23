@@ -21,7 +21,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
             RegisterEvent<PaymentSucceededIntegrationEvent>(Handle);
-            RegisterEvent<PaymentFailedIntegrationEvent>(Handle);
             RegisterEvent<ShippingGracePeriodExpiredDomainEvent>(Handle);
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
         }
@@ -33,8 +32,16 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 ShoppingCartId = ShoppingCartId
             });
 
-        private void Handle(OrderPlacedDomainEvent @event) 
-            => RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
+        private void Handle(OrderPlacedDomainEvent @event, Instant now)
+        {
+            RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
+            
+            ScheduleDomainEvent
+            (
+                new PaymentGracePeriodExpiredDomainEvent(OrderId),
+                now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
+            );
+        }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
             => ScheduleDomainEvent
@@ -60,14 +67,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 RaiseIntegrationEvent<PaymentSucceededIntegrationEvent>(@event.Content);
             }
         }
-        
-        // TODO - this should probably be triggered in the OrderPlaced handler
-        private void Handle(PaymentFailedIntegrationEvent @event, Instant now)
-            => ScheduleDomainEvent
-            (
-                new PaymentGracePeriodExpiredDomainEvent(Id),
-                now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
-            );
         
         private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
         {

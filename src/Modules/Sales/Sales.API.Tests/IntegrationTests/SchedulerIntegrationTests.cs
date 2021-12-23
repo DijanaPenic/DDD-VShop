@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_command_is_published_in_defined_time(EntityId orderId, ShoppingCart shoppingCart)
+        public async Task Scheduled_command_is_published_in_defined_time(ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
-            
-            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
+
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
@@ -87,7 +88,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 
             public async Task SampleAsync()
                 => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext, MessageLog>
-                    (dbContext => dbContext.MessageLogs.SingleOrDefaultAsync());
+                    (
+                        dbContext => dbContext.MessageLogs
+                        .OrderByDescending(ml => ml.DateCreated)
+                        .FirstOrDefaultAsync()
+                    );
 
             public string DescribeFailureTo() 
                 => "Finished message log cannot be found!";
