@@ -15,7 +15,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
         public static void AddIntegrationServices(this IServiceCollection services, string connectionString)
         {
             services.AddTransient<IIntegrationEventLogStore, IntegrationEventLogStore>();
-            services.AddTransient<IIntegrationEventService, IntegrationEventService<BillingContext>>();
+            services.AddTransient<IIntegrationEventService, IntegrationEventService>();
 
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Billing";

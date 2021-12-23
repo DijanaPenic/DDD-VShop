@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Billing.API.Models;
 using VShop.Modules.Billing.API.Application.Commands;

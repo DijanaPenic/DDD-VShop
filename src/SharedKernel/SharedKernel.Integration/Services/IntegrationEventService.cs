@@ -14,24 +14,23 @@ using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Integration.Services
 {
-    public class IntegrationEventService<TDbContext> : IIntegrationEventService
-        where TDbContext :  DbContextBase
+    public class IntegrationEventService : IIntegrationEventService
     {
         private readonly ILogger _logger;
-        private readonly TDbContext _dbContext;
+        private readonly DbContextBase _dbContext;
         private readonly IIntegrationEventStore _integrationEventRepository;
         private readonly IIntegrationEventLogStore _integrationEventLogRepository;
 
         public IntegrationEventService
         (
             ILogger logger,
-            TDbContext dbContext,
+            DbContextProvider dbContextProvider,
             IIntegrationEventStore integrationEventRepository,
             IIntegrationEventLogStore integrationEventLogRepository
         )
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _dbContext = dbContextProvider();
             _integrationEventRepository = integrationEventRepository;
             _integrationEventLogRepository = integrationEventLogRepository;
         }

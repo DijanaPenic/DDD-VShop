@@ -97,6 +97,4 @@ namespace VShop.SharedKernel.Application.Decorators
             }
         }
     }
-    
-    public delegate DbContextBase DbContextProvider();
 }
