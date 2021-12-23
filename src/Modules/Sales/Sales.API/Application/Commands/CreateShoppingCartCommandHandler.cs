@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value, // TODO - improve validation in commands
+                EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -40,9 +40,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
                 Result createShoppingCartResult = shoppingCart.Create
                 (
-                    EntityId.Create(command.ShoppingCartId).Value,
-                    EntityId.Create(command.CustomerId).Value,
-                    Discount.Create(command.CustomerDiscount).Value
+                    EntityId.Create(command.ShoppingCartId).Data,
+                    EntityId.Create(command.CustomerId).Data,
+                    Discount.Create(command.CustomerDiscount).Data
                 );
                 if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
@@ -50,9 +50,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 {
                     Result addProductResult = shoppingCart.AddProduct
                     (
-                        EntityId.Create(shoppingCartItem.ProductId).Value,
-                        ProductQuantity.Create(shoppingCartItem.Quantity).Value,
-                        Price.Create(shoppingCartItem.UnitPrice).Value
+                        EntityId.Create(shoppingCartItem.ProductId).Data,
+                        ProductQuantity.Create(shoppingCartItem.Quantity).Data,
+                        Price.Create(shoppingCartItem.UnitPrice).Data
                     );
                     if (addProductResult.IsError) return addProductResult.Error;
                 }

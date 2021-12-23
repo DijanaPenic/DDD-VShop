@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.Create(shoppingCartId, customerId, customerDiscount);
             sut.AddProduct(productId, productQuantity, productPrice);
 
-            Price newProductPrice = Price.Create(productPrice.Value + 1).Value;
+            Price newProductPrice = Price.Create(productPrice.Value + 1).Data;
             
             // Act
             Result result = sut.AddProduct(productId, productQuantity, newProductPrice);
@@ -75,10 +75,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Value);
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1).Value;
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Value;
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
 
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
@@ -100,10 +100,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Value);
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1).Value;
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Value;
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
 
             // Act
             Result result = sut.AddProduct(productId, productQuantity, productPrice);
@@ -143,15 +143,15 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = new();
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Value);
+            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(2).Value;
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Value;
+            ProductQuantity productQuantity = ProductQuantity.Create(2).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
             
             sut.AddProduct(productId, productQuantity, productPrice);
 
             // Act
-            Result result = sut.RemoveProduct(productId, ProductQuantity.Create(1).Value);
+            Result result = sut.RemoveProduct(productId, ProductQuantity.Create(1).Data);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -212,8 +212,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             ShoppingCart sut = new();
             sut.Create(shoppingCartId, customerId, customerDiscount);
             
-            ProductQuantity productQuantity = ProductQuantity.Create(1).Value;
-            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Value;
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Data;
             
             sut.AddProduct(productId, productQuantity, productPrice);
             

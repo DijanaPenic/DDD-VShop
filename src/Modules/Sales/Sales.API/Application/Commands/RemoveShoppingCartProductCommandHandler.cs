@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -33,8 +33,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 Result removeProductResult = shoppingCart.RemoveProduct
                 (
-                    EntityId.Create(command.ProductId).Value,
-                    ProductQuantity.Create(command.Quantity).Value
+                    EntityId.Create(command.ProductId).Data,
+                    ProductQuantity.Create(command.Quantity).Data
                 );
                 if (removeProductResult.IsError) return removeProductResult.Error;
             }

@@ -15,14 +15,14 @@ namespace VShop.SharedKernel.Tests
         {
             CommonFixture = new Fixture();
             
-            CommonFixture.Register(() => EmailAddress.Create(CommonFixture.Create<MailAddress>().Address).Value);
-            CommonFixture.Register(() => PhoneNumber.Create("+385929551178").Value);
+            CommonFixture.Register(() => EmailAddress.Create(CommonFixture.Create<MailAddress>().Address).Data);
+            CommonFixture.Register(() => PhoneNumber.Create("+385929551178").Data);
             CommonFixture.Register(() => FullName.Create
             (
                 CommonFixture.Create<string>(),
                 CommonFixture.Create<string>(),
                 CommonFixture.Create<string>()
-            ).Value);
+            ).Data);
             CommonFixture.Register(() => Address.Create
             (
                 CommonFixture.Create<string>(),
@@ -30,11 +30,11 @@ namespace VShop.SharedKernel.Tests
                 CommonFixture.Create<string>(),
                 CommonFixture.Create<string>(),
                 CommonFixture.Create<string>()
-            ).Value);
-            CommonFixture.Register(() => EntityId.Create(CommonFixture.Create<Guid>()).Value);
-            CommonFixture.Register(() => ProductQuantity.Create(CommonFixture.CreateInt(1, 10)).Value);
-            CommonFixture.Register(() => Price.Create(CommonFixture.CreateDecimal(10, 100)).Value);
-            CommonFixture.Register(() => Discount.Create(CommonFixture.CreateInt(0, 100)).Value);
+            ).Data);
+            CommonFixture.Register(() => EntityId.Create(CommonFixture.Create<Guid>()).Data);
+            CommonFixture.Register(() => ProductQuantity.Create(CommonFixture.CreateInt(1, 10)).Data);
+            CommonFixture.Register(() => Price.Create(CommonFixture.CreateDecimal(10, 100)).Data);
+            CommonFixture.Register(() => Discount.Create(CommonFixture.CreateInt(0, 100)).Data);
         } 
     }
 }

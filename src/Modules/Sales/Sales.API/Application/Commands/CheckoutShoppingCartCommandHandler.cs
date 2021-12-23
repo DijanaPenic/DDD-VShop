@@ -30,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 orderId = SequentialGuid.Create();
                 
-                Result checkoutResult = shoppingCart.RequestCheckout(EntityId.Create(orderId).Value, _clockService.Now);
+                Result checkoutResult = shoppingCart.RequestCheckout(EntityId.Create(orderId).Data, _clockService.Now);
                 if (checkoutResult.IsError) return checkoutResult.Error;
             }
             else

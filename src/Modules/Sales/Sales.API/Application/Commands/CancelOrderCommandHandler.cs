@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.OrderId).Value,
+                EntityId.Create(command.OrderId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken

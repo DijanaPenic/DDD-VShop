@@ -30,7 +30,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.OrderId).Value,
+                EntityId.Create(command.OrderId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -48,7 +48,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 );
                 if (createOrderResult.IsError) return createOrderResult.Error;
 
-                order = createOrderResult.Value;
+                order = createOrderResult.Data;
             }
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);

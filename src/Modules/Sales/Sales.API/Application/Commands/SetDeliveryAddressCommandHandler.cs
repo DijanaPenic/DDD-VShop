@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -41,7 +41,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 );
                 if (addressResult.IsError) return addressResult.Error;
             
-                Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Value);
+                Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Data);
                 if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
             }
 

@@ -22,7 +22,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken

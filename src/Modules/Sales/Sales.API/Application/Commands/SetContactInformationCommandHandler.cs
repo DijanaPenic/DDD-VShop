@@ -23,7 +23,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -37,9 +37,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
                 Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
                 (
-                    fullNameResult.Value,
-                    EmailAddress.Create(command.EmailAddress).Value,
-                    PhoneNumber.Create(command.PhoneNumber).Value,
+                    fullNameResult.Data,
+                    EmailAddress.Create(command.EmailAddress).Data,
+                    PhoneNumber.Create(command.PhoneNumber).Data,
                     command.Gender
                 );
                 if (setContactInformationResult.IsError) return setContactInformationResult.Error;

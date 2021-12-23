@@ -82,8 +82,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             {
                 case ShoppingCartCheckoutRequestedDomainEvent e:
                     Id = e.OrderId;
-                    OrderId = EntityId.Create(e.OrderId).Value;
-                    ShoppingCartId = EntityId.Create(e.ShoppingCartId).Value;
+                    OrderId = EntityId.Create(e.OrderId).Data;
+                    ShoppingCartId = EntityId.Create(e.ShoppingCartId).Data;
                     Status = OrderingProcessManagerStatus.CheckoutRequested;
                     break;
                 case OrderPlacedDomainEvent _:
