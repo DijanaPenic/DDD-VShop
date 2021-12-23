@@ -17,6 +17,9 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             ));
             services.AddDbContext<BillingContext>();
             services.AddDbContext<IntegrationContext>();
+            
+            // Register the main dbContext provider.
+            services.AddScoped<DbContextProvider>(provider => provider.GetService<BillingContext>);
         }
     }
 }
