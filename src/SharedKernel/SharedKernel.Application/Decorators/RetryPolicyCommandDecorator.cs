@@ -29,7 +29,7 @@ namespace VShop.SharedKernel.Application.Decorators
             const int sleepDuration = 200;
             
             AsyncRetryPolicy retryPolicy = Policy
-                .Handle<Exception>() // TODO - which exceptions should be retried?
+                .Handle<Exception>()
                 .WaitAndRetryAsync
                 (
                     maxRetryAttempts,

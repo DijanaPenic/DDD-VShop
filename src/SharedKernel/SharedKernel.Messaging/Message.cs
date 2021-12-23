@@ -4,7 +4,6 @@ using VShop.SharedKernel.Infrastructure.Helpers;
 
 namespace VShop.SharedKernel.Messaging
 {
-    // TODO - refactoring needed: client control
     public abstract record Message : IMessage
     {
         public Guid MessageId { get; set; } = SequentialGuid.Create();

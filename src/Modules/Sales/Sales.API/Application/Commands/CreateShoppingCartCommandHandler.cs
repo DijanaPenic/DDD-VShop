@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Value,
+                EntityId.Create(command.ShoppingCartId).Value, // TODO - improve validation in commands
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken

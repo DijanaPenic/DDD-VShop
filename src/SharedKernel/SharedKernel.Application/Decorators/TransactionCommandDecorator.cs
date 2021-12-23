@@ -57,8 +57,9 @@ namespace VShop.SharedKernel.Application.Decorators
                 {
                     Guid transactionId;
 
+                    // All messages written during a transaction will carry the id of that transaction
                     await using (IDbContextTransaction transaction = await _dbContext.BeginTransactionAsync(cancellationToken))
-                    using (LogContext.PushProperty("TransactionContext", transaction.TransactionId)) // All messages written during a transaction will carry the id of that transaction
+                    using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         _logger.Information
                         (

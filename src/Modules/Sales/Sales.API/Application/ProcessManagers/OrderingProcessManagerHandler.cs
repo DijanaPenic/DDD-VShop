@@ -9,7 +9,6 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
-// TODO - should I implement my own event publisher so that I can use customer errors instead of the exception-driven approach?
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
     public class OrderingProcessManagerHandler : ProcessManagerHandler<OrderingProcessManager>,
