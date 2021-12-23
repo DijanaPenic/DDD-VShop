@@ -46,7 +46,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError.Should().BeFalse();
             
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(EntityId.Create(command.ShoppingCartId).Data);
-            shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been deleted.
+            shoppingCartFromDb.Should().NotBeNull();
+            shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed); // The shopping cart should have been closed.
             
             EntityId orderId = EntityId.Create(result.Data.OrderId).Data;
 

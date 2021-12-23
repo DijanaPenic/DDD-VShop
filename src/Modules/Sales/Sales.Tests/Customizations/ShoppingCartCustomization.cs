@@ -1,3 +1,4 @@
+using System;
 using AutoFixture;
 
 using VShop.SharedKernel.Domain.Enums;
@@ -13,7 +14,11 @@ namespace VShop.Modules.Sales.Tests.Customizations
             fixture.Customize<ShoppingCart>(composer =>
                 composer.FromFactory(() =>
                 {
-                    ShoppingCart shoppingCart = new();
+                    ShoppingCart shoppingCart = new()
+                    {
+                        CausationId = fixture.Create<Guid>(),
+                        CorrelationId = fixture.Create<Guid>()
+                    };
 
                     shoppingCart.Create
                     (
