@@ -43,13 +43,14 @@ namespace VShop.SharedKernel.Integration.Projections
             if (message is not IIntegrationEvent integrationEvent) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
+
+            await _integrationRepository.SaveAsync(integrationEvent, cancellationToken);
             
+            // Update the checkpoint after successful projection.
             using IServiceScope scope = _serviceProvider.CreateScope();
             SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
             
             await checkpointUpdate(subscriptionContext);
-            
-            await _integrationRepository.SaveAsync(integrationEvent, cancellationToken);
         }
     }
 }

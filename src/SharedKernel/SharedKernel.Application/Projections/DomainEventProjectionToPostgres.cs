@@ -17,8 +17,7 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.SharedKernel.Application.Projections
 {
-    public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler 
-        where TDbContext : DbContextBase
+    public class DomainEventProjectionToPostgres<TDbContext> : ISubscriptionHandler where TDbContext : DbContextBase
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
@@ -49,11 +48,11 @@ namespace VShop.SharedKernel.Application.Projections
             using IServiceScope scope = _serviceProvider.CreateScope();
             TDbContext readDataContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
             SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
-                
-            IExecutionStrategy strategy = subscriptionContext.Database.CreateExecutionStrategy();
+            
+            IExecutionStrategy strategy = readDataContext.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
             {
-                await using IDbContextTransaction transaction = await subscriptionContext.BeginTransactionAsync(cancellationToken);
+                await using IDbContextTransaction transaction = await readDataContext.BeginTransactionAsync(cancellationToken);
                 
                 Func<Task> handler = _projector(readDataContext, domainEvent);
         
@@ -63,18 +62,19 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await handler();
 
-                await readDataContext.Database.UseTransactionAsync
-                (
-                    subscriptionContext.CurrentTransaction.GetDbTransaction(),
-                    cancellationToken
-                );
-                
                 IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
                 await readDataContext.SaveChangesAsync(metadata.EffectiveTime, cancellationToken);
                 
+                await subscriptionContext.Database.UseTransactionAsync
+                (
+                    readDataContext.CurrentTransaction.GetDbTransaction(),
+                    cancellationToken
+                );
+                
                 await checkpointUpdate(subscriptionContext);
                 
-                await subscriptionContext.CommitCurrentTransactionAsync(cancellationToken);
+                // Read model and checkpoint update will be committed in the same transaction.
+                await readDataContext.CommitCurrentTransactionAsync(cancellationToken);
             });
         }
         
