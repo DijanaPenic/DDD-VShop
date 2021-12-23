@@ -16,7 +16,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot, new()
+    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -73,11 +73,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             if (events.Count is 0) return default;
 
-            TAggregate aggregate = new()
-            {
-                CorrelationId = correlationId ?? Guid.Empty,
-                CausationId = causationId ?? Guid.Empty,
-            };
+            TAggregate aggregate = (TAggregate)Activator.CreateInstance
+            (
+                typeof(TAggregate),
+                causationId ?? Guid.Empty, correlationId ?? Guid.Empty
+            );
+            
+            if (aggregate is null) throw new Exception("Aggregate instance creation failed.");
+            
             aggregate.Load(events);
 
             return aggregate;
@@ -99,8 +102,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 cancellationToken
             );
         }
-
-
+        
         private string GetStreamName(EntityId aggregateId)
             => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
     }

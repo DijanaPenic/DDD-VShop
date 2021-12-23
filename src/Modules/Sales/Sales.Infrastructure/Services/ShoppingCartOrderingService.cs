@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
@@ -35,14 +34,8 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 correlationId,
                 cancellationToken
             );
-            
-            Order order = new()
-            {
-                CorrelationId = correlationId,
-                CausationId = causationId,
-            };
-            
-            Result createOrderResult = order.Create
+
+            Result<Order> createOrderResult = Order.Create
             (
                 orderId,
                 shoppingCart.DeliveryCost,
@@ -51,11 +44,13 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 shoppingCart.Customer.FullName,
                 shoppingCart.Customer.EmailAddress,
                 shoppingCart.Customer.PhoneNumber,
-                shoppingCart.Customer.DeliveryAddress
+                shoppingCart.Customer.DeliveryAddress,
+                causationId,
+                correlationId
             );
-            
             if (createOrderResult.IsError) return createOrderResult.Error;
-            
+
+            Order order = createOrderResult.Data;
             foreach (ShoppingCartItem item in shoppingCart.Items)
             {
                 Result addOrderLineResult = order.AddOrderLine

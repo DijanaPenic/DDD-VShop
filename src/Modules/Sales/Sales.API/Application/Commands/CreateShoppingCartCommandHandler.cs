@@ -32,20 +32,17 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             if (shoppingCart is null)
             {
-                shoppingCart = new ShoppingCart
-                {
-                    CorrelationId = command.CorrelationId,
-                    CausationId = command.MessageId,
-                };
-            
-                Result createShoppingCartResult = shoppingCart.Create
+                Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
                 (
                     EntityId.Create(command.ShoppingCartId).Data,
                     EntityId.Create(command.CustomerId).Data,
-                    Discount.Create(command.CustomerDiscount).Data
+                    Discount.Create(command.CustomerDiscount).Data,
+                    command.CausationId,
+                    command.CorrelationId
                 );
                 if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
+                shoppingCart = createShoppingCartResult.Data;
                 foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
                 {
                     Result addProductResult = shoppingCart.AddProduct

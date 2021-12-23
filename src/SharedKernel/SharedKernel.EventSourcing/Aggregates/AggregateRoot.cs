@@ -14,8 +14,14 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CorrelationId { get; init; }
-        public Guid CausationId { get; init; }
+        public Guid CausationId { get; }
+        public Guid CorrelationId { get; }
+
+        protected AggregateRoot(Guid causationId, Guid correlationId)
+        {
+            CausationId = causationId;
+            CorrelationId = correlationId;
+        }
         
         protected abstract void ApplyEvent(IBaseEvent @event);
 

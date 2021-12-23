@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using System;
+using NodaTime;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -30,14 +31,20 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public int TotalItemsCount => _shoppingCartItems.Count;
         public bool HasMinAmountForCheckout => ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForCheckout;
 
-        public Result Create
+        public ShoppingCart(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
+        
+        public static Result<ShoppingCart> Create
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            Discount customerDiscount
+            Discount customerDiscount,
+            Guid causationId,
+            Guid correlationId
         )
         {
-            RaiseEvent
+            ShoppingCart shoppingCart = new(causationId, correlationId);
+            
+            shoppingCart.RaiseEvent
             (
                 new ShoppingCartCreatedDomainEvent
                 {
@@ -47,7 +54,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 }
             );
 
-            return Result.Success;
+            return shoppingCart;
         }
         
         public Result AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)

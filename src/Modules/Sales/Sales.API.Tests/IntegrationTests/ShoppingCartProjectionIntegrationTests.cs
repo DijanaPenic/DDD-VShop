@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using FluentAssertions;
 using System.Threading.Tasks;
@@ -27,14 +28,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            Discount customerDiscount
+            Discount customerDiscount,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
-            
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+
+            ShoppingCart shoppingCart = ShoppingCart.Create
+                (shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);
@@ -67,14 +70,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Discount customerDiscount,
             EntityId productId,
             ProductQuantity productQuantity,
-            Price productPrice
+            Price productPrice,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart shoppingCart = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             shoppingCart.AddProduct(productId, productQuantity, productPrice);
 
             // Act
@@ -110,14 +115,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Discount customerDiscount,
             EntityId productId,
             ProductQuantity productQuantity,
-            Price productPrice
+            Price productPrice,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart shoppingCart = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             shoppingCart.AddProduct(productId, productQuantity, productPrice);
             shoppingCart.RemoveProduct(productId, productQuantity);
 
@@ -147,14 +154,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            Address deliveryAddress
+            Address deliveryAddress,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart shoppingCart = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             shoppingCart.Customer.SetDeliveryAddress(deliveryAddress);
 
             // Act
@@ -253,14 +262,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId customerId,
             Discount customerDiscount,
             EntityId productId,
-            Price productPrice
+            Price productPrice,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart shoppingCart = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             shoppingCart.AddProduct(productId, ProductQuantity.Create(1).Data, productPrice);
             shoppingCart.AddProduct(productId, ProductQuantity.Create(2).Data, productPrice);
 
@@ -294,14 +305,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId customerId,
             Discount customerDiscount,
             EntityId productId,
-            Price productPrice
+            Price productPrice,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart shoppingCart = new();
-            shoppingCart.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart shoppingCart = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             shoppingCart.AddProduct(productId, ProductQuantity.Create(10).Data, productPrice);
             shoppingCart.RemoveProduct(productId, ProductQuantity.Create(2).Data);
 

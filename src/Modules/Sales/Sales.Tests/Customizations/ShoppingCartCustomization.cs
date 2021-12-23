@@ -14,18 +14,14 @@ namespace VShop.Modules.Sales.Tests.Customizations
             fixture.Customize<ShoppingCart>(composer =>
                 composer.FromFactory(() =>
                 {
-                    ShoppingCart shoppingCart = new()
-                    {
-                        CausationId = fixture.Create<Guid>(),
-                        CorrelationId = fixture.Create<Guid>()
-                    };
-
-                    shoppingCart.Create
+                    ShoppingCart shoppingCart = ShoppingCart.Create
                     (
                         fixture.Create<EntityId>(),
                         fixture.Create<EntityId>(),
-                        fixture.Create<Discount>()
-                    );
+                        fixture.Create<Discount>(),
+                        fixture.Create<Guid>(),
+                        fixture.Create<Guid>()
+                    ).Data;
             
                     while(!shoppingCart.HasMinAmountForCheckout)
                     {

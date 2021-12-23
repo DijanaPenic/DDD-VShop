@@ -1,5 +1,5 @@
 using Xunit;
-using System.Linq;
+using System;
 using FluentAssertions;
 
 using VShop.SharedKernel.Infrastructure;
@@ -45,13 +45,14 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Discount customerDiscount,
             EntityId productId,
             ProductQuantity productQuantity,
-            Price productPrice
+            Price productPrice,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
-            ShoppingCart sut = new();
-
-            sut.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             sut.AddProduct(productId, productQuantity, productPrice);
 
             Price newProductPrice = Price.Create(productPrice.Value + 1).Data;
@@ -69,14 +70,15 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            EntityId productId
+            EntityId productId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
-            ShoppingCart sut = new();
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, Discount.Create(0).Data, causationId, correlationId).Data;
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
-            
             ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
 
@@ -94,14 +96,15 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            EntityId productId
+            EntityId productId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
-            ShoppingCart sut = new();
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, Discount.Create(0).Data, causationId, correlationId).Data;
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
-            
             ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
 
@@ -122,7 +125,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 
             sut.RequestCheckout(orderId, clockService.Now);
             
-            ShoppingCartItem shoppingCartItem = sut.Items.First();
+            ShoppingCartItem shoppingCartItem = sut.Items[0];
             
             // Act
             Result result = sut.RemoveProduct(shoppingCartItem.Id, shoppingCartItem.Quantity);
@@ -137,14 +140,15 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            EntityId productId
+            EntityId productId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
-            ShoppingCart sut = new();
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, Discount.Create(0).Data, causationId, correlationId).Data;
 
-            sut.Create(shoppingCartId, customerId, Discount.Create(0).Data);
-            
             ProductQuantity productQuantity = ProductQuantity.Create(2).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
             
@@ -179,15 +183,17 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            EntityId orderId
+            EntityId orderId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = new();
-            sut.Create(shoppingCartId, customerId, customerDiscount);
-            
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
+
             // Act
             Result result = sut.RequestCheckout(orderId, clockService.Now);
             
@@ -203,14 +209,16 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             EntityId customerId,
             Discount customerDiscount,
             EntityId productId,
-            EntityId orderId
+            EntityId orderId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = new();
-            sut.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             
             ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Data;
@@ -234,14 +242,16 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             EntityId productId,
             ProductQuantity productQuantity,
             Price productPrice,
-            EntityId orderId
+            EntityId orderId,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = new();
-            sut.Create(shoppingCartId, customerId, customerDiscount);
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             sut.AddProduct(productId, productQuantity, productPrice);
             
             // Act
