@@ -44,9 +44,8 @@ namespace VShop.SharedKernel.Application.Decorators
 
             try
             {
-                // TODO - need to test this. It might not work.
                 // Handling retries
-                if (_dbContext.HasActiveTransaction) return await next();
+                if (_dbContext.HasActiveTransaction) await _dbContext.DisposeCurrentTransactionAsync();
                 
                 TResponse response = default;
 
@@ -75,7 +74,7 @@ namespace VShop.SharedKernel.Application.Decorators
                             transaction.TransactionId, commandTypeName
                         );
 
-                        await _dbContext.CommitTransactionAsync(transaction, cancellationToken);
+                        await _dbContext.CommitCurrentTransactionAsync(cancellationToken);
 
                         transactionId = transaction.TransactionId;
                     }

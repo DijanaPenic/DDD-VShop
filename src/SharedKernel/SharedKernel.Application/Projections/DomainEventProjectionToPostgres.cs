@@ -74,7 +74,7 @@ namespace VShop.SharedKernel.Application.Projections
                 
                 await checkpointUpdate(subscriptionContext);
                 
-                await subscriptionContext.CommitTransactionAsync(transaction, cancellationToken);
+                await subscriptionContext.CommitCurrentTransactionAsync(cancellationToken);
             });
         }
         

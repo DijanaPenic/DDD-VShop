@@ -59,50 +59,44 @@ namespace VShop.SharedKernel.PostgresDb
             return CurrentTransaction;
         }
 
-        public async Task CommitTransactionAsync
-        (
-            IDbContextTransaction transaction,
-            CancellationToken cancellationToken = default
-        )
+        public async Task CommitCurrentTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if (transaction is null) 
-                throw new ArgumentNullException(nameof(transaction));
+            if (CurrentTransaction is null) return;
             
-            if (transaction != CurrentTransaction) 
-                throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
-
             try
             {
                 await SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                await CurrentTransaction.CommitAsync(cancellationToken);
                 
-                DisposeCurrentTransaction();
+                await DisposeCurrentTransactionAsync();
             }
             catch
             {
-                await RollbackTransactionAsync(cancellationToken);
+                await RollbackCurrentTransactionAsync(cancellationToken);
                 throw;
             }
         }
         
-        private Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                return CurrentTransaction?.RollbackAsync(cancellationToken);
-            }
-            finally
-            {
-                DisposeCurrentTransaction();
-            }
-        }
-
-        private void DisposeCurrentTransaction()
+        public async Task DisposeCurrentTransactionAsync()
         {
             if (CurrentTransaction is null) return;
             
-            CurrentTransaction.Dispose();
+            await CurrentTransaction.DisposeAsync();
             CurrentTransaction = null;
+        }
+        
+        private async Task RollbackCurrentTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            if (CurrentTransaction is null) return;
+            
+            try
+            {
+                await CurrentTransaction.RollbackAsync(cancellationToken);
+            }
+            finally
+            {
+                await DisposeCurrentTransactionAsync();
+            }
         }
     }
 }
