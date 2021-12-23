@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
             
-            ScheduleDomainEvent
+            SendReminder
             (
                 new PaymentGracePeriodExpiredDomainEvent(OrderId),
                 now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
@@ -44,7 +44,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
-            => ScheduleDomainEvent
+            => SendReminder
             (
                 new ShippingGracePeriodExpiredDomainEvent(OrderId, @event),
                 now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
