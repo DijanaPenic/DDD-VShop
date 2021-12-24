@@ -45,8 +45,7 @@ namespace VShop.SharedKernel.Domain.ValueObjects
             string streetAddress
         )
         {
-            // TODO - implement validation
-            
+            // No validation, for now.
             return new Address(city, countryCode, postalCode, stateProvince, streetAddress);
         }
         
