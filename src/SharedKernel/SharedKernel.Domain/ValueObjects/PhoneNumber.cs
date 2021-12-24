@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 
 using VShop.SharedKernel.Infrastructure;
@@ -18,9 +19,16 @@ namespace VShop.SharedKernel.Domain.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(value))
                 return Result.ValidationError("The phone number is required.");
-            // TODO - implement other phone number checks
             
-            return new PhoneNumber(value);
+            if (string.IsNullOrWhiteSpace(value))
+                return Result.ValidationError("The phone number is required.");
+
+            string phoneNumber = value.Trim();
+
+            if (!Regex.IsMatch(phoneNumber, @"^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$"))
+                return Result.ValidationError($"{phoneNumber} is not a valid phone number.");
+            
+            return new PhoneNumber(phoneNumber);
         }
         
         public static implicit operator string(PhoneNumber self) => self.Value;
