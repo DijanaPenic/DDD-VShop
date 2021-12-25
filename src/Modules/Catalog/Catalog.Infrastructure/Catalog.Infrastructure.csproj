@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.Modules.Catalog.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Modules.Catalog.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+</Project>

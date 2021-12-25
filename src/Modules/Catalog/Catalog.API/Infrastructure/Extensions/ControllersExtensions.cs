@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Application.Providers;
 
-namespace VShop.Modules.Billing.API.Infrastructure.Extensions
+namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {
     public static class ControllersExtensions
     {
