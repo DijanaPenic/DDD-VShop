@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Infrastructure;
+using VShop.Modules.Catalog.Infrastructure;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {
@@ -14,11 +15,11 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
                 connectionString,
                 typeof(Startup).Assembly
             ));
-            // services.AddDbContext<ProductContext>();
-            // services.AddDbContext<IntegrationContext>();
-            //
-            // // Register the main dbContext provider.
-            // services.AddScoped<DbContextProvider>(provider => provider.GetService<ProductContext>);
+            services.AddDbContext<CatalogContext>();
+            services.AddDbContext<IntegrationContext>();
+            
+            // Register the main dbContext provider.
+            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<CatalogContext>);
         }
     }
 }
