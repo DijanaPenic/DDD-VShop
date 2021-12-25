@@ -78,3 +78,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_BillingIntegration
       POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      
+  postgres.db.catalog:
+    image: postgres
+    ports: 
+      - 5442:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_Catalog
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
