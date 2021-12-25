@@ -25,7 +25,9 @@ namespace VShop.SharedKernel.PostgresDb
             optionsBuilder.UseNpgsql
             (
                 _connection,
-                ob => ob.MigrationsAssembly(migrationAssemblyName).UseNodaTime()
+                ob => ob
+                    .MigrationsAssembly(migrationAssemblyName)
+                    .UseNodaTime()
             ).UseSnakeCaseNamingConvention();
         }
     }

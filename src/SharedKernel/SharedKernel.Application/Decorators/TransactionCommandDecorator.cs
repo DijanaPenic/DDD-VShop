@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.Application.Decorators
         public TransactionCommandDecorator
         (
             ILogger logger,
-            DbContextProvider dbContextProvider,
+            MainDbContextProvider dbContextProvider,
             IIntegrationEventService integrationEventService
         )
         {

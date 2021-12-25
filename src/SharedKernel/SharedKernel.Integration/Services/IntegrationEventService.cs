@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.Integration.Services
         public IntegrationEventService
         (
             ILogger logger,
-            DbContextProvider dbContextProvider,
+            MainDbContextProvider dbContextProvider,
             IIntegrationEventStore integrationEventRepository,
             IIntegrationEventLogStore integrationEventLogRepository
         )

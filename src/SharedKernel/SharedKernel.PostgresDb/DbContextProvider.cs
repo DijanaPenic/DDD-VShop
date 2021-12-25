@@ -1,4 +1,4 @@
 namespace VShop.SharedKernel.PostgresDb
 {
-    public delegate DbContextBase DbContextProvider();
+    public delegate DbContextBase MainDbContextProvider();
 }
