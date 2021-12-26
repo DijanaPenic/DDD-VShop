@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.Modules.Catalog.API.Infrastructure.Extensions;
 using VShop.Modules.Catalog.API.Infrastructure.AutofacModules;
+using VShop.Modules.Catalog.API.Infrastructure.Automapper;
 
 namespace VShop.Modules.Catalog.API
 {
@@ -21,6 +22,7 @@ namespace VShop.Modules.Catalog.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersServices();
+            services.AddAutoMapper(typeof(CatalogAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));

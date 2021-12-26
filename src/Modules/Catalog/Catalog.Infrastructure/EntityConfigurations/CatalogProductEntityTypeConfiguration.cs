@@ -11,23 +11,24 @@ namespace VShop.Modules.Catalog.Infrastructure.EntityConfigurations
         {
             builder.ToTable("product", CatalogContext.CatalogSchema);
             
-            builder.HasKey(cp => cp.Id);
-            builder.Property(cp => cp.CategoryId).IsRequired();
-            builder.Property(cp => cp.Name).IsRequired();
-            builder.Property(cp => cp.Description);
-            builder.Property(cp => cp.Price).IsRequired();
-            builder.Property(cp => cp.PictureUri);
-            builder.Property(cp => cp.IsDeleted).IsRequired().HasDefaultValue(false);
-            builder.Property(cp => cp.AvailableStock).IsRequired();
-            builder.Property(cp => cp.MaxStockThreshold).IsRequired();
-            builder.Property(cp => cp.DateCreated).IsRequired();
-            builder.Property(cp => cp.DateUpdated).IsRequired();
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.CategoryId).IsRequired();
+            builder.Property(p => p.SKU).IsRequired();
+            builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.Description);
+            builder.Property(p => p.Price).IsRequired();
+            builder.Property(p => p.PictureUri);
+            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(false);
+            builder.Property(p => p.AvailableStock).IsRequired();
+            builder.Property(p => p.MaxStockThreshold).IsRequired();
+            builder.Property(p => p.DateCreated).IsRequired();
+            builder.Property(p => p.DateUpdated).IsRequired();
 
             builder.HasCheckConstraint("positive_price", "`price` > 0");
 
-            builder.HasOne(cp => cp.Category)
+            builder.HasOne(p => p.Category)
                 .WithMany(cc => cc.Products)
-                .HasForeignKey(cp => cp.CategoryId)
+                .HasForeignKey(p => p.CategoryId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             

@@ -11,11 +11,11 @@ namespace VShop.Modules.Catalog.Infrastructure.EntityConfigurations
         {
             builder.ToTable("product", CatalogContext.CatalogSchema);
             
-            builder.HasKey(cc => cc.Id);
-            builder.Property(cc => cc.Name).IsRequired();
-            builder.Property(cc => cc.IsDeleted).IsRequired().HasDefaultValue(false);
-            builder.Property(cc => cc.DateCreated).IsRequired();
-            builder.Property(cc => cc.DateUpdated).IsRequired();
+            builder.HasKey(c => c.Id);
+            builder.Property(c => c.Name).IsRequired();
+            builder.Property(c => c.IsDeleted).IsRequired().HasDefaultValue(false);
+            builder.Property(c => c.DateCreated).IsRequired();
+            builder.Property(c => c.DateUpdated).IsRequired();
 
             builder.UseXminAsConcurrencyToken();
         }
