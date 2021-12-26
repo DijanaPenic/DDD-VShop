@@ -10,6 +10,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Automapper
         public CatalogAutomapperProfile()
         {
             CreateMap<ProductRequest, CatalogProduct>();
+            CreateMap<CategoryRequest, CatalogCategory>();
         }
     }
 }
