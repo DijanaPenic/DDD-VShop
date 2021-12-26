@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Catalog.API.Infrastructure.Extensions;
 using VShop.Modules.Catalog.API.Infrastructure.AutofacModules;
 using VShop.Modules.Catalog.API.Infrastructure.Automapper;
@@ -26,6 +28,9 @@ namespace VShop.Modules.Catalog.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
+            
+            // Configure clock service
+            services.AddTransient<IClockService, ClockService>();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

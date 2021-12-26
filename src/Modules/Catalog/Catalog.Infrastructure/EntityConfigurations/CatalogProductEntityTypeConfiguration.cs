@@ -24,7 +24,7 @@ namespace VShop.Modules.Catalog.Infrastructure.EntityConfigurations
             builder.Property(p => p.DateCreated).IsRequired();
             builder.Property(p => p.DateUpdated).IsRequired();
 
-            builder.HasCheckConstraint("positive_price", "`price` > 0");
+            builder.HasCheckConstraint("positive_price", "price > 0");
 
             builder.HasOne(p => p.Category)
                 .WithMany(cc => cc.Products)

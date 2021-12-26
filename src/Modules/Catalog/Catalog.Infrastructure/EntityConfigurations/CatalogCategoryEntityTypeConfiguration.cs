@@ -9,7 +9,7 @@ namespace VShop.Modules.Catalog.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<CatalogCategory> builder)
         {
-            builder.ToTable("product", CatalogContext.CatalogSchema);
+            builder.ToTable("category", CatalogContext.CatalogSchema);
             
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Name).IsRequired();
