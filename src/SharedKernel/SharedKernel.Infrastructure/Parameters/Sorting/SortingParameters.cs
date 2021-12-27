@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Parameters.Sorting.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Sorting
@@ -9,18 +10,21 @@ namespace VShop.SharedKernel.Infrastructure.Parameters.Sorting
     {
         private readonly List<ISortingPair> _sorters = new();
 
+        public const char Separator = '|';
         public const string AscendingDirection = "asc";
         public const string DescendingDirection = "desc";
-        public const char Separator = '|';
+
         public IReadOnlyList<ISortingPair> Sorters => _sorters;
 
-        public SortingParameters(IReadOnlyCollection<string> sort) => InitializeSorting(sort);
+        public SortingParameters(IEnumerable<string> sort) => InitializeSorting(sort);
 
-        private void InitializeSorting(IReadOnlyCollection<string> sort)
+        private void InitializeSorting(IEnumerable<string> sort)
         {
-            if (sort.Count is 0) return;
+            List<string> sortList = sort.Select(p => p.ToPascalCase()).ToList();
+            
+            if (sortList.Count is 0) return;
 
-            foreach (string sortingExpression in sort)
+            foreach (string sortingExpression in sortList)
             {
                 IList<string> sortParams = sortingExpression.Split(Separator).ToList();
 

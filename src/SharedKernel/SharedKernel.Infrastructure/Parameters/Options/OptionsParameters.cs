@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Parameters.Options.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Options
@@ -8,6 +10,7 @@ namespace VShop.SharedKernel.Infrastructure.Parameters.Options
     {
         public IReadOnlyList<string> Include { get; }
 
-        public OptionsParameters(IReadOnlyList<string> include) => Include = include;
+        public OptionsParameters(IEnumerable<string> include)
+            => Include = include.Select(p => p.ToPascalCase()).ToList(); 
     }
 }
