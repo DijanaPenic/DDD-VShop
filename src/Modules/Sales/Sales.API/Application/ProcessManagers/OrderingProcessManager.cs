@@ -44,11 +44,16 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
-            => ScheduleReminder
+        {
+            RaiseCommand(new SetPaidOrderStatusCommand(OrderId));
+            
+            ScheduleReminder
             (
                 new ShippingGracePeriodExpiredDomainEvent(OrderId, @event),
                 now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
+
+        }
         
         private void Handle(ShippingGracePeriodExpiredDomainEvent @event)
         {

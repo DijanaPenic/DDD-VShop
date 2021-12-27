@@ -4,6 +4,7 @@
     {
         Processing = 1,
         Cancelled = 2,
-        Shipped = 3
+        Paid = 3,
+        Shipped = 4
     }
 }

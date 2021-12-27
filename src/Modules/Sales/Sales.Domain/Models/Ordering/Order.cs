@@ -106,6 +106,16 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             
             return Result.Success;
         }
+        
+        public Result SetPaidStatus()
+        {
+            if(Status is not OrderStatus.Paid)
+                return Result.ValidationError($"Changing status to '{OrderStatus.Paid}' is not allowed. Order Status: '{Status}'.");
+            
+            RaiseEvent(new OrderStatusSetToPaidDomainEvent{ OrderId = Id });
+            
+            return Result.Success;
+        }
 
         protected override void ApplyEvent(IBaseEvent @event)
         {
@@ -132,6 +142,9 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     break;
                 case OrderStatusSetToShippedDomainEvent _:
                     Status = OrderStatus.Shipped;
+                    break;
+                case OrderStatusSetToPaidDomainEvent _:
+                    Status = OrderStatus.Paid;
                     break;
             }
         }
