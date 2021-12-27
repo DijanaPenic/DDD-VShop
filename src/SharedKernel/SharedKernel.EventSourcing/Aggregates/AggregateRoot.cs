@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
@@ -23,11 +24,17 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             CorrelationId = correlationId;
         }
         
-        protected abstract void ApplyEvent(IBaseEvent @event);
+        protected abstract void ApplyEvent(IDomainEvent @event);
 
-        protected void RaiseEvent(IBaseEvent @event)
+        protected void RaiseEvent(IDomainEvent @event)
         {
             ApplyEvent(@event);
+            SetEventIdentification(@event);
+            _outbox.Add(@event);
+        }
+        
+        public void RaiseEvent(IIntegrationEvent @event)
+        {
             SetEventIdentification(@event);
             _outbox.Add(@event);
         }
@@ -39,10 +46,22 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             
             foreach (IBaseEvent @event in processedEvents)
             {
-                ApplyEvent(@event);
+                if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
             }
-            foreach (IBaseEvent @event in pendingEvents) RaiseEvent(@event);
+
+            foreach (IBaseEvent @event in pendingEvents)
+            {
+                switch (@event)
+                {
+                    case IDomainEvent domainEvent:
+                        RaiseEvent(domainEvent);
+                        break;
+                    case IIntegrationEvent integrationEvent:
+                        RaiseEvent(integrationEvent);
+                        break;
+                }
+            }
         }
 
         public IReadOnlyList<TType> GetOutboxMessages<TType>() => _outbox.OfType<TType>().ToList();

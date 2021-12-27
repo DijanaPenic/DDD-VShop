@@ -1,6 +1,7 @@
 ﻿using VShop.SharedKernel.Messaging;
 
 using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 
@@ -31,7 +32,7 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<ShippingGracePeriodExpiredDomainEvent>(nameof(ShippingGracePeriodExpiredDomainEvent));
 
             // Configure integration events - local
-            // 
+            AddCustomMap<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
             
             // Configure integration events - remote
             AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));

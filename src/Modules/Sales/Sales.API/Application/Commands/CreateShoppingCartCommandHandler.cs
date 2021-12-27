@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Commands;
@@ -43,7 +42,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
                 shoppingCart = createShoppingCartResult.Data;
-                foreach (ShoppingCartItemCommandDto shoppingCartItem in command.ShoppingCartItems)
+                foreach (AddShoppingCartItem shoppingCartItem in command.ShoppingCartItems)
                 {
                     Result addProductResult = shoppingCart.AddProduct
                     (
@@ -66,6 +65,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public Guid ShoppingCartId { get; init; }
         public Guid CustomerId { get; init; }
         public int CustomerDiscount { get; init; }
-        public IList<ShoppingCartItemCommandDto> ShoppingCartItems { get; init; }
+        public AddShoppingCartItem[] ShoppingCartItems { get; init; }
     }
 }

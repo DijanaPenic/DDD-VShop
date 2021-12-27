@@ -11,7 +11,7 @@ namespace VShop.SharedKernel.Messaging
         public Instant ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage() { } // Needs [JsonConstructor] attribute because this constructor is protected
+        protected ScheduledMessage() { } // Needs [JsonConstructor] attribute because this constructor is protected.
 
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {

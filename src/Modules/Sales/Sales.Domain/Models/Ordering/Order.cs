@@ -117,7 +117,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return Result.Success;
         }
 
-        protected override void ApplyEvent(IBaseEvent @event)
+        protected override void ApplyEvent(IDomainEvent @event)
         {
             switch (@event)
             {

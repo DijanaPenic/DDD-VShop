@@ -40,7 +40,7 @@ namespace VShop.SharedKernel.Integration.Projections
         )
         {
             IMessage message = resolvedEvent.DeserializeData<IMessage>();
-            if (message is not IIntegrationEvent integrationEvent) return;
+            if (message is not IIntegrationEvent integrationEvent) return; // TODO - test data serialization
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
 

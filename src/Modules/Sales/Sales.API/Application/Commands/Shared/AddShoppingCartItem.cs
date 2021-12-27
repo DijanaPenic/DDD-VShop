@@ -2,7 +2,7 @@
 
 namespace VShop.Modules.Sales.API.Application.Commands.Shared
 {
-    public record ShoppingCartItemCommandDto
+    public record AddShoppingCartItem
     {
         public Guid ProductId { get; init; }
         public decimal UnitPrice { get; init; }

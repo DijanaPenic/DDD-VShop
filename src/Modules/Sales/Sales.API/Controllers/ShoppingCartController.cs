@@ -122,7 +122,7 @@ namespace VShop.Modules.Sales.API.Controllers
             AddShoppingCartProductCommand command = new()
             {
                 ShoppingCartId = shoppingCartId,
-                ShoppingCartItem = _mapper.Map<ShoppingCartItemCommandDto>(request) with
+                ShoppingCartItem = _mapper.Map<AddShoppingCartItem>(request) with
                 {
                     ProductId = productId
                 },

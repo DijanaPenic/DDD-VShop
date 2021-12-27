@@ -50,6 +50,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public record AddShoppingCartProductCommand : Command
     {
         public Guid ShoppingCartId { get; init; }
-        public ShoppingCartItemCommandDto ShoppingCartItem { get; init; }
+        public AddShoppingCartItem ShoppingCartItem { get; init; }
     }
 }

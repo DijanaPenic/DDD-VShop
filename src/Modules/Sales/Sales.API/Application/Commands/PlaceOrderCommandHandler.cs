@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -8,6 +9,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
+using VShop.Modules.Sales.Integration.Events;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -49,6 +51,19 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 if (createOrderResult.IsError) return createOrderResult.Error;
 
                 order = createOrderResult.Data;
+
+                OrderPlacedIntegrationEvent orderPlacedIntegrationEvent = new()
+                {
+                    OrderId = order.Id,
+                    OrderLines = order.OrderLines.Select(ol => new PlacedOrderLine
+                    {
+                        ProductId = ol.Id,
+                        Quantity = ol.Quantity,
+                        Price = ol.UnitPrice
+                    }).ToList()
+                };
+                
+                order.RaiseEvent(orderPlacedIntegrationEvent);
             }
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);

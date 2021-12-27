@@ -42,6 +42,13 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 now.Plus(Duration.FromMinutes(Settings.PaymentGracePeriodInMinutes))
             );
         }
+        
+        private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
+        {
+            // User didn't manage to pay so we need to cancel the order.
+            if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) 
+                RaiseCommand(new CancelOrderCommand(OrderId));
+        }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
         {
@@ -52,7 +59,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 new ShippingGracePeriodExpiredDomainEvent(OrderId, @event),
                 now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
-
         }
         
         private void Handle(ShippingGracePeriodExpiredDomainEvent @event)
@@ -71,13 +77,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             {
                 RaiseIntegrationEvent<PaymentSucceededIntegrationEvent>(@event.Content);
             }
-        }
-        
-        private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
-        {
-            // User didn't manage to pay so we need to cancel the order.
-            if (Status is OrderingProcessManagerStatus.OrderPaymentFailed) 
-                RaiseCommand(new CancelOrderCommand(OrderId));
         }
 
         protected override void ApplyEvent(IBaseEvent @event)

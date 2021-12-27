@@ -25,7 +25,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            ShoppingCartItemCommandDto[] shoppingCartItems
+            AddShoppingCartItem[] shoppingCartItems
         )
         {
             // Arrange
@@ -52,7 +52,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Add_a_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
-            ShoppingCartItemCommandDto shoppingCartItem
+            AddShoppingCartItem shoppingCartItem
         )
         {
             // Arrange

@@ -40,9 +40,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             try
             {
-                // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-                foreach (IDomainEvent domainEvent in aggregate.GetOutboxMessages<IDomainEvent>())
-                    await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                await PublishAsync(aggregate, cancellationToken);
             }
             finally
             {
@@ -85,6 +83,13 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             aggregate.Load(events);
 
             return aggregate;
+        }
+        
+        private async Task PublishAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        {
+            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
+            foreach (IDomainEvent domainEvent in aggregate.GetOutboxMessages<IDomainEvent>())
+                await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
         }
         
         private async Task AppendMessagesToStreamAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
