@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure;
@@ -46,7 +46,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             result.IsError.Should().BeFalse();
             
             // The shopping cart should have been closed.
-            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(EntityId.Create(command.ShoppingCartId).Data);
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Status.Should().Be(ShoppingCartStatus.Closed);
             

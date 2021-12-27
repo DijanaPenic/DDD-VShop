@@ -1,5 +1,6 @@
 ﻿namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
+    // TODO - review integration tests
     public enum OrderingProcessManagerStatus
     {
         CheckoutRequested = 1,

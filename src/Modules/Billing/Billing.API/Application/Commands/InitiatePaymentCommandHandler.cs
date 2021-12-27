@@ -16,6 +16,7 @@ using VShop.Modules.Billing.Infrastructure.Repositories;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
+    // TODO - missing integration and unit tests
     public class InitiatePaymentCommandHandler : ICommandHandler<InitiatePaymentCommand>
     {
         private readonly IPaymentService _paymentService;

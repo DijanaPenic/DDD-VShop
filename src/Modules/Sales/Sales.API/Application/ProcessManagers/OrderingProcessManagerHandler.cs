@@ -36,6 +36,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public Task Handle(PaymentSucceededIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
+        // TODO - missing integration test
         public Task Handle(PaymentFailedIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
