@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Application;
-using VShop.Modules.Catalog.API.Models;
-using VShop.Modules.Catalog.API.Application;
-using VShop.Modules.Catalog.Infrastructure;
-using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Parameters.Paging;
 using VShop.SharedKernel.Infrastructure.Parameters.Options;
 using VShop.SharedKernel.Infrastructure.Parameters.Sorting;
+using VShop.Modules.Catalog.API.Models;
+using VShop.Modules.Catalog.API.Application;
+using VShop.Modules.Catalog.Infrastructure;
+using VShop.Modules.Catalog.Infrastructure.Entities;
 
 namespace VShop.Modules.Catalog.API.Controllers
 {
@@ -37,7 +37,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateProductAsync([FromBody] ProductRequest request)
         {
             CatalogProduct product = _mapper.Map<CatalogProduct>(request);
@@ -50,18 +50,23 @@ namespace VShop.Modules.Catalog.API.Controllers
             return Created(product);
         }
         
-        [HttpPut]
-        [Route("{productId:Guid}")]
+        [HttpPatch]
+        [Route("{productId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateProductAsync([FromRoute] Guid productId, [FromBody] ProductRequest request)
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> UpdateProductAsync
+        (
+            [FromRoute] Guid productId,
+            [FromBody] ProductRequest request
+        )
         {
             CatalogProduct product = await _catalogContext.Products.FindAsync(productId);
-            if (product is null)
-                return BadRequest("Requested product cannot be found.");
+            
+            if (product is null || product.IsDeleted is true)
+                return NotFound("Requested product cannot be found.");
 
             _mapper.Map(request, product);
 
@@ -72,17 +77,18 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpDelete]
-        [Route("{productId:Guid}")]
+        [Route("{productId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] Guid productId)
         {
             CatalogProduct product = await _catalogContext.Products.FindAsync(productId);
-            if (product is null)
-                return BadRequest("Requested product cannot be found.");
+            
+            if (product is null || product.IsDeleted is true)
+                return NotFound("Requested product cannot be found.");
 
             product.IsDeleted = true;
 
@@ -99,11 +105,18 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetProductAsync([FromRoute] Guid productId)
+        public async Task<IActionResult> GetProductAsync
+        (
+            [FromRoute] Guid productId,
+            [FromQuery] string include = DefaultParameters.Include
+        )
         {
-            CatalogProduct product = await _catalogContext.Products.FindAsync(productId);
-            if (product is null)
-                return BadRequest("Requested product cannot be found.");
+            CatalogProduct product = await _catalogContext.Products
+                .Include(OptionsFactory.Create(include))
+                .SingleOrDefaultAsync(c => c.Id == productId);
+            
+            if (product is null || product.IsDeleted is true)
+                return NotFound("Requested product cannot be found.");
 
             return Ok(product);
         }
@@ -115,6 +128,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetProductsAsync
         (
             [FromQuery] string include = DefaultParameters.Include,

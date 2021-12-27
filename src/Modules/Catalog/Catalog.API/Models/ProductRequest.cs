@@ -15,9 +15,9 @@ namespace VShop.Modules.Catalog.API.Models
         public int MaxStockThreshold { get; init; }
     }
     
-    public class ProductCreateRequestValidator : AbstractValidator<ProductRequest>
+    public class ProductRequestValidator : AbstractValidator<ProductRequest>
     {
-        public ProductCreateRequestValidator()
+        public ProductRequestValidator()
         {
             RuleFor(p => p.CategoryId).NotEmpty();
             RuleFor(p => p.SKU).NotEmpty();

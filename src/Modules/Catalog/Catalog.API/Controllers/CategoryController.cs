@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Application;
-using VShop.Modules.Catalog.API.Models;
-using VShop.Modules.Catalog.API.Application;
-using VShop.Modules.Catalog.Infrastructure;
-using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Parameters.Paging;
 using VShop.SharedKernel.Infrastructure.Parameters.Options;
 using VShop.SharedKernel.Infrastructure.Parameters.Sorting;
+using VShop.Modules.Catalog.API.Models;
+using VShop.Modules.Catalog.API.Application;
+using VShop.Modules.Catalog.Infrastructure;
+using VShop.Modules.Catalog.Infrastructure.Entities;
 
+// TODO - missing integration and unit tests
 namespace VShop.Modules.Catalog.API.Controllers
 {
     [ApiController]
@@ -37,7 +38,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryRequest request)
         {
             CatalogCategory category = _mapper.Map<CatalogCategory>(request);
@@ -50,18 +51,23 @@ namespace VShop.Modules.Catalog.API.Controllers
             return Created(category);
         }
         
-        [HttpPut]
-        [Route("{categoryId:Guid}")]
+        [HttpPatch]
+        [Route("{categoryId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateCategoryAsync([FromRoute] Guid categoryId, [FromBody] CategoryRequest request)
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> UpdateCategoryAsync
+        (
+            [FromRoute] Guid categoryId,
+            [FromBody] CategoryRequest request
+        )
         {
             CatalogCategory category = await _catalogContext.Categories.FindAsync(categoryId);
-            if (category is null)
-                return BadRequest("Requested category cannot be found.");
+            
+            if (category is null || category.IsDeleted is true)
+                return NotFound("Requested category cannot be found.");
 
             _mapper.Map(request, category);
 
@@ -72,17 +78,18 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpDelete]
-        [Route("{categoryId:Guid}")]
+        [Route("{categoryId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteCategoryAsync([FromRoute] Guid categoryId)
         {
             CatalogCategory category = await _catalogContext.Categories.FindAsync(categoryId);
-            if (category is null)
-                return BadRequest("Requested category cannot be found.");
+            
+            if (category is null || category.IsDeleted is true)
+                return NotFound("Requested category cannot be found.");
 
             category.IsDeleted = true;
 
@@ -93,17 +100,25 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpGet]
-        [Route("{categoryId:Guid}")]
+        [Route("{categoryId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCategoryAsync([FromRoute] Guid categoryId)
+        public async Task<IActionResult> GetCategoryAsync
+        (
+            [FromRoute] Guid categoryId,
+            [FromQuery] string include = DefaultParameters.Include
+        )
         {
-            CatalogCategory category = await _catalogContext.Categories.FindAsync(categoryId);
-            if (category is null)
-                return BadRequest("Requested category cannot be found.");
+            CatalogCategory category = await _catalogContext.Categories
+                .Include(OptionsFactory.Create(include))
+                .SingleOrDefaultAsync(c => c.Id == categoryId);
+
+            if (category is null || category.IsDeleted is true)
+                return NotFound("Requested category cannot be found.");
+            
 
             return Ok(category);
         }
@@ -126,6 +141,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             IList<CatalogCategory> categories = await _catalogContext.Categories
                 .OrderBy(SortingFactory.Create(sortOrder))
+                .Filter(c => c.IsDeleted == false)
                 .Filter(string.IsNullOrWhiteSpace(searchString) ? null : p => p.Name.Contains(searchString))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))
@@ -145,6 +161,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetCategoryProductsAsync
         (
             [FromRoute] Guid categoryId,
