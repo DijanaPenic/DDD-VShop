@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "f188edaf-1abd-4d81-aa96-df717100fc9a",
+		"name": "Catalog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Sporting Goods\",\r\n    \"description\": \"Sporting Goods - descrption\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Sporting Goods (updated)\",\r\n    \"description\": \"Sporting Goods - descrption (updated)\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories",
+								"{{category_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories",
+								"{{category_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category (by id)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}?include=products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories",
+								"{{category_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "products"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories?include=products&search_string=updated&page_index=1&page_size=3&sort_order=date_created|desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "products"
+								},
+								{
+									"key": "search_string",
+									"value": "updated"
+								},
+								{
+									"key": "page_index",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "3"
+								},
+								{
+									"key": "sort_order",
+									"value": "date_created|desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}/products?include=&search_string=&page_index=1&page_size=3&sort_order=date_created|desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"categories",
+								"{{category_id}}",
+								"products"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": ""
+								},
+								{
+									"key": "search_string",
+									"value": ""
+								},
+								{
+									"key": "page_index",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "3"
+								},
+								{
+									"key": "sort_order",
+									"value": "date_created|desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_id\": \"{{category_id}}\",\r\n    \"name\": \"Marcy Pro Home Gym Total Body Training System\",\r\n    \"description\": \"The Marcy Pro Home Gym Total Body Training System lets you enjoy complete, challenging workouts from the comfort of your home. This Marcy Pro home gym is built to last with heavy-duty tubular steel and a durable powder-coated finish. The Marcy Pro cage measures 86” x 73” x 85” when fully assembled. The bench measures 48” x 27” x 49” and uses deluxe materials for support while lifting. This Marcy Pro home gym is a Smith machine, Olympic weight rack, dip station, and pulley system all in one compact design. From bodyweight workouts to free weight and weight bar workouts, the Marcy Pro Home Gym Total Body Training System offers something for everyone and is a great addition to your home gym.\",\r\n    \"SKU\": \"UGG-BB-PUR-06\",\r\n    \"price\": \"1399.99\",\r\n    \"picture_uri\": \"\",\r\n    \"available_stock\": 100,\r\n    \"max_stock_threshold\": 120\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/catalog/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_id\": \"{{category_id}}\",\r\n    \"name\": \"Marcy Pro Home Gym Total Body Training System (updated)\",\r\n    \"description\": \"(updated) The Marcy Pro Home Gym Total Body Training System lets you enjoy complete, challenging workouts from the comfort of your home. This Marcy Pro home gym is built to last with heavy-duty tubular steel and a durable powder-coated finish. The Marcy Pro cage measures 86” x 73” x 85” when fully assembled. The bench measures 48” x 27” x 49” and uses deluxe materials for support while lifting. This Marcy Pro home gym is a Smith machine, Olympic weight rack, dip station, and pulley system all in one compact design. From bodyweight workouts to free weight and weight bar workouts, the Marcy Pro Home Gym Total Body Training System offers something for everyone and is a great addition to your home gym.\",\r\n    \"SKU\": \"UGG-BB-PUR-06\",\r\n    \"price\": \"1399.99\",\r\n    \"picture_uri\": \"\",\r\n    \"available_stock\": 100,\r\n    \"max_stock_threshold\": 120\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/catalog/products/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"products",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/products/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"products",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product (by id)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/products/{{product_id}}?include=category",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"products",
+								"{{product_id}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "category"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/catalog/products?include=category&search_string=updated&page_index=1&page_size=3&sort_order=date_created|desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"products"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "category"
+								},
+								{
+									"key": "search_string",
+									"value": "updated"
+								},
+								{
+									"key": "page_index",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "3"
+								},
+								{
+									"key": "sort_order",
+									"value": "date_created|desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5258"
+		},
+		{
+			"key": "category_id",
+			"value": "49c9f6d0-9064-4f69-f23f-08d9c92ed355"
+		},
+		{
+			"key": "product_id",
+			"value": "1e21c71c-a39e-4616-8a57-08d9c93e413c"
+		}
+	]
+}
