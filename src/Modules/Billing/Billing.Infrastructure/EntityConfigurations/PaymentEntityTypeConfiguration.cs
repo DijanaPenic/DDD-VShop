@@ -5,14 +5,15 @@ using VShop.Modules.Billing.Infrastructure.Entities;
 
 namespace VShop.Modules.Billing.Infrastructure.EntityConfigurations
 {
-    internal class PaymentEntityTypeConfiguration : IEntityTypeConfiguration<PaymentTransfer>
+    internal class PaymentEntityTypeConfiguration : IEntityTypeConfiguration<Payment>
     {
-        public void Configure(EntityTypeBuilder<PaymentTransfer> builder)
+        public void Configure(EntityTypeBuilder<Payment> builder)
         {
-            builder.ToTable("payment_transfer", BillingContext.PaymentSchema);
+            builder.ToTable("payment", BillingContext.PaymentSchema);
             
             builder.HasKey(pt => pt.Id);
             builder.Property(pt => pt.OrderId).IsRequired();
+            builder.Property(pt => pt.Type).IsRequired();
             builder.Property(pt => pt.Status).IsRequired();
             builder.Property(pt => pt.Error);
             builder.Property(pt => pt.DateCreated).IsRequired();

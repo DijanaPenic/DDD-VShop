@@ -11,7 +11,7 @@ namespace VShop.Modules.Billing.Infrastructure
     {
         public const string PaymentSchema = "payment";
 
-        public DbSet<PaymentTransfer> Payments { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         public BillingContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }

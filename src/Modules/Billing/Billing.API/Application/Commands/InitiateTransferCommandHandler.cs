@@ -17,13 +17,13 @@ using VShop.Modules.Billing.Infrastructure.Repositories;
 namespace VShop.Modules.Billing.API.Application.Commands
 {
     // TODO - missing integration and unit tests
-    public class InitiatePaymentCommandHandler : ICommandHandler<InitiatePaymentCommand>
+    public class InitiateTransferCommandHandler : ICommandHandler<InitiateTransferCommand>
     {
         private readonly IPaymentService _paymentService;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IIntegrationEventService _billingIntegrationEventService;
 
-        public InitiatePaymentCommandHandler
+        public InitiateTransferCommandHandler
         (
             IPaymentService paymentService,
             IPaymentRepository paymentRepository,
@@ -35,7 +35,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
-        public async Task<Result> Handle(InitiatePaymentCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(InitiateTransferCommand command, CancellationToken cancellationToken)
         {
             bool isPaid = await _paymentRepository.IsOrderPaidAsync(command.OrderId, cancellationToken);
             if (isPaid) return Result.Success;
@@ -51,12 +51,13 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 cancellationToken
             );
 
-            PaymentTransfer payment = new()
+            Payment payment = new()
             {
                 Id = SequentialGuid.Create(),
                 OrderId = command.OrderId,
-                Status = paymentTransferResult.IsError ? PaymentTransferStatus.Failed : PaymentTransferStatus.Success,
-                Error = paymentTransferResult.IsError ? paymentTransferResult.Error.ToString() : string.Empty
+                Status = paymentTransferResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
+                Error = paymentTransferResult.IsError ? paymentTransferResult.Error.ToString() : string.Empty,
+                Type = PaymentType.Transfer
             };
             await _paymentRepository.SaveAsync(payment, cancellationToken);
 
@@ -72,7 +73,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
         }
     }
     
-    public record InitiatePaymentCommand : Command
+    public record InitiateTransferCommand : Command
     {
         public Guid OrderId { get; set; }
         public int CardTypeId { get; set; }

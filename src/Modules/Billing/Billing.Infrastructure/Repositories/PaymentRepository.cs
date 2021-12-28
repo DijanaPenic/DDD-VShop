@@ -15,16 +15,16 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
 
         public PaymentRepository(BillingContext dbContext) => _dbContext = dbContext;
 
-        public async Task SaveAsync(PaymentTransfer paymentTransfer, CancellationToken cancellationToken)
+        public async Task SaveAsync(Payment paymentTransfer, CancellationToken cancellationToken)
         {
             await _dbContext.Payments.AddAsync(paymentTransfer, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<PaymentTransfer>> GetByOrderIdAsync
+        public async Task<IReadOnlyList<Payment>> GetByOrderIdAsync
         (
             Guid orderId,
-            PaymentTransferStatus status,
+            PaymentStatus status,
             CancellationToken cancellationToken
         ) => await _dbContext.Payments
             .Where(p => p.OrderId == orderId && p.Status == status)
@@ -33,7 +33,7 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
         public Task<bool> IsOrderPaidAsync(Guid orderId, CancellationToken cancellationToken)
             =>  _dbContext.Payments.AnyAsync
             (
-                p => p.OrderId == orderId && p.Status == PaymentTransferStatus.Success,
+                p => p.OrderId == orderId && p.Status == PaymentStatus.Success,
                 cancellationToken
             ); 
     }

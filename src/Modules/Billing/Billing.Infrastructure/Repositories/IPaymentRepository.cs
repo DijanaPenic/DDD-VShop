@@ -9,11 +9,11 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
 {
     public interface IPaymentRepository
     {
-        Task SaveAsync(PaymentTransfer paymentTransfer, CancellationToken cancellationToken);
-        Task<IReadOnlyList<PaymentTransfer>> GetByOrderIdAsync
+        Task SaveAsync(Payment paymentTransfer, CancellationToken cancellationToken);
+        Task<IReadOnlyList<Payment>> GetByOrderIdAsync
         (
             Guid orderId,
-            PaymentTransferStatus status,
+            PaymentStatus status,
             CancellationToken cancellationToken
         );
 

@@ -33,7 +33,7 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> RequestPaymentAsync([FromBody]InitiatePaymentRequest request)
         {
-            InitiatePaymentCommand command = _mapper.Map<InitiatePaymentCommand>(request);
+            InitiateTransferCommand command = _mapper.Map<InitiateTransferCommand>(request);
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);

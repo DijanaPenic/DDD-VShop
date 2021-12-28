@@ -9,7 +9,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Automapper
     {
         public PaymentAutomapperProfile()
         {
-            CreateMap<InitiatePaymentRequest, InitiatePaymentCommand>();
+            CreateMap<InitiatePaymentRequest, InitiateTransferCommand>();
         }
     }
 }
