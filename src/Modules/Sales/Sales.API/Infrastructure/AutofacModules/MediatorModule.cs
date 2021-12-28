@@ -35,7 +35,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
             builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommand).Assembly)
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
-            // Register domain event handlers
+            // Register event handlers
             builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
                    .AsClosedTypesOf(typeof(INotificationHandler<>));
             

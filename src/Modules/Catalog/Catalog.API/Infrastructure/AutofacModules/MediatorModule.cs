@@ -24,7 +24,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
             // Register event bus
             builder.RegisterType<EventBus>().As<IEventBus>().SingleInstance();
 
-            // Register domain event handlers
+            // Register event handlers
             builder.RegisterAssemblyTypes(typeof(OrderPaidIntegrationEventHandler).Assembly)
                 .AsClosedTypesOf(typeof(INotificationHandler<>));
         }

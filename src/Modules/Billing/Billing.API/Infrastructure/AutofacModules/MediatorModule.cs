@@ -35,7 +35,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             builder.RegisterAssemblyTypes(typeof(InitiateTransferCommand).Assembly)
                 .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
-            // Register domain event handlers
+            // Register event handlers
             builder.RegisterAssemblyTypes(typeof(OrderStockConfirmedIntegrationEventHandler).Assembly)
                 .AsClosedTypesOf(typeof(INotificationHandler<>));
 

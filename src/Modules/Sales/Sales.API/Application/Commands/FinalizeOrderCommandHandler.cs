@@ -63,6 +63,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     order.RaiseEvent(orderStatusSetToPendingShippingIntegrationEvent);
                 }
             }
+            
+            // TODO - will need to send an email to customer.
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
