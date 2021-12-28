@@ -31,9 +31,16 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<OrderPlacedDomainEvent>(nameof(OrderPlacedDomainEvent));
             AddCustomMap<PaymentGracePeriodExpiredDomainEvent>(nameof(PaymentGracePeriodExpiredDomainEvent));
             AddCustomMap<ShippingGracePeriodExpiredDomainEvent>(nameof(ShippingGracePeriodExpiredDomainEvent));
-
+            AddCustomMap<OrderStatusSetToPaidDomainEvent>(nameof(OrderStatusSetToPaidDomainEvent));
+            AddCustomMap<OrderLineOutOfStockRemoved>(nameof(OrderLineOutOfStockRemoved));
+            AddCustomMap<OrderStatusSetToPendingShippingDomainEvent>(nameof(OrderStatusSetToPendingShippingDomainEvent));
+            AddCustomMap<StockConfirmationGracePeriodExpiredDomainEvent>(nameof(StockConfirmationGracePeriodExpiredDomainEvent));
+            AddCustomMap<SetPaidOrderStatusCommand>(nameof(SetPaidOrderStatusCommand));
+            AddCustomMap<FinalizeOrderCommand>(nameof(FinalizeOrderCommand));
+            
             // Configure integration events - local
             AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
+            AddCustomMap<OrderStatusSetToPendingShippingIntegrationEvent>(nameof(OrderStatusSetToPendingShippingIntegrationEvent));
             
             // Configure integration events - remote
             AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
