@@ -19,8 +19,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         IIntegrationEventHandler<PaymentSucceededIntegrationEvent>,
         IIntegrationEventHandler<PaymentFailedIntegrationEvent>,
         IDomainEventHandler<OrderStatusSetToPaidDomainEvent>,
-        IDomainEventHandler<StockConfirmationGracePeriodExpiredDomainEvent>,
-        IIntegrationEventHandler<OrderStockConfirmedIntegrationEvent>,
+        IDomainEventHandler<OrderStockProcessingGracePeriodExpiredDomainEvent>,
+        IIntegrationEventHandler<OrderStockProcessedIntegrationEvent>,
         IDomainEventHandler<OrderStatusSetToPendingShippingDomainEvent>,
         IDomainEventHandler<ShippingGracePeriodExpiredDomainEvent>,
         IDomainEventHandler<OrderStatusSetToCancelledDomainEvent>
@@ -51,10 +51,10 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public Task Handle(OrderStatusSetToPaidDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(StockConfirmationGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
+        public Task Handle(OrderStockProcessingGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderStockConfirmedIntegrationEvent @event, CancellationToken cancellationToken)
+        public Task Handle(OrderStockProcessedIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
         public Task Handle(OrderStatusSetToPendingShippingDomainEvent @event, CancellationToken cancellationToken)

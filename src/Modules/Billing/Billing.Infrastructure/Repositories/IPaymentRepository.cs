@@ -17,6 +17,6 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
             CancellationToken cancellationToken
         );
 
-        Task<bool> IsOrderPaidAsync(Guid orderId, CancellationToken cancellationToken);
+        Task<bool> IsPaymentSuccessAsync(Guid orderId, PaymentType type, CancellationToken cancellationToken);
     }
 }

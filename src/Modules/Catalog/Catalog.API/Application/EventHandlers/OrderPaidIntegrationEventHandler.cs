@@ -32,8 +32,8 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
 
         public async Task Handle(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
         {
-            IList<OrderStockConfirmedIntegrationEvent.OrderLine> confirmedOrderLines = 
-                new List<OrderStockConfirmedIntegrationEvent.OrderLine>();
+            IList<OrderStockProcessedIntegrationEvent.OrderLine> confirmedOrderLines = 
+                new List<OrderStockProcessedIntegrationEvent.OrderLine>();
 
             foreach (OrderStatusSetToPaidIntegrationEvent.OrderLine orderLine in @event.OrderLines)
             {
@@ -45,7 +45,7 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 Result<int> decreaseStockResult = product.DecreaseStock(orderLine.Quantity);
                 if (decreaseStockResult.IsError) return;
                 
-                confirmedOrderLines.Add(new OrderStockConfirmedIntegrationEvent.OrderLine
+                confirmedOrderLines.Add(new OrderStockProcessedIntegrationEvent.OrderLine
                 {
                     ProductId = orderLine.ProductId,
                     OutOfStockQuantity = orderLine.Quantity - decreaseStockResult.Data,
@@ -54,7 +54,7 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
             }
 
             // TODO - use constructors for Catalog and Billing integration events.
-            OrderStockConfirmedIntegrationEvent orderStockConfirmedIntegrationEvent = new()
+            OrderStockProcessedIntegrationEvent orderStockConfirmedIntegrationEvent = new()
             {
                 OrderId = @event.OrderId,
                 OrderLines = confirmedOrderLines,

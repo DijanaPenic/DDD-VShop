@@ -32,11 +32,11 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
 
             // Register command handlers
-            builder.RegisterAssemblyTypes(typeof(InitiateTransferCommand).Assembly)
+            builder.RegisterAssemblyTypes(typeof(TransferCommand).Assembly)
                 .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register event handlers
-            builder.RegisterAssemblyTypes(typeof(OrderStockConfirmedIntegrationEventHandler).Assembly)
+            builder.RegisterAssemblyTypes(typeof(OrderFinalizedIntegrationEventHandler).Assembly)
                 .AsClosedTypesOf(typeof(INotificationHandler<>));
 
             // Register behaviors

@@ -17,14 +17,14 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public OrderLine(Action<IDomainEvent> applier) : base(applier) { }
         
-        public Result RemoveOutOfStock(ProductQuantity value)
+        public Result RemoveOutOfStockItems(ProductQuantity value)
         {
             if (Quantity - value < 0)
                 return Result.ValidationError($"Cannot decrease quantity by {value}.");
             
             RaiseEvent
             (
-                new OrderLineOutOfStockRemoved
+                new OrderLineOutOfStockRemovedDomainEvent
                 {
                     OrderId = OrderId,
                     ProductId = Id,
@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
                     break;
-                case OrderLineOutOfStockRemoved e:
+                case OrderLineOutOfStockRemovedDomainEvent e:
                     Quantity -= new ProductQuantity(e.Quantity);
                     break;
             }

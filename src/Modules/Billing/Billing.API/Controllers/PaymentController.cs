@@ -31,9 +31,9 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> RequestPaymentAsync([FromBody]InitiatePaymentRequest request)
+        public async Task<IActionResult> TransferAsync([FromBody]TransferRequest request)
         {
-            InitiateTransferCommand command = _mapper.Map<InitiateTransferCommand>(request);
+            TransferCommand command = _mapper.Map<TransferCommand>(request);
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);

@@ -4,11 +4,11 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record StockConfirmationGracePeriodExpiredDomainEvent : DomainEvent
+    public record OrderStockProcessingGracePeriodExpiredDomainEvent : DomainEvent
     {
         public Guid OrderId { get; }
 
-        public StockConfirmationGracePeriodExpiredDomainEvent(Guid orderId)
+        public OrderStockProcessingGracePeriodExpiredDomainEvent(Guid orderId)
         {
             OrderId = orderId;
         }

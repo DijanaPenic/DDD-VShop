@@ -10,7 +10,7 @@ namespace VShop.Modules.Catalog.API.Application
         public static void MapMessageTypes()
         {
             // Configure integration events - local
-            AddCustomMap<OrderStockConfirmedIntegrationEvent>(nameof(OrderStockConfirmedIntegrationEvent));
+            AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
             
             // Configure integration events - remote
             AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));

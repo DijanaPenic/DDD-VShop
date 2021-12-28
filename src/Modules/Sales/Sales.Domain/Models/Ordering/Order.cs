@@ -88,14 +88,14 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return Result.Success;
         }
         
-        public Result RemoveOutOfStock(EntityId productId, ProductQuantity quantity)
+        public Result RemoveOutOfStockItems(EntityId productId, ProductQuantity quantity)
         {
             OrderLine orderLine = FindOrderLine(productId);
             
             if (orderLine is null)
                 return Result.ValidationError($"Product with id `{productId}` was not found in the order.");
             
-            Result removeOutOfStockResult = orderLine.RemoveOutOfStock(quantity);
+            Result removeOutOfStockResult = orderLine.RemoveOutOfStockItems(quantity);
             if (removeOutOfStockResult.IsError) return removeOutOfStockResult.Error;
 
             return Result.Success;
@@ -133,7 +133,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public Result SetCancelledStatus()
         {
-            if(Status is not OrderStatus.Processing)
+            if(Status is not OrderStatus.Processing or OrderStatus.Paid)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
@@ -178,7 +178,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 case OrderStatusSetToPaidDomainEvent _:
                     Status = OrderStatus.Paid;
                     break;
-                case OrderLineOutOfStockRemoved e:
+                case OrderLineOutOfStockRemovedDomainEvent e:
                     orderLine = FindOrderLine(new EntityId(e.ProductId));
                     ApplyToEntity(orderLine, e);
                     if (orderLine.Quantity == 0) _orderLines.Remove(orderLine);

@@ -17,6 +17,7 @@ namespace VShop.Modules.Billing.Infrastructure.Services
         public Task<Result> TransferAsync
         (
             Guid orderId,
+            decimal amount,
             int cardTypeId,
             string cardNumber,
             string cardSecurityNumber,
@@ -24,5 +25,8 @@ namespace VShop.Modules.Billing.Infrastructure.Services
             Instant cardExpiration,
             CancellationToken cancellationToken = default
         ) => Task.FromResult<Result>(Result.Success);
+        
+        public Task<Result> RefundAsync(Guid orderId, decimal amount, CancellationToken cancellationToken = default)
+            => Task.FromResult<Result>(Result.Success);
     }
 }

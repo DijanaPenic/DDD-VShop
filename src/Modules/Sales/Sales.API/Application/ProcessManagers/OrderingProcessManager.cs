@@ -25,8 +25,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<PaymentGracePeriodExpiredDomainEvent>(Handle);
             RegisterEvent<PaymentSucceededIntegrationEvent>(Handle);
             RegisterEvent<OrderStatusSetToPaidDomainEvent>(Handle);
-            RegisterEvent<StockConfirmationGracePeriodExpiredDomainEvent>(Handle);
-            RegisterEvent<OrderStockConfirmedIntegrationEvent>(Handle);
+            RegisterEvent<OrderStockProcessingGracePeriodExpiredDomainEvent>(Handle);
+            RegisterEvent<OrderStockProcessedIntegrationEvent>(Handle);
             RegisterEvent<OrderStatusSetToPendingShippingDomainEvent>(Handle);
             RegisterEvent<ShippingGracePeriodExpiredDomainEvent>(Handle);
         }
@@ -68,12 +68,12 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             // Schedule a reminder for stock confirmation.
             ScheduleReminder
             (
-                new StockConfirmationGracePeriodExpiredDomainEvent(OrderId),
+                new OrderStockProcessingGracePeriodExpiredDomainEvent(OrderId),
                 now.Plus(Duration.FromMinutes(Settings.StockConfirmationGracePeriodInMinutes))
             );
         }
         
-        private void Handle(StockConfirmationGracePeriodExpiredDomainEvent @event)
+        private void Handle(OrderStockProcessingGracePeriodExpiredDomainEvent @event)
         {
             if (Status is OrderingProcessManagerStatus.OrderStockConfirmed) return;
             
@@ -81,7 +81,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             // move forward with refund and/or the shipping process.
         }
         
-        private void Handle(OrderStockConfirmedIntegrationEvent @event, Instant now)
+        private void Handle(OrderStockProcessedIntegrationEvent @event, Instant now)
         {
             RaiseCommand(new FinalizeOrderCommand
             (
@@ -135,7 +135,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 case OrderStatusSetToCancelledDomainEvent _:
                     Status = OrderingProcessManagerStatus.OrderCancelled;
                     break;
-                case OrderStockConfirmedIntegrationEvent _:
+                case OrderStockProcessedIntegrationEvent _:
                     Status = OrderingProcessManagerStatus.OrderStockConfirmed;
                     break;
             }

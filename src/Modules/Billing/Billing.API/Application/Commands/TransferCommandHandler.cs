@@ -17,13 +17,13 @@ using VShop.Modules.Billing.Infrastructure.Repositories;
 namespace VShop.Modules.Billing.API.Application.Commands
 {
     // TODO - missing integration and unit tests
-    public class InitiateTransferCommandHandler : ICommandHandler<InitiateTransferCommand>
+    public class TransferCommandHandler : ICommandHandler<TransferCommand>
     {
         private readonly IPaymentService _paymentService;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IIntegrationEventService _billingIntegrationEventService;
 
-        public InitiateTransferCommandHandler
+        public TransferCommandHandler
         (
             IPaymentService paymentService,
             IPaymentRepository paymentRepository,
@@ -35,14 +35,20 @@ namespace VShop.Modules.Billing.API.Application.Commands
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
-        public async Task<Result> Handle(InitiateTransferCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(TransferCommand command, CancellationToken cancellationToken)
         {
-            bool isPaid = await _paymentRepository.IsOrderPaidAsync(command.OrderId, cancellationToken);
-            if (isPaid) return Result.Success;
-            
-            Result paymentTransferResult = await _paymentService.TransferAsync
+            bool isTransferSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (
                 command.OrderId,
+                PaymentType.Transfer,
+                cancellationToken
+            );
+            if (isTransferSuccess) return Result.Success;
+            
+            Result transferResult = await _paymentService.TransferAsync
+            (
+                command.OrderId,
+                command.Amount,
                 command.CardTypeId,
                 command.CardNumber,
                 command.CardSecurityNumber,
@@ -51,17 +57,17 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 cancellationToken
             );
 
-            Payment payment = new()
+            Payment transfer = new()
             {
                 Id = SequentialGuid.Create(),
                 OrderId = command.OrderId,
-                Status = paymentTransferResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
-                Error = paymentTransferResult.IsError ? paymentTransferResult.Error.ToString() : string.Empty,
+                Status = transferResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
+                Error = transferResult.IsError ? transferResult.Error.ToString() : string.Empty,
                 Type = PaymentType.Transfer
             };
-            await _paymentRepository.SaveAsync(payment, cancellationToken);
+            await _paymentRepository.SaveAsync(transfer, cancellationToken);
 
-            IIntegrationEvent integrationEvent = paymentTransferResult.IsError 
+            IIntegrationEvent integrationEvent = transferResult.IsError 
                 ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
 
             integrationEvent.CausationId = command.MessageId;
@@ -69,13 +75,14 @@ namespace VShop.Modules.Billing.API.Application.Commands
 
             await _billingIntegrationEventService.SaveEventAsync(integrationEvent, cancellationToken);
             
-            return paymentTransferResult.IsError ? paymentTransferResult.Error : Result.Success;
+            return transferResult.IsError ? transferResult.Error : Result.Success;
         }
     }
     
-    public record InitiateTransferCommand : Command
+    public record TransferCommand : Command
     {
         public Guid OrderId { get; set; }
+        public decimal Amount { get; set; }
         public int CardTypeId { get; set; }
         public string CardNumber { get; set; }
         public string CardSecurityNumber { get; set; }

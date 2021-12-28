@@ -18,8 +18,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
     {
         private readonly IAggregateStore<Order> _orderStore;
 
-        public FinalizeOrderCommandHandler(IAggregateStore<Order> orderStore)
-            => _orderStore = orderStore;
+        public FinalizeOrderCommandHandler(IAggregateStore<Order> orderStore) => _orderStore = orderStore;
 
         public async Task<Result> Handle(FinalizeOrderCommand command, CancellationToken cancellationToken)
         {
@@ -34,9 +33,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (order.OutboxMessageCount is 0)
             {
+                decimal originalPaymentAmount = order.ProductsCostWithDiscount;
+                
                 foreach (FinalizeOrderCommand.OrderLine orderLine in command.OrderLines.Where(ol => !ol.EnoughStock))
                 {
-                    Result removeOutOfStockResult = order.RemoveOutOfStock
+                    Result removeOutOfStockResult = order.RemoveOutOfStockItems
                     (
                         EntityId.Create(orderLine.ProductId).Data,
                         ProductQuantity.Create(orderLine.OutOfStockQuantity).Data
@@ -48,20 +49,32 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 {
                     Result statusChangeResult = order.SetPendingShippingStatus();
                     if (statusChangeResult.IsError) return statusChangeResult.Error;
-                
-                    OrderStatusSetToPendingShippingIntegrationEvent orderStatusSetToPendingShippingIntegrationEvent = new()
-                    {
-                        OrderId = order.Id,
-                        OrderLines = order.OrderLines
-                            .Select(ol => new OrderStatusSetToPendingShippingIntegrationEvent.OrderLine
-                            {
-                                ProductId = ol.Id,
-                                Quantity = ol.Quantity
-                            }).ToList()
-                    };
-                
-                    order.RaiseEvent(orderStatusSetToPendingShippingIntegrationEvent);
                 }
+                else
+                {
+                    // Nothing to ship so cancelling the order.
+                    Result cancelOrderResult = order.SetCancelledStatus();
+                    if (cancelOrderResult.IsError) return cancelOrderResult.Error;
+                }
+                
+                // Check payment changes (for refund).
+                decimal finalPaymentAmount = order.ProductsCostWithDiscount;
+                decimal deltaPayment = originalPaymentAmount - finalPaymentAmount;
+                
+                OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = new()
+                {
+                    OrderId = order.Id,
+                    // Delivery costs need to be refunded if there is nothing to deliver.
+                    RefundAmount = (order.TotalOrderLineCount > 0) ? deltaPayment : order.FinalAmount,
+                    OrderLines = order.OrderLines
+                        .Select(ol => new OrderFinalizedIntegrationEvent.OrderLine
+                        {
+                            ProductId = ol.Id,
+                            Quantity = ol.Quantity
+                        }).ToList()
+                };
+                
+                order.RaiseEvent(orderFinalizedIntegrationEvent);
             }
             
             // TODO - will need to send an email to customer.

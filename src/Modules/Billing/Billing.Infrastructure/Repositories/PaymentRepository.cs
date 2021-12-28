@@ -30,10 +30,10 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
             .Where(p => p.OrderId == orderId && p.Status == status)
             .ToListAsync(cancellationToken);
 
-        public Task<bool> IsOrderPaidAsync(Guid orderId, CancellationToken cancellationToken)
+        public Task<bool> IsPaymentSuccessAsync(Guid orderId, PaymentType type, CancellationToken cancellationToken)
             =>  _dbContext.Payments.AnyAsync
             (
-                p => p.OrderId == orderId && p.Status == PaymentStatus.Success,
+                p => p.OrderId == orderId && p.Status == PaymentStatus.Success && p.Type == type,
                 cancellationToken
             ); 
     }

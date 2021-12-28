@@ -1,4 +1,5 @@
-﻿using VShop.Modules.Billing.Integration.Events;
+﻿using VShop.Modules.Sales.Integration.Events;
+using VShop.Modules.Billing.Integration.Events;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 
@@ -8,9 +9,12 @@ namespace VShop.Modules.Billing.API.Application
     {
         public static void MapMessageTypes()
         {
-            // Configure integration events
+            // Configure integration events - local
             AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
             AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
+            
+            // Configure integration events - remote
+            AddCustomMap<OrderFinalizedIntegrationEvent>(nameof(OrderFinalizedIntegrationEvent));
         }
     }
 }
