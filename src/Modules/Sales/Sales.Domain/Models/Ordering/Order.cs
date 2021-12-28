@@ -103,7 +103,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 
         public Result SetPaidStatus()
         {
-            if(Status is not OrderStatus.Paid)
+            if(Status is not OrderStatus.Processing)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Paid}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToPaidDomainEvent{ OrderId = Id });
@@ -113,7 +113,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 
         public Result SetPendingShippingStatus()
         {
-            if(Status is not OrderStatus.PendingShipping)
+            if(Status is not OrderStatus.Paid)
                 return Result.ValidationError($"Changing status to '{OrderStatus.PendingShipping}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent{ OrderId = Id });
@@ -123,7 +123,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 
         public Result SetShippedStatus()
         {
-            if(Status is not OrderStatus.Processing)
+            if(Status is not OrderStatus.PendingShipping)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
@@ -179,7 +179,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Status = OrderStatus.Paid;
                     break;
                 case OrderLineOutOfStockRemoved e:
-                    orderLine = new OrderLine(RaiseEvent);
+                    orderLine = FindOrderLine(new EntityId(e.ProductId));
                     ApplyToEntity(orderLine, e);
                     if (orderLine.Quantity == 0) _orderLines.Remove(orderLine);
                     break;
