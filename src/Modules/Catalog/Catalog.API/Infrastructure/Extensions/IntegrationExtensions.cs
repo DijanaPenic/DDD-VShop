@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.Modules.Catalog.API.Application;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.Integration.Services;
+using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
@@ -18,6 +20,9 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
     {
         public static void AddIntegrationServices(this IServiceCollection services, string connectionString)
         {
+            services.AddTransient<IIntegrationEventLogStore, IntegrationEventLogStore>();
+            services.AddTransient<IIntegrationEventService, IntegrationEventService>();
+            
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Catalog";
             
