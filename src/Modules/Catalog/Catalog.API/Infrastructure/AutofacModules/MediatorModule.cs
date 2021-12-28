@@ -1,4 +1,7 @@
 ﻿using Autofac;
+using MediatR;
+
+using VShop.Modules.Catalog.API.Application.EventHandlers;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
 {
@@ -6,29 +9,19 @@ namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            // // Register IMediator
-            // builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
-            //     .AsImplementedInterfaces();
-            //        
-            // builder.Register<ServiceFactory>(ctx =>
-            // {
-            //     IComponentContext c = ctx.Resolve<IComponentContext>();
-            //     return t => c.Resolve(t);
-            // });
-            //
-            // // Register command bus
-            // builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
-            //
-            // // Register command handlers
-            // builder.RegisterAssemblyTypes(typeof(InitiatePaymentCommand).Assembly)
-            //     .AsClosedTypesOf(typeof(IRequestHandler<,>));
-            //
-            // // Register behaviors
-            // builder.RegisterGeneric(typeof(ErrorCommandDecorator<>)).As(typeof(IPipelineBehavior<,>));
-            // builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
-            // builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
-            // builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
-            // builder.RegisterGeneric(typeof(TransactionCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            // Register IMediator
+            builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
+                .AsImplementedInterfaces();
+                   
+            builder.Register<ServiceFactory>(ctx =>
+            {
+                IComponentContext c = ctx.Resolve<IComponentContext>();
+                return t => c.Resolve(t);
+            });
+
+            // Register domain event handlers
+            builder.RegisterAssemblyTypes(typeof(OrderPaidIntegrationEventHandler).Assembly)
+                .AsClosedTypesOf(typeof(INotificationHandler<>));
         }
     }
 }

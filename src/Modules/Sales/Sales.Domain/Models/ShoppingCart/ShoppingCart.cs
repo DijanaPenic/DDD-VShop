@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
         public bool IsShoppingCartEmpty => _shoppingCartItems.Count is 0;
-        public int TotalItemsCount => _shoppingCartItems.Count;
+        public int TotalShoppingCartItemCount => _shoppingCartItems.Count;
         public bool HasMinAmountForCheckout => ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForCheckout;
 
         public ShoppingCart(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
@@ -84,7 +84,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                                                 requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
                 Result increaseProductQuantityResult = shoppingCartItem.IncreaseProductQuantity(quantity);
-                
                 if (increaseProductQuantityResult.IsError) return increaseProductQuantityResult.Error;
             }
             
@@ -117,7 +116,6 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             else
             {
                 Result decreaseProductQuantityResult = shoppingCartItem.DecreaseProductQuantity(quantity);
-
                 if (decreaseProductQuantityResult.IsError) return decreaseProductQuantityResult.Error;
             }
             

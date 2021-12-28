@@ -1,24 +1,26 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public class SetPaidOrderStatusCommandHandler : ICommandHandler<CancelOrderCommand>
+    public class SetPaidOrderStatusCommandHandler : ICommandHandler<SetPaidOrderStatusCommand>
     {
         private readonly IAggregateStore<Order> _orderStore;
 
         public SetPaidOrderStatusCommandHandler(IAggregateStore<Order> orderStore)
             => _orderStore = orderStore;
 
-        public async Task<Result> Handle(CancelOrderCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetPaidOrderStatusCommand command, CancellationToken cancellationToken)
         {
             Order order = await _orderStore.LoadAsync
             (
@@ -31,8 +33,21 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (order.OutboxMessageCount is 0)
             {
-                Result setPaidStatusResult = order.SetPaidStatus();
-                if (setPaidStatusResult.IsError) return setPaidStatusResult.Error;
+                Result statusChangeResult = order.SetPaidStatus();
+                if (statusChangeResult.IsError) return statusChangeResult.Error;
+                
+                OrderStatusSetToPaidIntegrationEvent orderPlacedIntegrationEvent = new()
+                {
+                    OrderId = order.Id,
+                    OrderLines = order.OrderLines.Select(ol => new OrderStatusSetToPaidIntegrationEvent.OrderLine
+                    {
+                        ProductId = ol.Id,
+                        Quantity = ol.Quantity,
+                        Price = ol.UnitPrice
+                    }).ToList()
+                };
+                
+                order.RaiseEvent(orderPlacedIntegrationEvent);
             }
 
             await _orderStore.SaveAndPublishAsync(order, cancellationToken);

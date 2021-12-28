@@ -32,7 +32,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
+      <ProjectReference Include="..\..\Sales\Sales.Integration\Sales.Integration.csproj" />
       <ProjectReference Include="..\Catalog.Infrastructure\Catalog.Infrastructure.csproj" />
+      <ProjectReference Include="..\Catalog.Integration\Catalog.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using VShop.Modules.Sales.Domain.Events;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
@@ -16,6 +17,24 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public OrderLine(Action<IDomainEvent> applier) : base(applier) { }
         
+        public Result RemoveOutOfStock(ProductQuantity value)
+        {
+            if (Quantity - value < 0)
+                return Result.ValidationError($"Cannot decrease quantity by {value}.");
+            
+            RaiseEvent
+            (
+                new OrderLineOutOfStockRemoved
+                {
+                    OrderId = OrderId,
+                    ProductId = Id,
+                    Quantity = value
+                }
+            );
+
+            return Result.Success;
+        }
+        
         protected override void ApplyEvent(IDomainEvent @event)
         {
             switch (@event)
@@ -25,6 +44,9 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     OrderId = new EntityId(e.OrderId);
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
+                    break;
+                case OrderLineOutOfStockRemoved e:
+                    Quantity -= new ProductQuantity(e.Quantity);
                     break;
             }
         }

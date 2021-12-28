@@ -14,7 +14,8 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
     public class Order : AggregateRoot
     {
         private readonly List<OrderLine> _orderLines = new();
-        
+
+        public int TotalOrderLineCount => _orderLines.Count;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_orderLines.Sum(ol => ol.TotalAmount));
         public Price TotalDiscount { get; private set; }
@@ -86,27 +87,20 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
 
             return Result.Success;
         }
+        
+        public Result RemoveOutOfStock(EntityId productId, ProductQuantity quantity)
+        {
+            OrderLine orderLine = FindOrderLine(productId);
+            
+            if (orderLine is null)
+                return Result.ValidationError($"Product with id `{productId}` was not found in the order.");
+            
+            Result removeOutOfStockResult = orderLine.RemoveOutOfStock(quantity);
+            if (removeOutOfStockResult.IsError) return removeOutOfStockResult.Error;
 
-        public Result SetCancelledStatus()
-        {
-            if(Status is not OrderStatus.Processing)
-                return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
-            
-            RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
-            
             return Result.Success;
         }
-        
-        public Result SetShippedStatus()
-        {
-            if(Status is not OrderStatus.Processing)
-                return Result.ValidationError($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
-            
-            RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
-            
-            return Result.Success;
-        }
-        
+
         public Result SetPaidStatus()
         {
             if(Status is not OrderStatus.Paid)
@@ -117,8 +111,43 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             return Result.Success;
         }
 
+        public Result SetPendingShippingStatus()
+        {
+            if(Status is not OrderStatus.PendingShipping)
+                return Result.ValidationError($"Changing status to '{OrderStatus.PendingShipping}' is not allowed. Order Status: '{Status}'.");
+            
+            RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent{ OrderId = Id });
+            
+            return Result.Success;
+        }
+
+        public Result SetShippedStatus()
+        {
+            if(Status is not OrderStatus.Processing)
+                return Result.ValidationError($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
+            
+            RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
+            
+            return Result.Success;
+        }
+        
+        public Result SetCancelledStatus()
+        {
+            if(Status is not OrderStatus.Processing)
+                return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
+            
+            RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
+            
+            return Result.Success;
+        }
+        
+        private OrderLine FindOrderLine(EntityId productId)
+            => OrderLines.SingleOrDefault(ol => ol.Id.Equals(productId));
+
         protected override void ApplyEvent(IDomainEvent @event)
         {
+            OrderLine orderLine;
+            
             switch (@event)
             {
                 case OrderPlacedDomainEvent e:
@@ -133,18 +162,26 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Customer = orderCustomer;
                     break;
                 case OrderLineAddedDomainEvent e:
-                    OrderLine orderLine = new(RaiseEvent);
+                    orderLine = new OrderLine(RaiseEvent);
                     ApplyToEntity(orderLine, e);
                     _orderLines.Add(orderLine);
                     break;
                 case OrderStatusSetToCancelledDomainEvent _:
                     Status = OrderStatus.Cancelled;
                     break;
+                case OrderStatusSetToPendingShippingDomainEvent _:
+                    Status = OrderStatus.PendingShipping;
+                    break;
                 case OrderStatusSetToShippedDomainEvent _:
                     Status = OrderStatus.Shipped;
                     break;
                 case OrderStatusSetToPaidDomainEvent _:
                     Status = OrderStatus.Paid;
+                    break;
+                case OrderLineOutOfStockRemoved e:
+                    orderLine = new OrderLine(RaiseEvent);
+                    ApplyToEntity(orderLine, e);
+                    if (orderLine.Quantity == 0) _orderLines.Remove(orderLine);
                     break;
             }
         }

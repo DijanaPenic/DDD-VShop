@@ -4,6 +4,7 @@ using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Catalog.Integration.Events;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
 
@@ -32,11 +33,12 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<ShippingGracePeriodExpiredDomainEvent>(nameof(ShippingGracePeriodExpiredDomainEvent));
 
             // Configure integration events - local
-            AddCustomMap<OrderPlacedIntegrationEvent>(nameof(OrderPlacedIntegrationEvent));
+            AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
             
             // Configure integration events - remote
             AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
             AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
+            AddCustomMap<OrderStockConfirmedIntegrationEvent>(nameof(OrderStockConfirmedIntegrationEvent));
             
             // Configure commands
             AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));

@@ -8,4 +8,8 @@
         <RootNamespace>VShop.Modules.Catalog.Integration</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
+    </ItemGroup>
+
 </Project>
