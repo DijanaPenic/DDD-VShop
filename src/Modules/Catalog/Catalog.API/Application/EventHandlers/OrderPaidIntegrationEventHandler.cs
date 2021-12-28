@@ -52,10 +52,13 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 });
             }
 
+            // TODO - use constructors for Catalog and Billing integration events.
             OrderStockConfirmedIntegrationEvent orderStockConfirmedIntegrationEvent = new()
             {
                 OrderId = @event.OrderId,
-                OrderLines = confirmedOrderLines
+                OrderLines = confirmedOrderLines,
+                CausationId = @event.MessageId,
+                CorrelationId = @event.CorrelationId
             };
             
             await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>

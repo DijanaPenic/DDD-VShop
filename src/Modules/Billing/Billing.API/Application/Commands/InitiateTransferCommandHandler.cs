@@ -64,7 +64,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
             IIntegrationEvent integrationEvent = paymentTransferResult.IsError 
                 ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
 
-            integrationEvent.CausationId = command.CausationId;
+            integrationEvent.CausationId = command.MessageId;
             integrationEvent.CorrelationId = command.CorrelationId;
 
             await _billingIntegrationEventService.AddAndSaveEventAsync(integrationEvent, cancellationToken);

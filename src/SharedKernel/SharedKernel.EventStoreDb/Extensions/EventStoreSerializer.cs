@@ -26,7 +26,8 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             if (data is not IMessage message) return data;
             
             IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-                
+
+            message.MessageId = metadata.MessageId;
             message.CausationId = metadata.CausationId;
             message.CorrelationId = metadata.CorrelationId;
 

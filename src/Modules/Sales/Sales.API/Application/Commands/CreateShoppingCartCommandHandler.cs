@@ -23,7 +23,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands
+                EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
                 command.MessageId,
                 command.CorrelationId,
                 cancellationToken
@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     EntityId.Create(command.ShoppingCartId).Data,
                     EntityId.Create(command.CustomerId).Data,
                     Discount.Create(command.CustomerDiscount).Data,
-                    command.CausationId,
+                    command.MessageId,
                     command.CorrelationId
                 );
                 if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
