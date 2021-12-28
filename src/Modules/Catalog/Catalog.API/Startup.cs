@@ -27,7 +27,7 @@ namespace VShop.Modules.Catalog.API
             services.AddAutoMapper(typeof(CatalogAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
-            services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
+            services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
             
             // Configure clock service
             services.AddTransient<IClockService, ClockService>();

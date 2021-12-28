@@ -14,9 +14,9 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {
-    public static class EventStoreExtensions
+    public static class IntegrationExtensions
     {
-        public static void AddEventStoreServices(this IServiceCollection services, string connectionString)
+        public static void AddIntegrationServices(this IServiceCollection services, string connectionString)
         {
             EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
             eventStoreSettings.ConnectionName = "Catalog";
