@@ -67,7 +67,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
             integrationEvent.CausationId = command.MessageId;
             integrationEvent.CorrelationId = command.CorrelationId;
 
-            await _billingIntegrationEventService.AddAndSaveEventAsync(integrationEvent, cancellationToken);
+            await _billingIntegrationEventService.SaveEventAsync(integrationEvent, cancellationToken);
             
             return paymentTransferResult.IsError ? paymentTransferResult.Error : Result.Success;
         }

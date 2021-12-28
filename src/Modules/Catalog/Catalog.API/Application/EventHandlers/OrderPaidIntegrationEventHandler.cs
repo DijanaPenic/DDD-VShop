@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -61,15 +62,17 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 CorrelationId = @event.CorrelationId
             };
             
-            await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>
+            Guid transactionId = await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>
             {
                 await _catalogContext.SaveChangesAsync(cancellationToken);
-                await _catalogIntegrationEventService.AddAndSaveEventAsync
+                await _catalogIntegrationEventService.SaveEventAsync
                 (
                     orderStockConfirmedIntegrationEvent,
                     cancellationToken
                 );
             }, cancellationToken);
+
+            await _catalogIntegrationEventService.PublishEventsAsync(transactionId, cancellationToken);
         }
     }
 }

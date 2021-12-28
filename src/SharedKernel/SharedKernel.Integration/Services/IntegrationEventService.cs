@@ -51,8 +51,12 @@ namespace VShop.SharedKernel.Integration.Services
                 try
                 {
                     await _integrationEventLogRepository.MarkEventAsInProgressAsync(pendingEvent.EventId, cancellationToken);
-                    
-                    object target = JsonConvert.DeserializeObject(pendingEvent.Content, MessageTypeMapper.ToType(pendingEvent.EventTypeName));
+
+                    object target = JsonConvert.DeserializeObject
+                    (
+                        pendingEvent.Content,
+                        MessageTypeMapper.ToType(pendingEvent.EventTypeName)
+                    );
                     await _integrationEventRepository.SaveAsync((IIntegrationEvent)target, cancellationToken);
                     
                     await _integrationEventLogRepository.MarkEventAsPublishedAsync(pendingEvent.EventId, cancellationToken);
@@ -71,11 +75,11 @@ namespace VShop.SharedKernel.Integration.Services
             }
         }
 
-        public async Task AddAndSaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
+        public async Task SaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
             _logger.Information
             (
-                "Enqueuing integration event {IntegrationEventId} to repository ({IntegrationEvent})",
+                "Enqueuing integration event {IntegrationEventId} - ({IntegrationEvent})",
                 @event.MessageId, @event
             );
             
