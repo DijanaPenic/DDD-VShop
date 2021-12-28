@@ -37,6 +37,7 @@ namespace VShop.Modules.Sales.API
             services.AddSchedulerServices(Configuration.GetConnectionString("PostgresDb"));
             
             // Configure Json serializer
+            // TODO - move to some other location.
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 DateParseHandling = DateParseHandling.None,

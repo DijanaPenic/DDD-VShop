@@ -12,7 +12,6 @@
       <PackageReference Include="EFCore.NamingConventions" Version="6.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="NodaTime" Version="3.0.9" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.1" />

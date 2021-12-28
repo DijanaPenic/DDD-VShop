@@ -1,4 +1,3 @@
-using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -17,30 +16,21 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
 {
     public class OrderPaidIntegrationEventHandler : IIntegrationEventHandler<OrderStatusSetToPaidIntegrationEvent>
     {
-        private readonly ILogger _logger;
         private readonly CatalogContext _catalogContext;
         private readonly IIntegrationEventService _catalogIntegrationEventService;
 
         public OrderPaidIntegrationEventHandler
         (
-            ILogger logger,
             CatalogContext catalogContext,
             IIntegrationEventService catalogIntegrationEventService
         )
         {
-            _logger = logger;
             _catalogContext = catalogContext;
             _catalogIntegrationEventService = catalogIntegrationEventService;
         }
 
         public async Task Handle(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
         {
-            _logger.Information
-            (
-                "Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", 
-                @event.OrderId, @event
-            );
-            
             IList<OrderStockConfirmedIntegrationEvent.OrderLine> confirmedOrderLines = 
                 new List<OrderStockConfirmedIntegrationEvent.OrderLine>();
 
