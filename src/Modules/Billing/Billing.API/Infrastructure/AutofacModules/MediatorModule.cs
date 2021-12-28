@@ -2,9 +2,12 @@
 using Autofac;
 
 using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Messaging.Events.Publishing;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Billing.API.Application.Commands;
+using VShop.Modules.Billing.API.Application.EventHandlers;
 
 namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
 {
@@ -21,13 +24,20 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
                 IComponentContext c = ctx.Resolve<IComponentContext>();
                 return t => c.Resolve(t);
             });
+            
+            // Register event bus
+            builder.RegisterType<EventBus>().As<IEventBus>().SingleInstance();
 
             // Register command bus
             builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
 
             // Register command handlers
-            builder.RegisterAssemblyTypes(typeof(InitiatePaymentCommand).Assembly)
+            builder.RegisterAssemblyTypes(typeof(InitiateTransferCommand).Assembly)
                 .AsClosedTypesOf(typeof(IRequestHandler<,>));
+
+            // Register domain event handlers
+            builder.RegisterAssemblyTypes(typeof(OrderStockConfirmedIntegrationEventHandler).Assembly)
+                .AsClosedTypesOf(typeof(INotificationHandler<>));
 
             // Register behaviors
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<>)).As(typeof(IPipelineBehavior<,>));

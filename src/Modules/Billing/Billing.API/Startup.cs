@@ -29,7 +29,7 @@ namespace VShop.Modules.Billing.API
             services.AddAutoMapper(typeof(PaymentAutomapperProfile));
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
-            services.AddEventStoreServices(Configuration.GetConnectionString("EventStoreDb"));
+            services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
 
             // Configure billing services
             services.AddTransient<IPaymentService, FakePaymentService>();

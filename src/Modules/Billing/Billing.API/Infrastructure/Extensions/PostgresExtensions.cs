@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Billing.Infrastructure;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
@@ -17,6 +18,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             ));
             services.AddDbContext<BillingContext>();
             services.AddDbContext<IntegrationContext>();
+            services.AddDbContext<SubscriptionContext>();
             
             // Register the main dbContext provider.
             services.AddScoped<MainDbContextProvider>(provider => provider.GetService<BillingContext>);
