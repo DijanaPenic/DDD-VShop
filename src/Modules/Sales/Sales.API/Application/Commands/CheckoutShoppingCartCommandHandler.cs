@@ -52,7 +52,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 ShoppingCartCheckoutRequestedDomainEvent checkoutDomainEvent = shoppingCart
                     .GetOutboxMessages<ShoppingCartCheckoutRequestedDomainEvent>()
                     .SingleOrDefault();
-                if (checkoutDomainEvent is null) return Result.NotFoundError("ShoppingCartCheckoutRequestedDomainEvent not found.");
+                
+                if (checkoutDomainEvent is null)
+                    return Result.NotFoundError("ShoppingCartCheckoutRequestedDomainEvent not found.");
                 
                 orderId = checkoutDomainEvent.OrderId;
             }

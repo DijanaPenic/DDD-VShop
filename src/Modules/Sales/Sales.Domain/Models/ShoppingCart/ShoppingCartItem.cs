@@ -77,7 +77,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         
         public static class Settings
         {
-            public const decimal MaxQuantityPerProduct = 10;
+            public const int MaxQuantityPerProduct = 10;
         }
     }
 }

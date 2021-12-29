@@ -119,25 +119,40 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         [CustomizedAutoData]
         public void Product_quantity_increment_fails_when_price_mismatch
         (
-            EntityId shoppingCartId,
-            EntityId customerId,
-            Discount customerDiscount,
+            ShoppingCart sut,
             EntityId productId,
             ProductQuantity productQuantity,
-            Price productPrice,
-            Guid causationId,
-            Guid correlationId
+            Price productPrice
         )
         {
             // Arrange
-            ShoppingCart sut = ShoppingCart
-                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
             sut.AddProductQuantity(productId, productQuantity, productPrice);
-
             Price newProductPrice = Price.Create(productPrice.Value + 1).Data;
             
             // Act
             Result result = sut.AddProductQuantity(productId, productQuantity, newProductPrice);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Product_quantity_increment_fails_when_per_product_quantity_is_more_than_allowed
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            Price productPrice
+        )
+        {
+            // Arrange
+            ProductQuantity productQuantity = ProductQuantity.Create(ShoppingCartItem.Settings.MaxQuantityPerProduct).Data;
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
+
+            ProductQuantity newProductQuantity = ProductQuantity.Create(1).Data;
+            
+            // Act
+            Result result = sut.AddProductQuantity(productId, newProductQuantity, productPrice);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -215,7 +230,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Product_quantity_removal_decreases_product_quantity           
+        public void Product_quantity_removal_decreases_the_existing_product_quantity           
         (
             ShoppingCart sut,
             EntityId productId,
@@ -281,6 +296,24 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Assert
             result.IsError.Should().BeFalse();
             sut.DeliveryCost.Value.Should().Be(ShoppingCart.Settings.DefaultDeliveryCost);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Decreasing_the_existing_product_quantity_fails_when_too_high_removal_quantity
+        (
+            ShoppingCart shoppingCart
+        )
+        {
+            // Arrange
+            ShoppingCartItem sut = shoppingCart.Items[0];
+            ProductQuantity productQuantity = ProductQuantity.Create(sut.Quantity + 1).Data;
+
+            // Act
+            Result result = sut.DecreaseQuantity(productQuantity);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
         }
         
         [Theory]

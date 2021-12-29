@@ -9,6 +9,13 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
 {
     public class IntegrationEventLog : DbEntityBase
     {
+        public Guid EventId { get; }
+        public string EventTypeName { get; }
+        public EventState State { get; set; }
+        public int TimesSent { get; set; }
+        public string Content { get; }
+        public Guid TransactionId { get; }
+        
         public IntegrationEventLog() { } // Needed for database migrations.
         public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
         {
@@ -19,11 +26,5 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
             TimesSent = 0;
             TransactionId = transactionId;
         }
-        public Guid EventId { get; }
-        public string EventTypeName { get; }
-        public EventState State { get; set; }
-        public int TimesSent { get; set; }
-        public string Content { get; }
-        public Guid TransactionId { get; }
     }
 }

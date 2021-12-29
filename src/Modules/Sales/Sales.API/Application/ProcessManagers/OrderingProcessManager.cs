@@ -1,5 +1,6 @@
-﻿using NodaTime;
+﻿using System;
 using System.Linq;
+using NodaTime;
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
@@ -18,7 +19,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public EntityId OrderId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
         
-        public OrderingProcessManager()
+        public OrderingProcessManager(Guid causationId, Guid correlationId) : base(causationId, correlationId)
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);
@@ -31,7 +32,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<ShippingGracePeriodExpiredDomainEvent>(Handle);
         }
 
-        private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event) 
+        private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, Instant _) 
             => RaiseCommand(new PlaceOrderCommand
             {
                 OrderId = OrderId,
@@ -50,7 +51,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             );
         }
         
-        private void Handle(PaymentGracePeriodExpiredDomainEvent @event)
+        private void Handle(PaymentGracePeriodExpiredDomainEvent @event, Instant _)
         {
             // User didn't manage to pay so we need to cancel the order.
             if (Status is OrderingProcessManagerStatus.OrderPaymentFailed)
@@ -73,7 +74,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             );
         }
         
-        private void Handle(OrderStockProcessingGracePeriodExpiredDomainEvent @event)
+        private void Handle(OrderStockProcessingGracePeriodExpiredDomainEvent @event, Instant _)
         {
             if (Status is OrderingProcessManagerStatus.OrderStockConfirmed) return;
             
@@ -105,7 +106,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             );
         }
 
-        private void Handle(ShippingGracePeriodExpiredDomainEvent @event)
+        private void Handle(ShippingGracePeriodExpiredDomainEvent @event, Instant _)
         {
             // The order is already shipped so there is nothing to address.
             if (Status is OrderingProcessManagerStatus.OrderShipped) return;

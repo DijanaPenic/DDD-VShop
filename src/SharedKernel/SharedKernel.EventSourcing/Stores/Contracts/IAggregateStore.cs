@@ -6,12 +6,21 @@ using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 {
-    public interface IAggregateStore<TA>
+    public interface IAggregateStore<TAggregate>
     {
-        Task SaveAndPublishAsync(TA aggregate, CancellationToken cancellationToken = default);
-        Task SaveAsync(TA aggregate, CancellationToken cancellationToken = default);
+        Task SaveAndPublishAsync
+        (
+            TAggregate aggregate,
+            CancellationToken cancellationToken = default
+        );
 
-        Task<TA> LoadAsync
+        Task SaveAsync
+        (
+            TAggregate aggregate,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<TAggregate> LoadAsync
         (
             EntityId aggregateId,
             Guid? causationId = default,

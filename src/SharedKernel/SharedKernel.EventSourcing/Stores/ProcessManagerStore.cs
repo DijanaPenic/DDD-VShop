@@ -18,7 +18,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
+    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -45,18 +45,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             try
             {
-                // Dispatch immediate commands
-                foreach (IBaseCommand command in processManager.Outbox.GetCommandsForImmediateDispatch())
-                {
-                    object commandResult = await _commandBus.SendAsync(command, cancellationToken);
-                    
-                    if (commandResult is IResult { Value: ApplicationError error })
-                        throw new Exception(error.ToString());
-                }
-                
-                // Schedule deferred commands and events
-                foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetMessagesForDeferredDispatch())
-                    await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
+                await PublishAsync(processManager, cancellationToken);
             }
             finally
             {
@@ -64,18 +53,32 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
         
+        // TODO - remove default for cancellationToken.
         public async Task SaveAsync(TProcess processManager, CancellationToken cancellationToken = default)
         {
             await AppendMessagesToStreamAsync(processManager, cancellationToken);
             processManager.Clear();
         }
-        
-        public async Task<TProcess> LoadAsync(Guid processManagerId, CancellationToken cancellationToken = default)
+
+        public async Task<TProcess> LoadAsync
+        (
+            Guid processManagerId,
+            Guid? causationId = default,
+            Guid? correlationId = default,
+            CancellationToken cancellationToken = default
+        )
         {
             IReadOnlyList<IMessage> inboxMessages = await LoadInboxAsync(processManagerId, cancellationToken);
             IReadOnlyList<IMessage> outboxMessages = await LoadOutboxAsync(processManagerId, cancellationToken);
             
-            TProcess processManager = new();
+            TProcess processManager = (TProcess)Activator.CreateInstance
+            (
+                typeof(TProcess),
+                causationId ?? Guid.Empty, correlationId ?? Guid.Empty
+            );
+            
+            if (processManager is null) throw new Exception("Process manager instance creation failed.");
+            
             processManager.Load(inboxMessages, outboxMessages);
 
             return processManager;
@@ -106,7 +109,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                processManager.Inbox.GetMessages(),
+                processManager.Inbox.GetEvents(),
                 _clockService.Now,
                 cancellationToken
             );
@@ -119,6 +122,22 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 _clockService.Now,
                 cancellationToken
             );
+        }
+        
+        public async Task PublishAsync(TProcess processManager, CancellationToken cancellationToken = default)
+        {
+            // Dispatch immediate commands
+            foreach (IBaseCommand command in processManager.Outbox.GetCommandsForImmediateDispatch())
+            {
+                object commandResult = await _commandBus.SendAsync(command, cancellationToken);
+                    
+                if (commandResult is IResult { Value: ApplicationError error })
+                    throw new Exception(error.ToString());
+            }
+                
+            // Schedule deferred commands and events
+            foreach (IScheduledMessage scheduledCommand in processManager.Outbox.GetMessagesForDeferredDispatch())
+                await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
         }
         
         private string GetInboxStreamName(Guid processManagerId)

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
@@ -41,8 +40,13 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         
         public void Load(IEnumerable<IBaseEvent> history)
         {
+            // Truncate events following the specified causationId.
+            IList<IBaseEvent> historyList = history.ToList()
+                .RemoveRangeAfterLast(e => e.CausationId == CausationId);
+            
+            // Restore aggregate state (identified by causationId param).
             (IEnumerable<IBaseEvent> pendingEvents, IEnumerable<IBaseEvent> processedEvents) = 
-                history.Split(e => e.CausationId == CausationId);
+                historyList.Split(e => e.CausationId == CausationId);
             
             foreach (IBaseEvent @event in processedEvents)
             {

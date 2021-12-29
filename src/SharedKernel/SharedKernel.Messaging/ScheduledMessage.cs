@@ -1,5 +1,4 @@
-﻿using System;
-using NodaTime;
+﻿using NodaTime;
 using Newtonsoft.Json;
 
 namespace VShop.SharedKernel.Messaging
@@ -11,18 +10,23 @@ namespace VShop.SharedKernel.Messaging
         public Instant ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage() { } // Needs [JsonConstructor] attribute because this constructor is protected.
+        protected ScheduledMessage(string body, string typeName, Instant scheduledTime)
+        {
+            Body = body;
+            TypeName = typeName;
+            ScheduledTime = scheduledTime;
+        }
 
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
             Body = JsonConvert.SerializeObject(message);
-            TypeName = GetMessageTypeName(message.GetType());
+            TypeName = MessageTypeMapper.ToName(message.GetType());
             ScheduledTime = scheduledTime;
             CausationId = message.CausationId;
             CorrelationId = message.CorrelationId;
         }
-
-        public static string GetMessageTypeName(Type type) => MessageTypeMapper.ToName(type);
+        
+        public object GetMessage() => JsonConvert.DeserializeObject(Body, MessageTypeMapper.ToType(TypeName));  
     }
     
     public interface IScheduledMessage : IMessage
@@ -30,5 +34,6 @@ namespace VShop.SharedKernel.Messaging
         public string Body { get; }
         public string TypeName { get; }
         public Instant ScheduledTime { get; }
+        object GetMessage();
     }
 }

@@ -34,9 +34,17 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 "{Process}: handling {Event} event",
                 typeof(TProcess).Name, @event.GetType().Name
             );
-            
-            TProcess processManager = await _processManagerStore.LoadAsync(processId, cancellationToken);
-            processManager.Transition(@event, _clockService.Now);
+
+            TProcess processManager = await _processManagerStore.LoadAsync
+            (
+                processId,
+                @event.MessageId,
+                @event.CorrelationId,
+                cancellationToken
+            );
+
+            if (processManager.Outbox.MessagesCount is 0)
+                processManager.Transition(@event, _clockService.Now);
             
             await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken);
         }
