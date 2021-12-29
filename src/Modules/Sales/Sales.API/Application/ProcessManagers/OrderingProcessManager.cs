@@ -9,7 +9,7 @@ using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
-// TODO - email alert support
+// TODO - email alert support.
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
 {
     public class OrderingProcessManager : ProcessManager

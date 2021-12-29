@@ -1,13 +1,16 @@
 using Xunit;
 using System;
+using System.Linq;
 using FluentAssertions;
 
+using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.Modules.Sales.Tests.Customizations;
+using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Tests.Customizations;
 
 namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 {
@@ -15,7 +18,84 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
     {
         [Theory]
         [CustomizedAutoData]
-        public void Product_insert_fails_when_shopping_cart_is_closed_for_updates
+        public void Shopping_cart_creation_succeeds
+        (
+            EntityId shoppingCartId,
+            EntityId customerId,
+            Discount customerDiscount,
+            Guid causationId,
+            Guid correlationId
+        )
+        {
+            // Act
+            Result<ShoppingCart> result = ShoppingCart.Create
+            (
+                shoppingCartId,
+                customerId,
+                customerDiscount,
+                causationId,
+                correlationId
+            );
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+
+            ShoppingCart shoppingCart = result.Data;
+            shoppingCart.Should().NotBeNull();
+            shoppingCart.Status.Should().Be(ShoppingCartStatus.New);
+            shoppingCart.DeliveryCost.Value.Should().Be(ShoppingCart.Settings.DefaultDeliveryCost);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Product_quantity_increment_adds_a_new_product_to_the_shopping_cart
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            ProductQuantity productQuantity,
+            Price productPrice
+        )
+        {
+            // Act
+            Result result = sut.AddProductQuantity(productId, productQuantity, productPrice);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            ShoppingCartItem shoppingCartItem = sut.Items
+                .FirstOrDefault(p => Equals(p.Id, productId));
+            shoppingCartItem.Should().NotBeNull();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Product_quantity_increment_increases_the_existing_product_quantity           
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            Price productPrice
+        )
+        {
+            // Arrange
+            sut.AddProductQuantity(productId, ProductQuantity.Create(2).Data, productPrice);
+            ProductQuantity addQuantity = ProductQuantity.Create(1).Data;
+
+            // Act
+            Result result = sut.AddProductQuantity(productId, addQuantity, productPrice);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            ShoppingCartItem shoppingCartItem = sut.Items
+                .FirstOrDefault(p => Equals(p.Id, productId));
+            shoppingCartItem.Should().NotBeNull();
+            shoppingCartItem!.Quantity.Value.Should().Be(3);
+        }
+
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void  Product_quantity_increment_fails_when_shopping_cart_is_closed_for_updates
         (
             ShoppingCart sut,
             EntityId orderId,
@@ -26,11 +106,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         {
             // Arrange
             IClockService clockService = new ClockService();
-
             sut.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
 
             // Act
-            Result result = sut.AddProduct(productId, productQuantity, productPrice);
+            Result result = sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -38,7 +117,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 
         [Theory]
         [CustomizedAutoData]
-        public void Product_quantity_increment_fails_when_adding_product_with_different_price
+        public void Product_quantity_increment_fails_when_price_mismatch
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -53,12 +132,12 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             ShoppingCart sut = ShoppingCart
                 .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
-            sut.AddProduct(productId, productQuantity, productPrice);
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
 
             Price newProductPrice = Price.Create(productPrice.Value + 1).Data;
             
             // Act
-            Result result = sut.AddProduct(productId, productQuantity, newProductPrice);
+            Result result = sut.AddProductQuantity(productId, productQuantity, newProductPrice);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -66,7 +145,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Delivery_cost_is_applied_when_adding_product_and_not_enough_purchase_amount
+        public void Delivery_cost_is_applied_when_adding_product_quantity_and_not_enough_purchase_amount
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -83,7 +162,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
 
             // Act
-            Result result = sut.AddProduct(productId, productQuantity, productPrice);
+            Result result = sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -92,7 +171,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Delivery_cost_is_zero_when_adding_product_and_enough_purchase_amount
+        public void Delivery_cost_is_zero_when_adding_product_quantity_and_enough_purchase_amount
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -109,7 +188,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
 
             // Act
-            Result result = sut.AddProduct(productId, productQuantity, productPrice);
+            Result result = sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -118,17 +197,59 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Product_removal_fails_when_shopping_cart_is_closed_for_updates(ShoppingCart sut, EntityId orderId)
+        public void Product_quantity_removal_removes_product_from_the_shopping_cart(ShoppingCart sut)
+        {
+            // Arrange
+            ShoppingCartItem shoppingCartItem = sut.Items[0];
+            
+            // Act
+            Result result = sut.RemoveProductQuantity(shoppingCartItem.Id, shoppingCartItem.Quantity);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            shoppingCartItem = sut.Items
+                .FirstOrDefault(p => Equals(p.Id, shoppingCartItem.Id));
+            shoppingCartItem.Should().BeNull();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Product_quantity_removal_decreases_product_quantity           
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            Price productPrice
+        )
+        {
+            // Arrange
+            sut.AddProductQuantity(productId, ProductQuantity.Create(2).Data, productPrice);
+            ProductQuantity removeQuantity = ProductQuantity.Create(1).Data;
+
+            // Act
+            Result result = sut.RemoveProductQuantity(productId, removeQuantity);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            ShoppingCartItem shoppingCartItem = sut.Items
+                .FirstOrDefault(p => Equals(p.Id, productId));
+            shoppingCartItem.Should().NotBeNull();
+            shoppingCartItem!.Quantity.Value.Should().Be(1);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Product_quantity_removal_fails_when_shopping_cart_is_closed_for_updates(ShoppingCart sut, EntityId orderId)
         {
             // Arrange
             IClockService clockService = new ClockService();
-
             sut.RequestCheckout(orderId, clockService.Now);
             
             ShoppingCartItem shoppingCartItem = sut.Items[0];
             
             // Act
-            Result result = sut.RemoveProduct(shoppingCartItem.Id, shoppingCartItem.Quantity);
+            Result result = sut.RemoveProductQuantity(shoppingCartItem.Id, shoppingCartItem.Quantity);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -136,7 +257,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Product_removal_increases_delivery_cost_when_not_enough_purchase_amount
+        public void Product_quantity_removal_increases_delivery_cost_when_not_enough_purchase_amount
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -152,10 +273,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             ProductQuantity productQuantity = ProductQuantity.Create(2).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
             
-            sut.AddProduct(productId, productQuantity, productPrice);
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
 
             // Act
-            Result result = sut.RemoveProduct(productId, ProductQuantity.Create(1).Data);
+            Result result = sut.RemoveProductQuantity(productId, ProductQuantity.Create(1).Data);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -164,7 +285,19 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Delete_fails_for_already_deleted_shopping_cart(ShoppingCart sut)
+        public void Shopping_cart_delete_succeeds(ShoppingCart sut)
+        {
+            // Act
+            Result result = sut.RequestDelete();
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            sut.Status.Should().Be(ShoppingCartStatus.Closed);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Shopping_cart_delete_fails_for_already_deleted_shopping_cart(ShoppingCart sut)
         {
             // Arrange
             sut.RequestDelete();
@@ -175,10 +308,111 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Assert
             result.IsError.Should().BeTrue();
         }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_customer_contact_information_succeeds
+        (
+            ShoppingCart shoppingCart,
+            FullName fullName,
+            EmailAddress emailAddress,
+            PhoneNumber phoneNumber,
+            GenderType genderType
+        )
+        {
+            // Arrange
+            ShoppingCartCustomer sut = shoppingCart.Customer;
+            
+            // Act
+            Result result = sut.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_customer_contact_information_fails_when_shopping_cart_is_closed_for_updates
+        (
+            ShoppingCart shoppingCart,
+            EntityId orderId,
+            FullName fullName,
+            EmailAddress emailAddress,
+            PhoneNumber phoneNumber,
+            GenderType genderType
+        )
+        {
+            // Arrange
+            IClockService clockService = new ClockService();
+            ShoppingCartCustomer sut = shoppingCart.Customer;
+
+            shoppingCart.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
+
+            // Act
+            Result result = sut.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_customer_delivery_address_succeeds
+        (
+            ShoppingCart shoppingCart,
+            Address deliveryAddress
+        )
+        {
+            // Arrange
+            ShoppingCartCustomer sut = shoppingCart.Customer;
+            
+            // Act
+            Result result = sut.SetDeliveryAddress(deliveryAddress);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_customer_delivery_address_fails_when_shopping_cart_is_closed_for_updates
+        (
+            ShoppingCart shoppingCart,
+            EntityId orderId,
+            Address deliveryAddress
+        )
+        {
+            // Arrange
+            IClockService clockService = new ClockService();
+            ShoppingCartCustomer sut = shoppingCart.Customer;
+
+            shoppingCart.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
+
+            // Act
+            Result result = sut.SetDeliveryAddress(deliveryAddress);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Shopping_cart_checkout_succeeds(ShoppingCart sut, EntityId orderId)
+        {
+            // Arrange
+            IClockService clockService = new ClockService();
+
+            // Act
+            Result result = sut.RequestCheckout(orderId, clockService.Now);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            sut.Status.Should().Be(ShoppingCartStatus.PendingCheckout);
+        }
 
         [Theory]
         [CustomizedAutoData]
-        public void Checkout_fails_when_shopping_cart_is_empty
+        public void Shopping_cart_checkout_fails_when_shopping_cart_is_empty
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -203,7 +437,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Checkout_fails_when_not_enough_amount
+        public void Shopping_cart_checkout_fails_when_not_enough_amount
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -223,7 +457,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Data;
             
-            sut.AddProduct(productId, productQuantity, productPrice);
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Act
             Result result = sut.RequestCheckout(orderId, clockService.Now);
@@ -234,7 +468,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Checkout_fails_when_not_in_awaiting_confirmation_status
+        public void Shopping_cart_checkout_fails_when_not_in_awaiting_confirmation_status
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -252,7 +486,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             
             ShoppingCart sut = ShoppingCart
                 .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
-            sut.AddProduct(productId, productQuantity, productPrice);
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Act
             Result result = sut.RequestCheckout(orderId, clockService.Now);

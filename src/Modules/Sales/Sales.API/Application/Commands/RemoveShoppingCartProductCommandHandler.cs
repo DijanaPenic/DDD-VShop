@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (shoppingCart.OutboxMessageCount is 0)
             {
-                Result removeProductResult = shoppingCart.RemoveProduct
+                Result removeProductResult = shoppingCart.RemoveProductQuantity
                 (
                     EntityId.Create(command.ProductId).Data,
                     ProductQuantity.Create(command.Quantity).Data

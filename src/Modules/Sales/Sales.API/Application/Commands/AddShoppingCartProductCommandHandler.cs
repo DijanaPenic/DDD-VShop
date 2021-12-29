@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (shoppingCart.OutboxMessageCount is 0)
             {
-                Result addProductResult = shoppingCart.AddProduct
+                Result addProductResult = shoppingCart.AddProductQuantity
                 (
                     EntityId.Create(command.ShoppingCartItem.ProductId).Data,
                     ProductQuantity.Create(command.ShoppingCartItem.Quantity).Data,

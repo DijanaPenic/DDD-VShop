@@ -133,7 +133,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         
         public Result SetCancelledStatus()
         {
-            if(Status is not OrderStatus.Processing or OrderStatus.Paid)
+            if(Status is not (OrderStatus.Processing or OrderStatus.Paid))
                 return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
             
             RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });

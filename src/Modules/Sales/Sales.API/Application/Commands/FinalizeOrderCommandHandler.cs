@@ -35,6 +35,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 decimal originalPaymentAmount = order.ProductsCostWithDiscount;
                 
+                // Remove out of stock items from the order.
                 foreach (FinalizeOrderCommand.OrderLine orderLine in command.OrderLines.Where(ol => !ol.EnoughStock))
                 {
                     Result removeOutOfStockResult = order.RemoveOutOfStockItems
@@ -47,6 +48,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
                 if (order.TotalOrderLineCount > 0)
                 {
+                    // The order is ready for shipping. 
                     Result statusChangeResult = order.SetPendingShippingStatus();
                     if (statusChangeResult.IsError) return statusChangeResult.Error;
                 }

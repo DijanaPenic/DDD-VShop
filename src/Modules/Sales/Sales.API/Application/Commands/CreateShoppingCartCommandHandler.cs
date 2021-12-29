@@ -44,7 +44,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 shoppingCart = createShoppingCartResult.Data;
                 foreach (AddShoppingCartItem shoppingCartItem in command.ShoppingCartItems)
                 {
-                    Result addProductResult = shoppingCart.AddProduct
+                    Result addProductResult = shoppingCart.AddProductQuantity
                     (
                         EntityId.Create(shoppingCartItem.ProductId).Data,
                         ProductQuantity.Create(shoppingCartItem.Quantity).Data,

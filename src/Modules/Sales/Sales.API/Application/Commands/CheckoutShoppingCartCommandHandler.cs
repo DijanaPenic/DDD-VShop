@@ -48,6 +48,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             }
             else
             {
+                // TODO - potentially set OrderId on shopping cart.
                 ShoppingCartCheckoutRequestedDomainEvent checkoutDomainEvent = shoppingCart
                     .GetOutboxMessages<ShoppingCartCheckoutRequestedDomainEvent>()
                     .SingleOrDefault();
@@ -72,6 +73,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         }
     }
     
+    // TODO - rename.
     public record CheckoutOrder
     {
         public Guid OrderId { get; }

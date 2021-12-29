@@ -57,7 +57,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return shoppingCart;
         }
         
-        public Result AddProduct(EntityId productId, ProductQuantity quantity, Price unitPrice)
+        public Result AddProductQuantity(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
                 return Result.ValidationError($"Adding product for the shopping cart in '{Status}' status is not allowed.");
@@ -83,7 +83,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     return Result.ValidationError(@$"Product's quantity cannot be increased - shopping cart already contains the 
                                                 requested product but with different unit price: {shoppingCartItem.UnitPrice}");
 
-                Result increaseProductQuantityResult = shoppingCartItem.IncreaseProductQuantity(quantity);
+                Result increaseProductQuantityResult = shoppingCartItem.IncreaseQuantity(quantity);
                 if (increaseProductQuantityResult.IsError) return increaseProductQuantityResult.Error;
             }
             
@@ -92,7 +92,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Result.Success;
         }
         
-        public Result RemoveProduct(EntityId productId, ProductQuantity quantity)
+        public Result RemoveProductQuantity(EntityId productId, ProductQuantity quantity)
         {
             if(_isClosedForUpdates)
                 return Result.ValidationError($"Removing product from the shopping cart in '{Status}' status is not allowed.");
@@ -115,7 +115,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             }
             else
             {
-                Result decreaseProductQuantityResult = shoppingCartItem.DecreaseProductQuantity(quantity);
+                Result decreaseProductQuantityResult = shoppingCartItem.DecreaseQuantity(quantity);
                 if (decreaseProductQuantityResult.IsError) return decreaseProductQuantityResult.Error;
             }
             

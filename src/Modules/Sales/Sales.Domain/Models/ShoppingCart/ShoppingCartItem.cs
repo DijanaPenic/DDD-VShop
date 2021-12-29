@@ -20,7 +20,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public ShoppingCartItem(Action<IDomainEvent> applier) : base(applier) { }
         
-        public Result IncreaseProductQuantity(ProductQuantity value)
+        public Result IncreaseQuantity(ProductQuantity value)
         {
             if (Quantity + value > Settings.MaxQuantityPerProduct)
                 return Result.ValidationError($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
@@ -38,7 +38,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             return Result.Success;
         }
         
-        public Result DecreaseProductQuantity(ProductQuantity value)
+        public Result DecreaseQuantity(ProductQuantity value)
         {
             if (Quantity - value <= 0)
                 return Result.ValidationError($"Cannot decrease quantity by {value}.");
