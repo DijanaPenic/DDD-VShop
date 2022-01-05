@@ -35,7 +35,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 
         public async Task SampleAsync()
             => _sample = await IntegrationTestsFixture.ExecuteServiceAsync<TDatabase, TSample>
-                (dbContext => _sampling(dbContext));
+                (
+                    dbContext => _sampling(dbContext)
+                );
 
         public string DescribeFailureTo() => _validationError;
     }

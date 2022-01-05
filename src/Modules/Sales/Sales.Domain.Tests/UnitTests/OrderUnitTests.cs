@@ -15,12 +15,12 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
     {
         [Theory]
         [CustomizedAutoData]
-        public void Order_creation_succeeds
+        public void Creates_an_order
         (
             EntityId orderId,
             Price deliveryCost,
-            Price totalDiscount,
             EntityId customerId,
+            Discount customerDiscount,
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
@@ -34,8 +34,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             (
                 orderId,
                 deliveryCost,
-                totalDiscount,
                 customerId,
+                customerDiscount,
                 fullName,
                 emailAddress,
                 phoneNumber,
@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Adding_a_new_order_line_to_order_succeeds
+        public void Adds_a_new_order_line_to_order
         (
             Order sut,
             EntityId productId,
@@ -75,7 +75,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Removing_out_of_stock_items_from_order_succeeds
+        public void Removes_out_of_stock_items_from_order
         (
             Order sut,
             EntityId productId,
@@ -120,7 +120,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_processing_to_paid_succeeds(Order sut)
+        public void Changes_status_from_processing_to_paid(Order sut)
         {
             // Act
             Result result = sut.SetPaidStatus();

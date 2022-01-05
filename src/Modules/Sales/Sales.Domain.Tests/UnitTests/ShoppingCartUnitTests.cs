@@ -18,7 +18,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
     {
         [Theory]
         [CustomizedAutoData]
-        public void Shopping_cart_creation_succeeds
+        public void Creates_a_new_shopping_cart
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -318,7 +318,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Shopping_cart_delete_succeeds(ShoppingCart sut)
+        public void Deletes_the_shopping_cart(ShoppingCart sut)
         {
             // Act
             Result result = sut.RequestDelete();
@@ -344,7 +344,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Setting_customer_contact_information_succeeds
+        public void Sets_customer_contact_information
         (
             ShoppingCart shoppingCart,
             FullName fullName,
@@ -390,7 +390,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Setting_customer_delivery_address_succeeds
+        public void Sets_customer_delivery_address
         (
             ShoppingCart shoppingCart,
             Address deliveryAddress
@@ -430,7 +430,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Shopping_cart_checkout_succeeds(ShoppingCart sut, EntityId orderId)
+        public void Checkouts_the_shopping_cart(ShoppingCart sut, EntityId orderId)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -458,8 +458,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = ShoppingCart
-                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
+            ShoppingCart sut = ShoppingCart.Create(shoppingCartId, customerId, customerDiscount, 
+                causationId, correlationId).Data;
 
             // Act
             Result result = sut.RequestCheckout(orderId, clockService.Now);
@@ -484,8 +484,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = ShoppingCart
-                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
+            ShoppingCart sut = ShoppingCart.Create(shoppingCartId, customerId, customerDiscount, 
+                causationId, correlationId).Data;
             
             ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
             Price productPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForCheckout - 1).Data;
@@ -517,8 +517,8 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            ShoppingCart sut = ShoppingCart
-                .Create(shoppingCartId, customerId, customerDiscount, causationId, correlationId).Data;
+            ShoppingCart sut = ShoppingCart.Create(shoppingCartId, customerId, customerDiscount, 
+                causationId, correlationId).Data;
             sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Act

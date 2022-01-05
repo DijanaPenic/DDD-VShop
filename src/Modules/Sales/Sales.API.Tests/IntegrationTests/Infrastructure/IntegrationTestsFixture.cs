@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
+using MediatR; // TODO
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure;
@@ -18,6 +19,7 @@ using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Sales.Infrastructure;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
@@ -50,17 +52,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 
             RunRelationalDatabaseMigrationsAsync().GetAwaiter();
         }
-        
-        private static async Task RunRelationalDatabaseMigrationsAsync()
-        { 
-            await MigratePostgresDatabaseAsync<SalesContext>();
-            await MigratePostgresDatabaseAsync<SchedulerContext>();
-            await MigratePostgresDatabaseAsync<SubscriptionContext>();
-        }
-        
-        private static Task MigratePostgresDatabaseAsync<TDbContext>() 
-            where TDbContext : DbContextBase
-            => ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
 
         public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
         public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
@@ -107,6 +98,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 return commandBus.SendAsync(command);
             });
         
+        // TODO- hide notification
+        public static Task PublishAsync(INotification @event)
+            => ExecuteScopeAsync(sp =>
+            {
+                IEventBus eventBus = sp.GetRequiredService<IEventBus>();
+                return eventBus.Publish(@event);
+            });
+        
         public static Task<Result<TData>> SendAsync<TData>(ICommand<TData> command)
             => ExecuteScopeAsync(sp =>
             {
@@ -125,5 +124,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             using IServiceScope scope = ServiceScopeFactory.CreateScope();
             return await action(scope.ServiceProvider).ConfigureAwait(false);
         }
+        
+        private static async Task RunRelationalDatabaseMigrationsAsync()
+        { 
+            await MigratePostgresDatabaseAsync<SalesContext>();
+            await MigratePostgresDatabaseAsync<SchedulerContext>();
+            await MigratePostgresDatabaseAsync<SubscriptionContext>();
+        }
+        
+        private static Task MigratePostgresDatabaseAsync<TDbContext>() 
+            where TDbContext : DbContextBase
+            => ExecuteServiceAsync<TDbContext>(dbContext => dbContext.Database.MigrateAsync());
     }
 }

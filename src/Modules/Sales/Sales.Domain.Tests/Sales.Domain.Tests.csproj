@@ -23,6 +23,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
+      <ProjectReference Include="..\Sales.Tests\Sales.Tests.csproj" />
     </ItemGroup>
 
     <ItemGroup>

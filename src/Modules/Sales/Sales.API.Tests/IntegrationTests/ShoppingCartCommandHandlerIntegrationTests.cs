@@ -1,7 +1,7 @@
+using Xunit;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
 using FluentAssertions;
 
 using VShop.SharedKernel.Domain.Enums;
@@ -49,14 +49,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             result.IsError.Should().BeFalse();
-            
+
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCartId);
             shoppingCartFromDb.Should().NotBeNull();
         }
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Shopping_cart_creation_is_idempotent
+        public async Task Shopping_cart_creation_command_is_idempotent
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -122,7 +122,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Adding_a_new_product_to_the_shopping_cart_is_idempotent
+        public async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
             AddShoppingCartItem shoppingCartItem,
@@ -187,7 +187,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removing_a_product_from_the_shopping_cart_is_idempotent
+        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             Guid messageId,
@@ -249,7 +249,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             result.IsError.Should().BeFalse();
-
+            
             ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
             shoppingCartFromDb.Should().NotBeNull();
             shoppingCartFromDb.Customer.FullName.Should().Be(fullName);
@@ -260,7 +260,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Setting_a_customer_contact_information_is_idempotent
+        public async Task Setting_a_customer_contact_information_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             FullName fullName,
@@ -333,7 +333,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Setting_a_customer_delivery_address_is_idempotent
+        public async Task Setting_a_customer_delivery_address_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             Address deliveryAddress,
@@ -393,7 +393,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deleting_the_shopping_cart_is_idempotent
+        public async Task Deleting_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             Guid messageId,
@@ -455,7 +455,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_is_idempotent
+         public async Task Shopping_cart_checkout_command_is_idempotent
          (
              ShoppingCart shoppingCart,
              Guid messageId,
