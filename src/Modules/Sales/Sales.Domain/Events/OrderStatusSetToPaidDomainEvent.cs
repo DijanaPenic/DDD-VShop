@@ -6,6 +6,11 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record OrderStatusSetToPaidDomainEvent : DomainEvent
     {
-        public Guid OrderId { get; init; }
+        public Guid OrderId { get; }
+        
+        public OrderStatusSetToPaidDomainEvent(Guid orderId)
+        {
+            OrderId = orderId;
+        }
     }
 }

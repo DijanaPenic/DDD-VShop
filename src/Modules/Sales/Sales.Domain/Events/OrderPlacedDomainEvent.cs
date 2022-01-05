@@ -8,7 +8,7 @@ namespace VShop.Modules.Sales.Domain.Events
     {
         public Guid OrderId { get; init; }
         public decimal DeliveryCost { get; init; }
-        public decimal TotalDiscount { get; init; }
+        public int CustomerDiscount { get; init; }
         public Guid CustomerId { get; init; }
         public string FirstName { get; init; }
         public string MiddleName { get; init; }

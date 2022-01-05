@@ -18,7 +18,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public int TotalOrderLineCount => _orderLines.Count;
         public Price DeliveryCost { get; private set; }
         public Price ProductsCostWithoutDiscount => new(_orderLines.Sum(ol => ol.TotalAmount));
-        public Price TotalDiscount { get; private set; }
+        public Price TotalDiscount => ProductsCostWithoutDiscount * (Customer.Discount / 100.00m);
         public Price ProductsCostWithDiscount => ProductsCostWithoutDiscount - TotalDiscount;
         public Price FinalAmount => ProductsCostWithDiscount + DeliveryCost;
         public IReadOnlyList<OrderLine> OrderLines => _orderLines;
@@ -31,8 +31,8 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         (
             EntityId orderId,
             Price deliveryCost,
-            Price totalDiscount,
             EntityId customerId,
+            Discount customerDiscount,
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
@@ -49,7 +49,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 {
                     OrderId = orderId,
                     DeliveryCost = deliveryCost,
-                    TotalDiscount = totalDiscount,
+                    CustomerDiscount = customerDiscount,
                     CustomerId = customerId,
                     FirstName = fullName.FirstName,
                     MiddleName = fullName.MiddleName,
@@ -106,7 +106,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.Processing)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Paid}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToPaidDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToPaidDomainEvent(Id));
             
             return Result.Success;
         }
@@ -116,7 +116,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.Paid)
                 return Result.ValidationError($"Changing status to '{OrderStatus.PendingShipping}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent(Id));
             
             return Result.Success;
         }
@@ -126,7 +126,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.PendingShipping)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToShippedDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToShippedDomainEvent(Id));
             
             return Result.Success;
         }
@@ -136,7 +136,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not (OrderStatus.Processing or OrderStatus.Paid))
                 return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToCancelledDomainEvent{ OrderId = Id });
+            RaiseEvent(new OrderStatusSetToCancelledDomainEvent(Id));
             
             return Result.Success;
         }
@@ -152,7 +152,6 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             {
                 case OrderPlacedDomainEvent e:
                     Id = new EntityId(e.OrderId);
-                    TotalDiscount = new Price(e.TotalDiscount);
                     DeliveryCost = new Price(e.DeliveryCost);
                     Status = OrderStatus.Processing;
 

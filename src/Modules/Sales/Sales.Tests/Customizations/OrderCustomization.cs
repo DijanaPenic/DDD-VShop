@@ -16,8 +16,8 @@ namespace VShop.Modules.Sales.Tests.Customizations
                 (
                     fixture.Create<EntityId>(),
                     fixture.Create<Price>(),
-                    fixture.Create<Price>(),
                     fixture.Create<EntityId>(),
+                    fixture.Create<Discount>(),
                     fixture.Create<FullName>(),
                     fixture.Create<EmailAddress>(),
                     fixture.Create<PhoneNumber>(),

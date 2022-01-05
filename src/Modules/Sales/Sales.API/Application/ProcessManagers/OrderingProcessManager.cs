@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<OrderStatusSetToPendingShippingDomainEvent>(Handle);
             RegisterEvent<ShippingGracePeriodExpiredDomainEvent>(Handle);
         }
-
+        
         private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, Instant _) 
             => RaiseCommand(new PlaceOrderCommand
             {
@@ -63,7 +63,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
             => RaiseCommand(new SetPaidOrderStatusCommand(OrderId));
-        
+
         private void Handle(OrderStatusSetToPaidDomainEvent @event, Instant now)
         {
             // Schedule a reminder for stock confirmation.
@@ -91,7 +91,6 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 {
                     ProductId = ol.ProductId,
                     OutOfStockQuantity = ol.OutOfStockQuantity,
-                    EnoughStock = ol.EnoughStock
                 }).ToList()
             ));
         }
@@ -105,7 +104,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 now.Plus(Duration.FromHours(Settings.ShippingGracePeriodInHours))
             );
         }
-
+        
         private void Handle(ShippingGracePeriodExpiredDomainEvent @event, Instant _)
         {
             // The order is already shipped so there is nothing to address.
@@ -113,7 +112,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
 
             // Send an alert. The shipping department never replied.
         }
-
+        
         protected override void ApplyEvent(IBaseEvent @event)
         {
             switch (@event)
@@ -138,6 +137,12 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                     break;
                 case OrderStockProcessedIntegrationEvent _:
                     Status = OrderingProcessManagerStatus.OrderStockConfirmed;
+                    break;
+                case OrderStatusSetToPendingShippingDomainEvent _:
+                    Status = OrderingProcessManagerStatus.OrderPendingShipping;
+                    break;
+                case OrderStatusSetToShippedDomainEvent _:
+                    Status = OrderingProcessManagerStatus.OrderShipped;
                     break;
             }
         }

@@ -14,6 +14,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public EmailAddress EmailAddress { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
+        public Discount Discount { get; private set; }
         
         public OrderCustomer(Action<IDomainEvent> applier) : base(applier) { }
         
@@ -24,6 +25,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                 case OrderPlacedDomainEvent e:
                     Id = new EntityId(e.OrderId);
                     CustomerId = new EntityId(e.CustomerId);
+                    Discount = new Discount(e.CustomerDiscount);
                     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
                     EmailAddress = new EmailAddress(e.EmailAddress);
                     PhoneNumber = new PhoneNumber(e.PhoneNumber);

@@ -19,7 +19,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public GenderType Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
-        public int Discount { get; private set; }
+        public Discount Discount { get; private set; }
         
         public ShoppingCartCustomer(Action<IDomainEvent> applier) : base(applier) { }
 
@@ -78,7 +78,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             {
                 case ShoppingCartCreatedDomainEvent e:
                     CustomerId = new EntityId(e.CustomerId);
-                    Discount = e.CustomerDiscount;
+                    Discount = new Discount(e.CustomerDiscount);
                     Id = new EntityId(e.ShoppingCartId);
                     break;
                 case ShoppingCartContactInformationSetDomainEvent e:

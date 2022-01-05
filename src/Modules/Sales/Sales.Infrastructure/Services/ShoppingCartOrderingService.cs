@@ -39,8 +39,8 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             (
                 orderId,
                 shoppingCart.DeliveryCost,
-                shoppingCart.TotalDiscount,
                 shoppingCart.Customer.CustomerId,
+                shoppingCart.Customer.Discount,
                 shoppingCart.Customer.FullName,
                 shoppingCart.Customer.EmailAddress,
                 shoppingCart.Customer.PhoneNumber,

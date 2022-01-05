@@ -6,6 +6,11 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record OrderStatusSetToPendingShippingDomainEvent : DomainEvent
     {
-        public Guid OrderId { get; init; }
+        public Guid OrderId { get; }
+        
+        public OrderStatusSetToPendingShippingDomainEvent(Guid orderId)
+        {
+            OrderId = orderId;
+        }
     }
 }

@@ -33,15 +33,18 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (order.Events.Count is 0)
             {
-                decimal originalPaymentAmount = order.ProductsCostWithDiscount;
+                decimal initialPaymentAmount = order.FinalAmount;
                 
                 // Remove out of stock items from the order.
-                foreach (FinalizeOrderCommand.OrderLine orderLine in command.OrderLines.Where(ol => !ol.EnoughStock))
+                IEnumerable<FinalizeOrderCommand.OrderLine> outOfStockOrderLines = command.OrderLines
+                    .Where(ol => ol.OutOfStockQuantity > 0);
+                
+                foreach (FinalizeOrderCommand.OrderLine outOfStockOrderLine in outOfStockOrderLines)
                 {
                     Result removeOutOfStockResult = order.RemoveOutOfStockItems
                     (
-                        EntityId.Create(orderLine.ProductId).Data,
-                        ProductQuantity.Create(orderLine.OutOfStockQuantity).Data
+                        EntityId.Create(outOfStockOrderLine.ProductId).Data,
+                        ProductQuantity.Create(outOfStockOrderLine.OutOfStockQuantity).Data
                     );
                     if (removeOutOfStockResult.IsError) return removeOutOfStockResult.Error;
                 }
@@ -59,15 +62,15 @@ namespace VShop.Modules.Sales.API.Application.Commands
                     if (cancelOrderResult.IsError) return cancelOrderResult.Error;
                 }
                 
-                // Check payment changes (for refund).
-                decimal finalPaymentAmount = order.ProductsCostWithDiscount;
-                decimal deltaPayment = originalPaymentAmount - finalPaymentAmount;
+                // Check the payment changes (for the refund).
+                decimal finalPaymentAmount = order.FinalAmount;
+                decimal deltaPaymentAmount = initialPaymentAmount - finalPaymentAmount;
                 
                 OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = new()
                 {
                     OrderId = order.Id,
-                    // Delivery costs need to be refunded if there is nothing to deliver.
-                    RefundAmount = (order.TotalOrderLineCount > 0) ? deltaPayment : order.FinalAmount,
+                    // Delivery costs need to be refunded as well if there is nothing to deliver.
+                    RefundAmount = (order.TotalOrderLineCount > 0) ? deltaPaymentAmount : initialPaymentAmount,
                     OrderLines = order.OrderLines
                         .Select(ol => new OrderFinalizedIntegrationEvent.OrderLine
                         {
@@ -102,7 +105,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             public Guid ProductId { get; init; }
             public int OutOfStockQuantity { get; init; }
-            public bool EnoughStock { get; init; }
         }
     }
 }

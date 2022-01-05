@@ -16,7 +16,6 @@ namespace VShop.Modules.Catalog.Integration.Events
             public Guid ProductId { get; init; }
             public int RequestedQuantity { get; init; }
             public int OutOfStockQuantity { get; init; }
-            public bool EnoughStock => OutOfStockQuantity is 0;
         }
     }
 }

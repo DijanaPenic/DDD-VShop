@@ -153,7 +153,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Status is ShoppingCartStatus.Closed)
                 return Result.ValidationError($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
-            RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent { ShoppingCartId = Id });
+            RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent(Id));
             
             return Result.Success;
         }
