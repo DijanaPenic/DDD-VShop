@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (order is null) return Result.NotFoundError("Order not found.");
 
-            if (order.OutboxMessageCount is 0)
+            if (order.Events.Count is 0)
             {
                 decimal originalPaymentAmount = order.ProductsCostWithDiscount;
                 

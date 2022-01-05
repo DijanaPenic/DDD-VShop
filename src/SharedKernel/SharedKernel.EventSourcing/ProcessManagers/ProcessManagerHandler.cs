@@ -43,7 +43,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 cancellationToken
             );
 
-            if (processManager.Outbox.MessagesCount is 0)
+            if (processManager.Outbox.Messages.Count is 0)
                 processManager.Transition(@event, _clockService.Now);
             
             await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken);

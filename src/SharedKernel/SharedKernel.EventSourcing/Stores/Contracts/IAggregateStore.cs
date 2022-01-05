@@ -14,17 +14,11 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
             CancellationToken cancellationToken = default
         );
 
-        Task SaveAsync
-        (
-            TAggregate aggregate,
-            CancellationToken cancellationToken = default
-        );
-
         Task<TAggregate> LoadAsync
         (
             EntityId aggregateId,
-            Guid? causationId = default,
-            Guid? correlationId = default,
+            Guid causationId,
+            Guid correlationId,
             CancellationToken cancellationToken = default
         );
     }

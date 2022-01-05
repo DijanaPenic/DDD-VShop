@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -36,29 +37,35 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
         public async Task SaveAndPublishAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
         {
-            await AppendMessagesToStreamAsync(aggregate, cancellationToken);
+            if (aggregate is null)
+                throw new ArgumentNullException(nameof(aggregate));
+
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                GetStreamName(aggregate.Id),
+                aggregate.Version,
+                aggregate.Events,
+                _clockService.Now,
+                cancellationToken
+            );
 
             try
             {
-                await PublishAsync(aggregate, cancellationToken);
+                // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
+                foreach (IDomainEvent domainEvent in aggregate.Events.OfType<IDomainEvent>())
+                    await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
             {
                 aggregate.Clear();
             }
         }
-        
-        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
-        {
-            await AppendMessagesToStreamAsync(aggregate, cancellationToken);
-            aggregate.Clear();
-        }
 
         public async Task<TAggregate> LoadAsync
         (
             EntityId aggregateId,
-            Guid? causationId = default,
-            Guid? correlationId = default,
+            Guid causationId,
+            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -75,7 +82,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             TAggregate aggregate = (TAggregate)Activator.CreateInstance
             (
                 typeof(TAggregate),
-                causationId ?? Guid.Empty, correlationId ?? Guid.Empty
+                causationId, correlationId
             );
             
             if (aggregate is null) throw new Exception("Aggregate instance creation failed.");
@@ -84,32 +91,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             return aggregate;
         }
-        
-        private async Task PublishAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
-        {
-            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-            foreach (IDomainEvent domainEvent in aggregate.GetOutboxMessages<IDomainEvent>())
-                await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
-        }
-        
-        private async Task AppendMessagesToStreamAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
-        {
-            if (aggregate is null)
-                throw new ArgumentNullException(nameof(aggregate));
 
-            string streamName = GetStreamName(aggregate.Id);
-
-            await _eventStoreClient.AppendToStreamAsync
-            (
-                streamName,
-                aggregate.Version,
-                aggregate.GetOutboxMessages(),
-                _clockService.Now,
-                cancellationToken
-            );
-        }
-        
-        private string GetStreamName(EntityId aggregateId)
-            => $"{_eventStoreClient.ConnectionName}/aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
+        public static string GetStreamName(EntityId aggregateId)
+            => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
     }
 }

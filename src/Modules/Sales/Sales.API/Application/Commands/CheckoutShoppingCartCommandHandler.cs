@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Guid orderId;
 
-            if (shoppingCart.OutboxMessageCount is 0)
+            if (shoppingCart.Events.Count is 0)
             {
                 orderId = SequentialGuid.Create();
                 
@@ -50,7 +50,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 // TODO - potentially set OrderId on shopping cart.
                 ShoppingCartCheckoutRequestedDomainEvent checkoutDomainEvent = shoppingCart
-                    .GetOutboxMessages<ShoppingCartCheckoutRequestedDomainEvent>()
+                    .Events.OfType<ShoppingCartCheckoutRequestedDomainEvent>()
                     .SingleOrDefault();
                 
                 if (checkoutDomainEvent is null)

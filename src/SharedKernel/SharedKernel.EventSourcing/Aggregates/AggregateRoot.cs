@@ -10,8 +10,9 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class AggregateRoot
     {
-        private readonly List<IBaseEvent> _outbox = new();
-
+        private readonly List<IBaseEvent> _events = new();
+        
+        public IReadOnlyList<IBaseEvent> Events => _events;
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
         public Guid CausationId { get; }
@@ -29,15 +30,16 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         {
             ApplyEvent(@event);
             SetEventIdentification(@event);
-            _outbox.Add(@event);
+            _events.Add(@event);
         }
         
         public void RaiseEvent(IIntegrationEvent @event)
         {
             SetEventIdentification(@event);
-            _outbox.Add(@event);
+            _events.Add(@event);
         }
         
+        // TODO - review this approach.
         public void Load(IEnumerable<IBaseEvent> history)
         {
             // Truncate events following the specified causationId.
@@ -68,16 +70,10 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             }
         }
 
-        public IReadOnlyList<TType> GetOutboxMessages<TType>() => _outbox.OfType<TType>().ToList();
-
-        public IReadOnlyList<IBaseEvent> GetOutboxMessages() => _outbox;
-
-        public int OutboxMessageCount => _outbox.Count;
-
         public void Clear()
         {
-            Version += _outbox.Count;
-            _outbox.Clear();
+            Version += _events.Count;
+            _events.Clear();
         }
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity.Handle(@event);

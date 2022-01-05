@@ -29,7 +29,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
 
-            if (shoppingCart.OutboxMessageCount is 0)
+            if (shoppingCart.Events.Count is 0)
             {
                 Result<Address> addressResult = Address.Create
                 (

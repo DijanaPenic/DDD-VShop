@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             where TMessage : IMessage
             => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
-                streamName,
+                $"{eventStoreClient.ConnectionName}/{streamName}",
                 StreamRevision.FromInt64(expectedRevision),
                 messages.ToEventData(now),
                 cancellationToken: ct
@@ -42,12 +42,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             where TMessage : IMessage
             => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
-                streamName,
+                $"{eventStoreClient.ConnectionName}/{streamName}",
                 expectedState,
                 messages.ToEventData(now),
                 cancellationToken: ct
             ), cancellationToken); 
-
+        
         public static async Task<IReadOnlyList<TMessage>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
@@ -59,7 +59,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             EventStoreClient.ReadStreamResult result = await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.ReadStreamAsync
             (
                 Direction.Forwards,
-                streamName,
+                $"{eventStoreClient.ConnectionName}/{streamName}",
                 position,
                 cancellationToken: ct
             ), cancellationToken);
