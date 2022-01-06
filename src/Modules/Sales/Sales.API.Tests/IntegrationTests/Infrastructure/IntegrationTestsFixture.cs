@@ -8,18 +8,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
-using MediatR; // TODO
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Sales.Infrastructure;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
 {
@@ -97,9 +97,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
                 return commandBus.SendAsync(command);
             });
+
+        public static Task PublishAsync(IDomainEvent @event)
+            => ExecuteScopeAsync(sp =>
+            {
+                IEventBus eventBus = sp.GetRequiredService<IEventBus>();
+                return eventBus.Publish(@event);
+            });
         
-        // TODO- hide notification
-        public static Task PublishAsync(INotification @event)
+        public static Task PublishAsync(IIntegrationEvent @event)
             => ExecuteScopeAsync(sp =>
             {
                 IEventBus eventBus = sp.GetRequiredService<IEventBus>();

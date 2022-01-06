@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using NodaTime;
 
@@ -35,13 +34,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
                (
                     store => store.LoadAsync(processManagerId)
                );
-        
-        // public static Task<IReadOnlyList<IMessage>> GetProcessManagerOutboxAsync(Guid processManagerId)
-        //     => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, IReadOnlyList<IMessage>>
-        //        (
-        //             store => store.LoadOutboxAsync(processManagerId)
-        //        );
-        
+
         public static Task SaveAndPublishAsync(OrderingProcessManager processManager)
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>>
                (

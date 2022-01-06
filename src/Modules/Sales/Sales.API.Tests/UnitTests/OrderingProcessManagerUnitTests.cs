@@ -531,7 +531,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_the_order_status_to_paid_schedules_a_stock_reminder
+        public void Changing_the_order_status_to_Paid_schedules_a_stock_reminder
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -842,7 +842,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_the_order_status_to_pending_shipping_schedules_a_shipping_reminder
+        public void Changing_the_order_status_to_PendingShipping_schedules_a_shipping_reminder
         (
             EntityId shoppingCartId,
             EntityId orderId,

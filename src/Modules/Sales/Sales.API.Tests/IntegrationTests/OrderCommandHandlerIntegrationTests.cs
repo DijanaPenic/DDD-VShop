@@ -119,6 +119,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Order orderFromDb = await OrderHelper.GetOrderAsync(orderId);
             orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().Be(OrderStatus.Paid);
+            
+            // TODO - need to check integration event.
         }
         
         [Theory]
@@ -221,21 +223,18 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture.ExecuteServiceAsync
-                 <EventStoreClient, IReadOnlyList<IBaseEvent>>
-             (
-                 eventStoreClient => eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
+             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
-                     AggregateStore<Order>.GetStreamName(order.Id),
-                     StreamPosition.Start
-                 )
-             );
+                     eventStoreClient => eventStoreClient
+                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
+                 );
 
-             OrderFinalizedIntegrationEvent integrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
-             integrationEvent.Should().NotBeNull();
-             integrationEvent!.RefundAmount.Should().Be(0);
-             integrationEvent.OrderLines.Count.Should().Be(2);
+             orderFinalizedIntegrationEvent.Should().NotBeNull();
+             orderFinalizedIntegrationEvent!.RefundAmount.Should().Be(0);
+             orderFinalizedIntegrationEvent.OrderLines.Count.Should().Be(2);
         }
         
         [Theory]
@@ -310,21 +309,18 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture.ExecuteServiceAsync
-                 <EventStoreClient, IReadOnlyList<IBaseEvent>>
-             (
-                 eventStoreClient => eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
+             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
-                     AggregateStore<Order>.GetStreamName(order.Id),
-                     StreamPosition.Start
-                 )
-             );
+                     eventStoreClient => eventStoreClient
+                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
+                 );
 
-             OrderFinalizedIntegrationEvent integrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
-             integrationEvent.Should().NotBeNull();
-             integrationEvent!.RefundAmount.Should().Be(shoppingCart.FinalAmount);
-             integrationEvent.OrderLines.Count.Should().Be(0);
+             orderFinalizedIntegrationEvent.Should().NotBeNull();
+             orderFinalizedIntegrationEvent!.RefundAmount.Should().Be(shoppingCart.FinalAmount);
+             orderFinalizedIntegrationEvent.OrderLines.Count.Should().Be(0);
         }
         
         [Theory]
@@ -371,7 +367,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.Customer.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            order.SetPaidStatus();
+            order.SetPaidStatus(); // TODO - use command and review other tests.
             
             await OrderHelper.SaveAndPublishAsync(order);
 
@@ -406,21 +402,18 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture.ExecuteServiceAsync
-                 <EventStoreClient, IReadOnlyList<IBaseEvent>>
-             (
-                 eventStoreClient => eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
+             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
-                     AggregateStore<Order>.GetStreamName(order.Id),
-                     StreamPosition.Start
-                 )
-             );
+                     eventStoreClient => eventStoreClient
+                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
+                 );
 
-             OrderFinalizedIntegrationEvent integrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
-             integrationEvent.Should().NotBeNull();
-             integrationEvent!.RefundAmount.Should().Be(135);
-             integrationEvent.OrderLines.Count.Should().Be(1);
+             orderFinalizedIntegrationEvent.Should().NotBeNull();
+             orderFinalizedIntegrationEvent!.RefundAmount.Should().Be(135);
+             orderFinalizedIntegrationEvent.OrderLines.Count.Should().Be(1);
         }
         
         [Theory]

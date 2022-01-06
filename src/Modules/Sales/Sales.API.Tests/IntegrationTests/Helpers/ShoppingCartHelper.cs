@@ -26,5 +26,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
                (
                     store => store.SaveAndPublishAsync(shoppingCart)
                );
+        
+        public static Task SaveAsync(ShoppingCart shoppingCart)
+            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>
+            (
+                store => store.SaveAsync(shoppingCart)
+            );
     }
 }
