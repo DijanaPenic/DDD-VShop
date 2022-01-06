@@ -120,7 +120,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().Be(OrderStatus.Paid);
             
-            // TODO - need to check integration event.
+            IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
+                .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
+                (
+                    eventStoreClient => eventStoreClient
+                        .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
+                );
+
+            OrderStatusSetToPaidIntegrationEvent orderStatusSetToPaidIntegrationEvent = orderEvents
+                .OfType<OrderStatusSetToPaidIntegrationEvent>().SingleOrDefault();
+            orderStatusSetToPaidIntegrationEvent.Should().NotBeNull();
         }
         
         [Theory]
@@ -195,9 +204,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.Customer.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            order.SetPaidStatus();
             
-            await OrderHelper.SaveAndPublishAsync(order);
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
+            {
+                MessageId = SequentialGuid.Create(),
+                CorrelationId = SequentialGuid.Create()
+            });
 
             FinalizeOrderCommand command = new
             (
@@ -281,9 +293,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.Customer.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            order.SetPaidStatus();
             
-            await OrderHelper.SaveAndPublishAsync(order);
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
+            {
+                MessageId = SequentialGuid.Create(),
+                CorrelationId = SequentialGuid.Create()
+            });
 
             FinalizeOrderCommand command = new
             (
@@ -366,10 +381,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             shoppingCart.Customer.SetDeliveryAddress(deliveryAddress);
             shoppingCart.Customer.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
             
-            Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            order.SetPaidStatus(); // TODO - use command and review other tests.
-            
-            await OrderHelper.SaveAndPublishAsync(order);
+            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
+
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
+            {
+                MessageId = SequentialGuid.Create(),
+                CorrelationId = SequentialGuid.Create()
+            });
 
             IList<FinalizeOrderCommand.OrderLine> finalizedOrderLines = new List<FinalizeOrderCommand.OrderLine>
             {
@@ -386,7 +404,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             };
             
             // TODO - meesageId and correlationId can be easily forgotten and then there will be a problem.
-            FinalizeOrderCommand command = new(order.Id, finalizedOrderLines)
+            FinalizeOrderCommand command = new(orderId, finalizedOrderLines)
             {
                 MessageId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
@@ -406,7 +424,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                  .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
                      eventStoreClient => eventStoreClient
-                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
+                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
                  );
 
              OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
@@ -430,9 +448,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             IClockService clockService = new ClockService();
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            order.SetPaidStatus();
-            
-            await OrderHelper.SaveAndPublishAsync(order);
+
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
+            {
+                MessageId = SequentialGuid.Create(),
+                CorrelationId = SequentialGuid.Create()
+            });
             
             FinalizeOrderCommand command = new
             (

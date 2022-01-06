@@ -35,18 +35,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
                     store => store.LoadAsync(processManagerId)
                );
 
-        public static Task SaveAndPublishAsync(OrderingProcessManager processManager)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>>
-               (
-                    store => store.SaveAndPublishAsync(processManager)
-               );
-        
-        public static Task SaveAndPublishAsync(Order order)
-            => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<Order>>
-               (
-                    store => store.SaveAndPublishAsync(order)
-               );
-
         public static Task<Order> GetOrderAsync(EntityId orderId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<Order>, Order>
                (
