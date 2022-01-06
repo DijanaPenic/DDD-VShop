@@ -9,7 +9,6 @@ using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
@@ -91,13 +90,11 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             IReadOnlyList<IMessage> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetInboxStreamName(processManagerId),
-                StreamPosition.Start,
                 cancellationToken
             );
             IReadOnlyList<IMessage> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetOutboxStreamName(processManagerId),
-                StreamPosition.Start,
                 cancellationToken
             );
             
@@ -122,11 +119,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
         }
         
-        public static string GetInboxStreamName(Guid processManagerId)
-            => $"{GetStreamPrefix(processManagerId)}/inbox".ToSnakeCase();
+        public static string GetInboxStreamName(Guid processManagerId) => $"{GetStreamPrefix(processManagerId)}/inbox";
         
-        public static string GetOutboxStreamName(Guid processManagerId)
-            => $"{GetStreamPrefix(processManagerId)}/outbox".ToSnakeCase();
+        public static string GetOutboxStreamName(Guid processManagerId) => $"{GetStreamPrefix(processManagerId)}/outbox";
         
         private static string GetStreamPrefix(Guid processManagerId)
         {

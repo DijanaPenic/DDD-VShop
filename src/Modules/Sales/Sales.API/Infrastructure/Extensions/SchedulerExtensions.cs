@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             });
             services.AddQuartzHostedService(options =>
             {
-                // When shutting down we want jobs to complete gracefully
+                // When shutting down we want jobs to complete gracefully.
                 options.WaitForJobsToComplete = true;
             });
             services.AddTransient<ISchedulerService, SchedulerService>();

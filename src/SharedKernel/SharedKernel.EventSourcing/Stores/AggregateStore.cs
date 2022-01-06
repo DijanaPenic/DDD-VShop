@@ -12,7 +12,6 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
@@ -40,14 +39,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            await _eventStoreClient.AppendToStreamAsync
-            (
-                GetStreamName(aggregate.Id),
-                aggregate.Version,
-                aggregate.Events,
-                _clockService.Now,
-                cancellationToken
-            );
+            await SaveAsync(aggregate, cancellationToken);
 
             try
             {
@@ -59,6 +51,21 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             {
                 aggregate.Clear();
             }
+        }
+        
+        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        {
+            if (aggregate is null)
+                throw new ArgumentNullException(nameof(aggregate));
+
+            await _eventStoreClient.AppendToStreamAsync
+            (
+                GetStreamName(aggregate.Id),
+                aggregate.Version,
+                aggregate.Events,
+                _clockService.Now,
+                cancellationToken
+            );
         }
 
         public async Task<TAggregate> LoadAsync
@@ -72,7 +79,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             IReadOnlyList<IBaseEvent> events = await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
             (
                 GetStreamName(aggregateId),
-                StreamPosition.Start,
                 cancellationToken
             );
 
@@ -92,7 +98,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             return aggregate;
         }
 
-        public static string GetStreamName(EntityId aggregateId)
-            => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}".ToSnakeCase();
+        public static string GetStreamName(EntityId aggregateId) => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}";
     }
 }

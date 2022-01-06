@@ -13,6 +13,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
             TAggregate aggregate,
             CancellationToken cancellationToken = default
         );
+        
+        Task SaveAsync
+        (
+            TAggregate aggregate,
+            CancellationToken cancellationToken = default
+        );
 
         Task<TAggregate> LoadAsync
         (

@@ -42,7 +42,6 @@ namespace VShop.SharedKernel.Integration.Stores
             => _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
             (
                 GetStreamName(),
-                StreamPosition.Start,
                 cancellationToken
             );
         

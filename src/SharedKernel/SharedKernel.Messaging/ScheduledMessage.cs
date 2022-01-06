@@ -27,9 +27,10 @@ namespace VShop.SharedKernel.Messaging
             CorrelationId = message.CorrelationId;
         }
         
+        public T GetMessage<T>() => (T)GetMessage();
         public object GetMessage() => JsonConvert.DeserializeObject(Body, ToType(TypeName));
+        public static string ToName<T>() => ToName(typeof(T));
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
-        public static string ToName<TType>() => MessageTypeMapper.ToName(typeof(TType));
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }
     
@@ -38,6 +39,7 @@ namespace VShop.SharedKernel.Messaging
         public string Body { get; }
         public string TypeName { get; }
         public Instant ScheduledTime { get; }
+        T GetMessage<T>();
         object GetMessage();
     }
 }

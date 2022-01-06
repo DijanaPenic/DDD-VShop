@@ -7,6 +7,7 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventStoreDb.Policies;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
@@ -15,7 +16,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
-            string streamName,
+            string streamSuffix,
             int expectedRevision,
             IEnumerable<TMessage> messages,
             Instant now,
@@ -24,7 +25,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             where TMessage : IMessage
             => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
-                $"{eventStoreClient.ConnectionName}/{streamName}",
+                eventStoreClient.GetStreamName(streamSuffix),
                 StreamRevision.FromInt64(expectedRevision),
                 messages.ToEventData(now),
                 cancellationToken: ct
@@ -33,7 +34,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static Task AppendToStreamAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
-            string streamName,
+            string streamSuffix,
             StreamState expectedState,
             IEnumerable<TMessage> messages,
             Instant now,
@@ -42,7 +43,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             where TMessage : IMessage
             => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
-                $"{eventStoreClient.ConnectionName}/{streamName}",
+                eventStoreClient.GetStreamName(streamSuffix),
                 expectedState,
                 messages.ToEventData(now),
                 cancellationToken: ct
@@ -51,18 +52,18 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static async Task<IReadOnlyList<TMessage>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
-            string streamName,
-            StreamPosition position,
+            string streamSuffix,
             CancellationToken cancellationToken = default
         ) where TMessage : class, IMessage
         {
-            EventStoreClient.ReadStreamResult result = await RetryWrapper.ExecuteAsync((ct) => eventStoreClient.ReadStreamAsync
-            (
-                Direction.Forwards,
-                $"{eventStoreClient.ConnectionName}/{streamName}",
-                position,
-                cancellationToken: ct
-            ), cancellationToken);
+            EventStoreClient.ReadStreamResult result = await RetryWrapper
+                .ExecuteAsync((ct) => eventStoreClient.ReadStreamAsync
+                (
+                    Direction.Forwards,
+                    eventStoreClient.GetStreamName(streamSuffix),
+                    StreamPosition.Start,
+                    cancellationToken: ct
+                ), cancellationToken);
 
             if ((await result.ReadState) is ReadState.StreamNotFound) return new List<TMessage>();
 
@@ -70,5 +71,8 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 
             return messages.Select(@event => @event.DeserializeData<TMessage>()).ToList();
         }
+
+        private static string GetStreamName(this EventStoreClientBase eventStoreClient, string value)
+            => $"{eventStoreClient.ConnectionName}/{value}".ToSnakeCase();
     }
 }

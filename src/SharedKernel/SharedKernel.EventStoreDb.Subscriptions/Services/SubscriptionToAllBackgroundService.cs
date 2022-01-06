@@ -143,7 +143,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         {
             if (resolvedEvent.Event.Data.Length is not 0) return false;
 
-            _logger.Information("Event without data received");
+            _logger.Information("Event without data - ignoring");
             
             return true;
         }
@@ -177,11 +177,10 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             (
                 exception,
                 "Subscription to all '{SubscriptionId}' dropped with '{Reason}'",
-                _subscriptionName,
-                reason
+                _subscriptionName, reason
             );
             
-            // Resubscribe if the client didn't stop the subscription
+            // Resubscribe if the client didn't stop the subscription.
             if (reason is not SubscriptionDroppedReason.Disposed) Resubscribe();
         }
 

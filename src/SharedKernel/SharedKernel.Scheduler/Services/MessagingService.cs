@@ -2,10 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
@@ -38,13 +36,11 @@ namespace VShop.SharedKernel.Scheduler.Services
             await SendMessageAsync(message, cancellationToken);
         }
         
-        private async Task SendMessageAsync(MessageLog message, CancellationToken cancellationToken)
+        private async Task SendMessageAsync(MessageLog messageLog, CancellationToken cancellationToken)
         {
-            object target = JsonConvert.DeserializeObject(message.Body, MessageTypeMapper.ToType(message.TypeName)); 
-
             try
             {
-                switch (target)
+                switch (messageLog.GetMessage())
                 {
                     case ICommand command:
                         await _commandBus.SendAsync(command, cancellationToken);
@@ -56,13 +52,13 @@ namespace VShop.SharedKernel.Scheduler.Services
                         throw new Exception("Unknown target type.");
                 }
 
-                await SetMessageStatusAsync(message, MessageStatus.Finished, cancellationToken);
+                await SetMessageStatusAsync(messageLog, MessageStatus.Finished, cancellationToken);
             }                                                                                                                    
             catch (Exception ex)                                                                                                  
             {                                                                                                                    
                 _logger.Error(ex, "Unhandled error has occurred");
                                                                                                                                  
-                await SetMessageStatusAsync(message, MessageStatus.Failed, cancellationToken);                                
+                await SetMessageStatusAsync(messageLog, MessageStatus.Failed, cancellationToken);                                
             }
         }
 
@@ -74,11 +70,11 @@ namespace VShop.SharedKernel.Scheduler.Services
                     cancellationToken
                 );
         
-        private async Task SetMessageStatusAsync(MessageLog message, MessageStatus status, CancellationToken cancellationToken)
+        private async Task SetMessageStatusAsync(MessageLog messageLog, MessageStatus status, CancellationToken cancellationToken)
         {
-            message.Status = status;
+            messageLog.Status = status;
             
-            _schedulerContext.Entry(message).Property(ml => ml.Status).IsModified = true;
+            _schedulerContext.Entry(messageLog).Property(ml => ml.Status).IsModified = true;
             
             await _schedulerContext.SaveChangesAsync(cancellationToken);
         }
