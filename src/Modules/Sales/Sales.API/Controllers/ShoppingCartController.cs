@@ -72,7 +72,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)] //TODO - rename to close
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
             DeleteShoppingCartCommand command = new(shoppingCartId)

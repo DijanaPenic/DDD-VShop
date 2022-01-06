@@ -3,13 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Serilog;
-using Newtonsoft.Json;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Integration.Services.Contracts;
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Integration.Services
@@ -37,29 +35,36 @@ namespace VShop.SharedKernel.Integration.Services
 
         public async Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default)
         {
-            IEnumerable<IntegrationEventLog> pendingEvents = await _integrationEventLogRepository
+            IEnumerable<IntegrationEventLog> pendingEventLogs = await _integrationEventLogRepository
                 .RetrieveEventsPendingPublishAsync(transactionId, cancellationToken);
 
-            foreach (IntegrationEventLog pendingEvent in pendingEvents)
+            foreach (IntegrationEventLog pendingEventLog in pendingEventLogs)
             {
                 _logger.Information
                 (
                     "Publishing integration event: {IntegrationEventId} - ({IntegrationEvent})",
-                    pendingEvent.EventId, pendingEvent.Content
+                    pendingEventLog.EventId, pendingEventLog.Content
                 );
 
                 try
                 {
-                    await _integrationEventLogRepository.MarkEventAsInProgressAsync(pendingEvent.EventId, cancellationToken);
-
-                    object target = JsonConvert.DeserializeObject
+                    await _integrationEventLogRepository.MarkEventAsInProgressAsync
                     (
-                        pendingEvent.Content,
-                        MessageTypeMapper.ToType(pendingEvent.EventTypeName)
+                        pendingEventLog.EventId,
+                        cancellationToken
                     );
-                    await _integrationEventRepository.SaveAsync((IIntegrationEvent)target, cancellationToken);
-                    
-                    await _integrationEventLogRepository.MarkEventAsPublishedAsync(pendingEvent.EventId, cancellationToken);
+
+                    await _integrationEventRepository.SaveAsync
+                    (
+                        pendingEventLog.GetEvent<IIntegrationEvent>(),
+                        cancellationToken
+                    );
+
+                    await _integrationEventLogRepository.MarkEventAsPublishedAsync
+                    (
+                        pendingEventLog.EventId,
+                        cancellationToken
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -67,10 +72,10 @@ namespace VShop.SharedKernel.Integration.Services
                     (
                         ex,
                         "Error publishing integration event: {IntegrationEventId}",
-                        pendingEvent.EventId
+                        pendingEventLog.EventId
                     );
 
-                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEvent.EventId, cancellationToken);
+                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEventLog.EventId, cancellationToken);
                 }
             }
         }
