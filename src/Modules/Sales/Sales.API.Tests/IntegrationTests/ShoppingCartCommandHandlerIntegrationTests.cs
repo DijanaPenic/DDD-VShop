@@ -30,17 +30,21 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Discount customerDiscount,
             AddShoppingCartItem[] shoppingCartItems,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
-            CreateShoppingCartCommand command = new()
+            CreateShoppingCartCommand command = new
+            (
+                shoppingCartId,
+                customerId,
+                customerDiscount,
+                shoppingCartItems
+            )
             {
-                ShoppingCartId = shoppingCartId,
-                CustomerId = customerId,
-                CustomerDiscount = customerDiscount,
-                ShoppingCartItems = shoppingCartItems,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
 
@@ -63,17 +67,21 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             Discount customerDiscount,
             AddShoppingCartItem[] shoppingCartItems,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
-            CreateShoppingCartCommand command = new()
+            CreateShoppingCartCommand command = new
+            (
+                shoppingCartId,
+                customerId,
+                customerDiscount,
+                shoppingCartItems
+            )
             {
-                ShoppingCartId = shoppingCartId,
-                CustomerId = customerId,
-                CustomerDiscount = customerDiscount,
-                ShoppingCartItems = shoppingCartItems,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             await IntegrationTestsFixture.SendAsync(command);
@@ -92,17 +100,21 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart, 
             AddShoppingCartItem shoppingCartItem,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            AddShoppingCartProductCommand command = new()
+            AddShoppingCartProductCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                ShoppingCartItem = shoppingCartItem,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -127,19 +139,24 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart, 
             AddShoppingCartItem shoppingCartItem,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            AddShoppingCartProductCommand command = new()
+            AddShoppingCartProductCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                ShoppingCartItem = shoppingCartItem,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
+            
             await IntegrationTestsFixture.SendAsync(command);
             
             // Act
@@ -155,19 +172,23 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             ShoppingCartItem shoppingCartItem = shoppingCart.Items[0];
             
-            RemoveShoppingCartProductCommand command = new()
+            RemoveShoppingCartProductCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem.Id,
+                shoppingCartItem.Quantity
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                ProductId = shoppingCartItem.Id,
-                Quantity = shoppingCartItem.Quantity,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -191,19 +212,23 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             ShoppingCartItem shoppingCartItem = shoppingCart.Items[0];
             
-            RemoveShoppingCartProductCommand command = new()
+            RemoveShoppingCartProductCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem.Id,
+                shoppingCartItem.Quantity
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                ProductId = shoppingCartItem.Id,
-                Quantity = shoppingCartItem.Quantity,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             await IntegrationTestsFixture.SendAsync(command);
@@ -225,22 +250,26 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            SetContactInformationCommand command = new()
+            SetContactInformationCommand command = new
+            (
+                shoppingCart.Id,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                gender
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                FirstName = fullName.FirstName,
-                MiddleName = fullName.MiddleName,
-                LastName = fullName.LastName,
-                Gender = gender,
-                EmailAddress = emailAddress,
-                PhoneNumber = phoneNumber,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -268,22 +297,26 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            SetContactInformationCommand command = new()
+            SetContactInformationCommand command = new
+            (
+                shoppingCart.Id,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                gender
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                FirstName = fullName.FirstName,
-                MiddleName = fullName.MiddleName,
-                LastName = fullName.LastName,
-                Gender = gender,
-                EmailAddress = emailAddress,
-                PhoneNumber = phoneNumber,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             await IntegrationTestsFixture.SendAsync(command);
@@ -302,21 +335,25 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             Address deliveryAddress,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            SetDeliveryAddressCommand command = new()
+            SetDeliveryAddressCommand command = new
+            (
+                shoppingCart.Id,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                City = deliveryAddress.City,
-                CountryCode = deliveryAddress.CountryCode,
-                PostalCode = deliveryAddress.PostalCode,
-                StateProvince = deliveryAddress.StateProvince,
-                StreetAddress = deliveryAddress.StreetAddress,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -338,21 +375,25 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             Address deliveryAddress,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            SetDeliveryAddressCommand command = new()
+            SetDeliveryAddressCommand command = new
+            (
+                shoppingCart.Id,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            )
             {
-                ShoppingCartId = shoppingCart.Id,
-                City = deliveryAddress.City,
-                CountryCode = deliveryAddress.CountryCode,
-                PostalCode = deliveryAddress.PostalCode,
-                StateProvince = deliveryAddress.StateProvince,
-                StreetAddress = deliveryAddress.StreetAddress,
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -369,7 +410,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
@@ -378,6 +420,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             DeleteShoppingCartCommand command = new(shoppingCart.Id)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             
@@ -397,7 +440,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
@@ -406,8 +450,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             DeleteShoppingCartCommand command = new(shoppingCart.Id)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
+            
             await IntegrationTestsFixture.SendAsync(command);
             
             // Act
@@ -423,7 +469,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          (
              ShoppingCart shoppingCart,
              Guid messageId,
-             Guid correlationId
+             Guid correlationId,
+             Guid causationId
          )
          {
              // Arrange
@@ -432,6 +479,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              CheckoutShoppingCartCommand command = new(shoppingCart.Id)
              {
                  MessageId = messageId,
+                 CausationId = causationId,
                  CorrelationId = correlationId
              };
              
@@ -459,7 +507,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          (
              ShoppingCart shoppingCart,
              Guid messageId,
-             Guid correlationId
+             Guid correlationId,
+             Guid causationId
          )
          {
              // Arrange
@@ -468,8 +517,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              CheckoutShoppingCartCommand command = new(shoppingCart.Id)
              {
                  MessageId = messageId,
+                 CausationId = causationId,
                  CorrelationId = correlationId
              };
+             
              await IntegrationTestsFixture.SendAsync(command);
              
              // Act

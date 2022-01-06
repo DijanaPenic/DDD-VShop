@@ -74,19 +74,11 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         public async Task<TProcess> LoadAsync
         (
             Guid processManagerId,
-            Guid? causationId = default,
-            Guid? correlationId = default,
+            Guid causationId,
+            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
-            TProcess processManager = (TProcess)Activator.CreateInstance
-            (
-                typeof(TProcess),
-                causationId ?? Guid.Empty, correlationId ?? Guid.Empty
-            );
-            
-            if (processManager is null) throw new Exception("Process manager instance creation failed.");
-            
             IReadOnlyList<IMessage> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetInboxStreamName(processManagerId),
@@ -97,6 +89,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 GetOutboxStreamName(processManagerId),
                 cancellationToken
             );
+
+            TProcess processManager = (TProcess)Activator.CreateInstance
+            (
+                typeof(TProcess),
+                causationId, correlationId
+            );
+            
+            if (processManager is null) throw new Exception("Process manager instance creation failed.");
             
             processManager.Load(inboxMessages, outboxMessages);
 

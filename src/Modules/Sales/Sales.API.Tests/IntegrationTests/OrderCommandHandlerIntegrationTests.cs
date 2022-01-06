@@ -38,7 +38,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             EntityId orderId,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
@@ -48,6 +49,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             CancelOrderCommand command = new(orderId)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
 
@@ -69,7 +71,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             EntityId orderId,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
@@ -79,8 +82,10 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             CancelOrderCommand command = new(orderId)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
+            
             await IntegrationTestsFixture.SendAsync(command);
             
             // Act
@@ -97,7 +102,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             EntityId orderId,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
@@ -107,6 +113,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             SetPaidOrderStatusCommand command = new(orderId)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
 
@@ -139,16 +146,18 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCart shoppingCart,
             EntityId orderId,
             Guid messageId,
-            Guid correlationId
+            Guid correlationId,
+            Guid causationId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            
+
             SetPaidOrderStatusCommand command = new(orderId)
             {
                 MessageId = messageId,
+                CausationId = causationId,
                 CorrelationId = correlationId
             };
             await IntegrationTestsFixture.SendAsync(command);
@@ -207,7 +216,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             });
 
@@ -221,7 +230,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 }).ToList()
             )
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             };
 
@@ -296,10 +305,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             });
-
             FinalizeOrderCommand command = new
             (
                 order.Id,
@@ -310,7 +318,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 }).ToList()
             )
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             };
 
@@ -385,7 +393,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 
             await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             });
 
@@ -403,10 +411,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 }
             };
             
-            // TODO - meesageId and correlationId can be easily forgotten and then there will be a problem.
-            FinalizeOrderCommand command = new(orderId, finalizedOrderLines)
+            FinalizeOrderCommand command = new
+            (
+                orderId,
+                finalizedOrderLines
+            )
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             };
 
@@ -439,9 +450,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Finalizing_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            Guid messageId,
-            Guid correlationId
+            EntityId orderId
         )
         {
             // Arrange
@@ -451,7 +460,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 
             await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
             {
-                MessageId = SequentialGuid.Create(),
+                CausationId = SequentialGuid.Create(),
                 CorrelationId = SequentialGuid.Create()
             });
             
@@ -465,8 +474,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 }).ToList()
             )
             {
-                MessageId = messageId,
-                CorrelationId = correlationId
+                CausationId = SequentialGuid.Create(),
+                CorrelationId = SequentialGuid.Create()
             };
             
             await IntegrationTestsFixture.SendAsync(command);

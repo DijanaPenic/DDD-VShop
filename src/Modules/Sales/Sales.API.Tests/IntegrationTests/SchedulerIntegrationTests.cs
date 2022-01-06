@@ -1,4 +1,5 @@
 using Xunit;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_command_is_published_in_defined_time(ShoppingCart shoppingCart)
+        public async Task Scheduled_command_is_published_in_defined_time
+        (
+            ShoppingCart shoppingCart,
+            Guid messageId,
+            Guid correlationId,
+            Guid causationId
+        )
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -34,7 +41,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
-                new DeleteShoppingCartCommand(shoppingCart.Id),
+                new DeleteShoppingCartCommand(shoppingCart.Id)
+                {
+                    MessageId = messageId,
+                    CausationId = causationId,
+                    CorrelationId = correlationId
+                },
                 clockService.Now
             );
         

@@ -6,19 +6,53 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record OrderPlacedDomainEvent : DomainEvent
     {
-        public Guid OrderId { get; init; }
-        public decimal DeliveryCost { get; init; }
-        public int CustomerDiscount { get; init; }
-        public Guid CustomerId { get; init; }
-        public string FirstName { get; init; }
-        public string MiddleName { get; init; }
-        public string LastName { get; init; }
-        public string EmailAddress { get; init; }
-        public string PhoneNumber { get; init; }
-        public string City { get; init; }
-        public string CountryCode { get; init; }
-        public string PostalCode { get; init; }
-        public string StateProvince { get; init; }
-        public string StreetAddress { get; init; }
+        public Guid OrderId { get; }
+        public decimal DeliveryCost { get; }
+        public int CustomerDiscount { get; }
+        public Guid CustomerId { get; }
+        public string FirstName { get; }
+        public string MiddleName { get; }
+        public string LastName { get; }
+        public string EmailAddress { get; }
+        public string PhoneNumber { get; }
+        public string City { get; }
+        public string CountryCode { get; }
+        public string PostalCode { get; }
+        public string StateProvince { get; }
+        public string StreetAddress { get; }
+
+        public OrderPlacedDomainEvent
+        (
+            Guid orderId,
+            decimal deliveryCost,
+            int customerDiscount,
+            Guid customerId,
+            string firstName,
+            string middleName,
+            string lastName,
+            string emailAddress,
+            string phoneNumber,
+            string city,
+            string countryCode,
+            string postalCode,
+            string stateProvince,
+            string streetAddress
+        )
+        {
+            OrderId = orderId;
+            DeliveryCost = deliveryCost;
+            CustomerDiscount = customerDiscount;
+            CustomerId = customerId;
+            FirstName = firstName;
+            MiddleName = middleName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            PhoneNumber = phoneNumber;
+            City = city;
+            CountryCode = countryCode;
+            PostalCode = postalCode;
+            StateProvince = stateProvince;
+            StreetAddress = streetAddress;
+        }
     }
 }

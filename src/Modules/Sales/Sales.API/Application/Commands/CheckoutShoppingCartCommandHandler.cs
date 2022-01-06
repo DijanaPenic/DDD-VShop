@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 orderId = SequentialGuid.Create();
                 
-                Result checkoutResult = shoppingCart.RequestCheckout(EntityId.Create(orderId).Data, _clockService.Now);
+                Result checkoutResult = shoppingCart.Checkout(EntityId.Create(orderId).Data, _clockService.Now);
                 if (checkoutResult.IsError) return checkoutResult.Error;
             }
             else
@@ -67,7 +67,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record CheckoutShoppingCartCommand : Command<CheckoutOrder>
     {
-        public Guid ShoppingCartId { get; }
+        public Guid ShoppingCartId { get; init; }
+        
+        public CheckoutShoppingCartCommand() { }
         
         public CheckoutShoppingCartCommand(Guid shoppingCartId)
         {

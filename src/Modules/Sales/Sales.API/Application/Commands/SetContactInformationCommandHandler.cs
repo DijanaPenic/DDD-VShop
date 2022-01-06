@@ -60,5 +60,27 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public string EmailAddress { get; init; }
         public string PhoneNumber { get; init; }
         public GenderType Gender { get; init; }
+        
+        public SetContactInformationCommand() { }
+
+        public SetContactInformationCommand
+        (
+            Guid shoppingCartId,
+            string firstName,
+            string middleName,
+            string lastName,
+            string emailAddress,
+            string phoneNumber,
+            GenderType gender
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            FirstName = firstName;
+            MiddleName = middleName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            PhoneNumber = phoneNumber;
+            Gender = gender;
+        }
     }
 }

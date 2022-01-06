@@ -6,8 +6,20 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record ShoppingCartCreatedDomainEvent : DomainEvent
     {
-        public Guid ShoppingCartId { get; init; }
-        public Guid CustomerId { get; init; }
-        public int CustomerDiscount { get; init; }
+        public Guid ShoppingCartId { get; }
+        public Guid CustomerId { get; }
+        public int CustomerDiscount { get; }
+
+        public ShoppingCartCreatedDomainEvent
+        (
+            Guid shoppingCartId,
+            Guid customerId,
+            int customerDiscount
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            CustomerId = customerId;
+            CustomerDiscount = customerDiscount;
+        }
     }
 }

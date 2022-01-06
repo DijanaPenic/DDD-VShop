@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -40,8 +41,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
                 (
-                    command.ShoppingCartId,
-                    command.OrderId,
+                    EntityId.Create(command.ShoppingCartId).Data,
+                    EntityId.Create(command.OrderId).Data,
                     command.MessageId,
                     command.CorrelationId,
                     cancellationToken
@@ -59,7 +60,19 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record PlaceOrderCommand : Command<Order>
     {
-        public EntityId OrderId { get; init; }
-        public EntityId ShoppingCartId { get; init; }
+        public Guid OrderId { get; init; }
+        public Guid ShoppingCartId { get; init; }
+        
+        public PlaceOrderCommand() { }
+
+        public PlaceOrderCommand
+        (
+            Guid orderId,
+            Guid shoppingCartId
+        )
+        {
+            OrderId = orderId;
+            ShoppingCartId = shoppingCartId;
+        }
     }
 }

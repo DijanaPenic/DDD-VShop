@@ -6,8 +6,20 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record OrderLineOutOfStockRemovedDomainEvent : DomainEvent
     {
-        public Guid OrderId { get; init; }
-        public Guid ProductId { get; init; }
-        public int Quantity { get; init; }
+        public Guid OrderId { get; }
+        public Guid ProductId { get; }
+        public int Quantity { get; }
+
+        public OrderLineOutOfStockRemovedDomainEvent
+        (
+            Guid orderId,
+            Guid productId,
+            int quantity
+        )
+        {
+            OrderId = orderId;
+            ProductId = productId;
+            Quantity = quantity;
+        }
     }
 }

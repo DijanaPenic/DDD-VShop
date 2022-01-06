@@ -7,12 +7,32 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record ShoppingCartContactInformationSetDomainEvent : DomainEvent
     {
-        public Guid ShoppingCartId { get; init; }
-        public string FirstName { get; init; }
-        public string MiddleName { get; init; }
-        public string LastName { get; init; }
-        public string EmailAddress { get; init; }
-        public string PhoneNumber { get; init; }
-        public GenderType Gender { get; init; }
+        public Guid ShoppingCartId { get; }
+        public string FirstName { get; }
+        public string MiddleName { get; }
+        public string LastName { get; }
+        public string EmailAddress { get; }
+        public string PhoneNumber { get; }
+        public GenderType Gender { get; }
+
+        public ShoppingCartContactInformationSetDomainEvent
+        (
+            Guid shoppingCartId,
+            string firstName,
+            string middleName,
+            string lastName,
+            string emailAddress,
+            string phoneNumber,
+            GenderType gender
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            FirstName = firstName;
+            MiddleName = middleName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            PhoneNumber = phoneNumber;
+            Gender = gender;
+        }
     }
 }

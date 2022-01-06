@@ -6,9 +6,23 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record OrderLineAddedDomainEvent : DomainEvent
     {
-        public Guid OrderId { get; init; }
-        public Guid ProductId { get; init; }
-        public int Quantity { get; init; }
-        public decimal UnitPrice { get; init; }
+        public Guid OrderId { get; }
+        public Guid ProductId { get; }
+        public int Quantity { get; }
+        public decimal UnitPrice { get; }
+
+        public OrderLineAddedDomainEvent
+        (
+            Guid orderId,
+            Guid productId,
+            int quantity,
+            decimal unitPrice
+        )
+        {
+            OrderId = orderId;
+            ProductId = productId;
+            Quantity = quantity;
+            UnitPrice = unitPrice;
+        }
     }
 }

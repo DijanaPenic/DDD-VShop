@@ -199,7 +199,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            shoppingCart.RequestCheckout(orderId, clockService.Now);
+            shoppingCart.Checkout(orderId, clockService.Now);
 
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);
@@ -230,7 +230,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            shoppingCart.RequestDelete();
+            shoppingCart.Delete();
 
             // Act
             await ShoppingCartHelper.SaveAsync(shoppingCart);

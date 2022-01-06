@@ -50,5 +50,19 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public Guid ShoppingCartId { get; init; }
         public Guid ProductId { get; init; }
         public int Quantity { get; init; }
+        
+        public RemoveShoppingCartProductCommand() { }
+
+        public RemoveShoppingCartProductCommand
+        (
+            Guid shoppingCartId,
+            Guid productId,
+            int quantity
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            ProductId = productId;
+            Quantity = quantity;
+        }
     }
 }

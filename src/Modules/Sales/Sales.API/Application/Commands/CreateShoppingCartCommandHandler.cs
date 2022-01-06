@@ -66,5 +66,21 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public Guid CustomerId { get; init; }
         public int CustomerDiscount { get; init; }
         public AddShoppingCartItem[] ShoppingCartItems { get; init; }
+        
+       public CreateShoppingCartCommand() { }
+        
+        public CreateShoppingCartCommand
+        (
+            Guid shoppingCartId,
+            Guid customerId,
+            int customerDiscount,
+            AddShoppingCartItem[] shoppingCartItems
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            CustomerId = customerId;
+            CustomerDiscount = customerDiscount;
+            ShoppingCartItems = shoppingCartItems;
+        }
     }
 }

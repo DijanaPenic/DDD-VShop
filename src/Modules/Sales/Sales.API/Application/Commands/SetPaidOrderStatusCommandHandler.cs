@@ -58,7 +58,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record SetPaidOrderStatusCommand : Command
     {
-        public Guid OrderId { get; }
+        public Guid OrderId { get; init; }
+        
+        public SetPaidOrderStatusCommand() { }
 
         public SetPaidOrderStatusCommand(Guid orderId)
         {

@@ -21,7 +21,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             Instant now
         )
         {
-            shoppingCart.RequestCheckout(orderId, now);
+            shoppingCart.Checkout(orderId, now);
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
             Order order = await GetOrderAsync(orderId);
@@ -29,10 +29,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             return order;
         }
         
-        public static Task<OrderingProcessManager> GetProcessManagerAsync(Guid processManagerId)
+        public static Task<OrderingProcessManager> LoadProcessManagerAsync
+            (
+                Guid processManagerId, 
+                Guid causationId,
+                Guid correlationId
+            )
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
                (
-                    store => store.LoadAsync(processManagerId)
+                    store => store.LoadAsync(processManagerId, causationId, correlationId)
                );
 
         public static Task<Order> GetOrderAsync(EntityId orderId)

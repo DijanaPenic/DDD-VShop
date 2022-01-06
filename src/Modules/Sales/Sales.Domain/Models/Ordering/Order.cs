@@ -46,22 +46,22 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             order.RaiseEvent
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                }
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                )
             );
 
             return order;
@@ -77,12 +77,12 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             RaiseEvent
             (
                 new OrderLineAddedDomainEvent
-                {
-                    OrderId = Id,
-                    ProductId = productId,
-                    Quantity = quantity,
-                    UnitPrice = unitPrice
-                }
+                (
+                    Id,
+                    productId,
+                    quantity,
+                    unitPrice
+                )
             );
 
             return Result.Success;

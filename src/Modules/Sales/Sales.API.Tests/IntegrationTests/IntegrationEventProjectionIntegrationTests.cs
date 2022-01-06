@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using System.Linq;
 using System.Threading;
@@ -34,7 +35,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
         (
             EntityId orderId,
-            ShoppingCart shoppingCart
+            ShoppingCart shoppingCart,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
@@ -43,8 +46,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
-        
-            OrderingProcessManager processManager = await OrderHelper.GetProcessManagerAsync(orderId);
+
+            OrderingProcessManager processManager = await OrderHelper.LoadProcessManagerAsync
+            (
+                orderId,
+                causationId,
+                correlationId
+            );
         
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<EventStoreClient>
@@ -79,7 +87,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Publishing_integration_event_from_the_integration_stream
         (
             EntityId orderId,
-            ShoppingCart shoppingCart
+            ShoppingCart shoppingCart,
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
@@ -95,7 +105,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Task<OrderingProcessManager> Sampling(IProcessManagerStore<OrderingProcessManager> store)
-                => store.LoadAsync(orderId);
+                => store.LoadAsync(orderId, causationId, correlationId);
 
             void Validation(OrderingProcessManager processManager)
             {

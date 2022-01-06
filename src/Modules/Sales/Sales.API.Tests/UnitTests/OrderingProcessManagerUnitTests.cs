@@ -34,12 +34,12 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             IClockService clockService = new ClockService();
             
             OrderingProcessManager processManager = new(causationId, correlationId);
-            ShoppingCartCheckoutRequestedDomainEvent shoppingCartCheckoutRequestedDomainEvent = new()
-            {
-                ShoppingCartId = shoppingCartId,
-                OrderId = orderId,
-                ConfirmedAt = clockService.Now
-            };
+            ShoppingCartCheckoutRequestedDomainEvent shoppingCartCheckoutRequestedDomainEvent = new
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            );
 
             // Act
             processManager.Transition(shoppingCartCheckoutRequestedDomainEvent, clockService.Now);
@@ -77,31 +77,31 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
 
-            OrderPlacedDomainEvent orderPlacedDomainEvent = new()
-            {
-                OrderId = orderId,
-                DeliveryCost = deliveryCost,
-                CustomerDiscount = customerDiscount,
-                CustomerId = customerId,
-                FirstName = fullName.FirstName,
-                MiddleName = fullName.MiddleName,
-                LastName = fullName.LastName,
-                EmailAddress = emailAddress,
-                PhoneNumber = phoneNumber,
-                City = deliveryAddress.City,
-                CountryCode = deliveryAddress.CountryCode,
-                PostalCode = deliveryAddress.PostalCode,
-                StateProvince = deliveryAddress.StateProvince,
-                StreetAddress = deliveryAddress.StreetAddress
-            };
+            OrderPlacedDomainEvent orderPlacedDomainEvent = new
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            );
 
             // Act
             processManager.Transition(orderPlacedDomainEvent, clockService.Now);
@@ -138,37 +138,37 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         {
             // Arrange
             IClockService clockService = new ClockService();
-            
+
             OrderingProcessManager processManager = new(causationId, correlationId);
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
 
@@ -207,32 +207,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
 
@@ -271,32 +271,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -340,32 +340,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -412,32 +412,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -486,32 +486,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
 
@@ -553,32 +553,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -594,7 +594,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             
             // Assert
             IScheduledMessage stockReminder = processManager.Outbox.ScheduledMessages
-                .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>());;
+                .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>());
             stockReminder.Should().NotBeNull();
 
             processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
@@ -624,32 +624,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -699,32 +699,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -783,32 +783,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -864,32 +864,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -957,32 +957,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -1053,32 +1053,32 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    OrderId = orderId,
-                    ConfirmedAt = clockService.Now
-                },
+                (
+                    shoppingCartId,
+                    orderId,
+                    clockService.Now
+                ),
                 clockService.Now
             );
             processManager.Transition
             (
                 new OrderPlacedDomainEvent
-                {
-                    OrderId = orderId,
-                    DeliveryCost = deliveryCost,
-                    CustomerDiscount = customerDiscount,
-                    CustomerId = customerId,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress
-                },
+                (
+                    orderId,
+                    deliveryCost,
+                    customerDiscount,
+                    customerId,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                ),
                 clockService.Now
             );
             processManager.Transition

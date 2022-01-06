@@ -43,7 +43,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record CancelOrderCommand : Command
     {
-        public Guid OrderId { get; }
+        public Guid OrderId { get; init; }
+        
+        public CancelOrderCommand() { }
 
         public CancelOrderCommand(Guid orderId)
         {

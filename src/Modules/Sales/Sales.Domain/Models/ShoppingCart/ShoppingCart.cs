@@ -47,17 +47,22 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             shoppingCart.RaiseEvent
             (
                 new ShoppingCartCreatedDomainEvent
-                {
-                    ShoppingCartId = shoppingCartId,
-                    CustomerId = customerId,
-                    CustomerDiscount = customerDiscount
-                }
+                (
+                    shoppingCartId,
+                    customerId,
+                    customerDiscount
+                )
             );
 
             return shoppingCart;
         }
-        
-        public Result AddProductQuantity(EntityId productId, ProductQuantity quantity, Price unitPrice)
+
+        public Result AddProductQuantity
+        (
+            EntityId productId,
+            ProductQuantity quantity,
+            Price unitPrice
+        )
         {
             if(_isClosedForUpdates)
                 return Result.ValidationError($"Adding product for the shopping cart in '{Status}' status is not allowed.");
@@ -66,16 +71,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
             if (shoppingCartItem is null)
             {
-                RaiseEvent
-                (
-                    new ShoppingCartProductAddedDomainEvent
-                    {
-                        ShoppingCartId = Id,
-                        ProductId = productId,
-                        Quantity = quantity,
-                        UnitPrice = unitPrice
-                    }
-                );
+                RaiseEvent(new ShoppingCartProductAddedDomainEvent(Id, productId, quantity, unitPrice));
             }
             else
             {
@@ -91,7 +87,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
             return Result.Success;
         }
-        
+
         public Result RemoveProductQuantity(EntityId productId, ProductQuantity quantity)
         {
             if(_isClosedForUpdates)
@@ -104,14 +100,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             if (shoppingCartItem.Quantity - quantity <= 0)
             {
-                RaiseEvent
-                (
-                    new ShoppingCartProductRemovedDomainEvent
-                    {
-                        ShoppingCartId = Id,
-                        ProductId = productId
-                    }
-                );
+                RaiseEvent(new ShoppingCartProductRemovedDomainEvent(Id, productId));
             }
             else
             {
@@ -123,8 +112,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             return Result.Success;
         }
-        
-        public Result RequestCheckout(EntityId orderId, Instant now)
+
+        public Result Checkout(EntityId orderId, Instant now)
         {
             if(Status is not ShoppingCartStatus.AwaitingConfirmation)
                 return Result.ValidationError($"Checkout is not allowed. Shopping cart Status: '{Status}'.");
@@ -135,20 +124,13 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if(!HasMinAmountForCheckout)
                 return Result.ValidationError(@$"Checkout is not allowed. Minimum required shopping cart amount 
                                                             for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
-            RaiseEvent
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                {
-                    ShoppingCartId = Id,
-                    OrderId = orderId,
-                    ConfirmedAt = now
-                }
-            );
+            
+            RaiseEvent(new ShoppingCartCheckoutRequestedDomainEvent(Id, orderId, now));
             
             return Result.Success;
         }
         
-        public Result RequestDelete()
+        public Result Delete()
         {
             if (Status is ShoppingCartStatus.Closed)
                 return Result.ValidationError($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
@@ -164,14 +146,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 ? 0 : Settings.DefaultDeliveryCost;
             
             if (newDeliveryCost != DeliveryCost)
-                RaiseEvent
-                (
-                    new ShoppingCartDeliveryCostChangedDomainEvent
-                    {
-                        ShoppingCartId = Id,
-                        DeliveryCost = newDeliveryCost
-                    }
-                );
+                RaiseEvent(new ShoppingCartDeliveryCostChangedDomainEvent(Id, newDeliveryCost));
         }
 
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)

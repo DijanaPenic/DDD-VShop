@@ -16,10 +16,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly ProcessManagerOutbox _outbox = new();
 
         public Guid Id { get; protected set; }
-        public Guid CorrelationId { get; }
-        public Guid CausationId { get; }
         public IProcessManagerInbox Inbox => _inbox;
         public IProcessManagerOutbox Outbox => _outbox;
+        public Guid CausationId { get; }
+        public Guid CorrelationId { get; }
         
         protected ProcessManager(Guid causationId, Guid correlationId)
         {
@@ -72,7 +72,11 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(@event, scheduledTime);
         }
 
-        public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory)
+        public void Load
+        (
+            IEnumerable<IMessage> inboxHistory,
+            IEnumerable<IMessage> outboxHistory
+        )
         {
             foreach (IMessage inboxMessage in inboxHistory)
             {

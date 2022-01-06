@@ -92,10 +92,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
     public record FinalizeOrderCommand : Command
     {
-        public Guid OrderId { get; }
-        public IList<OrderLine> OrderLines { get; }
+        public Guid OrderId { get; init; }
+        public IList<OrderLine> OrderLines { get; init; }
+        
+        public FinalizeOrderCommand() { }
 
-        public FinalizeOrderCommand(Guid orderId, IList<OrderLine> orderLines)
+        public FinalizeOrderCommand
+        (
+            Guid orderId,
+            IList<OrderLine> orderLines
+        )
         {
             OrderId = orderId;
             OrderLines = orderLines;

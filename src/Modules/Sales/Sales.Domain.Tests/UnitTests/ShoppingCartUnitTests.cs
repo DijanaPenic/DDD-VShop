@@ -106,7 +106,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         {
             // Arrange
             IClockService clockService = new ClockService();
-            sut.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
+            sut.Checkout(orderId, clockService.Now); // Checkout will prevent further updates
 
             // Act
             Result result = sut.AddProductQuantity(productId, productQuantity, productPrice);
@@ -259,7 +259,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         {
             // Arrange
             IClockService clockService = new ClockService();
-            sut.RequestCheckout(orderId, clockService.Now);
+            sut.Checkout(orderId, clockService.Now);
             
             ShoppingCartItem shoppingCartItem = sut.Items[0];
             
@@ -321,7 +321,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Deletes_the_shopping_cart(ShoppingCart sut)
         {
             // Act
-            Result result = sut.RequestDelete();
+            Result result = sut.Delete();
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -333,10 +333,10 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         public void Shopping_cart_delete_fails_for_already_deleted_shopping_cart(ShoppingCart sut)
         {
             // Arrange
-            sut.RequestDelete();
+            sut.Delete();
 
             // Act
-            Result result = sut.RequestDelete();
+            Result result = sut.Delete();
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -379,7 +379,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             IClockService clockService = new ClockService();
             ShoppingCartCustomer sut = shoppingCart.Customer;
 
-            shoppingCart.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
+            shoppingCart.Checkout(orderId, clockService.Now); // Checkout will prevent further updates
 
             // Act
             Result result = sut.SetContactInformation(fullName, emailAddress, phoneNumber, genderType);
@@ -419,7 +419,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             IClockService clockService = new ClockService();
             ShoppingCartCustomer sut = shoppingCart.Customer;
 
-            shoppingCart.RequestCheckout(orderId, clockService.Now); // Checkout will prevent further updates
+            shoppingCart.Checkout(orderId, clockService.Now); // Checkout will prevent further updates
 
             // Act
             Result result = sut.SetDeliveryAddress(deliveryAddress);
@@ -436,7 +436,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             IClockService clockService = new ClockService();
 
             // Act
-            Result result = sut.RequestCheckout(orderId, clockService.Now);
+            Result result = sut.Checkout(orderId, clockService.Now);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -462,7 +462,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
                 causationId, correlationId).Data;
 
             // Act
-            Result result = sut.RequestCheckout(orderId, clockService.Now);
+            Result result = sut.Checkout(orderId, clockService.Now);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -493,7 +493,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(orderId, clockService.Now);
+            Result result = sut.Checkout(orderId, clockService.Now);
             
             // Assert
             result.IsError.Should().BeTrue();
@@ -522,7 +522,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             sut.AddProductQuantity(productId, productQuantity, productPrice);
             
             // Act
-            Result result = sut.RequestCheckout(orderId, clockService.Now);
+            Result result = sut.Checkout(orderId, clockService.Now);
             
             // Assert
             result.IsError.Should().BeTrue();

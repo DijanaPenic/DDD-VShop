@@ -25,11 +25,11 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             RaiseEvent
             (
                 new OrderLineOutOfStockRemovedDomainEvent
-                {
-                    OrderId = OrderId,
-                    ProductId = Id,
-                    Quantity = value
-                }
+                (
+                    OrderId,
+                    Id,
+                    value
+                )
             );
 
             return Result.Success;

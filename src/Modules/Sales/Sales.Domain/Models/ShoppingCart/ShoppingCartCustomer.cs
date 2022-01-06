@@ -37,15 +37,15 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             RaiseEvent
             (
                 new ShoppingCartContactInformationSetDomainEvent
-                {
-                    ShoppingCartId = Id,
-                    FirstName = fullName.FirstName,
-                    MiddleName = fullName.MiddleName,
-                    LastName = fullName.LastName,
-                    EmailAddress = emailAddress,
-                    PhoneNumber = phoneNumber,
-                    Gender = gender
-                }
+                (
+                    Id,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    gender
+                )
             );
             
             return Result.Success;
@@ -59,14 +59,14 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             RaiseEvent
             (
                 new ShoppingCartDeliveryAddressSetDomainEvent
-                {
-                    ShoppingCartId = Id,
-                    City = deliveryAddress.City,
-                    CountryCode = deliveryAddress.CountryCode,
-                    PostalCode = deliveryAddress.PostalCode,
-                    StateProvince = deliveryAddress.StateProvince,
-                    StreetAddress = deliveryAddress.StreetAddress,
-                }
+                (
+                    Id,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                )
             );
             
             return Result.Success;

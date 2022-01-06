@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             CausationId = causationId;
             CorrelationId = correlationId;
         }
-        
+
         protected abstract void ApplyEvent(IDomainEvent @event);
 
         protected void RaiseEvent(IDomainEvent @event)
@@ -38,7 +38,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             SetEventIdentification(@event);
             _events.Add(@event);
         }
-        
+
         // TODO - review this approach.
         public void Load(IEnumerable<IBaseEvent> history)
         {

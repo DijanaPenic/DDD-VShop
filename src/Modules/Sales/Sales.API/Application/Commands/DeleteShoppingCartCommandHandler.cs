@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             if (shoppingCart.Events.Count is 0)
             {
-                Result deleteResult = shoppingCart.RequestDelete();
+                Result deleteResult = shoppingCart.Delete();
                 if (deleteResult.IsError) return deleteResult.Error;
             }
 
@@ -43,7 +43,9 @@ namespace VShop.Modules.Sales.API.Application.Commands
     
     public record DeleteShoppingCartCommand : Command
     {
-        public Guid ShoppingCartId { get; }
+        public Guid ShoppingCartId { get; init; }
+        
+        public DeleteShoppingCartCommand() { }
 
         public DeleteShoppingCartCommand(Guid shoppingCartId)
         {

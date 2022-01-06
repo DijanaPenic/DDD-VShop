@@ -31,13 +31,9 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
             RegisterEvent<OrderStatusSetToPendingShippingDomainEvent>(Handle);
             RegisterEvent<ShippingGracePeriodExpiredDomainEvent>(Handle);
         }
-        
+
         private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, Instant _) 
-            => RaiseCommand(new PlaceOrderCommand
-            {
-                OrderId = OrderId,
-                ShoppingCartId = ShoppingCartId
-            });
+            => RaiseCommand(new PlaceOrderCommand(OrderId, ShoppingCartId));
 
         private void Handle(OrderPlacedDomainEvent @event, Instant now)
         {

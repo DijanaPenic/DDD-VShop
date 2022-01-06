@@ -75,10 +75,9 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
-            DeleteShoppingCartCommand command = new(shoppingCartId)
+            DeleteShoppingCartCommand command = _mapper.Map<DeleteShoppingCartCommand>(request) with
             {
-                MessageId = request.MessageId,
-                CorrelationId = request.CorrelationId
+                ShoppingCartId = shoppingCartId
             };
             
             Result result = await _commandBus.SendAsync(command);
@@ -94,10 +93,9 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
-            CheckoutShoppingCartCommand command = new(shoppingCartId)
+            CheckoutShoppingCartCommand command = _mapper.Map<CheckoutShoppingCartCommand>(request) with
             {
-                MessageId = request.MessageId,
-                CorrelationId = request.CorrelationId
+                ShoppingCartId = shoppingCartId
             };
             
             Result<CheckoutOrder> result = await _commandBus.SendAsync(command);
@@ -119,13 +117,15 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromBody] AddShoppingCartProductRequest request
         )
         {
-            AddShoppingCartProductCommand command = new()
-            {
-                ShoppingCartId = shoppingCartId,
-                ShoppingCartItem = _mapper.Map<AddShoppingCartItem>(request) with
+            AddShoppingCartProductCommand command = new
+            (
+                shoppingCartId,
+                _mapper.Map<AddShoppingCartItem>(request) with
                 {
                     ProductId = productId
-                },
+                }
+            )
+            {
                 MessageId = request.MessageId,
                 CorrelationId = request.CorrelationId
             };

@@ -7,8 +7,20 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record ShoppingCartCheckoutRequestedDomainEvent : DomainEvent
     {
-        public Guid ShoppingCartId { get; init; }
-        public Guid OrderId { get; init; }
-        public Instant ConfirmedAt { get; init; }
+        public Guid ShoppingCartId { get; }
+        public Guid OrderId { get; }
+        public Instant ConfirmedAt { get; }
+
+        public ShoppingCartCheckoutRequestedDomainEvent
+        (
+            Guid shoppingCartId,
+            Guid orderId,
+            Instant confirmedAt
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            OrderId = orderId;
+            ConfirmedAt = confirmedAt;
+        }
     }
 }

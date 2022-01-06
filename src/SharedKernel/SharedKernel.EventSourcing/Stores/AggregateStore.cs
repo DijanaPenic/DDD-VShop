@@ -83,14 +83,13 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             );
 
             if (events.Count is 0) return default;
-
+            
             // TODO - potentially use private constructor.
             TAggregate aggregate = (TAggregate)Activator.CreateInstance
             (
                 typeof(TAggregate),
                 causationId, correlationId
             );
-            
             if (aggregate is null) throw new Exception("Aggregate instance creation failed.");
             
             aggregate.Load(events);

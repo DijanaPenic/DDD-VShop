@@ -17,8 +17,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         Task<TProcess> LoadAsync
         (
             Guid processManagerId,
-            Guid? causationId = default,
-            Guid? correlationId = default,
+            Guid causationId,
+            Guid correlationId,
             CancellationToken cancellationToken = default
         );
     }

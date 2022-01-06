@@ -59,5 +59,25 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public string PostalCode { get; init; }
         public string StateProvince { get; init; }
         public string StreetAddress { get; init; }
+        
+        public SetDeliveryAddressCommand() { }
+
+        public SetDeliveryAddressCommand
+        (
+            Guid shoppingCartId,
+            string city,
+            string countryCode,
+            string postalCode,
+            string stateProvince,
+            string streetAddress
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            City = city;
+            CountryCode = countryCode;
+            PostalCode = postalCode;
+            StateProvince = stateProvince;
+            StreetAddress = streetAddress;
+        }
     }
 }

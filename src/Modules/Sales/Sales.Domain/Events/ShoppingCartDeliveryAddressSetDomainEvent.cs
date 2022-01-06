@@ -6,11 +6,29 @@ namespace VShop.Modules.Sales.Domain.Events
 {
     public record ShoppingCartDeliveryAddressSetDomainEvent : DomainEvent
     {
-        public Guid ShoppingCartId { get; init; }
-        public string City { get; init; }
-        public string CountryCode { get; init; }
-        public string PostalCode { get; init; }
-        public string StateProvince { get; init; }
-        public string StreetAddress { get; init; }
+        public Guid ShoppingCartId { get; }
+        public string City { get; }
+        public string CountryCode { get; }
+        public string PostalCode { get; }
+        public string StateProvince { get; }
+        public string StreetAddress { get; }
+
+        public ShoppingCartDeliveryAddressSetDomainEvent
+        (
+            Guid shoppingCartId,
+            string city,
+            string countryCode,
+            string postalCode,
+            string stateProvince,
+            string streetAddress
+        )
+        {
+            ShoppingCartId = shoppingCartId;
+            City = city;
+            CountryCode = countryCode;
+            PostalCode = postalCode;
+            StateProvince = stateProvince;
+            StreetAddress = streetAddress;
+        }
     }
 }

@@ -28,11 +28,11 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             RaiseEvent
             (
                 new ShoppingCartItemQuantityIncreasedDomainEvent
-                {
-                    ShoppingCartId = ShoppingCartId,
-                    ProductId = Id,
-                    Quantity = value
-                }
+                (
+                    ShoppingCartId,
+                    Id,
+                    value
+                )
             );
             
             return Result.Success;
@@ -46,11 +46,11 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             RaiseEvent
             (
                 new ShoppingCartItemQuantityDecreasedDomainEvent
-                {
-                    ShoppingCartId = ShoppingCartId,
-                    ProductId = Id,
-                    Quantity = value
-                }
+                (
+                    ShoppingCartId,
+                    Id,
+                    value
+                )
             );
             
             return Result.Success;
