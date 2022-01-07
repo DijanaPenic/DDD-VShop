@@ -15,8 +15,10 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         public IReadOnlyList<IBaseEvent> Events => _events;
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CausationId { get; }
-        public Guid CorrelationId { get; }
+        public Guid CausationId { get; private set; }
+        public Guid CorrelationId { get; private set; }
+        
+        protected AggregateRoot() { }
 
         protected AggregateRoot(Guid causationId, Guid correlationId)
         {
@@ -39,8 +41,11 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             _events.Add(@event);
         }
         
-        public void Load(IEnumerable<IBaseEvent> history)
+        public void Load(IEnumerable<IBaseEvent> history, Guid causationId, Guid correlationId)
         {
+            CausationId = causationId;
+            CorrelationId = correlationId;
+            
             // Truncate events following the specified causationId.
             IList<IBaseEvent> historyList = history.ToList()
                 .RemoveRangeFollowingLast(e => e.CausationId == CausationId);

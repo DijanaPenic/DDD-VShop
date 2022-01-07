@@ -75,6 +75,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         (
             Guid processManagerId,
             Guid causationId,
+            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -90,7 +91,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             );
 
             TProcess processManager = new();
-            processManager.Load(inboxMessages, outboxMessages, causationId);
+            processManager.Load(inboxMessages, outboxMessages, causationId, correlationId);
 
             return processManager;
         }

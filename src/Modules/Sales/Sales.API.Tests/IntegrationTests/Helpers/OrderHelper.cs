@@ -37,7 +37,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             )
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
                (
-                    store => store.LoadAsync(processManagerId, causationId)
+                    store => store.LoadAsync(processManagerId, causationId, correlationId)
                );
 
         public static Task<Order> GetOrderAsync(EntityId orderId)

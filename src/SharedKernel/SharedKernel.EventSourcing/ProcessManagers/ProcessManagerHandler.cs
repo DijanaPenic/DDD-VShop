@@ -39,6 +39,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             (
                 processId,
                 @event.MessageId,
+                @event.CorrelationId,
                 cancellationToken
             );
 

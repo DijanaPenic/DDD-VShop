@@ -88,7 +88,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             EntityId orderId,
             ShoppingCart shoppingCart,
-            Guid causationId
+            Guid causationId,
+            Guid correlationId
         )
         {
             // Arrange
@@ -104,7 +105,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Task<OrderingProcessManager> Sampling(IProcessManagerStore<OrderingProcessManager> store)
-                => store.LoadAsync(orderId, causationId);
+                => store.LoadAsync(orderId, causationId, correlationId);
 
             void Validation(OrderingProcessManager processManager)
             {

@@ -69,8 +69,17 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(@event, scheduledTime);
         }
 
-        public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory, Guid causationId)
+        public void Load
+        (
+            IEnumerable<IMessage> inboxHistory,
+            IEnumerable<IMessage> outboxHistory,
+            Guid causationId,
+            Guid correlationId
+        )
         {
+            CausationId = causationId;
+            CorrelationId = correlationId;
+            
             foreach (IMessage inboxMessage in inboxHistory)
             {
                 if(inboxMessage is IBaseEvent @event) ApplyEvent(@event);
@@ -79,11 +88,11 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
             // Truncate events following the specified causationId.
             IList<IMessage> outboxHistoryList = outboxHistory.ToList()
-                .RemoveRangeFollowingLast(m => m.CausationId == causationId);
+                .RemoveRangeFollowingLast(m => m.CausationId == CausationId);
 
             // Restore aggregate state (identified by causationId param).
             (IEnumerable<IMessage> pendingOutboxMessages, IEnumerable<IMessage> processedOutboxMessages) = 
-                outboxHistoryList.Split(m => m.CausationId == causationId);
+                outboxHistoryList.Split(m => m.CausationId == CausationId);
             
             _outbox.Version = processedOutboxMessages.Count() - 1;
 

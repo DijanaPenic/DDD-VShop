@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Reflection;
 using System.Collections.Generic;
 using EventStore.Client;
 
@@ -17,7 +16,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot
+    public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -84,19 +83,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             );
 
             if (events.Count is 0) return default;
-            
-            // TODO - anti-pattern
-            TAggregate aggregate = (TAggregate)Activator.CreateInstance
-            (
-                typeof(TAggregate),
-                BindingFlags.NonPublic | BindingFlags.Instance,
-                null,
-                new object[] { causationId, correlationId },
-                null
-            );
-            if (aggregate is null) throw new Exception("Aggregate instance creation failed.");
 
-            aggregate.Load(events);
+            TAggregate aggregate = new();
+            aggregate.Load(events, causationId, correlationId);
 
             return aggregate;
         }
