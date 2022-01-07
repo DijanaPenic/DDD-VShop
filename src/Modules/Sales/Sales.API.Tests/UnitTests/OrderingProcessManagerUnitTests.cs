@@ -9,6 +9,7 @@ using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.ProcessManagers;

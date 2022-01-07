@@ -4,22 +4,22 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ShoppingCartItemQuantityIncreasedDomainEvent : DomainEvent
+    public record ShoppingCartProductPriceChangedDomainEvent : DomainEvent
     {
         public Guid ShoppingCartId { get; }
         public Guid ProductId { get; }
-        public int Quantity { get; }
+        public decimal UnitPrice { get; }
 
-        public ShoppingCartItemQuantityIncreasedDomainEvent
+        public ShoppingCartProductPriceChangedDomainEvent
         (
             Guid shoppingCartId,
             Guid productId,
-            int quantity
+            decimal unitPrice
         )
         {
             ShoppingCartId = shoppingCartId;
             ProductId = productId;
-            Quantity = quantity;
+            UnitPrice = unitPrice;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         {
             RaiseEvent
             (
-                new ShoppingCartItemPriceChangedDomainEvent
+                new ShoppingCartProductPriceChangedDomainEvent
                 (
                     ShoppingCartId,
                     Id,
@@ -42,7 +42,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             RaiseEvent
             (
-                new ShoppingCartItemQuantityIncreasedDomainEvent
+                new ShoppingCartProductQuantityIncreasedDomainEvent
                 (
                     ShoppingCartId,
                     Id,
@@ -60,7 +60,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             
             RaiseEvent
             (
-                new ShoppingCartItemQuantityDecreasedDomainEvent
+                new ShoppingCartProductQuantityDecreasedDomainEvent
                 (
                     ShoppingCartId,
                     Id,
@@ -81,13 +81,13 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
                     break;
-                case ShoppingCartItemQuantityIncreasedDomainEvent e:
+                case ShoppingCartProductQuantityIncreasedDomainEvent e:
                     Quantity += new ProductQuantity(e.Quantity);
                     break;
-                case ShoppingCartItemQuantityDecreasedDomainEvent e:
+                case ShoppingCartProductQuantityDecreasedDomainEvent e:
                     Quantity -= new ProductQuantity(e.Quantity);
                     break;
-                case ShoppingCartItemPriceChangedDomainEvent e:
+                case ShoppingCartProductPriceChangedDomainEvent e:
                     UnitPrice = new Price(e.UnitPrice);
                     break;
             }

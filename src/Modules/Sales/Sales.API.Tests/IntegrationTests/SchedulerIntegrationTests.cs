@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +11,9 @@ using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
-using VShop.Modules.Sales.Domain.Events;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Tests.Customizations;
+using VShop.Modules.Sales.Domain.Events.Reminders;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;

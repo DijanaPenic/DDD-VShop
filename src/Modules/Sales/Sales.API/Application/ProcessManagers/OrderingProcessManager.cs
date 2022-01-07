@@ -2,6 +2,7 @@
 using System.Linq;
 
 using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;

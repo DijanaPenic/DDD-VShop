@@ -58,21 +58,21 @@ namespace VShop.Modules.Sales.API.Projections
             
                     salesContext.ShoppingCarts.Update(shoppingCart);
                 },
-                ShoppingCartDeletionRequestedDomainEvent e => async() =>
+                ShoppingCartDeletedDomainEvent e => async() =>
                 {
                     ShoppingCartInfo shoppingCart = await GetShoppingCartAsync(salesContext, e.ShoppingCartId);
                     shoppingCart.Status = ShoppingCartStatus.Closed;
             
                     salesContext.ShoppingCarts.Update(shoppingCart);
                 },
-                ShoppingCartItemQuantityIncreasedDomainEvent e => async() =>
+                ShoppingCartProductQuantityIncreasedDomainEvent e => async() =>
                 {
                     ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(salesContext, e.ProductId, e.ShoppingCartId);
                     shoppingCartItem.Quantity += e.Quantity;
             
                     salesContext.ShoppingCartItems.Update(shoppingCartItem);
                 },
-                ShoppingCartItemQuantityDecreasedDomainEvent e => async() =>
+                ShoppingCartProductQuantityDecreasedDomainEvent e => async() =>
                 {
                     ShoppingCartInfoItem shoppingCartItem = await GetShoppingCartItemAsync(salesContext, e.ProductId, e.ShoppingCartId);
                     shoppingCartItem.Quantity -= e.Quantity;

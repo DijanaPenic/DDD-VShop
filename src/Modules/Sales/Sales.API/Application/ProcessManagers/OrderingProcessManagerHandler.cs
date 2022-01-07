@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;

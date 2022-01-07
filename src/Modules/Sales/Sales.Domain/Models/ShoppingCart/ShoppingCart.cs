@@ -149,7 +149,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Status is ShoppingCartStatus.Closed)
                 return Result.ValidationError($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
-            RaiseEvent(new ShoppingCartDeletionRequestedDomainEvent(Id));
+            RaiseEvent(new ShoppingCartDeletedDomainEvent(Id));
             
             return Result.Success;
         }
@@ -191,11 +191,11 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     _shoppingCartItems.Remove(shoppingCartItem);
                     break;
-                case ShoppingCartItemQuantityIncreasedDomainEvent e:
+                case ShoppingCartProductQuantityIncreasedDomainEvent e:
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     ApplyToEntity(shoppingCartItem, e);
                     break;
-                case ShoppingCartItemQuantityDecreasedDomainEvent e:
+                case ShoppingCartProductQuantityDecreasedDomainEvent e:
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     ApplyToEntity(shoppingCartItem, e);
                     break;
@@ -216,10 +216,10 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     ConfirmedAt = e.ConfirmedAt;
                     _isClosedForUpdates = true;
                     break;
-                case ShoppingCartDeletionRequestedDomainEvent _:
+                case ShoppingCartDeletedDomainEvent _:
                     Status = ShoppingCartStatus.Closed;
                     break;
-                case ShoppingCartItemPriceChangedDomainEvent e:
+                case ShoppingCartProductPriceChangedDomainEvent e:
                     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
                     ApplyToEntity(shoppingCartItem, e);
                     break;
