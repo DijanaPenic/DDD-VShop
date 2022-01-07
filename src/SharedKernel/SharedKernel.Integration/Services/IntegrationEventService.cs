@@ -43,14 +43,14 @@ namespace VShop.SharedKernel.Integration.Services
                 _logger.Information
                 (
                     "Publishing integration event: {IntegrationEventId} - ({IntegrationEvent})",
-                    pendingEventLog.EventId, pendingEventLog.Content
+                    pendingEventLog.Id, pendingEventLog.Body
                 );
 
                 try
                 {
                     await _integrationEventLogRepository.MarkEventAsInProgressAsync
                     (
-                        pendingEventLog.EventId,
+                        pendingEventLog.Id,
                         cancellationToken
                     );
 
@@ -62,7 +62,7 @@ namespace VShop.SharedKernel.Integration.Services
 
                     await _integrationEventLogRepository.MarkEventAsPublishedAsync
                     (
-                        pendingEventLog.EventId,
+                        pendingEventLog.Id,
                         cancellationToken
                     );
                 }
@@ -72,10 +72,10 @@ namespace VShop.SharedKernel.Integration.Services
                     (
                         ex,
                         "Error publishing integration event: {IntegrationEventId}",
-                        pendingEventLog.EventId
+                        pendingEventLog.Id
                     );
 
-                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEventLog.EventId, cancellationToken);
+                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEventLog.Id, cancellationToken);
                 }
             }
         }

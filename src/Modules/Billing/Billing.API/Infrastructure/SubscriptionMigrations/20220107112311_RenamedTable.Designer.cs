@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,12 +10,13 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 #nullable disable
 
-namespace VShop.Modules.Sales.API.Infrastructure.SubscriptionMigrations
+namespace VShop.Modules.Billing.API.Infrastructure.SubscriptionMigrations
 {
     [DbContext(typeof(SubscriptionContext))]
-    partial class SubscriptionContextModelSnapshot : ModelSnapshot
+    [Migration("20220107112311_RenamedTable")]
+    partial class RenamedTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -86,7 +86,3 @@ namespace VShop.Modules.Sales.API
         }
     }
 }
-
-// TODO - rename
-// integration_event_log -> integration_event_queue
-// message_dead_letter_log -> message_dead_letter_queue

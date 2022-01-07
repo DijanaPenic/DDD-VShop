@@ -25,15 +25,15 @@ namespace VShop.Modules.Catalog.API.Infrastructure.IntegrationMigrations
 
             modelBuilder.Entity("VShop.SharedKernel.Integration.Infrastructure.Entities.IntegrationEventLog", b =>
                 {
-                    b.Property<Guid>("EventId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("event_id");
+                        .HasColumnName("id");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("content");
+                        .HasColumnName("body");
 
                     b.Property<Instant>("DateCreated")
                         .HasColumnType("timestamp with time zone")
@@ -42,11 +42,6 @@ namespace VShop.Modules.Catalog.API.Infrastructure.IntegrationMigrations
                     b.Property<Instant>("DateUpdated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_updated");
-
-                    b.Property<string>("EventTypeName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("event_type_name");
 
                     b.Property<int>("State")
                         .HasColumnType("integer")
@@ -60,16 +55,21 @@ namespace VShop.Modules.Catalog.API.Infrastructure.IntegrationMigrations
                         .HasColumnType("uuid")
                         .HasColumnName("transaction_id");
 
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type_name");
+
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
-                    b.HasKey("EventId")
-                        .HasName("pk_integration_event_log");
+                    b.HasKey("Id")
+                        .HasName("pk_integration_event_queue");
 
-                    b.ToTable("integration_event_log", "integration");
+                    b.ToTable("integration_event_queue", "integration");
                 });
 #pragma warning restore 612, 618
         }

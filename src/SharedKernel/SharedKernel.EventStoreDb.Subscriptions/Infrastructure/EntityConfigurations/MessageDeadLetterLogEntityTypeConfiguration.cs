@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityCon
     {
         public void Configure(EntityTypeBuilder<MessageDeadLetterLog> builder)
         {
-            builder.ToTable("message_dead_letter_log", SubscriptionContext.SubscriptionSchema);
+            builder.ToTable("message_dead_letter_queue", SubscriptionContext.SubscriptionSchema);
             
             builder.HasKey(el => el.Id);
             builder.Property(el => el.StreamId).IsRequired();

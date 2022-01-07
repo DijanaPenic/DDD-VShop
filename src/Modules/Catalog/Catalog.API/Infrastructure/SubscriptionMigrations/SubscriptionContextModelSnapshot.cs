@@ -103,9 +103,9 @@ namespace VShop.Modules.Catalog.API.Infrastructure.SubscriptionMigrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id")
-                        .HasName("pk_message_dead_letter_log");
+                        .HasName("pk_message_dead_letter_queue");
 
-                    b.ToTable("message_dead_letter_log", "subscription");
+                    b.ToTable("message_dead_letter_queue", "subscription");
                 });
 #pragma warning restore 612, 618
         }

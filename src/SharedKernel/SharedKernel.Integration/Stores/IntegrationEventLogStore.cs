@@ -59,7 +59,7 @@ namespace VShop.SharedKernel.Integration.Stores
         private async Task UpdateEventStatusAsync(Guid eventId, EventState status, CancellationToken cancellationToken = default)
         {
             IntegrationEventLog integrationEventLogEntry = await _integrationContext.IntegrationEventLogs
-                .SingleAsync(ie => ie.EventId == eventId, cancellationToken);
+                .SingleAsync(ie => ie.Id == eventId, cancellationToken);
             
             integrationEventLogEntry.State = status;
             if (status is EventState.InProgress) integrationEventLogEntry.TimesSent++;

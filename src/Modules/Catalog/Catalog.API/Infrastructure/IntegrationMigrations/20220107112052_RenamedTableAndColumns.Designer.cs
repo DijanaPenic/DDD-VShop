@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,16 +10,17 @@ using VShop.SharedKernel.Integration.Infrastructure;
 
 #nullable disable
 
-namespace VShop.Modules.Billing.API.Infrastructure.IntegrationMigrations
+namespace VShop.Modules.Catalog.API.Infrastructure.IntegrationMigrations
 {
     [DbContext(typeof(IntegrationContext))]
-    partial class IntegrationContextModelSnapshot : ModelSnapshot
+    [Migration("20220107112052_RenamedTableAndColumns")]
+    partial class RenamedTableAndColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
