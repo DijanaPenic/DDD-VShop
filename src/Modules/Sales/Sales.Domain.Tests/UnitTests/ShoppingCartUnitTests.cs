@@ -48,6 +48,134 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
+        public void Sets_product_price
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            ProductQuantity productQuantity,
+            Price productPrice
+        )
+        {
+            // Arrange
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
+            Price newProductPrice = ++productPrice;
+            
+            // Act
+            Result result = sut.SetProductPrice(productId, newProductPrice);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            ShoppingCartItem shoppingCartItem = sut.Items
+                .FirstOrDefault(p => Equals(p.Id, productId));
+            shoppingCartItem.Should().NotBeNull();
+            shoppingCartItem!.UnitPrice.Should().Be(newProductPrice);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_product_price_fails_when_shopping_cart_is_closed_for_updates
+        (
+            ShoppingCart sut,
+            EntityId orderId,
+            EntityId productId,
+            ProductQuantity productQuantity,
+            Price productPrice
+        )
+        {
+            // Arrange
+            IClockService clockService = new ClockService();
+            
+            sut.AddProductQuantity(productId, productQuantity, productPrice);
+            Price newProductPrice = ++productPrice;
+
+            sut.Checkout(orderId, clockService.Now); // Checkout will prevent further updates
+
+            // Act
+            Result result = sut.SetProductPrice(productId, newProductPrice);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Setting_product_price_fails_when_product_is_missing
+        (
+            ShoppingCart sut,
+            EntityId productId,
+            Price productPrice
+        )
+        {
+            // Act
+            Result result = sut.SetProductPrice(productId, productPrice);
+            
+            // Assert
+            result.IsError.Should().BeTrue();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Delivery_cost_is_applied_when_changing_product_price_and_not_enough_purchase_amount
+        (
+            EntityId shoppingCartId,
+            EntityId customerId,
+            EntityId productId,
+            Guid causationId,
+            Guid correlationId
+        )
+        {
+            // Arrange
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, Discount.Create(0).Data, causationId, correlationId).Data;
+
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price initialProductPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
+            
+            sut.AddProductQuantity(productId, productQuantity, initialProductPrice);
+            
+            Price newProductPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
+
+            // Act
+            Result result = sut.SetProductPrice(productId, newProductPrice);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            sut.DeliveryCost.Value.Should().Be(ShoppingCart.Settings.DefaultDeliveryCost);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public void Delivery_cost_is_zero_when_changing_product_price_and_enough_purchase_amount
+        (
+            EntityId shoppingCartId,
+            EntityId customerId,
+            EntityId productId,
+            Guid causationId,
+            Guid correlationId
+        )
+        {
+            // Arrange
+            ShoppingCart sut = ShoppingCart
+                .Create(shoppingCartId, customerId, Discount.Create(0).Data, causationId, correlationId).Data;
+
+            ProductQuantity productQuantity = ProductQuantity.Create(1).Data;
+            Price initialProductPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery - 1).Data;
+            
+            sut.AddProductQuantity(productId, productQuantity, initialProductPrice);
+            
+            Price newProductPrice = Price.Create(ShoppingCart.Settings.MinShoppingCartAmountForFreeDelivery).Data;
+
+            // Act
+            Result result = sut.SetProductPrice(productId, newProductPrice);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            sut.DeliveryCost.Value.Should().Be(0);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
         public void Product_quantity_increment_adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart sut,
@@ -272,7 +400,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Product_quantity_removal_increases_delivery_cost_when_not_enough_purchase_amount
+        public void Delivery_cost_is_applied_when_removing_product_quantity_and_not_enough_purchase_amount
         (
             EntityId shoppingCartId,
             EntityId customerId,

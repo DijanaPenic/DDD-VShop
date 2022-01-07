@@ -20,6 +20,21 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
         public ShoppingCartItem(Action<IDomainEvent> applier) : base(applier) { }
         
+        public Result SetPrice(Price value)
+        {
+            RaiseEvent
+            (
+                new ShoppingCartItemPriceChangedDomainEvent
+                (
+                    ShoppingCartId,
+                    Id,
+                    value
+                )
+            );
+            
+            return Result.Success;
+        }
+        
         public Result IncreaseQuantity(ProductQuantity value)
         {
             if (Quantity + value > Settings.MaxQuantityPerProduct)
@@ -71,6 +86,9 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     break;
                 case ShoppingCartItemQuantityDecreasedDomainEvent e:
                     Quantity -= new ProductQuantity(e.Quantity);
+                    break;
+                case ShoppingCartItemPriceChangedDomainEvent e:
+                    UnitPrice = new Price(e.UnitPrice);
                     break;
             }
         }

@@ -6,12 +6,17 @@ namespace VShop.SharedKernel.Messaging
 {
     public record ScheduledMessage : Message, IScheduledMessage
     {
-        public string Body { get; init; }
-        public string TypeName { get; init; }
-        public Instant ScheduledTime { get; init; }
+        public string Body { get; }
+        public string TypeName { get; }
+        public Instant ScheduledTime { get; }
 
         [JsonConstructor]
-        protected ScheduledMessage() { }
+        protected ScheduledMessage(string body, string typeName, Instant scheduledTime)
+        {
+            Body = body;
+            TypeName = typeName;
+            ScheduledTime = scheduledTime;
+        }
 
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {

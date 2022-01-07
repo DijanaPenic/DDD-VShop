@@ -142,6 +142,31 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> SetProductPriceAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] SetShoppingCartProductPriceRequest request
+        )
+        {
+            SetShoppingCartProductPriceCommand command = _mapper.Map<SetShoppingCartProductPriceCommand>(request) with
+            {
+                ShoppingCartId = shoppingCartId,
+                ProductId = productId
+            };
+            
+            Result commandResult = await _commandBus.SendAsync(command);
+
+            return HandleResult(commandResult, NoContent);
+        }
+        
+        [HttpDelete]
+        [Route("{shoppingCartId:guid}/products/{productId:guid}")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveProductAsync
         (
             [FromRoute] Guid shoppingCartId,

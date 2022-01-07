@@ -58,13 +58,25 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 
             return shoppingCart;
         }
+        
+        public Result SetProductPrice(EntityId productId, Price unitPrice)
+        {
+            if(_isClosedForUpdates)
+                return Result.ValidationError($"Changing product price for the shopping cart in '{Status}' status is not allowed.");
 
-        public Result AddProductQuantity
-        (
-            EntityId productId,
-            ProductQuantity quantity,
-            Price unitPrice
-        )
+            ShoppingCartItem shoppingCartItem = _shoppingCartItems.SingleOrDefault(sci => sci.Id.Equals(productId));
+
+            if (shoppingCartItem is null) return Result.ValidationError($"Product cannot be found.");
+
+            Result setProductPriceResult = shoppingCartItem.SetPrice(unitPrice);
+            if (setProductPriceResult.IsError) return setProductPriceResult.Error;
+
+            RecalculateDeliveryCost();
+
+            return Result.Success;
+        }
+
+        public Result AddProductQuantity(EntityId productId, ProductQuantity quantity, Price unitPrice)
         {
             if(_isClosedForUpdates)
                 return Result.ValidationError($"Adding product for the shopping cart in '{Status}' status is not allowed.");
@@ -206,6 +218,10 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     break;
                 case ShoppingCartDeletionRequestedDomainEvent _:
                     Status = ShoppingCartStatus.Closed;
+                    break;
+                case ShoppingCartItemPriceChangedDomainEvent e:
+                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                    ApplyToEntity(shoppingCartItem, e);
                     break;
             }
         }

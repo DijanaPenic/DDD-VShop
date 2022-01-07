@@ -9,6 +9,7 @@ using Autofac.Extensions.DependencyInjection;
 
 using VShop.Modules.Billing.Infrastructure;
 using VShop.SharedKernel.Integration.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Billing.API
 {
@@ -79,6 +80,9 @@ namespace VShop.Modules.Billing.API
             
             using IntegrationContext integrationContext = serviceProvider.GetService<IntegrationContext>();
             integrationContext?.Database.Migrate();
+            
+            using SubscriptionContext subscriptionContext = serviceProvider.GetService<SubscriptionContext>();
+            subscriptionContext?.Database.Migrate();
         }
     }
 }

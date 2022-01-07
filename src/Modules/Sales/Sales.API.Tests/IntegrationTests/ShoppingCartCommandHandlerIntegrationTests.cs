@@ -79,6 +79,60 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
+        public async Task Changes_product_price_in_the_shopping_cart(ShoppingCart shoppingCart)
+        {
+            // Arrange
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
+            ShoppingCartItem shoppingCartItem = shoppingCart.Items[0];
+
+            SetShoppingCartProductPriceCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem.Id,
+                shoppingCartItem.UnitPrice.Value + 1
+            );
+            
+            // Act
+            Result result = await IntegrationTestsFixture.SendAsync(command);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+            
+            ShoppingCart shoppingCartFromDb = await ShoppingCartHelper.GetShoppingCartAsync(shoppingCart.Id);
+            shoppingCartFromDb.Should().NotBeNull();
+            
+            ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
+                .SingleOrDefault(sci => sci.Id.Value == command.ProductId);
+            shoppingCartItemFromDb.Should().NotBeNull();
+            shoppingCartItemFromDb!.UnitPrice.Value.Should().Be(command.UnitPrice);
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
+        public async Task Changing_product_price_in_the_shopping_cart_is_idempotent(ShoppingCart shoppingCart)
+        {
+            // Arrange
+            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
+            ShoppingCartItem shoppingCartItem = shoppingCart.Items[0];
+
+            SetShoppingCartProductPriceCommand command = new
+            (
+                shoppingCart.Id,
+                shoppingCartItem.Id,
+                shoppingCartItem.UnitPrice.Value + 1
+            );
+            
+            await IntegrationTestsFixture.SendAsync(command);
+            
+            // Act
+            Result result = await IntegrationTestsFixture.SendAsync(command);
+            
+            // Assert
+            result.IsError.Should().BeFalse();
+        }
+        
+        [Theory]
+        [CustomizedAutoData]
         public async Task Adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
