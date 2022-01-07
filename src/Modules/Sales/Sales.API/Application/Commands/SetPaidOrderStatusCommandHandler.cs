@@ -36,16 +36,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 Result statusChangeResult = order.SetPaidStatus();
                 if (statusChangeResult.IsError) return statusChangeResult.Error;
                 
-                OrderStatusSetToPaidIntegrationEvent orderPlacedIntegrationEvent = new()
-                {
-                    OrderId = order.Id,
-                    OrderLines = order.OrderLines.Select(ol => new OrderStatusSetToPaidIntegrationEvent.OrderLine
-                    {
-                        ProductId = ol.Id,
-                        Quantity = ol.Quantity,
-                        Price = ol.UnitPrice
-                    }).ToList()
-                };
+                OrderStatusSetToPaidIntegrationEvent orderPlacedIntegrationEvent = new
+                (
+                    order.Id,
+                    order.OrderLines.Select(ol => new OrderStatusSetToPaidIntegrationEvent.OrderLine
+                    (
+                        ol.Id,
+                        ol.Quantity,
+                        ol.UnitPrice
+                    )).ToList()
+                );
                 
                 order.RaiseEvent(orderPlacedIntegrationEvent);
             }

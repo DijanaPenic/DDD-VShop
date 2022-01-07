@@ -13,5 +13,12 @@ namespace VShop.Modules.Billing.Integration.Events
         {
             OrderId = orderId;
         }
+        
+        public PaymentFailedIntegrationEvent(Guid orderId, Guid causationId, Guid correlationId)
+        {
+            OrderId = orderId;
+            causationId = causationId;
+            CorrelationId = correlationId;
+        }
     }
 }

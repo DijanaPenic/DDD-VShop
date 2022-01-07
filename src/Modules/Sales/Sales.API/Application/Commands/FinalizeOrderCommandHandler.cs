@@ -65,19 +65,19 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 // Check the payment changes (for the refund).
                 decimal finalPaymentAmount = order.FinalAmount;
                 decimal deltaPaymentAmount = initialPaymentAmount - finalPaymentAmount;
-                
-                OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = new()
-                {
-                    OrderId = order.Id,
+
+                OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = new
+                (
+                    orderId: order.Id,
                     // Delivery costs need to be refunded as well if there is nothing to deliver.
-                    RefundAmount = (order.TotalOrderLineCount > 0) ? deltaPaymentAmount : initialPaymentAmount,
-                    OrderLines = order.OrderLines
+                    refundAmount: (order.TotalOrderLineCount > 0) ? deltaPaymentAmount : initialPaymentAmount,
+                    orderLines: order.OrderLines
                         .Select(ol => new OrderFinalizedIntegrationEvent.OrderLine
-                        {
-                            ProductId = ol.Id,
-                            Quantity = ol.Quantity
-                        }).ToList()
-                };
+                        (
+                            ol.Id,
+                            ol.Quantity
+                        )).ToList()
+                );
                 
                 order.RaiseEvent(orderFinalizedIntegrationEvent);
             }

@@ -739,11 +739,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new OrderStockProcessedIntegrationEvent
-                {
-                    OrderId = orderId,
-                    OrderLines = orderLines
-                },
+                new OrderStockProcessedIntegrationEvent(orderId, orderLines),
                 clockService.Now
             );
             
@@ -822,11 +818,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 clockService.Now
             );
 
-            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new()
-            {
-                OrderId = orderId,
-                OrderLines = orderLines
-            };
+            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines);
 
             // Act
             processManager.Transition(orderStockProcessedIntegrationEvent, clockService.Now);
@@ -905,18 +897,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new OrderStockProcessedIntegrationEvent
-                {
-                    OrderId = orderId,
-                    OrderLines = new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                (
+                    orderId,
+                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
                     {
-                        new()
-                        {
-                            ProductId = SequentialGuid.Create(),
-                            RequestedQuantity = 10,
-                            OutOfStockQuantity = 0
-                        }
+                        new(SequentialGuid.Create(), 10, 0)
                     }
-                },
+                ),
                 clockService.Now
             );
 
@@ -998,18 +985,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new OrderStockProcessedIntegrationEvent
-                {
-                    OrderId = orderId,
-                    OrderLines = new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                (
+                    orderId,
+                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
                     {
-                        new()
-                        {
-                            ProductId = SequentialGuid.Create(),
-                            RequestedQuantity = 10,
-                            OutOfStockQuantity = 0
-                        }
+                        new(SequentialGuid.Create(), 10, 0)
                     }
-                },
+                ),
                 clockService.Now
             );
             processManager.Transition
@@ -1094,18 +1076,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition
             (
                 new OrderStockProcessedIntegrationEvent
-                {
-                    OrderId = orderId,
-                    OrderLines = new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                (
+                    orderId,
+                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
                     {
-                        new()
-                        {
-                            ProductId = SequentialGuid.Create(),
-                            RequestedQuantity = 10,
-                            OutOfStockQuantity = 0
-                        }
+                        new(SequentialGuid.Create(), 10, 0)
                     }
-                },
+                ),
                 clockService.Now
             );
             processManager.Transition

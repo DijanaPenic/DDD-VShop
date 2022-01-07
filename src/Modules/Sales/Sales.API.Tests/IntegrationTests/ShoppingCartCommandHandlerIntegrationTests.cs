@@ -28,10 +28,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            AddShoppingCartItem[] shoppingCartItems,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            AddShoppingCartItem[] shoppingCartItems
         )
         {
             // Arrange
@@ -41,12 +38,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 customerId,
                 customerDiscount,
                 shoppingCartItems
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
 
             // Act
             Result<ShoppingCart> result = await IntegrationTestsFixture.SendAsync(command);
@@ -65,10 +57,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            AddShoppingCartItem[] shoppingCartItems,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            AddShoppingCartItem[] shoppingCartItems
         )
         {
             // Arrange
@@ -78,12 +67,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 customerId,
                 customerDiscount,
                 shoppingCartItems
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             await IntegrationTestsFixture.SendAsync(command);
 
             // Act
@@ -98,10 +82,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
-            AddShoppingCartItem shoppingCartItem,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            AddShoppingCartItem shoppingCartItem
         )
         {
             // Arrange
@@ -111,12 +92,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -137,10 +113,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
-            AddShoppingCartItem shoppingCartItem,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            AddShoppingCartItem shoppingCartItem
         )
         {
             // Arrange
@@ -150,12 +123,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -168,13 +136,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removes_a_product_from_the_shopping_cart
-        (
-            ShoppingCart shoppingCart,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
-        )
+        public async Task Removes_a_product_from_the_shopping_cart(ShoppingCart shoppingCart)
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -185,12 +147,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 shoppingCart.Id,
                 shoppingCartItem.Id,
                 shoppingCartItem.Quantity
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -208,13 +165,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
-        (
-            ShoppingCart shoppingCart,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
-        )
+        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -225,12 +176,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 shoppingCart.Id,
                 shoppingCartItem.Id,
                 shoppingCartItem.Quantity
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             await IntegrationTestsFixture.SendAsync(command);
             
             // Act
@@ -248,10 +194,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             FullName fullName,
             GenderType gender,
             EmailAddress emailAddress,
-            PhoneNumber phoneNumber,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            PhoneNumber phoneNumber
         )
         {
             // Arrange
@@ -266,12 +209,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 emailAddress,
                 phoneNumber,
                 gender
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -295,10 +233,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             FullName fullName,
             GenderType gender,
             EmailAddress emailAddress,
-            PhoneNumber phoneNumber,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            PhoneNumber phoneNumber
         )
         {
             // Arrange
@@ -313,12 +248,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 emailAddress,
                 phoneNumber,
                 gender
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             await IntegrationTestsFixture.SendAsync(command);
             
             // Act
@@ -333,10 +263,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Sets_a_customer_delivery_address
         (
             ShoppingCart shoppingCart,
-            Address deliveryAddress,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            Address deliveryAddress
         )
         {
             // Arrange
@@ -350,12 +277,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 deliveryAddress.PostalCode,
                 deliveryAddress.StateProvince,
                 deliveryAddress.StreetAddress
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -373,10 +295,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Setting_a_customer_delivery_address_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            Address deliveryAddress,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            Address deliveryAddress
         )
         {
             // Arrange
@@ -390,12 +309,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 deliveryAddress.PostalCode,
                 deliveryAddress.StateProvince,
                 deliveryAddress.StreetAddress
-            )
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            );
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -406,23 +320,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deletes_the_shopping_cart
-        (
-            ShoppingCart shoppingCart,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
-        )
+        public async Task Deletes_the_shopping_cart(ShoppingCart shoppingCart)
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            DeleteShoppingCartCommand command = new(shoppingCart.Id)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            DeleteShoppingCartCommand command = new(shoppingCart.Id);
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -436,23 +339,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deleting_the_shopping_cart_command_is_idempotent
-        (
-            ShoppingCart shoppingCart,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
-        )
+        public async Task Deleting_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            DeleteShoppingCartCommand command = new(shoppingCart.Id)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            DeleteShoppingCartCommand command = new(shoppingCart.Id);
             
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -465,26 +357,15 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_places_an_order
-         (
-             ShoppingCart shoppingCart,
-             Guid messageId,
-             Guid correlationId,
-             Guid causationId
-         )
+         public async Task Shopping_cart_checkout_places_an_order(ShoppingCart shoppingCart)
          {
              // Arrange
              await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
-             CheckoutShoppingCartCommand command = new(shoppingCart.Id)
-             {
-                 MessageId = messageId,
-                 CausationId = causationId,
-                 CorrelationId = correlationId
-             };
+             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
              
              // Act
-             Result<CheckoutOrder> result = await IntegrationTestsFixture.SendAsync(command);
+             Result<CheckoutResponse> result = await IntegrationTestsFixture.SendAsync(command);
              
              // Assert
              result.IsError.Should().BeFalse();
@@ -503,28 +384,17 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_command_is_idempotent
-         (
-             ShoppingCart shoppingCart,
-             Guid messageId,
-             Guid correlationId,
-             Guid causationId
-         )
+         public async Task Shopping_cart_checkout_command_is_idempotent(ShoppingCart shoppingCart)
          {
              // Arrange
              await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
-             CheckoutShoppingCartCommand command = new(shoppingCart.Id)
-             {
-                 MessageId = messageId,
-                 CausationId = causationId,
-                 CorrelationId = correlationId
-             };
+             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
              
              await IntegrationTestsFixture.SendAsync(command);
              
              // Act
-             Result<CheckoutOrder> result = await IntegrationTestsFixture.SendAsync(command);
+             Result<CheckoutResponse> result = await IntegrationTestsFixture.SendAsync(command);
              
              // Assert
              result.IsError.Should().BeFalse();

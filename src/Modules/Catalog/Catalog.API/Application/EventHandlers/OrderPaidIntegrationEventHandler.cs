@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Integration.Utilities;
 using VShop.SharedKernel.Integration.Services.Contracts;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.Modules.Catalog.Integration.Events;
@@ -46,21 +46,20 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 if (decreaseStockResult.IsError) return;
                 
                 confirmedOrderLines.Add(new OrderStockProcessedIntegrationEvent.OrderLine
-                {
-                    ProductId = orderLine.ProductId,
-                    OutOfStockQuantity = orderLine.Quantity - decreaseStockResult.Data,
-                    RequestedQuantity = orderLine.Quantity
-                });
+                (
+                    orderLine.ProductId,
+                    orderLine.Quantity,
+                    orderLine.Quantity - decreaseStockResult.Data
+                ));
             }
 
-            // TODO - use constructors for Catalog and Billing integration events.
-            OrderStockProcessedIntegrationEvent orderStockConfirmedIntegrationEvent = new()
-            {
-                OrderId = @event.OrderId,
-                OrderLines = confirmedOrderLines,
-                CausationId = @event.MessageId,
-                CorrelationId = @event.CorrelationId
-            };
+            OrderStockProcessedIntegrationEvent orderStockConfirmedIntegrationEvent = new
+            (
+                @event.OrderId,
+                confirmedOrderLines,
+                @event.MessageId,
+                @event.CorrelationId
+            );
             
             Guid transactionId = await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>
             {

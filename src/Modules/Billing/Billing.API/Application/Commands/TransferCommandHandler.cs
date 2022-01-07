@@ -68,10 +68,8 @@ namespace VShop.Modules.Billing.API.Application.Commands
             await _paymentRepository.SaveAsync(transfer, cancellationToken);
 
             IIntegrationEvent integrationEvent = transferResult.IsError 
-                ? new PaymentFailedIntegrationEvent(command.OrderId) : new PaymentSucceededIntegrationEvent(command.OrderId);
-
-            integrationEvent.CausationId = command.MessageId;
-            integrationEvent.CorrelationId = command.CorrelationId;
+                ? new PaymentFailedIntegrationEvent(command.OrderId, command.CausationId, command.CorrelationId) 
+                : new PaymentSucceededIntegrationEvent(command.OrderId, command.CausationId, command.CorrelationId);
 
             await _billingIntegrationEventService.SaveEventAsync(integrationEvent, cancellationToken);
             
@@ -81,12 +79,33 @@ namespace VShop.Modules.Billing.API.Application.Commands
     
     public record TransferCommand : Command
     {
-        public Guid OrderId { get; set; }
-        public decimal Amount { get; set; }
-        public int CardTypeId { get; set; }
-        public string CardNumber { get; set; }
-        public string CardSecurityNumber { get; set; }
-        public string CardholderName { get; set; }
-        public Instant CardExpiration { get; set; }
+        public Guid OrderId { get; init; }
+        public decimal Amount { get; init; }
+        public int CardTypeId { get; init; }
+        public string CardNumber { get; init; }
+        public string CardSecurityNumber { get; init; }
+        public string CardholderName { get; init; }
+        public Instant CardExpiration { get; init; }
+        
+        public TransferCommand() { }
+        public TransferCommand
+        (
+            Guid orderId,
+            decimal amount,
+            int cardTypeId,
+            string cardNumber,
+            string cardSecurityNumber,
+            string cardholderName,
+            Instant cardExpiration
+        )
+        {
+            OrderId = orderId;
+            Amount = amount;
+            CardTypeId = cardTypeId;
+            CardNumber = cardNumber;
+            CardSecurityNumber = cardSecurityNumber;
+            CardholderName = cardholderName;
+            CardExpiration = cardExpiration;
+        }
     }
 }

@@ -36,22 +36,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Cancels_the_order
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            CancelOrderCommand command = new(orderId)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            CancelOrderCommand command = new(orderId);
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -69,22 +61,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Cancelling_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            CancelOrderCommand command = new(orderId)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            CancelOrderCommand command = new(orderId);
             
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -100,22 +84,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Sets_the_order_status_to_paid
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            SetPaidOrderStatusCommand command = new(orderId)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            SetPaidOrderStatusCommand command = new(orderId);
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -144,22 +120,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Setting_the_order_status_to_paid_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            Guid messageId,
-            Guid correlationId,
-            Guid causationId
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            SetPaidOrderStatusCommand command = new(orderId)
-            {
-                MessageId = messageId,
-                CausationId = causationId,
-                CorrelationId = correlationId
-            };
+            SetPaidOrderStatusCommand command = new(orderId);
             await IntegrationTestsFixture.SendAsync(command);
 
             // Act
@@ -214,11 +182,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            });
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
 
             FinalizeOrderCommand command = new
             (
@@ -228,11 +192,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     ProductId = ol.Id,
                     OutOfStockQuantity = 0  // All items are in stock.
                 }).ToList()
-            )
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            };
+            );
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -303,11 +263,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            });
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
             FinalizeOrderCommand command = new
             (
                 order.Id,
@@ -316,11 +272,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     ProductId = ol.Id,
                     OutOfStockQuantity = ol.Quantity
                 }).ToList()
-            )
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            };
+            );
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -391,11 +343,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            });
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
 
             IList<FinalizeOrderCommand.OrderLine> finalizedOrderLines = new List<FinalizeOrderCommand.OrderLine>
             {
@@ -415,11 +363,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 orderId,
                 finalizedOrderLines
-            )
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            };
+            );
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -458,11 +402,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId)
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            });
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
             
             FinalizeOrderCommand command = new
             (
@@ -472,11 +412,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                     ProductId = ol.Id,
                     OutOfStockQuantity = 0
                 }).ToList()
-            )
-            {
-                CausationId = SequentialGuid.Create(),
-                CorrelationId = SequentialGuid.Create()
-            };
+            );
             
             await IntegrationTestsFixture.SendAsync(command);
 

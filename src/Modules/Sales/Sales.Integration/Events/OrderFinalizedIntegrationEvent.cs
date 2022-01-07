@@ -8,15 +8,28 @@ namespace VShop.Modules.Sales.Integration.Events
     // Notification for Billing - need to perform partial or full refund.
     public record OrderFinalizedIntegrationEvent : IntegrationEvent
     {
-        public Guid OrderId { get; init; }
-        public decimal RefundAmount { get; init; }
+        public Guid OrderId { get; }
+        public decimal RefundAmount { get; }
+        public IList<OrderLine> OrderLines { get; }
         
-        public IList<OrderLine> OrderLines { get; init; }
+        public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IList<OrderLine> orderLines)
+        {
+            OrderId = orderId;
+            RefundAmount = refundAmount;
+            OrderLines = orderLines;
+        }
+
         
         public record OrderLine
         {
-            public Guid ProductId { get; init; }
-            public int Quantity { get; set; }
+            public Guid ProductId { get; }
+            public int Quantity { get; }
+            
+            public OrderLine(Guid productId, int quantity)
+            {
+                ProductId = productId;
+                Quantity = quantity;
+            }
         }
     }
 }

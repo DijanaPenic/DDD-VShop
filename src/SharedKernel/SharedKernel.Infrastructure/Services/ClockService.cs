@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.Infrastructure.Services
         {
             _clock = clock;
 
-            // TODO Get the current users timezone here instead of hard coding it.
+            // TODO - get the current users timezone here instead of hard coding it.
             TimeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull("Europe/Zagreb");
         }
 
