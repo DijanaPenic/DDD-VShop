@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -84,14 +85,17 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             if (events.Count is 0) return default;
             
-            // TODO - potentially use private constructor.
+            // TODO - anti-pattern
             TAggregate aggregate = (TAggregate)Activator.CreateInstance
             (
                 typeof(TAggregate),
-                causationId, correlationId
+                BindingFlags.NonPublic | BindingFlags.Instance,
+                null,
+                new object[] { causationId, correlationId },
+                null
             );
             if (aggregate is null) throw new Exception("Aggregate instance creation failed.");
-            
+
             aggregate.Load(events);
 
             return aggregate;

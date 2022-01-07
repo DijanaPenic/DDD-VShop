@@ -1,7 +1,7 @@
 ﻿using System;
-using NodaTime;
 using System.Linq;
 using System.Collections.Generic;
+using NodaTime;
 
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
@@ -18,6 +18,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         private readonly List<ShoppingCartItem> _shoppingCartItems = new();
         
         public ShoppingCartCustomer Customer { get; private set; }
+        public EntityId OrderId { get; private set; }
         public ShoppingCartStatus Status { get; private set; }
         public string PromoCode { get; private set; } // TODO - missing promo code implementation
         public Instant ConfirmedAt { get; private set; }
@@ -31,7 +32,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public int TotalShoppingCartItemCount => _shoppingCartItems.Count;
         public bool HasMinAmountForCheckout => ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForCheckout;
 
-        public ShoppingCart(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
+        private ShoppingCart(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
         
         public static Result<ShoppingCart> Create
         (
@@ -197,6 +198,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     break;
                 case ShoppingCartCheckoutRequestedDomainEvent e:
                     ApplyToEntity(Customer, e);
+                    OrderId = new EntityId(e.OrderId);
                     Status = ShoppingCartStatus.PendingCheckout;
                     ConfirmedAt = e.ConfirmedAt;
                     _isClosedForUpdates = true;

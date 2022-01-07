@@ -90,7 +90,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(CheckoutOrder), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(CheckoutResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
         {
             CheckoutShoppingCartCommand command = _mapper.Map<CheckoutShoppingCartCommand>(request) with
@@ -98,7 +98,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartId = shoppingCartId
             };
             
-            Result<CheckoutOrder> result = await _commandBus.SendAsync(command);
+            Result<CheckoutResponse> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);
         }

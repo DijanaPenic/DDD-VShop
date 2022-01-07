@@ -25,7 +25,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public OrderStatus Status { get; private set; }
         public OrderCustomer Customer { get; private set; }
         
-        public Order(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
+        private Order(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
 
         public static Result<Order> Create
         (
