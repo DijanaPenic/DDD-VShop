@@ -11,18 +11,12 @@ namespace VShop.Modules.Catalog.Integration.Events
         public Guid OrderId { get; }
         public IList<OrderLine> OrderLines { get; }
 
-        public OrderStockProcessedIntegrationEvent(Guid orderId, IList<OrderLine> orderLines)
-        {
-            OrderId = orderId;
-            OrderLines = orderLines;
-        }
-
         public OrderStockProcessedIntegrationEvent
         (
             Guid orderId,
             IList<OrderLine> orderLines,
-            Guid causationId,
-            Guid correlationId
+            Guid causationId = default,
+            Guid correlationId = default
         )
         {
             OrderId = orderId;

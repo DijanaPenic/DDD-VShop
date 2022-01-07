@@ -6,9 +6,8 @@ using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores
 {
@@ -45,7 +44,6 @@ namespace VShop.SharedKernel.Integration.Stores
                 cancellationToken
             );
         
-        private string GetStreamName()
-            => $"{_eventStoreClient.ConnectionName}/integration".ToSnakeCase();
+        public static string GetStreamName() => "integration";
     }
 }

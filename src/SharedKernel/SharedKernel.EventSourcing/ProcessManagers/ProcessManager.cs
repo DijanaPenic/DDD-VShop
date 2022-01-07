@@ -18,14 +18,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public Guid Id { get; protected set; }
         public IProcessManagerInbox Inbox => _inbox;
         public IProcessManagerOutbox Outbox => _outbox;
-        public Guid CausationId { get; }
-        public Guid CorrelationId { get; }
-        
-        protected ProcessManager(Guid causationId, Guid correlationId)
-        {
-            CausationId = causationId;
-            CorrelationId = correlationId;
-        }
+        public Guid CausationId { get; private set; }
+        public Guid CorrelationId { get; private set; }
 
         protected abstract void ApplyEvent(IBaseEvent @event);
 
@@ -36,6 +30,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         public void Transition(IBaseEvent @event, Instant now)
         {
+            CausationId = @event.MessageId;
+            CorrelationId = @event.CorrelationId;
+            
             ApplyEvent(@event);
             _inbox.Add(@event);
 
@@ -72,11 +69,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Add(@event, scheduledTime);
         }
 
-        public void Load
-        (
-            IEnumerable<IMessage> inboxHistory,
-            IEnumerable<IMessage> outboxHistory
-        )
+        public void Load(IEnumerable<IMessage> inboxHistory, IEnumerable<IMessage> outboxHistory, Guid causationId)
         {
             foreach (IMessage inboxMessage in inboxHistory)
             {
@@ -86,11 +79,11 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
             // Truncate events following the specified causationId.
             IList<IMessage> outboxHistoryList = outboxHistory.ToList()
-                .RemoveRangeAfterLast(e => e.CausationId == CausationId);
+                .RemoveRangeFollowingLast(m => m.CausationId == causationId);
 
             // Restore aggregate state (identified by causationId param).
             (IEnumerable<IMessage> pendingOutboxMessages, IEnumerable<IMessage> processedOutboxMessages) = 
-                outboxHistoryList.Split(e => e.CausationId == CausationId);
+                outboxHistoryList.Split(m => m.CausationId == causationId);
             
             _outbox.Version = processedOutboxMessages.Count() - 1;
 

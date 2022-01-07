@@ -1,11 +1,11 @@
-using System;
 using Xunit;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using EventStore.Client;
 using FluentAssertions;
+using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -88,8 +88,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             EntityId orderId,
             ShoppingCart shoppingCart,
-            Guid causationId,
-            Guid correlationId
+            Guid causationId
         )
         {
             // Arrange
@@ -105,7 +104,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
             // Assert
             Task<OrderingProcessManager> Sampling(IProcessManagerStore<OrderingProcessManager> store)
-                => store.LoadAsync(orderId, causationId, correlationId);
+                => store.LoadAsync(orderId, causationId);
 
             void Validation(OrderingProcessManager processManager)
             {

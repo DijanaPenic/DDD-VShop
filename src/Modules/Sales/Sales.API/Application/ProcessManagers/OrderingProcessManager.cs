@@ -1,6 +1,5 @@
-﻿using System;
+﻿using NodaTime;
 using System.Linq;
-using NodaTime;
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.API.Application.Commands;
@@ -19,7 +18,7 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         public EntityId OrderId { get; private set; }
         public OrderingProcessManagerStatus Status { get; private set; }
         
-        public OrderingProcessManager(Guid causationId, Guid correlationId) : base(causationId, correlationId)
+        public OrderingProcessManager()
         {
             RegisterEvent<ShoppingCartCheckoutRequestedDomainEvent>(Handle);
             RegisterEvent<OrderPlacedDomainEvent>(Handle);

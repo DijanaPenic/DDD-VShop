@@ -17,7 +17,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
-    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager
+    public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
@@ -75,7 +75,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         (
             Guid processManagerId,
             Guid causationId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -90,15 +89,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 cancellationToken
             );
 
-            TProcess processManager = (TProcess)Activator.CreateInstance
-            (
-                typeof(TProcess),
-                causationId, correlationId
-            );
-            
-            if (processManager is null) throw new Exception("Process manager instance creation failed.");
-            
-            processManager.Load(inboxMessages, outboxMessages);
+            TProcess processManager = new();
+            processManager.Load(inboxMessages, outboxMessages, causationId);
 
             return processManager;
         }

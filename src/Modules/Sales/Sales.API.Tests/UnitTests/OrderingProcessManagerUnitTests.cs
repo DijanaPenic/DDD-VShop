@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Collections.Generic;
 using FluentAssertions;
@@ -25,15 +24,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         public void Shopping_cart_checkout_places_a_new_order
         (
             EntityId shoppingCartId,
-            EntityId orderId,
-            Guid causationId,
-            Guid correlationId
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             ShoppingCartCheckoutRequestedDomainEvent shoppingCartCheckoutRequestedDomainEvent = new
             (
                 shoppingCartId,
@@ -59,8 +56,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -73,7 +68,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -125,8 +120,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -139,7 +132,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
 
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -189,8 +182,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -203,7 +194,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -253,8 +244,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -267,7 +256,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -322,8 +311,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -336,7 +323,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -394,8 +381,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -408,7 +393,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -468,8 +453,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -482,7 +465,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -535,8 +518,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -549,7 +530,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -606,8 +587,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -620,7 +599,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -680,8 +659,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -695,7 +672,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -760,8 +737,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -775,7 +750,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -838,8 +813,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -852,7 +825,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -926,8 +899,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -940,7 +911,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent
@@ -1017,8 +988,6 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         (
             EntityId shoppingCartId,
             EntityId orderId,
-            Guid causationId,
-            Guid correlationId,
             Price deliveryCost,
             Discount customerDiscount,
             EntityId customerId,
@@ -1031,7 +1000,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             // Arrange
             IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new(causationId, correlationId);
+            OrderingProcessManager processManager = new();
             processManager.Transition
             (
                 new ShoppingCartCheckoutRequestedDomainEvent

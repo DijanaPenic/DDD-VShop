@@ -10,7 +10,7 @@ namespace VShop.Modules.Sales.Integration.Events
     {
         public Guid OrderId { get; }
         public IList<OrderLine> OrderLines { get; }
-        
+
         public OrderStatusSetToPaidIntegrationEvent(Guid orderId, IList<OrderLine> orderLines)
         {
             OrderId = orderId;

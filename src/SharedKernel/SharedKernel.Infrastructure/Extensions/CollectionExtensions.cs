@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
             return (trueList, falseList);
         }
         
-        public static List<T> RemoveRangeAfterLast<T>(this List<T> source, Predicate<T> predicate)
+        public static List<T> RemoveRangeFollowingLast<T>(this List<T> source, Predicate<T> predicate)
         {
             int lastIndex = source.FindLastIndex(predicate);
             if (lastIndex is -1) return source;

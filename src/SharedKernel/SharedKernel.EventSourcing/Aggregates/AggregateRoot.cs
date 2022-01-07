@@ -38,13 +38,12 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
             SetEventIdentification(@event);
             _events.Add(@event);
         }
-
-        // TODO - review this approach.
+        
         public void Load(IEnumerable<IBaseEvent> history)
         {
             // Truncate events following the specified causationId.
             IList<IBaseEvent> historyList = history.ToList()
-                .RemoveRangeAfterLast(e => e.CausationId == CausationId);
+                .RemoveRangeFollowingLast(e => e.CausationId == CausationId);
             
             // Restore aggregate state (identified by causationId param).
             (IEnumerable<IBaseEvent> pendingEvents, IEnumerable<IBaseEvent> processedEvents) = 

@@ -11,7 +11,7 @@ namespace VShop.Modules.Sales.Integration.Events
         public Guid OrderId { get; }
         public decimal RefundAmount { get; }
         public IList<OrderLine> OrderLines { get; }
-        
+
         public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IList<OrderLine> orderLines)
         {
             OrderId = orderId;
@@ -19,7 +19,6 @@ namespace VShop.Modules.Sales.Integration.Events
             OrderLines = orderLines;
         }
 
-        
         public record OrderLine
         {
             public Guid ProductId { get; }

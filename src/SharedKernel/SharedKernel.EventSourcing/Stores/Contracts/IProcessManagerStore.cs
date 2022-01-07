@@ -18,7 +18,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         (
             Guid processManagerId,
             Guid causationId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         );
     }
