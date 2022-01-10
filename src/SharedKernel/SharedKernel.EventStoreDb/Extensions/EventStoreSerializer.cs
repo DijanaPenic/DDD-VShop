@@ -1,20 +1,23 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
 using System.Text;
+using System.Linq;
 using System.Collections.Generic;
+using ProtoBuf;
 using NodaTime;
+using NodaTime.Serialization.Protobuf;
 using Newtonsoft.Json;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Infrastructure.Serialization;
+using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
+        // TODO - need to review this.
         public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) => (T)DeserializeData(resolvedEvent);
         
         public static object DeserializeData(this ResolvedEvent resolvedEvent)
@@ -24,17 +27,17 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             object data = JsonConvert.DeserializeObject(jsonData, eventType);
 
             if (data is not IMessage message) return data;
-            
-            IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
 
-            message.MessageId = metadata.MessageId;
-            message.CausationId = metadata.CausationId;
-            message.CorrelationId = metadata.CorrelationId;
+            IIdentifiedMessage<IMessage> identifiedMessage = new IdentifiedMessage<IMessage>
+            (
+                message,
+                resolvedEvent.DeserializeMetadata()
+            );
 
-            return message;
+            return identifiedMessage;
         }
         
-        public static IMessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
+        public static MessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
             string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.Span);
             
@@ -43,53 +46,46 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 
         public static IReadOnlyList<EventData> ToEventData<TMessage>
         (
-            this IEnumerable<TMessage> messages,
+            this IEnumerable<IIdentifiedMessage<TMessage>> messages,
             Instant now
         )
             where TMessage : IMessage
-            => messages.Select((message, index) => new EventData
-            (
-                GetDeterministicEventId(message, index),
-                GetMessageName(message),
-                Serialize(message),
-                Serialize(GetMetadata(message, now))
-            )).ToList();
+            => messages.Select((message, index) =>
+            {
+                message.Metadata.EffectiveTime = now.ToTimestamp(); // TODO - better way to handle this?
+
+                return new EventData
+                (
+                    GetDeterministicMessageId(message, index),
+                    GetMessageTypeName(message.Data),
+                    Serialize(message.Data),
+                    Serialize(message.Metadata),
+                    "application/octet-stream"
+                );
+            }).ToList();
 
         private static byte[] Serialize(object data)
         {
-            PropertyIgnoreContractResolver jsonResolver = new();
-            jsonResolver.Ignore(typeof(Message));
-
-            JsonSerializerSettings serializerSettings = JsonConvert.DefaultSettings is null
-                ? new JsonSerializerSettings() : JsonConvert.DefaultSettings();
-
-            serializerSettings.ContractResolver = jsonResolver;
-
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data, serializerSettings));
+            using MemoryStream stream = new();
+            Serializer.Serialize(stream, data);
+            
+            return stream.ToArray();
         }
 
-        private static Uuid GetDeterministicEventId(IMessage message, int index)
+        private static Uuid GetDeterministicMessageId<TMessage>(IIdentifiedMessage<TMessage> message, int index) 
+            where TMessage : IMessage
         {
-            string messageName = GetMessageName(message);
+            string messageName = GetMessageTypeName(message.Data);
             
             Guid deterministicId = DeterministicGuid.Create
             (
-                message.CausationId,
+                message.Metadata.CausationId,
                 $"{messageName}-{index}"
             );
 
             return Uuid.FromGuid(deterministicId);
         }
 
-        private static string GetMessageName(IMessage message) => MessageTypeMapper.ToName(message.GetType());
-
-        private static IMessageMetadata GetMetadata(IMessage message, Instant now)
-            => new MessageMetadata
-            {
-                EffectiveTime = now,
-                MessageId = message.MessageId,
-                CausationId = message.CausationId,
-                CorrelationId = message.CorrelationId
-            };
+        private static string GetMessageTypeName(IMessage data) => MessageTypeMapper.ToName(data.GetType());
     }
 }

@@ -4,7 +4,7 @@ using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record RemoveShoppingCartProductRequest : BaseRequest
+    public record RemoveShoppingCartProductRequest
     {
         [Required, ProductQuantity]
         public int Quantity { get; init; }

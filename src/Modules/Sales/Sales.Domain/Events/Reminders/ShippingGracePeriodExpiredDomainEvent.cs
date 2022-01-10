@@ -4,7 +4,7 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events.Reminders
 {
-    public record ShippingGracePeriodExpiredDomainEvent : DomainEvent
+    public record ShippingGracePeriodExpiredDomainEvent //: DomainEvent
     {
         public Guid OrderId { get; }
 

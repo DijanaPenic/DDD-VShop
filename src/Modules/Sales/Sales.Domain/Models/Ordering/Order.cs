@@ -45,26 +45,26 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         {
             Order order = new(causationId, correlationId);
             
-            order.RaiseEvent
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                )
-            );
+            // order.RaiseEvent
+            // (
+            //     new OrderPlacedDomainEvent
+            //     (
+            //         orderId,
+            //         deliveryCost,
+            //         customerDiscount,
+            //         customerId,
+            //         fullName.FirstName,
+            //         fullName.MiddleName,
+            //         fullName.LastName,
+            //         emailAddress,
+            //         phoneNumber,
+            //         deliveryAddress.City,
+            //         deliveryAddress.CountryCode,
+            //         deliveryAddress.PostalCode,
+            //         deliveryAddress.StateProvince,
+            //         deliveryAddress.StreetAddress
+            //     )
+            // );
 
             return order;
         }
@@ -76,16 +76,16 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             Price unitPrice
         )
         {
-            RaiseEvent
-            (
-                new OrderLineAddedDomainEvent
-                (
-                    Id,
-                    productId,
-                    quantity,
-                    unitPrice
-                )
-            );
+            // RaiseEvent
+            // (
+            //     new OrderLineAddedDomainEvent
+            //     (
+            //         Id,
+            //         productId,
+            //         quantity,
+            //         unitPrice
+            //     )
+            // );
 
             return Result.Success;
         }
@@ -108,7 +108,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.Processing)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Paid}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToPaidDomainEvent(Id));
+            //RaiseEvent(new OrderStatusSetToPaidDomainEvent(Id));
             
             return Result.Success;
         }
@@ -118,7 +118,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.Paid)
                 return Result.ValidationError($"Changing status to '{OrderStatus.PendingShipping}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent(Id));
+            //RaiseEvent(new OrderStatusSetToPendingShippingDomainEvent(Id));
             
             return Result.Success;
         }
@@ -128,7 +128,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not OrderStatus.PendingShipping)
                 return Result.ValidationError($"Changing status to '{OrderStatus.Shipped}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToShippedDomainEvent(Id));
+            //RaiseEvent(new OrderStatusSetToShippedDomainEvent(Id));
             
             return Result.Success;
         }
@@ -138,7 +138,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if(Status is not (OrderStatus.Processing or OrderStatus.Paid))
                 return Result.ValidationError($"Changing status to '{OrderStatus.Cancelled}' is not allowed. Order Status: '{Status}'.");
             
-            RaiseEvent(new OrderStatusSetToCancelledDomainEvent(Id));
+            //RaiseEvent(new OrderStatusSetToCancelledDomainEvent(Id));
             
             return Result.Success;
         }
@@ -152,38 +152,38 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             
             switch (@event)
             {
-                case OrderPlacedDomainEvent e:
-                    Id = new EntityId(e.OrderId);
-                    DeliveryCost = new Price(e.DeliveryCost);
-                    Status = OrderStatus.Processing;
-
-                    // one-to-one relationship
-                    OrderCustomer orderCustomer = new(RaiseEvent);
-                    ApplyToEntity(orderCustomer, e);
-                    Customer = orderCustomer;
-                    break;
-                case OrderLineAddedDomainEvent e:
-                    orderLine = new OrderLine(RaiseEvent);
-                    ApplyToEntity(orderLine, e);
-                    _orderLines.Add(orderLine);
-                    break;
-                case OrderStatusSetToCancelledDomainEvent _:
-                    Status = OrderStatus.Cancelled;
-                    break;
-                case OrderStatusSetToPendingShippingDomainEvent _:
-                    Status = OrderStatus.PendingShipping;
-                    break;
-                case OrderStatusSetToShippedDomainEvent _:
-                    Status = OrderStatus.Shipped;
-                    break;
-                case OrderStatusSetToPaidDomainEvent _:
-                    Status = OrderStatus.Paid;
-                    break;
-                case OrderLineOutOfStockRemovedDomainEvent e:
-                    orderLine = FindOrderLine(new EntityId(e.ProductId));
-                    ApplyToEntity(orderLine, e);
-                    if (orderLine.Quantity == 0) _orderLines.Remove(orderLine);
-                    break;
+                // case OrderPlacedDomainEvent e:
+                //     Id = new EntityId(e.OrderId);
+                //     DeliveryCost = new Price(e.DeliveryCost);
+                //     Status = OrderStatus.Processing;
+                //
+                //     // one-to-one relationship
+                //     OrderCustomer orderCustomer = new(RaiseEvent);
+                //     ApplyToEntity(orderCustomer, e);
+                //     Customer = orderCustomer;
+                //     break;
+                // case OrderLineAddedDomainEvent e:
+                //     orderLine = new OrderLine(RaiseEvent);
+                //     ApplyToEntity(orderLine, e);
+                //     _orderLines.Add(orderLine);
+                //     break;
+                // case OrderStatusSetToCancelledDomainEvent _:
+                //     Status = OrderStatus.Cancelled;
+                //     break;
+                // case OrderStatusSetToPendingShippingDomainEvent _:
+                //     Status = OrderStatus.PendingShipping;
+                //     break;
+                // case OrderStatusSetToShippedDomainEvent _:
+                //     Status = OrderStatus.Shipped;
+                //     break;
+                // case OrderStatusSetToPaidDomainEvent _:
+                //     Status = OrderStatus.Paid;
+                //     break;
+                // case OrderLineOutOfStockRemovedDomainEvent e:
+                //     orderLine = FindOrderLine(new EntityId(e.ProductId));
+                //     ApplyToEntity(orderLine, e);
+                //     if (orderLine.Quantity == 0) _orderLines.Remove(orderLine);
+                //     break;
             }
         }
     }

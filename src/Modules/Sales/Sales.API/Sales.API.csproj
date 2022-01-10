@@ -45,6 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Application\Commands\Shared" />
       <Folder Include="Infrastructure\Migrations" />
       <Folder Include="Infrastructure\SchedulerMigrations" />
       <Folder Include="Infrastructure\SubscriptionMigrations" />

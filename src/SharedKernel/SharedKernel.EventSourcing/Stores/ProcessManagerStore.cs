@@ -47,7 +47,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                processManager.Inbox.Events,
+                processManager.Inbox.Messages,
                 _clockService.Now,
                 cancellationToken
             );
@@ -79,12 +79,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IMessage> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            IReadOnlyList<IIdentifiedMessage<IMessage>> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetInboxStreamName(processManagerId),
                 cancellationToken
             );
-            IReadOnlyList<IMessage> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
+            IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
             (
                 GetOutboxStreamName(processManagerId),
                 cancellationToken
@@ -99,7 +99,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private async Task PublishAsync(TProcess processManager, CancellationToken cancellationToken = default)
         {
             // Dispatch immediate commands
-            foreach (IBaseCommand command in processManager.Outbox.Commands)
+            foreach (IIdentifiedMessage<IMessage> command in processManager.Outbox.Commands)
             {
                 object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
@@ -108,7 +108,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
                 
             // Schedule deferred commands and events
-            foreach (IScheduledMessage scheduledCommand in processManager.Outbox.ScheduledMessages)
+            foreach (IIdentifiedMessage<IScheduledMessage> scheduledCommand in processManager.Outbox.ScheduledMessages())
                 await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
         }
         

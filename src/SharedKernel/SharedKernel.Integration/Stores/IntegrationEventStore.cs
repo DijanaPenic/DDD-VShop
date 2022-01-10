@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -22,7 +23,7 @@ namespace VShop.SharedKernel.Integration.Stores
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
+        public async Task SaveAsync(IIdentifiedEvent @event, CancellationToken cancellationToken = default)
         {
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
@@ -37,12 +38,12 @@ namespace VShop.SharedKernel.Integration.Stores
             );
         }
 
-        public Task<IReadOnlyList<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
-            => _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
+        public async Task<IReadOnlyList<IIdentifiedEvent>> LoadAsync(CancellationToken cancellationToken = default)
+            => (await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
             (
                 GetStreamName(),
                 cancellationToken
-            );
+            )).Select(im => im as IIdentifiedEvent).ToList();
         
         public static string GetStreamName() => "integration";
     }

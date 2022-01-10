@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VShop.SharedKernel.Infrastructure.Serialization
 {
+    // TODO - remove; not needed.
     public class PropertyIgnoreContractResolver : DefaultContractResolver
     {
         private readonly IList<Type> _ignores;

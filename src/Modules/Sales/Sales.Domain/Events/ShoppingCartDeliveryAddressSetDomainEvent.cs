@@ -4,7 +4,7 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ShoppingCartDeliveryAddressSetDomainEvent : DomainEvent
+    public record ShoppingCartDeliveryAddressSetDomainEvent //: DomainEvent
     {
         public Guid ShoppingCartId { get; }
         public string City { get; }

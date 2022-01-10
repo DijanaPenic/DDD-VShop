@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
@@ -42,8 +41,8 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IMessage message = resolvedEvent.DeserializeData<IMessage>();
-            if(message is not IDomainEvent domainEvent) return;
+            IIdentifiedEvent message = resolvedEvent.DeserializeData<IdentifiedEvent>();
+            if(message.Data is not IDomainEvent domainEvent) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();
             TDbContext readDataContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
@@ -61,9 +60,10 @@ namespace VShop.SharedKernel.Application.Projections
                 _logger.Debug("Projecting domain event: {Message}", domainEvent);
 
                 await handler();
-
-                IMessageMetadata metadata = resolvedEvent.DeserializeMetadata();
-                await readDataContext.SaveChangesAsync(metadata.EffectiveTime, cancellationToken);
+                
+                // TODO - convert.
+                //await readDataContext.SaveChangesAsync(message.Metadata.EffectiveTime, cancellationToken);
+                await readDataContext.SaveChangesAsync(cancellationToken);
                 
                 await subscriptionContext.Database.UseTransactionAsync
                 (

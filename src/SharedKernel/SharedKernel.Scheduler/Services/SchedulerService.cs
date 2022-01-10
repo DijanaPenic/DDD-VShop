@@ -22,33 +22,41 @@ namespace VShop.SharedKernel.Scheduler.Services
             _schedulerContext = schedulerContext;
         }
 
-        public async Task ScheduleMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
+        public async Task ScheduleMessageAsync
+        (
+            IIdentifiedMessage<IScheduledMessage> message,
+            CancellationToken cancellationToken = default
+        )
         {
             await LogScheduledMessageAsync(message, cancellationToken);
                 
             IJobDetail job = JobBuilder.Create<ProcessMessageJob>()
-                .WithIdentity(message.MessageId.ToString())
+                .WithIdentity(message.Metadata.MessageId.ToString())
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity(message.MessageId.ToString())
-                .StartAt(message.ScheduledTime.ToDateTimeOffset())
+                .WithIdentity(message.Metadata.MessageId.ToString())
+                .StartAt(message.Data.ScheduledTime.ToDateTimeOffset())
                 .Build();
 
             IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
             await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
-        
-        private Task LogScheduledMessageAsync(IScheduledMessage message, CancellationToken cancellationToken = default)
+
+        private Task LogScheduledMessageAsync
+        (
+            IIdentifiedMessage<IScheduledMessage> message,
+            CancellationToken cancellationToken = default
+        )
         {
             MessageLog messageLog = new()
             {
-                Id = message.MessageId,
-                Body = message.Body,
+                Id = message.Metadata.MessageId,
+                Body = message.Data.Body,
                 Status = MessageStatus.Scheduled,
-                TypeName = message.TypeName,
-                ScheduledTime = message.ScheduledTime
+                TypeName = message.Data.TypeName,
+                ScheduledTime = message.Data.ScheduledTime
             };
             
             _schedulerContext.MessageLogs.Add(messageLog);

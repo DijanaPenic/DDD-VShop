@@ -27,7 +27,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _processManagerStore = processManagerStore;
         }
         
-        protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
+        protected async Task TransitionAsync(Guid processId, IIdentifiedEvent @event, CancellationToken cancellationToken)
         {
             _logger.Information
             (
@@ -38,8 +38,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             TProcess processManager = await _processManagerStore.LoadAsync
             (
                 processId,
-                @event.MessageId,
-                @event.CorrelationId,
+                @event.Metadata.MessageId,
+                @event.Metadata.CorrelationId,
                 cancellationToken
             );
 

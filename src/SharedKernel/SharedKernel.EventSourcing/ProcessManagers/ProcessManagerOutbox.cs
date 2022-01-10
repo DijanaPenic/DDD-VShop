@@ -9,16 +9,25 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class ProcessManagerOutbox : IProcessManagerOutbox
     {
-        private readonly List<IMessage> _messages = new();
+        private readonly List<IIdentifiedMessage<IMessage>> _messages = new();
         
-        public IReadOnlyList<IMessage> Messages => _messages;
-        public IReadOnlyList<IScheduledMessage> ScheduledMessages => _messages.OfType<IScheduledMessage>().ToList();
-        public IReadOnlyList<IBaseCommand> Commands => _messages.OfType<IBaseCommand>().ToList();
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages => _messages;
+
+        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages() // TODO
+            => _messages.OfType<IIdentifiedMessage<IScheduledMessage>>().ToList();
+
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> Commands 
+            => _messages.Where(im => im.Data is IBaseCommand).ToList();
+ 
         public int Version { get; set; } = -1;
         
-        public void Add(IMessage message) => _messages.Add(message);
-        public void Add(IMessage message, Instant scheduledTime) 
-            => _messages.Add(new ScheduledMessage(message, scheduledTime));
+        public void Add(IIdentifiedMessage<IMessage> message) => _messages.Add(message);
+        public void Add(IIdentifiedMessage<IMessage> message, Instant scheduledTime)
+            => _messages.Add(new IdentifiedMessage<IMessage>
+            (
+                new ScheduledMessage(message, scheduledTime),
+                message.Metadata
+            ));
         
         public void Clear()
         {
@@ -30,8 +39,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     public interface IProcessManagerOutbox
     {
         public int Version { get; }
-        public IReadOnlyList<IMessage> Messages { get; }
-        public IReadOnlyList<IScheduledMessage> ScheduledMessages { get; }
-        public IReadOnlyList<IBaseCommand> Commands { get; }
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages { get; }
+        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages();
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> Commands { get; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
@@ -19,13 +18,17 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public CreateShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
             => _shoppingCartStore = shoppingCartStore;
 
-        public async Task<Result<ShoppingCart>> Handle(CreateShoppingCartCommand command, CancellationToken cancellationToken)
+        public async Task<Result<ShoppingCart>> Handle
+        (
+            IIdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command,
+            CancellationToken cancellationToken
+        )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
-                command.MessageId,
-                command.CorrelationId,
+                EntityId.Create(command.Data.ShoppingCartId).Data, // TODO - improve validation in commands.
+                command.Metadata.MessageId,
+                command.Metadata.CorrelationId,
                 cancellationToken
             );
             
@@ -33,16 +36,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
             {
                 Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
                 (
-                    EntityId.Create(command.ShoppingCartId).Data,
-                    EntityId.Create(command.CustomerId).Data,
-                    Discount.Create(command.CustomerDiscount).Data,
-                    command.MessageId,
-                    command.CorrelationId
+                    EntityId.Create(command.Data.ShoppingCartId).Data,
+                    EntityId.Create(command.Data.CustomerId).Data,
+                    Discount.Create(command.Data.CustomerDiscount).Data,
+                    command.Metadata.MessageId,
+                    command.Metadata.CorrelationId
                 );
                 if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
                 shoppingCart = createShoppingCartResult.Data;
-                foreach (AddShoppingCartItem shoppingCartItem in command.ShoppingCartItems)
+                foreach (ShoppingCartItemCommand shoppingCartItem in command.Data.ShoppingCartItems)
                 {
                     Result addProductResult = shoppingCart.AddProductQuantity
                     (
@@ -57,30 +60,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return shoppingCart;
-        }
-    }
-    
-    public record CreateShoppingCartCommand : Command<ShoppingCart>
-    {
-        public Guid ShoppingCartId { get; init; }
-        public Guid CustomerId { get; init; }
-        public int CustomerDiscount { get; init; }
-        public AddShoppingCartItem[] ShoppingCartItems { get; init; }
-        
-       public CreateShoppingCartCommand() { }
-        
-        public CreateShoppingCartCommand
-        (
-            Guid shoppingCartId,
-            Guid customerId,
-            int customerDiscount,
-            AddShoppingCartItem[] shoppingCartItems
-        )
-        {
-            ShoppingCartId = shoppingCartId;
-            CustomerId = customerId;
-            CustomerDiscount = customerDiscount;
-            ShoppingCartItems = shoppingCartItems;
         }
     }
 }

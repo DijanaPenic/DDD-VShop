@@ -5,7 +5,7 @@ using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record CreateShoppingCartRequest : BaseRequest
+    public record CreateShoppingCartRequest
     {
         [Required, EntityId]
         public Guid ShoppingCartId { get; init; }
@@ -16,18 +16,18 @@ namespace VShop.Modules.Sales.API.Models
         [Required, Discount]
         public int CustomerDiscount { get; init; }
         
-        public CreateShoppingCartProductRequest[] ShoppingCartItems { get; init; }
-    }
-
-    public record CreateShoppingCartProductRequest
-    {
-        [Required, EntityId]
-        public Guid ProductId { get; init; }
+        public ShoppingCartItemRequest[] ShoppingCartItems { get; init; }
         
-        [Required, Price]
-        public decimal UnitPrice { get; init; }
+        public record ShoppingCartItemRequest
+        {
+            [Required, EntityId]
+            public Guid ProductId { get; init; }
         
-        [Required, ProductQuantity]
-        public int Quantity { get; init; }
+            [Required, Price]
+            public decimal UnitPrice { get; init; }
+        
+            [Required, ProductQuantity]
+            public int Quantity { get; init; }
+        }
     }
 }

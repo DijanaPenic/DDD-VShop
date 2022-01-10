@@ -6,6 +6,7 @@ using NodaTime;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
@@ -25,54 +26,50 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         protected void RegisterEvent<TEvent>(Action<TEvent, Instant> handler)
             where TEvent : class, IBaseEvent
-            => _inbox.EventHandlers[typeof(TEvent)] = 
+            => _inbox.MessageHandlers[typeof(TEvent)] = 
                 (message, now) => handler(message as TEvent, now);
 
-        public void Transition(IBaseEvent @event, Instant now)
+        public void Transition(IIdentifiedMessage<IBaseEvent> @event, Instant now)
         {
-            CausationId = @event.MessageId;
-            CorrelationId = @event.CorrelationId;
+            CausationId = @event.Metadata.MessageId;
+            CorrelationId = @event.Metadata.CorrelationId;
             
-            ApplyEvent(@event);
+            ApplyEvent(@event.Data);
             _inbox.Add(@event);
 
             Type eventType = @event.GetType();
             
-            if (_inbox.EventHandlers.ContainsKey(eventType))
-                _inbox.EventHandlers[eventType](@event, now);
+            if (_inbox.MessageHandlers.ContainsKey(eventType))
+                _inbox.MessageHandlers[eventType](@event, now);
             
             // else - don't need to have event handler events for all events. Some events can only trigger 
             // process manager status change.
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)
-        {
-            SetMessageIdentification(@event);
-            _outbox.Add(@event);
-        }
+            => _outbox.Add(new IdentifiedMessage<IMessage>(@event, GetMetadata()));
 
         protected void RaiseCommand(IBaseCommand command)
-        {
-            SetMessageIdentification(command);
-            _outbox.Add(command);
-        }
+            => _outbox.Add(new IdentifiedMessage<IMessage>(command, GetMetadata()));
         
         protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime)
-        {
-            SetMessageIdentification(command);
-            _outbox.Add(command, scheduledTime);
-        }
+            => _outbox.Add
+            (
+                new IdentifiedMessage<IMessage>(command, GetMetadata()),
+                scheduledTime
+            );
         
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
-        {
-            SetMessageIdentification(@event);
-            _outbox.Add(@event, scheduledTime);
-        }
+            => _outbox.Add
+            (
+                new IdentifiedMessage<IMessage>(@event, GetMetadata()),
+                scheduledTime
+            );
 
         public void Load
         (
-            IEnumerable<IMessage> inboxHistory,
-            IEnumerable<IMessage> outboxHistory,
+            IEnumerable<IIdentifiedMessage<IMessage>> inboxHistory,
+            IEnumerable<IIdentifiedMessage<IMessage>> outboxHistory,
             Guid causationId,
             Guid correlationId
         )
@@ -80,25 +77,25 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             CausationId = causationId;
             CorrelationId = correlationId;
             
-            foreach (IMessage inboxMessage in inboxHistory)
+            foreach (IIdentifiedMessage<IMessage> inboxMessage in inboxHistory)
             {
-                if(inboxMessage is IBaseEvent @event) ApplyEvent(@event);
+                if(inboxMessage.Data is IBaseEvent @event) ApplyEvent(@event);
                 _inbox.Version++;
             }
 
             // Truncate events following the specified causationId.
-            IList<IMessage> outboxHistoryList = outboxHistory.ToList()
-                .RemoveRangeFollowingLast(m => m.CausationId == CausationId);
+            IList<IIdentifiedMessage<IMessage>> outboxHistoryList = outboxHistory.ToList()
+                .RemoveRangeFollowingLast(m => m.Metadata.CausationId == CausationId);
 
             // Restore aggregate state (identified by causationId param).
-            (IEnumerable<IMessage> pendingOutboxMessages, IEnumerable<IMessage> processedOutboxMessages) = 
-                outboxHistoryList.Split(m => m.CausationId == CausationId);
+            (IEnumerable<IIdentifiedMessage<IMessage>> pendingOutboxMessages, IEnumerable<IIdentifiedMessage<IMessage>> processedOutboxMessages) = 
+                outboxHistoryList.Split(m => m.Metadata.CausationId == CausationId);
             
             _outbox.Version = processedOutboxMessages.Count() - 1;
 
-            foreach (IMessage message in pendingOutboxMessages)
+            foreach (IIdentifiedMessage<IMessage> message in pendingOutboxMessages)
             {
-                switch (message)
+                switch (message.Data)
                 {
                     case IBaseCommand command:
                         RaiseCommand(command);
@@ -109,7 +106,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                     case IScheduledMessage scheduledMessage:
                         switch (scheduledMessage.GetMessage())
                         {
-                            case ICommand command:
+                            case IBaseCommand command:
                                 ScheduleCommand(command, scheduledMessage.ScheduledTime);
                                 break;
                             case IDomainEvent domainEvent:
@@ -127,10 +124,6 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _outbox.Clear();
         }
         
-        private void SetMessageIdentification(IMessage message)
-        {
-            message.CausationId = CausationId;
-            message.CorrelationId = CorrelationId;
-        }
+        private MessageMetadata GetMetadata() => new(SequentialGuid.Create(), CorrelationId, CausationId);
     }
 }

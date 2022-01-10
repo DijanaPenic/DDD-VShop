@@ -2,7 +2,7 @@
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record SetDeliveryAddressRequest : BaseRequest
+    public record SetDeliveryAddressRequest
     {
         [Required]
         public string City { get; init; }

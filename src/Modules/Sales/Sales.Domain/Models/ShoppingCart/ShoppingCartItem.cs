@@ -22,15 +22,15 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         
         public Result SetPrice(Price value)
         {
-            RaiseEvent
-            (
-                new ShoppingCartProductPriceChangedDomainEvent
-                (
-                    ShoppingCartId,
-                    Id,
-                    value
-                )
-            );
+            // RaiseEvent
+            // (
+            //     new ShoppingCartProductPriceChangedDomainEvent
+            //     (
+            //         ShoppingCartId,
+            //         Id,
+            //         value
+            //     )
+            // );
             
             return Result.Success;
         }
@@ -39,16 +39,16 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         {
             if (Quantity + value > Settings.MaxQuantityPerProduct)
                 return Result.ValidationError($"Maximum allowed quantity per single product is {Settings.MaxQuantityPerProduct}.");
-            
-            RaiseEvent
-            (
-                new ShoppingCartProductQuantityIncreasedDomainEvent
-                (
-                    ShoppingCartId,
-                    Id,
-                    value
-                )
-            );
+            //
+            // RaiseEvent
+            // (
+            //     new ShoppingCartProductQuantityIncreasedDomainEvent
+            //     (
+            //         ShoppingCartId,
+            //         Id,
+            //         value
+            //     )
+            // );
             
             return Result.Success;
         }
@@ -58,15 +58,15 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Quantity - value <= 0)
                 return Result.ValidationError($"Cannot decrease quantity by {value}.");
             
-            RaiseEvent
-            (
-                new ShoppingCartProductQuantityDecreasedDomainEvent
-                (
-                    ShoppingCartId,
-                    Id,
-                    value
-                )
-            );
+            // RaiseEvent
+            // (
+            //     new ShoppingCartProductQuantityDecreasedDomainEvent
+            //     (
+            //         ShoppingCartId,
+            //         Id,
+            //         value
+            //     )
+            // );
             
             return Result.Success;
         }
@@ -81,15 +81,15 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Quantity = new ProductQuantity(e.Quantity);
                     UnitPrice = new Price(e.UnitPrice);
                     break;
-                case ShoppingCartProductQuantityIncreasedDomainEvent e:
-                    Quantity += new ProductQuantity(e.Quantity);
-                    break;
-                case ShoppingCartProductQuantityDecreasedDomainEvent e:
-                    Quantity -= new ProductQuantity(e.Quantity);
-                    break;
-                case ShoppingCartProductPriceChangedDomainEvent e:
-                    UnitPrice = new Price(e.UnitPrice);
-                    break;
+                // case ShoppingCartProductQuantityIncreasedDomainEvent e:
+                //     Quantity += new ProductQuantity(e.Quantity);
+                //     break;
+                // case ShoppingCartProductQuantityDecreasedDomainEvent e:
+                //     Quantity -= new ProductQuantity(e.Quantity);
+                //     break;
+                // case ShoppingCartProductPriceChangedDomainEvent e:
+                //     UnitPrice = new Price(e.UnitPrice);
+                //     break;
             }
         }
         

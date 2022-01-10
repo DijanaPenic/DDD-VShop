@@ -37,8 +37,8 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<OrderLineOutOfStockRemovedDomainEvent>(nameof(OrderLineOutOfStockRemovedDomainEvent));
             AddCustomMap<OrderStatusSetToPendingShippingDomainEvent>(nameof(OrderStatusSetToPendingShippingDomainEvent));
             AddCustomMap<OrderStockProcessingGracePeriodExpiredDomainEvent>(nameof(OrderStockProcessingGracePeriodExpiredDomainEvent));
-            AddCustomMap<SetPaidOrderStatusCommand>(nameof(SetPaidOrderStatusCommand));
-            AddCustomMap<FinalizeOrderCommand>(nameof(FinalizeOrderCommand));
+            // AddCustomMap<SetPaidOrderStatusCommand>(nameof(SetPaidOrderStatusCommand));
+            // AddCustomMap<FinalizeOrderCommand>(nameof(FinalizeOrderCommand));
             
             // Configure integration events - local
             AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
@@ -50,9 +50,9 @@ namespace VShop.Modules.Sales.API.Application
             AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
             
             // Configure commands
-            AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));
-            AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
-            AddCustomMap<CancelOrderCommand>(nameof(CancelOrderCommand));
+            // AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));
+            // AddCustomMap<DeleteShoppingCartCommand>(nameof(DeleteShoppingCartCommand));
+            // AddCustomMap<CancelOrderCommand>(nameof(CancelOrderCommand));
 
             // Configure scheduled message
             AddCustomMap<ScheduledMessage>(nameof(ScheduledMessage));

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
@@ -40,13 +41,15 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                switch (messageLog.GetMessage())
+                // TODO - refactor
+                IIdentifiedMessage<IMessage> message = messageLog.GetMessage<IdentifiedMessage<IMessage>>();
+                switch (message.Data)
                 {
-                    case ICommand command:
-                        await _commandBus.SendAsync(command, cancellationToken);
+                    case IBaseCommand:
+                        await _commandBus.SendAsync(message, cancellationToken);
                         break;
-                    case IDomainEvent domainEvent:
-                        await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                    case IBaseEvent:
+                        await _eventBus.Publish(message as IIdentifiedEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
                         break;
                     default:
                         throw new Exception("Unknown target type.");

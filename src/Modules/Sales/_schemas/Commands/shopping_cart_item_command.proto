@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands.Shared";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+
+message ShoppingCartItemCommand
+{
+    Uuid product_id = 1;
+    Decimal unit_price = 2;
+    int32 quantity = 3;
+}

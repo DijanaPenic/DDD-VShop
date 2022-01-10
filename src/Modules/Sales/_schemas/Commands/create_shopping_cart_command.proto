@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/message_metadata.proto";
+import "Modules/Sales/_schemas/Commands/shopping_cart_item_command.proto";
+
+message CreateShoppingCartCommand 
+{
+    MessageMetadata Metadata = 1;
+    Uuid shopping_cart_id = 2;
+    Uuid customer_id = 3;
+    int32 customer_discount = 4;
+    repeated ShoppingCartItemCommand shopping_cart_items = 5;
+}

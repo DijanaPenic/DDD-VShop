@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace VShop.SharedKernel.Messaging
 {
-    public record ScheduledMessage : Message, IScheduledMessage
+    public record ScheduledMessage : IScheduledMessage
     {
         public string Body { get; }
         public string TypeName { get; }
@@ -18,13 +18,11 @@ namespace VShop.SharedKernel.Messaging
             ScheduledTime = scheduledTime;
         }
 
-        public ScheduledMessage(IMessage message, Instant scheduledTime)
+        public ScheduledMessage(IIdentifiedMessage<IMessage> message, Instant scheduledTime)
         {
             Body = JsonConvert.SerializeObject(message);
-            TypeName = ToName(message.GetType());
+            TypeName = ToName(message.Data.GetType());
             ScheduledTime = scheduledTime;
-            CausationId = message.CausationId;
-            CorrelationId = message.CorrelationId;
         }
         
         public T GetMessage<T>() => (T)GetMessage();

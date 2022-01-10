@@ -45,7 +45,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         )
         {
             ShoppingCart shoppingCart = new(causationId, correlationId);
-            
+
             shoppingCart.RaiseEvent
             (
                 new ShoppingCartCreatedDomainEvent
@@ -112,16 +112,16 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (shoppingCartItem is null)
                 return Result.ValidationError($"Product with id `{productId}` was not found in shopping cart.");
             
-            if (shoppingCartItem.Quantity - quantity <= 0)
-            {
-                RaiseEvent(new ShoppingCartProductRemovedDomainEvent(Id, productId));
-            }
-            else
-            {
-                Result decreaseProductQuantityResult = shoppingCartItem.DecreaseQuantity(quantity);
-                if (decreaseProductQuantityResult.IsError) return decreaseProductQuantityResult.Error;
-            }
-            
+            // if (shoppingCartItem.Quantity - quantity <= 0)
+            // {
+            //     RaiseEvent(new ShoppingCartProductRemovedDomainEvent(Id, productId));
+            // }
+            // else
+            // {
+            //     Result decreaseProductQuantityResult = shoppingCartItem.DecreaseQuantity(quantity);
+            //     if (decreaseProductQuantityResult.IsError) return decreaseProductQuantityResult.Error;
+            // }
+            //
             RecalculateDeliveryCost();
             
             return Result.Success;
@@ -139,7 +139,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                 return Result.ValidationError(@$"Checkout is not allowed. Minimum required shopping cart amount 
                                                             for checkout is ${Settings.MinShoppingCartAmountForCheckout}.");
             
-            RaiseEvent(new ShoppingCartCheckoutRequestedDomainEvent(Id, orderId, now));
+           // RaiseEvent(new ShoppingCartCheckoutRequestedDomainEvent(Id, orderId, now));
             
             return Result.Success;
         }
@@ -149,7 +149,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (Status is ShoppingCartStatus.Closed)
                 return Result.ValidationError($"Cannot proceed with the delete request. Shopping cart is already deleted/closed.");
             
-            RaiseEvent(new ShoppingCartDeletedDomainEvent(Id));
+            //RaiseEvent(new ShoppingCartDeletedDomainEvent(Id));
             
             return Result.Success;
         }
@@ -159,8 +159,8 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             decimal newDeliveryCost = (ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForFreeDelivery) 
                 ? 0 : Settings.DefaultDeliveryCost;
             
-            if (newDeliveryCost != DeliveryCost)
-                RaiseEvent(new ShoppingCartDeliveryCostChangedDomainEvent(Id, newDeliveryCost));
+            // if (newDeliveryCost != DeliveryCost)
+            //     RaiseEvent(new ShoppingCartDeliveryCostChangedDomainEvent(Id, newDeliveryCost));
         }
 
         private ShoppingCartItem FindShoppingCartItem(EntityId productId)
@@ -187,42 +187,42 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     ApplyToEntity(shoppingCartItem, e);
                     _shoppingCartItems.Add(shoppingCartItem);
                     break;
-                case ShoppingCartProductRemovedDomainEvent e:
-                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
-                    _shoppingCartItems.Remove(shoppingCartItem);
-                    break;
-                case ShoppingCartProductQuantityIncreasedDomainEvent e:
-                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
-                    ApplyToEntity(shoppingCartItem, e);
-                    break;
-                case ShoppingCartProductQuantityDecreasedDomainEvent e:
-                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
-                    ApplyToEntity(shoppingCartItem, e);
-                    break;
-                case ShoppingCartContactInformationSetDomainEvent e:
-                    ApplyToEntity(Customer, e);
-                    break;
-                case ShoppingCartDeliveryAddressSetDomainEvent e:
-                    ApplyToEntity(Customer, e);
-                    Status = ShoppingCartStatus.AwaitingConfirmation;
-                    break;
-                case ShoppingCartDeliveryCostChangedDomainEvent e:
-                    DeliveryCost = new Price(e.DeliveryCost);
-                    break;
-                case ShoppingCartCheckoutRequestedDomainEvent e:
-                    ApplyToEntity(Customer, e);
-                    OrderId = new EntityId(e.OrderId);
-                    Status = ShoppingCartStatus.PendingCheckout;
-                    ConfirmedAt = e.ConfirmedAt;
-                    _isClosedForUpdates = true;
-                    break;
-                case ShoppingCartDeletedDomainEvent _:
-                    Status = ShoppingCartStatus.Closed;
-                    break;
-                case ShoppingCartProductPriceChangedDomainEvent e:
-                    shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
-                    ApplyToEntity(shoppingCartItem, e);
-                    break;
+                // case ShoppingCartProductRemovedDomainEvent e:
+                //     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                //     _shoppingCartItems.Remove(shoppingCartItem);
+                //     break;
+                // case ShoppingCartProductQuantityIncreasedDomainEvent e:
+                //     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                //     ApplyToEntity(shoppingCartItem, e);
+                //     break;
+                // case ShoppingCartProductQuantityDecreasedDomainEvent e:
+                //     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                //     ApplyToEntity(shoppingCartItem, e);
+                //     break;
+                // case ShoppingCartContactInformationSetDomainEvent e:
+                //     ApplyToEntity(Customer, e);
+                //     break;
+                // case ShoppingCartDeliveryAddressSetDomainEvent e:
+                //     ApplyToEntity(Customer, e);
+                //     Status = ShoppingCartStatus.AwaitingConfirmation;
+                //     break;
+                // case ShoppingCartDeliveryCostChangedDomainEvent e:
+                //     DeliveryCost = new Price(e.DeliveryCost);
+                //     break;
+                // case ShoppingCartCheckoutRequestedDomainEvent e:
+                //     ApplyToEntity(Customer, e);
+                //     OrderId = new EntityId(e.OrderId);
+                //     Status = ShoppingCartStatus.PendingCheckout;
+                //     ConfirmedAt = e.ConfirmedAt;
+                //     _isClosedForUpdates = true;
+                //     break;
+                // case ShoppingCartDeletedDomainEvent _:
+                //     Status = ShoppingCartStatus.Closed;
+                //     break;
+                // case ShoppingCartProductPriceChangedDomainEvent e:
+                //     shoppingCartItem = FindShoppingCartItem(new EntityId(e.ProductId));
+                //     ApplyToEntity(shoppingCartItem, e);
+                //     break;
             }
         }
 

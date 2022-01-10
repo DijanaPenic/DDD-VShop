@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Policies;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
@@ -18,7 +19,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             this EventStoreClient eventStoreClient,
             string streamSuffix,
             int expectedRevision,
-            IEnumerable<TMessage> messages,
+            IEnumerable<IIdentifiedMessage<TMessage>> messages,
             Instant now,
             CancellationToken cancellationToken = default
         ) 
@@ -36,7 +37,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             this EventStoreClient eventStoreClient,
             string streamSuffix,
             StreamState expectedState,
-            IEnumerable<TMessage> messages,
+            IEnumerable<IIdentifiedMessage<TMessage>> messages,
             Instant now,
             CancellationToken cancellationToken = default
         ) 
@@ -49,7 +50,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 cancellationToken: ct
             ), cancellationToken); 
         
-        public static async Task<IReadOnlyList<TMessage>> ReadStreamForwardAsync<TMessage>
+        public static async Task<IReadOnlyList<IIdentifiedMessage<TMessage>>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamSuffix,
@@ -65,11 +66,11 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                     cancellationToken: ct
                 ), cancellationToken);
 
-            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<TMessage>();
+            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<IIdentifiedMessage<TMessage>>();
 
             IList<ResolvedEvent> messages = await result.ToListAsync(cancellationToken);
 
-            return messages.Select(@event => @event.DeserializeData<TMessage>()).ToList();
+            return messages.Select(@event => @event.DeserializeData<IdentifiedMessage<TMessage>>()).ToList();
         }
 
         private static string GetStreamName(this EventStoreClientBase eventStoreClient, string value)

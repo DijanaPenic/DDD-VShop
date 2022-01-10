@@ -56,7 +56,7 @@ namespace VShop.SharedKernel.Integration.Services
 
                     await _integrationEventRepository.SaveAsync
                     (
-                        pendingEventLog.GetEvent<IIntegrationEvent>(),
+                        pendingEventLog.GetEvent<IIdentifiedEvent>(),
                         cancellationToken
                     );
 
@@ -80,12 +80,12 @@ namespace VShop.SharedKernel.Integration.Services
             }
         }
 
-        public async Task SaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
+        public async Task SaveEventAsync(IIdentifiedEvent @event, CancellationToken cancellationToken = default)
         {
             _logger.Information
             (
                 "Enqueuing integration event {IntegrationEventId} - ({IntegrationEvent})",
-                @event.MessageId, @event
+                @event.Metadata.MessageId, @event
             );
             
             await _integrationEventLogRepository.SaveEventAsync(@event, _dbContext.CurrentTransaction, cancellationToken);

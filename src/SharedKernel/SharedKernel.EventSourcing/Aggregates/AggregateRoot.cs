@@ -2,17 +2,22 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Helpers;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class AggregateRoot
     {
-        private readonly List<IBaseEvent> _events = new();
+        private readonly List<IIdentifiedEvent> _events = new();
         
-        public IReadOnlyList<IBaseEvent> Events => _events;
+        public IReadOnlyList<IIdentifiedEvent> Events => _events;
+        public IReadOnlyList<IIdentifiedEvent> DomainEvents // TODO - refactor
+            => _events.Where(ie => ie.Data is IDomainEvent).ToList();
+        
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
         public Guid CausationId { get; private set; }
@@ -31,38 +36,34 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         protected void RaiseEvent(IDomainEvent @event)
         {
             ApplyEvent(@event);
-            SetEventIdentification(@event);
-            _events.Add(@event);
+            _events.Add(new IdentifiedEvent(@event, GetMetadata()));
         }
         
         public void RaiseEvent(IIntegrationEvent @event)
-        {
-            SetEventIdentification(@event);
-            _events.Add(@event);
-        }
+            => _events.Add(new IdentifiedEvent(@event, GetMetadata()));
         
-        public void Load(IEnumerable<IBaseEvent> history, Guid causationId, Guid correlationId)
+        public void Load(IEnumerable<IIdentifiedEvent> history, Guid causationId, Guid correlationId)
         {
             CausationId = causationId;
             CorrelationId = correlationId;
             
             // Truncate events following the specified causationId.
-            IList<IBaseEvent> historyList = history.ToList()
-                .RemoveRangeFollowingLast(e => e.CausationId == CausationId);
+            IList<IIdentifiedEvent> historyList = history.ToList()
+                .RemoveRangeFollowingLast(e => e.Metadata.CausationId == CausationId);
             
             // Restore aggregate state (identified by causationId param).
-            (IEnumerable<IBaseEvent> pendingEvents, IEnumerable<IBaseEvent> processedEvents) = 
-                historyList.Split(e => e.CausationId == CausationId);
+            (IEnumerable<IIdentifiedEvent> pendingEvents, IEnumerable<IIdentifiedEvent> processedEvents) = 
+                historyList.Split(e => e.Metadata.CausationId == CausationId);
             
-            foreach (IBaseEvent @event in processedEvents)
+            foreach (IIdentifiedEvent @event in processedEvents)
             {
-                if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
+                if(@event.Data is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
             }
 
-            foreach (IBaseEvent @event in pendingEvents)
+            foreach (IIdentifiedEvent @event in pendingEvents)
             {
-                switch (@event)
+                switch (@event.Data)
                 {
                     case IDomainEvent domainEvent:
                         RaiseEvent(domainEvent);
@@ -81,11 +82,6 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         }
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity.Handle(@event);
-        
-        private void SetEventIdentification(IBaseEvent @event)
-        {
-            @event.CausationId = CausationId;
-            @event.CorrelationId = CorrelationId;
-        }
+        private MessageMetadata GetMetadata() => new(SequentialGuid.Create(), CorrelationId, CausationId);
     }
 }

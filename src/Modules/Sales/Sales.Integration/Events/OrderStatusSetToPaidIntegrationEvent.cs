@@ -6,7 +6,7 @@ using VShop.SharedKernel.Messaging.Events;
 namespace VShop.Modules.Sales.Integration.Events
 {
     // Notification for Catalog - need to perform the "out of stock" check.
-    public record OrderStatusSetToPaidIntegrationEvent : IntegrationEvent
+    public record OrderStatusSetToPaidIntegrationEvent //: IntegrationEvent
     {
         public Guid OrderId { get; }
         public IList<OrderLine> OrderLines { get; }
