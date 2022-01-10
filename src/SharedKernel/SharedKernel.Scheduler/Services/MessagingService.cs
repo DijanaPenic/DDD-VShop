@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                // TODO - refactor
+                // TODO - refactor.
                 IIdentifiedMessage<IMessage> message = messageLog.GetMessage<IdentifiedMessage<IMessage>>();
                 switch (message.Data)
                 {
@@ -49,7 +49,12 @@ namespace VShop.SharedKernel.Scheduler.Services
                         await _commandBus.SendAsync(message, cancellationToken);
                         break;
                     case IBaseEvent:
-                        await _eventBus.Publish(message as IIdentifiedEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                        await _eventBus.Publish
+                        (
+                            message as IIdentifiedEvent<IBaseEvent>,
+                            EventPublishStrategy.SyncStopOnException,
+                            cancellationToken
+                        );
                         break;
                     default:
                         throw new Exception("Unknown target type.");

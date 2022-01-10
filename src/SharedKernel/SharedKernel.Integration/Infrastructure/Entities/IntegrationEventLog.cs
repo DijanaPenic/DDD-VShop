@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         public Guid TransactionId { get; }
         
         public IntegrationEventLog() { } // Needed for database migrations.
-        public IntegrationEventLog(IIdentifiedEvent @event, Guid transactionId)
+        public IntegrationEventLog(IIdentifiedEvent<IBaseEvent> @event, Guid transactionId)
         {
             Id = @event.Metadata.MessageId;
             TypeName = ToName(@event.Data.GetType());

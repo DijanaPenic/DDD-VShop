@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ShoppingCartCheckoutRequestedDomainEvent// : DomainEvent
+    public record ShoppingCartCheckoutRequestedDomainEvent : IBaseEvent
     {
         public Guid ShoppingCartId { get; }
         public Guid OrderId { get; }

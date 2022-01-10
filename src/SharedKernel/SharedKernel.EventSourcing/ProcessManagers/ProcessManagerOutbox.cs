@@ -12,13 +12,10 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IIdentifiedMessage<IMessage>> _messages = new();
         
         public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages => _messages;
-
-        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages() // TODO
+        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages
             => _messages.OfType<IIdentifiedMessage<IScheduledMessage>>().ToList();
-
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> Commands 
-            => _messages.Where(im => im.Data is IBaseCommand).ToList();
- 
+        public IReadOnlyList<IIdentifiedMessage<IBaseCommand>> Commands 
+            => _messages.OfType<IIdentifiedMessage<IBaseCommand>>().ToList();
         public int Version { get; set; } = -1;
         
         public void Add(IIdentifiedMessage<IMessage> message) => _messages.Add(message);
@@ -40,7 +37,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     {
         public int Version { get; }
         public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages { get; }
-        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages();
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> Commands { get; }
+        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages { get; }
+        public IReadOnlyList<IIdentifiedMessage<IBaseCommand>> Commands { get; }
     }
 }

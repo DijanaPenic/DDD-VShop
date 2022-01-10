@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -44,7 +43,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             try
             {
                 // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-                foreach (IIdentifiedEvent domainEvent in aggregate.DomainEvents)
+                foreach (IIdentifiedEvent<IDomainEvent> domainEvent in aggregate.DomainEvents)
                     await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
             }
             finally
@@ -76,11 +75,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IList<IIdentifiedEvent> events = (await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
-            (
-                GetStreamName(aggregateId),
-                cancellationToken
-            )).Select(im => im as IIdentifiedEvent).ToList();
+            IReadOnlyList<IIdentifiedEvent<IBaseEvent>> events = await _eventStoreClient
+                .ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>>
+                (
+                    GetStreamName(aggregateId),
+                    cancellationToken
+                );
 
             if (events.Count is 0) return default;
 

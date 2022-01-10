@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.Integration.Stores
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task SaveAsync(IIdentifiedEvent @event, CancellationToken cancellationToken = default)
+        public async Task SaveAsync(IIdentifiedEvent<IBaseEvent> @event, CancellationToken cancellationToken = default)
         {
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
@@ -38,12 +38,12 @@ namespace VShop.SharedKernel.Integration.Stores
             );
         }
 
-        public async Task<IReadOnlyList<IIdentifiedEvent>> LoadAsync(CancellationToken cancellationToken = default)
-            => (await _eventStoreClient.ReadStreamForwardAsync<IBaseEvent>
+        public async Task<IReadOnlyList<IIdentifiedEvent<IBaseEvent>>> LoadAsync(CancellationToken cancellationToken = default)
+            => await _eventStoreClient.ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>>
             (
                 GetStreamName(),
                 cancellationToken
-            )).Select(im => im as IIdentifiedEvent).ToList();
+            );
         
         public static string GetStreamName() => "integration";
     }

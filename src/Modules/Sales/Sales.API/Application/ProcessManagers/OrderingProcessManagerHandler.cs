@@ -9,6 +9,7 @@
 // using VShop.SharedKernel.EventSourcing.ProcessManagers;
 // using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 // using VShop.SharedKernel.Infrastructure.Services.Contracts;
+// using VShop.SharedKernel.Messaging.Events;
 // using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 //
 // namespace VShop.Modules.Sales.API.Application.ProcessManagers
@@ -33,8 +34,8 @@
 //             IProcessManagerStore<OrderingProcessManager> processManagerStore
 //         ) : base(clockService, logger, processManagerStore) { }
 //         
-//         public Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
-//             => TransitionAsync(@event.OrderId, @event, cancellationToken);
+//         public Task Handle(IIdentifiedEvent<ShoppingCartCheckoutRequestedDomainEvent> @event, CancellationToken cancellationToken)
+//             => TransitionAsync(@event.Data.OrderId, @event, cancellationToken);
 //         
 //         public Task Handle(OrderPlacedDomainEvent @event, CancellationToken cancellationToken)
 //             => TransitionAsync(@event.OrderId, @event, cancellationToken);

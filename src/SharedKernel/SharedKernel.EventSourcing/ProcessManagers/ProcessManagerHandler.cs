@@ -27,7 +27,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _processManagerStore = processManagerStore;
         }
         
-        protected async Task TransitionAsync(Guid processId, IIdentifiedEvent @event, CancellationToken cancellationToken)
+        protected async Task TransitionAsync(Guid processId, IIdentifiedEvent<IBaseEvent> @event, CancellationToken cancellationToken)
         {
             _logger.Information
             (

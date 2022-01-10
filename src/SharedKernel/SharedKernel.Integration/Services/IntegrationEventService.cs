@@ -56,7 +56,7 @@ namespace VShop.SharedKernel.Integration.Services
 
                     await _integrationEventRepository.SaveAsync
                     (
-                        pendingEventLog.GetEvent<IIdentifiedEvent>(),
+                        pendingEventLog.GetEvent<IIdentifiedEvent<IBaseEvent>>(),
                         cancellationToken
                     );
 
@@ -80,7 +80,7 @@ namespace VShop.SharedKernel.Integration.Services
             }
         }
 
-        public async Task SaveEventAsync(IIdentifiedEvent @event, CancellationToken cancellationToken = default)
+        public async Task SaveEventAsync(IIdentifiedEvent<IBaseEvent> @event, CancellationToken cancellationToken = default)
         {
             _logger.Information
             (

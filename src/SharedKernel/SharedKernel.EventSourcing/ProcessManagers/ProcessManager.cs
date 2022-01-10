@@ -29,7 +29,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _inbox.MessageHandlers[typeof(TEvent)] = 
                 (message, now) => handler(message as TEvent, now);
 
-        public void Transition(IIdentifiedMessage<IBaseEvent> @event, Instant now)
+        public void Transition(IIdentifiedEvent<IBaseEvent> @event, Instant now)
         {
             CausationId = @event.Metadata.MessageId;
             CorrelationId = @event.Metadata.CorrelationId;
@@ -40,29 +40,29 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             Type eventType = @event.GetType();
             
             if (_inbox.MessageHandlers.ContainsKey(eventType))
-                _inbox.MessageHandlers[eventType](@event, now);
+                _inbox.MessageHandlers[eventType](@event.Data, now);
             
             // else - don't need to have event handler events for all events. Some events can only trigger 
             // process manager status change.
         }
 
         protected void RaiseIntegrationEvent(IIntegrationEvent @event)
-            => _outbox.Add(new IdentifiedMessage<IMessage>(@event, GetMetadata()));
+            => _outbox.Add(new IdentifiedEvent<IIntegrationEvent>(@event, GetMetadata()));
 
         protected void RaiseCommand(IBaseCommand command)
-            => _outbox.Add(new IdentifiedMessage<IMessage>(command, GetMetadata()));
+            => _outbox.Add(new IdentifiedCommand<IBaseCommand>(command, GetMetadata()));
         
         protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime)
             => _outbox.Add
             (
-                new IdentifiedMessage<IMessage>(command, GetMetadata()),
+                new IdentifiedMessage<IBaseCommand>(command, GetMetadata()),
                 scheduledTime
             );
         
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
             => _outbox.Add
             (
-                new IdentifiedMessage<IMessage>(@event, GetMetadata()),
+                new IdentifiedMessage<IDomainEvent>(@event, GetMetadata()),
                 scheduledTime
             );
 

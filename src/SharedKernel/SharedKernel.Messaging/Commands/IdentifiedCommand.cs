@@ -15,4 +15,16 @@ namespace VShop.SharedKernel.Messaging.Commands
     {
         
     }
+    
+    public class IdentifiedCommand<TCommand> : IdentifiedMessage<TCommand>, IIdentifiedCommand<TCommand>
+        where TCommand : IBaseCommand
+    {
+        public IdentifiedCommand(TCommand command, MessageMetadata metadata) : base(command, metadata) { }
+    }
+    
+    public interface IIdentifiedCommand<out TCommand> : IIdentifiedMessage<TCommand>, IRequest<Result>
+        where TCommand : IBaseCommand
+    {
+        
+    }
 }

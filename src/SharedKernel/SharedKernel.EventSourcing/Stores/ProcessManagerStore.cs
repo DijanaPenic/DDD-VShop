@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -47,7 +46,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             (
                 GetInboxStreamName(processManager.Id),
                 processManager.Inbox.Version,
-                processManager.Inbox.Messages,
+                processManager.Inbox.Events,
                 _clockService.Now,
                 cancellationToken
             );
@@ -79,16 +78,18 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IIdentifiedMessage<IMessage>> inboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
-            (
-                GetInboxStreamName(processManagerId),
-                cancellationToken
-            );
-            IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient.ReadStreamForwardAsync<IMessage>
-            (
-                GetOutboxStreamName(processManagerId),
-                cancellationToken
-            );
+            IReadOnlyList<IIdentifiedMessage<IMessage>> inboxMessages = await _eventStoreClient
+                .ReadStreamForwardAsync<IdentifiedMessage<IMessage>>
+                (
+                    GetInboxStreamName(processManagerId),
+                    cancellationToken
+                );
+            IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient
+                .ReadStreamForwardAsync<IdentifiedMessage<IMessage>>
+                (
+                    GetOutboxStreamName(processManagerId),
+                    cancellationToken
+                );
 
             TProcess processManager = new();
             processManager.Load(inboxMessages, outboxMessages, causationId, correlationId);
@@ -108,7 +109,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
                 
             // Schedule deferred commands and events
-            foreach (IIdentifiedMessage<IScheduledMessage> scheduledCommand in processManager.Outbox.ScheduledMessages())
+            foreach (IIdentifiedMessage<IScheduledMessage> scheduledCommand in processManager.Outbox.ScheduledMessages)
                 await _messageSchedulerService.ScheduleMessageAsync(scheduledCommand, cancellationToken);
         }
         
