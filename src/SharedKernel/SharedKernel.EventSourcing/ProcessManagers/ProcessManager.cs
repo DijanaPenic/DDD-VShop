@@ -49,32 +49,24 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected void RaiseEvent(IIntegrationEvent @event) => RaiseEvent(@event, GetMetadata());
         
         protected void RaiseEvent(IIntegrationEvent @event, MessageMetadata metadata)
-            => _outbox.Add(new IdentifiedEvent<IIntegrationEvent>(@event, metadata));
+            => _outbox.Add(@event, metadata);
         
         protected void RaiseCommand(IBaseCommand command) => RaiseCommand(command, GetMetadata());
         
         protected void RaiseCommand(IBaseCommand command, MessageMetadata metadata)
-            => _outbox.Add(new IdentifiedCommand<IBaseCommand>(command, metadata));
+            => _outbox.Add(command, metadata);
         
         protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime) 
             => ScheduleCommand(command, scheduledTime, GetMetadata());
         
         protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime, MessageMetadata metadata)
-            => _outbox.Add
-            (
-                new IdentifiedMessage<IBaseCommand>(command, metadata),
-                scheduledTime
-            );
+            => _outbox.Add(command, metadata, scheduledTime);
         
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
             => ScheduleReminder(@event, scheduledTime, GetMetadata());
 
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime, MessageMetadata metadata)
-            => _outbox.Add
-            (
-                new IdentifiedMessage<IDomainEvent>(@event, metadata),
-                scheduledTime
-            );
+            => _outbox.Add(@event, metadata, scheduledTime);
 
         public void Load
         (

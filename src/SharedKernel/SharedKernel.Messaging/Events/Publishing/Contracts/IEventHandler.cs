@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Messaging.Events.Publishing.Contracts
 {
-    public interface IEventHandler<in TEvent> : INotificationHandler<IIdentifiedEvent<TEvent>>
+    public interface IEventHandler<TEvent> : INotificationHandler<IdentifiedEvent<TEvent>> 
         where TEvent : IBaseEvent
     {
         

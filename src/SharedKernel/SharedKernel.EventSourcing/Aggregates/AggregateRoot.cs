@@ -15,7 +15,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         private readonly List<IIdentifiedEvent<IBaseEvent>> _events = new();
         
         public IReadOnlyList<IIdentifiedEvent<IBaseEvent>> Events => _events;
-        public IReadOnlyList<IIdentifiedEvent<IDomainEvent>> DomainEvents // TODO ??
+        public IReadOnlyList<IIdentifiedEvent<IDomainEvent>> DomainEvents
             => _events.OfType<IIdentifiedEvent<IDomainEvent>>().ToList();
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;

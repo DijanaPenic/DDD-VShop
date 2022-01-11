@@ -1,10 +1,12 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Billing.API.Models;
 using VShop.Modules.Billing.API.Application.Commands;
@@ -31,9 +33,23 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> TransferAsync([FromBody]TransferRequest request)
+        public async Task<IActionResult> TransferAsync
+        (
+            [FromBody] TransferRequest request,
+            [FromHeader(Name = "x-request-id")] string requestId,
+            [FromHeader(Name = "x-correlation-id")]
+            string correlationId
+        )
         {
-            TransferCommand command = _mapper.Map<TransferCommand>(request);
+            // TODO - missing header validation.
+            
+            IdentifiedCommand<TransferCommand> command = new
+            (
+                _mapper.Map<TransferCommand>(request),
+                Guid.Parse(requestId),
+                Guid.Parse(correlationId)
+            );
+            
             Result result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Ok);

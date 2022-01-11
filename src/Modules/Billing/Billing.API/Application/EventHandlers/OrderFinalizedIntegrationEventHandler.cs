@@ -1,9 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Entities;
@@ -11,7 +12,7 @@ using VShop.Modules.Billing.Infrastructure.Repositories;
 
 namespace VShop.Modules.Billing.API.Application.EventHandlers
 {
-    public class OrderFinalizedIntegrationEventHandler : IIntegrationEventHandler<OrderFinalizedIntegrationEvent>
+    public class OrderFinalizedIntegrationEventHandler : IEventHandler<OrderFinalizedIntegrationEvent>
     {
         private readonly IPaymentService _paymentService;
         private readonly IPaymentRepository _paymentRepository;
@@ -26,13 +27,13 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
             _paymentRepository = paymentRepository;
         }
 
-        public async Task Handle(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
+        public async Task Handle(IdentifiedEvent<OrderFinalizedIntegrationEvent> @event, CancellationToken cancellationToken)
         {
-            if (@event.RefundAmount is 0) return;
+            if (@event.Data.RefundAmount is 0) return;
             
             bool isRefundSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (
-                @event.OrderId,
+                @event.Data.OrderId,
                 PaymentType.Transfer,
                 cancellationToken
             );
@@ -40,15 +41,15 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
             
             Result refundResult = await _paymentService.RefundAsync
             (
-                @event.OrderId,
-                @event.RefundAmount,
+                @event.Data.OrderId,
+                @event.Data.RefundAmount,
                 cancellationToken
             );
 
             Payment refund = new()
             {
                 Id = SequentialGuid.Create(),
-                OrderId = @event.OrderId,
+                OrderId = @event.Data.OrderId,
                 Status = refundResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
                 Error = refundResult.IsError ? refundResult.Error.ToString() : string.Empty,
                 Type = PaymentType.Refund

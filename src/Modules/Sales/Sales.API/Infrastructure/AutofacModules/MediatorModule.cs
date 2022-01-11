@@ -7,7 +7,6 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.ProcessManagers;
 
 namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 {
@@ -16,8 +15,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
         protected override void Load(ContainerBuilder builder)
         {
             // Register IMediator
-            builder.RegisterAssemblyTypes(typeof(IMediator).Assembly)
-                   .AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(IMediator).Assembly).AsImplementedInterfaces();
                    
             builder.Register<ServiceFactory>(ctx =>
             {
@@ -32,7 +30,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
             builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
 
             // Register command handlers
-            builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommand).Assembly)
+            builder.RegisterAssemblyTypes(typeof(CreateShoppingCartCommandHandler).Assembly)
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register event handlers

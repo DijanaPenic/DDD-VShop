@@ -1,31 +1,33 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using ProtoBuf;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
-using Newtonsoft.Json;
+using Google.Protobuf;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Helpers;
+
+using IProtoData = Google.Protobuf.IMessage;
+using IMessage = VShop.SharedKernel.Messaging.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
         // TODO - need to review this.
-        public static T DeserializeData<T>(this ResolvedEvent resolvedEvent) => (T)DeserializeData(resolvedEvent);
+        public static TMessage DeserializeData<TMessage>(this ResolvedEvent resolvedEvent) 
+            => (TMessage)DeserializeData(resolvedEvent);
         
         public static object DeserializeData(this ResolvedEvent resolvedEvent)
         {
             Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
-            string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span);
-            object data = JsonConvert.DeserializeObject(jsonData, eventType);
 
-            if (data is not IMessage message) return data;
+            object data = Deserialize(resolvedEvent.Event.Data.Span.ToArray(), eventType);
+
+            if (data is not IMessage message) return data; // TODO - review.
 
             IIdentifiedMessage<IMessage> identifiedMessage = new IdentifiedMessage<IMessage>
             (
@@ -36,11 +38,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return identifiedMessage;
         }
         
+        // TODO - keep in method?
         public static MessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
         {
-            string jsonData = Encoding.UTF8.GetString(resolvedEvent.Event.Metadata.Span);
-            
-            return JsonConvert.DeserializeObject<MessageMetadata>(jsonData);
+            var res = Deserialize<MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
+
+            return res; // TODO - review.
         }
 
         public static IReadOnlyList<EventData> ToEventData<TMessage>
@@ -57,18 +60,25 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 (
                     GetDeterministicMessageId(message, index),
                     GetMessageTypeName(message.Data),
-                    Serialize(message.Data),
+                    Serialize((IProtoData)message.Data), // TODO - casting??
                     Serialize(message.Metadata),
                     "application/octet-stream"
                 );
             }).ToList();
 
-        private static byte[] Serialize(object data)
+        private static byte[] Serialize(IProtoData data) => data.ToByteArray();
+
+        public static TData Deserialize<TData>(byte[] data) where TData : IProtoData
+            => (TData)Deserialize(data, typeof(TData));
+        
+        public static IProtoData Deserialize(byte[] data, Type type)
         {
-            using MemoryStream stream = new();
-            Serializer.Serialize(stream, data);
+            IProtoData message = (IProtoData)Activator.CreateInstance(type);
             
-            return stream.ToArray();
+            using MemoryStream stream = new(data);
+            message.MergeFrom(stream);
+            
+            return message;
         }
 
         private static Uuid GetDeterministicMessageId<TMessage>(IIdentifiedMessage<TMessage> message, int index) 

@@ -2,6 +2,6 @@
 {
     public interface IMessage
     {
-        //MessageMetadata Metadata { get; set; }
+
     }
 }

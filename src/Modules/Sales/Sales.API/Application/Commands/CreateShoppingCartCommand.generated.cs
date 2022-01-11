@@ -26,20 +26,18 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           string.Concat(
             "CkJNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2NyZWF0ZV9zaG9w",
             "cGluZ19jYXJ0X2NvbW1hbmQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRL",
-            "ZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8aQ1NoYXJlZEtl",
-            "cm5lbC9TaGFyZWRLZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL21lc3NhZ2Vf",
-            "bWV0YWRhdGEucHJvdG8aQE1vZHVsZXMvU2FsZXMvX3NjaGVtYXMvQ29tbWFu",
-            "ZHMvc2hvcHBpbmdfY2FydF9pdGVtX2NvbW1hbmQucHJvdG8izgEKGUNyZWF0",
-            "ZVNob3BwaW5nQ2FydENvbW1hbmQSIgoITWV0YWRhdGEYASABKAsyEC5NZXNz",
-            "YWdlTWV0YWRhdGESHwoQc2hvcHBpbmdfY2FydF9pZBgCIAEoCzIFLlV1aWQS",
-            "GgoLY3VzdG9tZXJfaWQYAyABKAsyBS5VdWlkEhkKEWN1c3RvbWVyX2Rpc2Nv",
-            "dW50GAQgASgFEjUKE3Nob3BwaW5nX2NhcnRfaXRlbXMYBSADKAsyGC5TaG9w",
-            "cGluZ0NhcnRJdGVtQ29tbWFuZEIvqgIsVlNob3AuTW9kdWxlcy5TYWxlcy5B",
-            "UEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
+            "ZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8aQE1vZHVsZXMv",
+            "U2FsZXMvX3NjaGVtYXMvQ29tbWFuZHMvc2hvcHBpbmdfY2FydF9pdGVtX2Nv",
+            "bW1hbmQucHJvdG8iqgEKGUNyZWF0ZVNob3BwaW5nQ2FydENvbW1hbmQSHwoQ",
+            "c2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQSGgoLY3VzdG9tZXJfaWQY",
+            "AiABKAsyBS5VdWlkEhkKEWN1c3RvbWVyX2Rpc2NvdW50GAMgASgFEjUKE3No",
+            "b3BwaW5nX2NhcnRfaXRlbXMYBCADKAsyGC5TaG9wcGluZ0NhcnRJdGVtQ29t",
+            "bWFuZEIvqgIsVlNob3AuTW9kdWxlcy5TYWxlcy5BUEkuQXBwbGljYXRpb24u",
+            "Q29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Messaging.MessageMetadataReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand), global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand.Parser, new[]{ "Metadata", "ShoppingCartId", "CustomerId", "CustomerDiscount", "ShoppingCartItems" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand), global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand.Parser, new[]{ "ShoppingCartId", "CustomerId", "CustomerDiscount", "ShoppingCartItems" }, null, null, null, null)
           }));
     }
     #endregion
@@ -80,7 +78,6 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public CreateShoppingCartCommand(CreateShoppingCartCommand other) : this() {
-      metadata_ = other.metadata_ != null ? other.metadata_.Clone() : null;
       shoppingCartId_ = other.shoppingCartId_ != null ? other.shoppingCartId_.Clone() : null;
       customerId_ = other.customerId_ != null ? other.customerId_.Clone() : null;
       customerDiscount_ = other.customerDiscount_;
@@ -94,20 +91,8 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       return new CreateShoppingCartCommand(this);
     }
 
-    /// <summary>Field number for the "Metadata" field.</summary>
-    public const int MetadataFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.MessageMetadata metadata_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.MessageMetadata Metadata {
-      get { return metadata_; }
-      set {
-        metadata_ = value;
-      }
-    }
-
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
-    public const int ShoppingCartIdFieldNumber = 2;
+    public const int ShoppingCartIdFieldNumber = 1;
     private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -119,7 +104,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     }
 
     /// <summary>Field number for the "customer_id" field.</summary>
-    public const int CustomerIdFieldNumber = 3;
+    public const int CustomerIdFieldNumber = 2;
     private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid customerId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -131,7 +116,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     }
 
     /// <summary>Field number for the "customer_discount" field.</summary>
-    public const int CustomerDiscountFieldNumber = 4;
+    public const int CustomerDiscountFieldNumber = 3;
     private int customerDiscount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -143,9 +128,9 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     }
 
     /// <summary>Field number for the "shopping_cart_items" field.</summary>
-    public const int ShoppingCartItemsFieldNumber = 5;
+    public const int ShoppingCartItemsFieldNumber = 4;
     private static readonly pb::FieldCodec<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand> _repeated_shoppingCartItems_codec
-        = pb::FieldCodec.ForMessage(42, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand.Parser);
+        = pb::FieldCodec.ForMessage(34, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand.Parser);
     private readonly pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand> shoppingCartItems_ = new pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -168,7 +153,6 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Metadata, other.Metadata)) return false;
       if (!object.Equals(ShoppingCartId, other.ShoppingCartId)) return false;
       if (!object.Equals(CustomerId, other.CustomerId)) return false;
       if (CustomerDiscount != other.CustomerDiscount) return false;
@@ -180,7 +164,6 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (metadata_ != null) hash ^= Metadata.GetHashCode();
       if (shoppingCartId_ != null) hash ^= ShoppingCartId.GetHashCode();
       if (customerId_ != null) hash ^= CustomerId.GetHashCode();
       if (CustomerDiscount != 0) hash ^= CustomerDiscount.GetHashCode();
@@ -203,20 +186,16 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (metadata_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Metadata);
-      }
       if (shoppingCartId_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(ShoppingCartId);
       }
       if (customerId_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(CustomerId);
       }
       if (CustomerDiscount != 0) {
-        output.WriteRawTag(32);
+        output.WriteRawTag(24);
         output.WriteInt32(CustomerDiscount);
       }
       shoppingCartItems_.WriteTo(output, _repeated_shoppingCartItems_codec);
@@ -230,20 +209,16 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (metadata_ != null) {
-        output.WriteRawTag(10);
-        output.WriteMessage(Metadata);
-      }
       if (shoppingCartId_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(ShoppingCartId);
       }
       if (customerId_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(CustomerId);
       }
       if (CustomerDiscount != 0) {
-        output.WriteRawTag(32);
+        output.WriteRawTag(24);
         output.WriteInt32(CustomerDiscount);
       }
       shoppingCartItems_.WriteTo(ref output, _repeated_shoppingCartItems_codec);
@@ -257,9 +232,6 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (metadata_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Metadata);
-      }
       if (shoppingCartId_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ShoppingCartId);
       }
@@ -281,12 +253,6 @@ namespace VShop.Modules.Sales.API.Application.Commands {
     public void MergeFrom(CreateShoppingCartCommand other) {
       if (other == null) {
         return;
-      }
-      if (other.metadata_ != null) {
-        if (metadata_ == null) {
-          Metadata = new global::VShop.SharedKernel.Messaging.MessageMetadata();
-        }
-        Metadata.MergeFrom(other.Metadata);
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
@@ -320,31 +286,24 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            if (metadata_ == null) {
-              Metadata = new global::VShop.SharedKernel.Messaging.MessageMetadata();
-            }
-            input.ReadMessage(Metadata);
-            break;
-          }
-          case 18: {
             if (shoppingCartId_ == null) {
               ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
-          case 26: {
+          case 18: {
             if (customerId_ == null) {
               CustomerId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
             }
             input.ReadMessage(CustomerId);
             break;
           }
-          case 32: {
+          case 24: {
             CustomerDiscount = input.ReadInt32();
             break;
           }
-          case 42: {
+          case 34: {
             shoppingCartItems_.AddEntriesFrom(input, _repeated_shoppingCartItems_codec);
             break;
           }
@@ -364,31 +323,24 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            if (metadata_ == null) {
-              Metadata = new global::VShop.SharedKernel.Messaging.MessageMetadata();
-            }
-            input.ReadMessage(Metadata);
-            break;
-          }
-          case 18: {
             if (shoppingCartId_ == null) {
               ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
-          case 26: {
+          case 18: {
             if (customerId_ == null) {
               CustomerId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
             }
             input.ReadMessage(CustomerId);
             break;
           }
-          case 32: {
+          case 24: {
             CustomerDiscount = input.ReadInt32();
             break;
           }
-          case 42: {
+          case 34: {
             shoppingCartItems_.AddEntriesFrom(ref input, _repeated_shoppingCartItems_codec);
             break;
           }

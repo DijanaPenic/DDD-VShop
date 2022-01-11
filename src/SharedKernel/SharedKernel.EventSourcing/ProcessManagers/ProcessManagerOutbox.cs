@@ -18,12 +18,14 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _messages.OfType<IIdentifiedMessage<IBaseCommand>>().ToList();
         public int Version { get; set; } = -1;
         
-        public void Add(IIdentifiedMessage<IMessage> message) => _messages.Add(message);
-        public void Add(IIdentifiedMessage<IMessage> message, Instant scheduledTime)
-            => _messages.Add(new IdentifiedMessage<IMessage>
+        public void Add(IMessage message, MessageMetadata metadata)
+            => _messages.Add(new IdentifiedMessage<IMessage>(message, metadata));
+        
+        public void Add(IMessage message, MessageMetadata metadata, Instant scheduledTime)
+            => _messages.Add(new IdentifiedMessage<IScheduledMessage>
             (
-                new ScheduledMessage(message, scheduledTime),
-                message.Metadata
+                new ScheduledMessage(new IdentifiedMessage<IMessage>(message, metadata), scheduledTime),
+                metadata
             ));
         
         public void Clear()

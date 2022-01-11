@@ -6,23 +6,15 @@ using VShop.SharedKernel.Messaging.Events;
 namespace VShop.Modules.Catalog.Integration.Events
 {
     // Notification for Sales - need to finalize the order and start the shipping process.
-    public record OrderStockProcessedIntegrationEvent : IntegrationEvent 
+    public record OrderStockProcessedIntegrationEvent : IIntegrationEvent 
     {
         public Guid OrderId { get; }
         public IList<OrderLine> OrderLines { get; }
 
-        public OrderStockProcessedIntegrationEvent
-        (
-            Guid orderId,
-            IList<OrderLine> orderLines,
-            Guid causationId = default,
-            Guid correlationId = default
-        )
+        public OrderStockProcessedIntegrationEvent(Guid orderId, IList<OrderLine> orderLines)
         {
             OrderId = orderId;
             OrderLines = orderLines;
-            CausationId = causationId;
-            CorrelationId = correlationId;
         }
         
         public record OrderLine

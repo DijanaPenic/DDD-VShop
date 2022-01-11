@@ -20,7 +20,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<ShoppingCart>> Handle
         (
-            IIdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command,
+            IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command,
             CancellationToken cancellationToken
         )
         {

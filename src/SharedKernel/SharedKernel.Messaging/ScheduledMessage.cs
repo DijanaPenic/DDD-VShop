@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.Messaging
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }
     
-    public interface IScheduledMessage : IMessage
+    public interface IScheduledMessage : IMessage // TODO - should be proto??
     {
         public string Body { get; }
         public string TypeName { get; }

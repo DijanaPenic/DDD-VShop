@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Google.Protobuf;
 using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Messaging;
@@ -12,8 +13,10 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands;
+using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Messaging.CustomTypes;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
@@ -71,7 +74,8 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
             
-            IIdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart>
+            // TODO - review MediatR.
+            IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new
             (
                 _mapper.Map<CreateShoppingCartCommand>(request),
                 Guid.Parse(requestId),
