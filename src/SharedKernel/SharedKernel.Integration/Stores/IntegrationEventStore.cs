@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
@@ -38,13 +36,6 @@ namespace VShop.SharedKernel.Integration.Stores
             );
         }
 
-        public async Task<IReadOnlyList<IIdentifiedEvent<IBaseEvent>>> LoadAsync(CancellationToken cancellationToken = default)
-            => await _eventStoreClient.ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>>
-            (
-                GetStreamName(),
-                cancellationToken
-            );
-        
         public static string GetStreamName() => "integration";
     }
 }

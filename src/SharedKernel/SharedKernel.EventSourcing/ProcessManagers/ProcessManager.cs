@@ -70,7 +70,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         public void Load
         (
-            IEnumerable<IIdentifiedMessage<IMessage>> inboxHistory,
+            IEnumerable<IIdentifiedEvent<IBaseEvent>> inboxHistory,
             IEnumerable<IIdentifiedMessage<IMessage>> outboxHistory,
             Guid causationId,
             Guid correlationId
@@ -79,9 +79,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             CausationId = causationId;
             CorrelationId = correlationId;
             
-            foreach (IIdentifiedMessage<IMessage> inboxMessage in inboxHistory)
+            foreach (IIdentifiedEvent<IBaseEvent> inboxMessage in inboxHistory)
             {
-                if(inboxMessage.Data is IBaseEvent @event) ApplyEvent(@event);
+                ApplyEvent(inboxMessage.Data);
                 _inbox.Version++;
             }
 

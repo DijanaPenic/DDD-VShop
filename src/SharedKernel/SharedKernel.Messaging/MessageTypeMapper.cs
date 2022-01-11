@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 
 namespace VShop.SharedKernel.Messaging
 {
+    // TODO - check usage for ES.
     public static class MessageTypeMapper
     {
         private static readonly ConcurrentDictionary<Type, string> TypeNameMap = new();

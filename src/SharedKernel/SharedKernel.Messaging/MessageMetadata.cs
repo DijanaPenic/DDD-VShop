@@ -14,7 +14,6 @@ namespace VShop.SharedKernel.Messaging
         }
         
         public MessageMetadata(Guid messageId, Guid correlationId, Guid causationId, Instant effectiveTime)
-        : this(messageId, correlationId, causationId)
-            => EffectiveTime = effectiveTime.ToTimestamp();
+        : this(messageId, correlationId, causationId) => EffectiveTime = effectiveTime.ToTimestamp();
     }
 }

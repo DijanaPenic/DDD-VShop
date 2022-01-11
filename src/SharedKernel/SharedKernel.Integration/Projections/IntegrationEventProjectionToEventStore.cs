@@ -39,12 +39,16 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIdentifiedEvent<IBaseEvent> message = resolvedEvent.DeserializeData<IdentifiedEvent<IBaseEvent>>();
+            IIdentifiedMessage<IMessage> message = resolvedEvent.Deserialize<IMessage>();
             if (message.Data is not IIntegrationEvent integrationEvent) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
 
-            await _integrationRepository.SaveAsync(message, cancellationToken);
+            await _integrationRepository.SaveAsync
+            (
+                new IdentifiedEvent<IBaseEvent>(integrationEvent, message.Metadata),
+                cancellationToken
+            );
             
             // Update the checkpoint after successful projection.
             using IServiceScope scope = _serviceProvider.CreateScope();

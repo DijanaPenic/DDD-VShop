@@ -6,6 +6,8 @@ namespace VShop.SharedKernel.Messaging.Events
         where TEvent : IBaseEvent
     {
         public IdentifiedEvent(TEvent @event, MessageMetadata metadata) : base(@event, metadata) { }
+        
+        public IdentifiedEvent(IIdentifiedMessage<TEvent> message) : base(message.Data, message.Metadata) { }
     }
 
     public interface IIdentifiedEvent<out TEvent> : IIdentifiedMessage<TEvent>, INotification

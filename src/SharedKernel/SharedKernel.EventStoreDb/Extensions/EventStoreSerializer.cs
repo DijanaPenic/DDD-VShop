@@ -17,40 +17,27 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        // TODO - need to review this.
-        public static TMessage DeserializeData<TMessage>(this ResolvedEvent resolvedEvent) 
-            => (TMessage)DeserializeData(resolvedEvent);
-        
-        public static object DeserializeData(this ResolvedEvent resolvedEvent)
+        public static IIdentifiedMessage<TMessage> Deserialize<TMessage>(this ResolvedEvent resolvedEvent) 
+            where TMessage : IMessage
         {
-            Type eventType = MessageTypeMapper.ToType(resolvedEvent.Event.EventType);
-
-            object data = Deserialize(resolvedEvent.Event.Data.Span.ToArray(), eventType);
-
-            if (data is not IMessage message) return data; // TODO - review.
-
-            IIdentifiedMessage<IMessage> identifiedMessage = new IdentifiedMessage<IMessage>
+            object data = Deserialize
             (
-                message,
-                resolvedEvent.DeserializeMetadata()
+                resolvedEvent.Event.Data.Span.ToArray(),
+                MessageTypeMapper.ToType(resolvedEvent.Event.EventType)
             );
 
-            return identifiedMessage;
-        }
-        
-        // TODO - keep in method?
-        public static MessageMetadata DeserializeMetadata(this ResolvedEvent resolvedEvent)
-        {
-            var res = Deserialize<MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
+            if (data is not TMessage message) throw new Exception("Invalid message type!");
 
-            return res; // TODO - review.
+            MessageMetadata metadata = Deserialize<MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
+
+            return new IdentifiedMessage<TMessage>(message, metadata);
         }
 
         public static IReadOnlyList<EventData> ToEventData<TMessage>
         (
             this IEnumerable<IIdentifiedMessage<TMessage>> messages,
             Instant now
-        )
+        ) 
             where TMessage : IMessage
             => messages.Select((message, index) =>
             {
@@ -60,7 +47,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 (
                     GetDeterministicMessageId(message, index),
                     GetMessageTypeName(message.Data),
-                    Serialize((IProtoData)message.Data), // TODO - casting??
+                    Serialize(message.Data as IProtoData), // TODO - casting??
                     Serialize(message.Metadata),
                     "application/octet-stream"
                 );
@@ -81,6 +68,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return message;
         }
 
+        // TODO - test idempotent behaviour without determ. guid.
         private static Uuid GetDeterministicMessageId<TMessage>(IIdentifiedMessage<TMessage> message, int index) 
             where TMessage : IMessage
         {

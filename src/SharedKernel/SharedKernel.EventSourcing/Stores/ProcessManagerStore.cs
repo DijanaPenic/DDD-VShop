@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -78,21 +80,28 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IIdentifiedMessage<IMessage>> inboxMessages = await _eventStoreClient
-                .ReadStreamForwardAsync<IdentifiedMessage<IMessage>>
+            IReadOnlyList<IIdentifiedMessage<IBaseEvent>> inboxMessages = await _eventStoreClient
+                .ReadStreamForwardAsync<IBaseEvent>
                 (
                     GetInboxStreamName(processManagerId),
                     cancellationToken
                 );
+                
             IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient
-                .ReadStreamForwardAsync<IdentifiedMessage<IMessage>>
+                .ReadStreamForwardAsync<IMessage>
                 (
                     GetOutboxStreamName(processManagerId),
                     cancellationToken
                 );
 
             TProcess processManager = new();
-            processManager.Load(inboxMessages, outboxMessages, causationId, correlationId);
+            processManager.Load
+            (
+                inboxMessages.Select(e => new IdentifiedEvent<IBaseEvent>(e)),
+                outboxMessages,
+                causationId,
+                correlationId
+            );
 
             return processManager;
         }

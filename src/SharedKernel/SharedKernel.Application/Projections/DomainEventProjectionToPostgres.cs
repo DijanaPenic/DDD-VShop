@@ -41,7 +41,7 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIdentifiedEvent<IBaseEvent> message = resolvedEvent.DeserializeData<IdentifiedEvent<IBaseEvent>>();
+            IIdentifiedMessage<IMessage> message = resolvedEvent.Deserialize<IMessage>();
             if(message.Data is not IDomainEvent domainEvent) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();

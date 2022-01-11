@@ -45,7 +45,7 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIdentifiedEvent<IBaseEvent> message = resolvedEvent.DeserializeData<IdentifiedEvent<IBaseEvent>>();
+            IIdentifiedMessage<IMessage> message = resolvedEvent.Deserialize<IMessage>();
             if (message.Data is not IIntegrationEvent integrationEvent) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
@@ -60,7 +60,12 @@ namespace VShop.SharedKernel.Integration.Projections
 
                 try
                 {
-                    await _eventBus.Publish(message, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                    await _eventBus.Publish
+                    (
+                        new IdentifiedEvent<IIntegrationEvent>(integrationEvent, message.Metadata),
+                        EventPublishStrategy.SyncStopOnException,
+                        cancellationToken
+                    );
                 }
                 catch (Exception ex)
                 {

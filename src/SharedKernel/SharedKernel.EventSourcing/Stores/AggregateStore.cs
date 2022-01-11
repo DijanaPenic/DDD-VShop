@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
@@ -75,8 +77,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IIdentifiedEvent<IBaseEvent>> events = await _eventStoreClient
-                .ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>> // TODO - casting should not work??
+            IReadOnlyList<IIdentifiedMessage<IBaseEvent>> events = await _eventStoreClient
+                .ReadStreamForwardAsync<IBaseEvent>
                 (
                     GetStreamName(aggregateId),
                     cancellationToken
@@ -85,7 +87,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             if (events.Count is 0) return default;
 
             TAggregate aggregate = new();
-            aggregate.Load(events, causationId, correlationId);
+            aggregate.Load
+            (
+                events.Select(e => new IdentifiedEvent<IBaseEvent>(e)),
+                causationId,
+                correlationId
+            );
 
             return aggregate;
         }
