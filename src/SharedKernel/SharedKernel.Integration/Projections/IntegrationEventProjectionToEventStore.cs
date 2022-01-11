@@ -46,7 +46,7 @@ namespace VShop.SharedKernel.Integration.Projections
 
             await _integrationRepository.SaveAsync
             (
-                new IdentifiedEvent<IBaseEvent>(integrationEvent, message.Metadata),
+                new IdentifiedEvent<IIntegrationEvent>(integrationEvent, message.Metadata),
                 cancellationToken
             );
             

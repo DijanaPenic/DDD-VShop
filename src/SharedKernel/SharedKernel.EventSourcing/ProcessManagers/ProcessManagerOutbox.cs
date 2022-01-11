@@ -22,9 +22,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _messages.Add(new IdentifiedMessage<IMessage>(message, metadata));
         
         public void Add(IMessage message, MessageMetadata metadata, Instant scheduledTime)
-            => _messages.Add(new IdentifiedMessage<IScheduledMessage> // TODO - review.
+            => _messages.Add(new IdentifiedMessage<IScheduledMessage>
             (
-                new ScheduledMessage(new IdentifiedMessage<IMessage>(message, metadata), scheduledTime),
+                new ScheduledMessage(message, scheduledTime),
                 metadata
             ));
         

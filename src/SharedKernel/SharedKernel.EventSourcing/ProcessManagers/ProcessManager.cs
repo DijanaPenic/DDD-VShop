@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using NodaTime;
+using NodaTime.Serialization.Protobuf;
+ 
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -106,13 +108,23 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                         RaiseEvent(integrationEvent, message.Metadata);
                         break;
                     case IScheduledMessage scheduledMessage:
-                        switch (scheduledMessage.GetMessage()) // TODO - not sure if this is going to work??
+                        switch (scheduledMessage.GetMessage())
                         {
                             case IBaseCommand command:
-                                ScheduleCommand(command, scheduledMessage.ScheduledTime, message.Metadata);
+                                ScheduleCommand
+                                (
+                                    command,
+                                    scheduledMessage.ScheduledTime.ToInstant(),
+                                    message.Metadata
+                                );
                                 break;
                             case IDomainEvent domainEvent:
-                                ScheduleReminder(domainEvent, scheduledMessage.ScheduledTime, message.Metadata);
+                                ScheduleReminder
+                                (
+                                    domainEvent,
+                                    scheduledMessage.ScheduledTime.ToInstant(),
+                                    message.Metadata
+                                );
                                 break;
                         }
                         break;

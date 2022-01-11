@@ -41,17 +41,17 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                // TODO - refactor.
-                IIdentifiedMessage<IMessage> message = messageLog.GetMessage<IdentifiedMessage<IMessage>>(); // TODO - this will not work.
+                IIdentifiedMessage<IMessage> message = messageLog.GetMessage();
+                
                 switch (message.Data)
                 {
                     case IBaseCommand:
-                        await _commandBus.SendAsync(message, cancellationToken);
+                        await _commandBus.SendAsync(message, cancellationToken);  // TODO - need to test this.
                         break;
                     case IBaseEvent:
                         await _eventBus.Publish
                         (
-                            message as IIdentifiedEvent<IBaseEvent>,
+                            message as IIdentifiedEvent<IBaseEvent>, // TODO - need to test this. Should be null.
                             EventPublishStrategy.SyncStopOnException,
                             cancellationToken
                         );

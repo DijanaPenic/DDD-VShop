@@ -1,43 +1,33 @@
-﻿using System;
-using NodaTime;
-using Newtonsoft.Json;
+﻿using NodaTime;
+using NodaTime.Serialization.Protobuf;
+using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+
+using VShop.SharedKernel.Infrastructure.Serialization;
+
+using Type = System.Type;
 
 namespace VShop.SharedKernel.Messaging
 {
-    public record ScheduledMessage : IScheduledMessage
+    public partial class ScheduledMessage : IScheduledMessage
     {
-        public string Body { get; }
-        public string TypeName { get; }
-        public Instant ScheduledTime { get; }
-
-        [JsonConstructor]
-        protected ScheduledMessage(string body, string typeName, Instant scheduledTime)
+        public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
-            Body = body;
-            TypeName = typeName;
-            ScheduledTime = scheduledTime;
-        }
-
-        public ScheduledMessage(IIdentifiedMessage<IMessage> message, Instant scheduledTime)
-        {
-            Body = JsonConvert.SerializeObject(message);
-            TypeName = ToName(message.Data.GetType());
-            ScheduledTime = scheduledTime;
+            Body = ProtobufSerializer.ToByteString(message);
+            TypeName = ToName(message.GetType());
+            ScheduledTime = scheduledTime.ToTimestamp();
         }
         
-        public T GetMessage<T>() => (T)GetMessage();
-        public object GetMessage() => JsonConvert.DeserializeObject(Body, ToType(TypeName));
-        public static string ToName<T>() => ToName(typeof(T));
+        public object GetMessage() => ProtobufSerializer.FromByteString(Body, ToType(TypeName));
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }
-    
-    public interface IScheduledMessage : IMessage // TODO - should be proto??
+
+    public interface IScheduledMessage : IMessage
     {
-        public string Body { get; }
-        public string TypeName { get; }
-        public Instant ScheduledTime { get; }
-        T GetMessage<T>();
+        ByteString Body { get; }
+        string TypeName { get; }
+        Timestamp ScheduledTime { get; }
         object GetMessage();
     }
 }

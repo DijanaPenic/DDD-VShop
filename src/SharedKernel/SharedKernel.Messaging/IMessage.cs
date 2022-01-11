@@ -1,6 +1,8 @@
-﻿namespace VShop.SharedKernel.Messaging
+﻿using IProtoData = Google.Protobuf.IMessage;
+
+namespace VShop.SharedKernel.Messaging
 {
-    public interface IMessage
+    public interface IMessage : IProtoData
     {
 
     }

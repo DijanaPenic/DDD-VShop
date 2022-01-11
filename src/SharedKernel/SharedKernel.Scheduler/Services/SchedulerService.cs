@@ -50,15 +50,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             CancellationToken cancellationToken = default
         )
         {
-            MessageLog messageLog = new()
-            {
-                Id = message.Metadata.MessageId,
-                Body = message.Data.Body,
-                Status = MessageStatus.Scheduled,
-                TypeName = message.Data.TypeName,
-                ScheduledTime = message.Data.ScheduledTime
-            };
-            
+            MessageLog messageLog = new(message);
             _schedulerContext.MessageLogs.Add(messageLog);
 
             return _schedulerContext.SaveChangesAsync(cancellationToken);

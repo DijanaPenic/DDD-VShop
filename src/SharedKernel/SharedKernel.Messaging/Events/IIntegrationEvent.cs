@@ -1,8 +1,6 @@
-﻿using IProtoData = Google.Protobuf.IMessage;
-
-namespace VShop.SharedKernel.Messaging.Events
+﻿namespace VShop.SharedKernel.Messaging.Events
 {
-    public interface IIntegrationEvent : IBaseEvent, IProtoData
+    public interface IIntegrationEvent : IBaseEvent
     {
         
     }

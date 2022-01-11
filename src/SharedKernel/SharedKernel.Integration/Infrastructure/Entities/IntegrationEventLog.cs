@@ -1,9 +1,9 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.Integration.Infrastructure.Entities
 {
@@ -13,23 +13,30 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         public string TypeName { get; }
         public EventState State { get; set; }
         public int TimesSent { get; set; }
-        public string Body { get; }
+        public Byte[] Body { get; }
+        public Byte[] Metadata { get; }
         public Guid TransactionId { get; }
         
-        public IntegrationEventLog() { } // Needed for database migrations.
+        // For database migrations.
+        public IntegrationEventLog() { } 
+        
         public IntegrationEventLog(IIdentifiedEvent<IBaseEvent> @event, Guid transactionId)
         {
             Id = @event.Metadata.MessageId;
             TypeName = ToName(@event.Data.GetType());
-            Body = JsonConvert.SerializeObject(@event);
+            Body = ProtobufSerializer.ToByteArray(@event.Data);
+            Metadata = ProtobufSerializer.ToByteArray(@event.Metadata);
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;
         }
         
-        public T GetEvent<T>() => (T)GetEvent();
-        public object GetEvent() => JsonConvert.DeserializeObject(Body, ToType(TypeName)); // TODO- this will not work!
-        public static string ToName<T>() => ToName(typeof(T));
+        public IIdentifiedEvent<IIntegrationEvent> GetEvent()
+            => new IdentifiedEvent<IIntegrationEvent>
+            (
+                ProtobufSerializer.FromByteArray(Body, ToType(TypeName)) as IIntegrationEvent, 
+                ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata)
+            );
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }

@@ -56,7 +56,7 @@ namespace VShop.SharedKernel.Integration.Services
 
                     await _integrationEventRepository.SaveAsync
                     (
-                        pendingEventLog.GetEvent<IIdentifiedEvent<IBaseEvent>>(),
+                        pendingEventLog.GetEvent(),
                         cancellationToken
                     );
 

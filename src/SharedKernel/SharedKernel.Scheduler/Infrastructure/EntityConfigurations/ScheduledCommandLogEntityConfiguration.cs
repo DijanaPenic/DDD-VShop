@@ -14,6 +14,7 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations
             builder.HasKey(ml => ml.Id);
             builder.Property(ml => ml.TypeName).IsRequired();
             builder.Property(ml => ml.Body).IsRequired();
+            builder.Property(ml => ml.Metadata).IsRequired();
             builder.Property(ml => ml.ScheduledTime).IsRequired();
             builder.Property(ml => ml.Status).IsRequired();
             builder.Property(ml => ml.DateCreated).IsRequired();

@@ -7,6 +7,6 @@ namespace VShop.SharedKernel.Integration.Stores.Contracts
 {
     public interface IIntegrationEventStore
     {
-        Task SaveAsync(IIdentifiedEvent<IBaseEvent> @event, CancellationToken cancellationToken = default);
+        Task SaveAsync(IIdentifiedEvent<IIntegrationEvent> @event, CancellationToken cancellationToken = default);
     }
 }
