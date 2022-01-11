@@ -40,14 +40,14 @@ namespace VShop.Modules.Sales.API.Application
             // AddCustomMap<SetPaidOrderStatusCommand>(nameof(SetPaidOrderStatusCommand));
             // AddCustomMap<FinalizeOrderCommand>(nameof(FinalizeOrderCommand));
             
-            // Configure integration events - local
-            AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
-            AddCustomMap<OrderFinalizedIntegrationEvent>(nameof(OrderFinalizedIntegrationEvent));
-            
-            // Configure integration events - remote
-            AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
-            AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
-            AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
+            // // Configure integration events - local
+            // AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
+            // AddCustomMap<OrderFinalizedIntegrationEvent>(nameof(OrderFinalizedIntegrationEvent));
+            //
+            // // Configure integration events - remote
+            // AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
+            // AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
+            // AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
             
             // Configure commands
             // AddCustomMap<PlaceOrderCommand>(nameof(PlaceOrderCommand));

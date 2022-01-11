@@ -73,8 +73,9 @@ namespace VShop.Modules.Sales.API.Controllers
             
             IIdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart>
             (
-                _mapper.Map<CreateShoppingCartCommand>(request), 
-                new MessageMetadata(Guid.Parse(requestId), Guid.Parse(correlationId), Guid.Empty)
+                _mapper.Map<CreateShoppingCartCommand>(request),
+                Guid.Parse(requestId),
+                Guid.Parse(correlationId)
             );
 
             Result<ShoppingCart> result = await _commandBus.SendAsync(command);

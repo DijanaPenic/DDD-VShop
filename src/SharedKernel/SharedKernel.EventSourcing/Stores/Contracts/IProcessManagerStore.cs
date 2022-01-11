@@ -6,7 +6,7 @@ using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 {
-    public interface IProcessManagerStore<TProcess> where TProcess : ProcessManager
+    public interface IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
     {
         Task SaveAndPublishAsync
         (

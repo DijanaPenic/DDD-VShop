@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
@@ -15,7 +15,7 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
         private readonly List<IIdentifiedEvent<IBaseEvent>> _events = new();
         
         public IReadOnlyList<IIdentifiedEvent<IBaseEvent>> Events => _events;
-        public IReadOnlyList<IIdentifiedEvent<IDomainEvent>> DomainEvents
+        public IReadOnlyList<IIdentifiedEvent<IDomainEvent>> DomainEvents // TODO ??
             => _events.OfType<IIdentifiedEvent<IDomainEvent>>().ToList();
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
@@ -32,14 +32,18 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         protected abstract void ApplyEvent(IDomainEvent @event);
 
-        protected void RaiseEvent(IDomainEvent @event)
+        protected void RaiseEvent(IDomainEvent @event) => RaiseEvent(@event, GetMetadata());
+        
+        protected void RaiseEvent(IDomainEvent @event, MessageMetadata metadata)
         {
             ApplyEvent(@event);
-            _events.Add(new IdentifiedEvent<IDomainEvent>(@event, GetMetadata()));
+            _events.Add(new IdentifiedEvent<IDomainEvent>(@event, metadata));
         }
         
-        public void RaiseEvent(IIntegrationEvent @event)
-            => _events.Add(new IdentifiedEvent<IIntegrationEvent>(@event, GetMetadata()));
+        public void RaiseEvent(IIntegrationEvent @event) => RaiseEvent(@event, GetMetadata());
+        
+        public void RaiseEvent(IIntegrationEvent @event, MessageMetadata metadata)
+            => _events.Add(new IdentifiedEvent<IIntegrationEvent>(@event, metadata));
         
         public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> history, Guid causationId, Guid correlationId)
         {
@@ -65,10 +69,10 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
                 switch (@event.Data)
                 {
                     case IDomainEvent domainEvent:
-                        RaiseEvent(domainEvent);
+                        RaiseEvent(domainEvent, @event.Metadata);
                         break;
                     case IIntegrationEvent integrationEvent:
-                        RaiseEvent(integrationEvent);
+                        RaiseEvent(integrationEvent, @event.Metadata);
                         break;
                 }
             }

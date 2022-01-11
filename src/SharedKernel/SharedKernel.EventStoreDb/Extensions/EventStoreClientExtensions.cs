@@ -50,7 +50,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             this EventStoreClient eventStoreClient,
             string streamSuffix,
             CancellationToken cancellationToken = default
-        )
+        ) // TODO - potentially where missing.
         {
             EventStoreClient.ReadStreamResult result = await RetryWrapper
                 .ExecuteAsync((ct) => eventStoreClient.ReadStreamAsync

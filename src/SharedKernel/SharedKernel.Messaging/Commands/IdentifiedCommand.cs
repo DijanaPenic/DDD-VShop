@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 
 using VShop.SharedKernel.Infrastructure;
@@ -7,6 +8,9 @@ namespace VShop.SharedKernel.Messaging.Commands
     public class IdentifiedCommand<TCommand, TResponse> : IdentifiedMessage<TCommand>, IIdentifiedCommand<TCommand, TResponse>
         where TCommand : IBaseCommand
     {
+        public IdentifiedCommand(TCommand command, Guid messageId, Guid correlationId) 
+            : base(command, new MessageMetadata(messageId, correlationId, Guid.Empty)) { }
+        
         public IdentifiedCommand(TCommand command, MessageMetadata metadata) : base(command, metadata) { }
     }
     
@@ -19,6 +23,9 @@ namespace VShop.SharedKernel.Messaging.Commands
     public class IdentifiedCommand<TCommand> : IdentifiedMessage<TCommand>, IIdentifiedCommand<TCommand>
         where TCommand : IBaseCommand
     {
+        public IdentifiedCommand(TCommand command, Guid messageId, Guid correlationId) 
+            : base(command, new MessageMetadata(messageId, correlationId, Guid.Empty)) { }
+        
         public IdentifiedCommand(TCommand command, MessageMetadata metadata) : base(command, metadata) { }
     }
     

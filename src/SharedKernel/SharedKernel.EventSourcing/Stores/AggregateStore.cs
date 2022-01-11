@@ -76,7 +76,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         )
         {
             IReadOnlyList<IIdentifiedEvent<IBaseEvent>> events = await _eventStoreClient
-                .ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>>
+                .ReadStreamForwardAsync<IdentifiedEvent<IBaseEvent>> // TODO - casting should not work??
                 (
                     GetStreamName(aggregateId),
                     cancellationToken

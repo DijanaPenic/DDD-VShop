@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             try
             {
                 // TODO - refactor.
-                IIdentifiedMessage<IMessage> message = messageLog.GetMessage<IdentifiedMessage<IMessage>>();
+                IIdentifiedMessage<IMessage> message = messageLog.GetMessage<IdentifiedMessage<IMessage>>(); // TODO - this will not work.
                 switch (message.Data)
                 {
                     case IBaseCommand:

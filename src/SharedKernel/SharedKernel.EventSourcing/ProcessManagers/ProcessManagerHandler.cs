@@ -9,7 +9,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
-    public abstract class ProcessManagerHandler<TProcess> where TProcess : ProcessManager
+    public abstract class ProcessManagerHandler<TProcess> where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
         private readonly ILogger _logger;

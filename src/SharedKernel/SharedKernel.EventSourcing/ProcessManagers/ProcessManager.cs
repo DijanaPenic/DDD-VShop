@@ -46,23 +46,33 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             // process manager status change.
         }
 
-        protected void RaiseIntegrationEvent(IIntegrationEvent @event)
-            => _outbox.Add(new IdentifiedEvent<IIntegrationEvent>(@event, GetMetadata()));
-
-        protected void RaiseCommand(IBaseCommand command)
-            => _outbox.Add(new IdentifiedCommand<IBaseCommand>(command, GetMetadata()));
+        protected void RaiseEvent(IIntegrationEvent @event) => RaiseEvent(@event, GetMetadata());
         
-        protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime)
+        protected void RaiseEvent(IIntegrationEvent @event, MessageMetadata metadata)
+            => _outbox.Add(new IdentifiedEvent<IIntegrationEvent>(@event, metadata));
+        
+        protected void RaiseCommand(IBaseCommand command) => RaiseCommand(command, GetMetadata());
+        
+        protected void RaiseCommand(IBaseCommand command, MessageMetadata metadata)
+            => _outbox.Add(new IdentifiedCommand<IBaseCommand>(command, metadata));
+        
+        protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime) 
+            => ScheduleCommand(command, scheduledTime, GetMetadata());
+        
+        protected void ScheduleCommand(IBaseCommand command, Instant scheduledTime, MessageMetadata metadata)
             => _outbox.Add
             (
-                new IdentifiedMessage<IBaseCommand>(command, GetMetadata()),
+                new IdentifiedMessage<IBaseCommand>(command, metadata),
                 scheduledTime
             );
         
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
+            => ScheduleReminder(@event, scheduledTime, GetMetadata());
+
+        protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime, MessageMetadata metadata)
             => _outbox.Add
             (
-                new IdentifiedMessage<IDomainEvent>(@event, GetMetadata()),
+                new IdentifiedMessage<IDomainEvent>(@event, metadata),
                 scheduledTime
             );
 
@@ -88,29 +98,29 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 .RemoveRangeFollowingLast(m => m.Metadata.CausationId == CausationId);
 
             // Restore aggregate state (identified by causationId param).
-            (IEnumerable<IIdentifiedMessage<IMessage>> pendingOutboxMessages, IEnumerable<IIdentifiedMessage<IMessage>> processedOutboxMessages) = 
+            (IEnumerable<IIdentifiedMessage<IMessage>> pendingMessages, IEnumerable<IIdentifiedMessage<IMessage>> processedMessages) = 
                 outboxHistoryList.Split(m => m.Metadata.CausationId == CausationId);
             
-            _outbox.Version = processedOutboxMessages.Count() - 1;
+            _outbox.Version = processedMessages.Count() - 1;
 
-            foreach (IIdentifiedMessage<IMessage> message in pendingOutboxMessages)
+            foreach (IIdentifiedMessage<IMessage> message in pendingMessages)
             {
                 switch (message.Data)
                 {
                     case IBaseCommand command:
-                        RaiseCommand(command);
+                        RaiseCommand(command, message.Metadata);
                         break;
                     case IIntegrationEvent integrationEvent:
-                        RaiseIntegrationEvent(integrationEvent);
+                        RaiseEvent(integrationEvent, message.Metadata);
                         break;
                     case IScheduledMessage scheduledMessage:
-                        switch (scheduledMessage.GetMessage())
+                        switch (scheduledMessage.GetMessage()) // TODO - not sure if this is going to work??
                         {
                             case IBaseCommand command:
-                                ScheduleCommand(command, scheduledMessage.ScheduledTime);
+                                ScheduleCommand(command, scheduledMessage.ScheduledTime, message.Metadata);
                                 break;
                             case IDomainEvent domainEvent:
-                                ScheduleReminder(domainEvent, scheduledMessage.ScheduledTime);
+                                ScheduleReminder(domainEvent, scheduledMessage.ScheduledTime, message.Metadata);
                                 break;
                         }
                         break;
