@@ -14,7 +14,8 @@ namespace VShop.SharedKernel.Messaging.Commands.Publishing
 
         public CommandBus(IMediator mediator) => _mediator = mediator;
 
-        public Task<Result> SendAsync(IIdentifiedCommand<IBaseCommand> command, CancellationToken cancellationToken = default)
+        public Task<Result> SendAsync<TCommand>(IIdentifiedCommand<TCommand> command, CancellationToken cancellationToken = default)
+            where TCommand : IBaseCommand
             => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         
         public Task<Result<TResponse>> SendAsync<TCommand, TResponse>

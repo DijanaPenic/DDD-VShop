@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
     {
         public Guid Id { get; }
         public byte[] Body { get; }
-        public byte[] Metadata { get; set; }
+        public byte[] Metadata { get; }
         public string TypeName { get; }
         public Instant ScheduledTime { get; }
         public MessageStatus Status { get; set; }
@@ -24,6 +24,7 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
         {
             Id = message.Metadata.MessageId;
             Body = ProtobufSerializer.ToByteArray(message.Data);
+            Metadata = ProtobufSerializer.ToByteArray(message.Metadata);
             Status = MessageStatus.Scheduled;
             TypeName = message.Data.TypeName;
             ScheduledTime = message.Data.ScheduledTime.ToInstant();

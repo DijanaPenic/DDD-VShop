@@ -66,7 +66,6 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
             
-            // TODO - review MediatR.
             IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new
             (
                 _mapper.Map<CreateShoppingCartCommand>(request),

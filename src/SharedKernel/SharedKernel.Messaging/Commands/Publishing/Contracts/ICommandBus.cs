@@ -9,7 +9,8 @@ namespace VShop.SharedKernel.Messaging.Commands.Publishing.Contracts
     {
         Task<object> SendAsync(object command, CancellationToken cancellationToken = default);
         
-        Task<Result> SendAsync(IIdentifiedCommand<IBaseCommand> command, CancellationToken cancellationToken = default);
+        Task<Result> SendAsync<TCommand>(IIdentifiedCommand<TCommand> command, CancellationToken cancellationToken = default)
+            where TCommand : IBaseCommand;
         
         Task<Result<TResponse>> SendAsync<TCommand, TResponse>
         (

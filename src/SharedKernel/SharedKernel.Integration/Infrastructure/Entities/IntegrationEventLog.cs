@@ -13,8 +13,8 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         public string TypeName { get; }
         public EventState State { get; set; }
         public int TimesSent { get; set; }
-        public Byte[] Body { get; }
-        public Byte[] Metadata { get; }
+        public byte[] Body { get; }
+        public byte[] Metadata { get; }
         public Guid TransactionId { get; }
         
         // For database migrations.
