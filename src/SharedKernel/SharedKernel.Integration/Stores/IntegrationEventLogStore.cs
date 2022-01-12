@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.Integration.Stores
 
         public async Task SaveEventAsync
         (
-            IIdentifiedEvent<IBaseEvent> @event,
+            IIdentifiedEvent<IIntegrationEvent> @event,
             IDbContextTransaction transaction,
             CancellationToken cancellationToken = default
         )

@@ -4,14 +4,13 @@ using System.Collections.Concurrent;
 
 namespace VShop.SharedKernel.Messaging
 {
-    // TODO - check usage for ES.
     public static class MessageTypeMapper
     {
         private static readonly ConcurrentDictionary<Type, string> TypeNameMap = new();
         private static readonly ConcurrentDictionary<string, Type> TypeMap = new();
 
-        public static void AddCustomMap<T>(string mappedMessageTypeName)
-            => AddCustomMap(typeof(T), mappedMessageTypeName);
+        public static void AddCustomMap<TMessage>(string mappedMessageTypeName)
+            => AddCustomMap(typeof(TMessage), mappedMessageTypeName);
 
         public static void AddCustomMap(Type messageType, string mappedMessageTypeName)
         {
@@ -19,7 +18,7 @@ namespace VShop.SharedKernel.Messaging
             TypeMap.AddOrUpdate(mappedMessageTypeName, messageType, (_, _) => messageType);
         }
 
-        public static string ToName<T>() => ToName(typeof(T));
+        public static string ToName<TMessage>() => ToName(typeof(TMessage));
         
         public static string ToName(Type messageType) => TypeNameMap.GetOrAdd(messageType, (_) =>
         {

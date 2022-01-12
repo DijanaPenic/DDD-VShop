@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         // For database migrations.
         public IntegrationEventLog() { } 
         
-        public IntegrationEventLog(IIdentifiedEvent<IBaseEvent> @event, Guid transactionId)
+        public IntegrationEventLog(IIdentifiedMessage<IIntegrationEvent> @event, Guid transactionId)
         {
             Id = @event.Metadata.MessageId;
             TypeName = ToName(@event.Data.GetType());

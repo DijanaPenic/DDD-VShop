@@ -46,7 +46,7 @@ namespace VShop.SharedKernel.Scheduler.Services
                 switch (message.Data)
                 {
                     case IBaseCommand:
-                        await _commandBus.SendAsync(message, cancellationToken);  // TODO - need to test this.
+                        await _commandBus.SendAsync(message, cancellationToken);  // TODO - need to test this. Should not work.
                         break;
                     case IBaseEvent:
                         await _eventBus.Publish
