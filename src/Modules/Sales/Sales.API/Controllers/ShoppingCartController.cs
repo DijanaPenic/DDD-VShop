@@ -55,14 +55,10 @@ namespace VShop.Modules.Sales.API.Controllers
         public async Task<IActionResult> CreateShoppingCartAsync
         (
             [FromBody] CreateShoppingCartRequest request,
-            [FromHeader(Name = "x-request-id")] string requestId,
-            [FromHeader(Name = "x-correlation-id")] string correlationId
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-            // TODO - can this be handled via model binder?
-            // if (Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty)
-            // if (Guid.TryParse(correlationId, out Guid correlationIdGuid) && correlationIdGuid != Guid.Empty)
-
             // TODO - uncomment; should this check be performed by API gateway, command handler or bounded context API?
             // ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(request.CustomerId);
             // if (shoppingCart is not null)
@@ -74,14 +70,15 @@ namespace VShop.Modules.Sales.API.Controllers
             IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new
             (
                 _mapper.Map<CreateShoppingCartCommand>(request),
-                Guid.Parse(requestId),
-                Guid.Parse(correlationId)
+                requestId,
+                correlationId
             );
 
             Result<ShoppingCart> result = await _commandBus.SendAsync(command);
 
             return HandleResult(result, Created);
         }
+
         //
         // [HttpDelete]
         // [Route("{shoppingCartId:guid}")]
