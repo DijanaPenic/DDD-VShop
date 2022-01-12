@@ -6,28 +6,24 @@ using VShop.SharedKernel.Messaging.Events;
 namespace VShop.Modules.Catalog.Integration.Events
 {
     // Notification for Sales - need to finalize the order and start the shipping process.
-    public record OrderStockProcessedIntegrationEvent : IIntegrationEvent 
+    public partial class OrderStockProcessedIntegrationEvent : IIntegrationEvent 
     {
-        public Guid OrderId { get; }
-        public IList<OrderLine> OrderLines { get; }
-
-        public OrderStockProcessedIntegrationEvent(Guid orderId, IList<OrderLine> orderLines)
+        public OrderStockProcessedIntegrationEvent(Guid orderId, IEnumerable<Types.OrderLine> orderLines)
         {
             OrderId = orderId;
-            OrderLines = orderLines;
+            OrderLines.AddRange(orderLines);
         }
-        
-        public record OrderLine
+
+        public partial class Types
         {
-            public Guid ProductId { get; }
-            public int RequestedQuantity { get; }
-            public int OutOfStockQuantity { get; }
-            
-            public OrderLine(Guid productId, int requestedQuantity, int outOfStockQuantity)
+            public partial class OrderLine
             {
-                ProductId = productId;
-                RequestedQuantity = requestedQuantity;
-                OutOfStockQuantity = outOfStockQuantity;
+                public OrderLine(Guid productId, int requestedQuantity, int outOfStockQuantity)
+                {
+                    ProductId = productId;
+                    RequestedQuantity = requestedQuantity;
+                    OutOfStockQuantity = outOfStockQuantity;
+                }
             }
         }
     }

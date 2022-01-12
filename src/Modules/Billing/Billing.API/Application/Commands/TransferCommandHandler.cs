@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using NodaTime;
+using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -55,7 +54,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
                 command.Data.CardNumber,
                 command.Data.CardSecurityNumber,
                 command.Data.CardholderName,
-                command.Data.CardExpiration,
+                command.Data.CardExpiration.ToInstant(),
                 cancellationToken
             );
             Payment transfer = new()
@@ -77,38 +76,6 @@ namespace VShop.Modules.Billing.API.Application.Commands
             await _billingIntegrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
             
             return transferResult.IsError ? transferResult.Error : Result.Success;
-        }
-    }
-    
-    public record TransferCommand : IBaseCommand
-    {
-        public Guid OrderId { get; init; }
-        public decimal Amount { get; init; }
-        public int CardTypeId { get; init; }
-        public string CardNumber { get; init; }
-        public string CardSecurityNumber { get; init; }
-        public string CardholderName { get; init; }
-        public Instant CardExpiration { get; init; }
-        
-        public TransferCommand() { }
-        public TransferCommand
-        (
-            Guid orderId,
-            decimal amount,
-            int cardTypeId,
-            string cardNumber,
-            string cardSecurityNumber,
-            string cardholderName,
-            Instant cardExpiration
-        )
-        {
-            OrderId = orderId;
-            Amount = amount;
-            CardTypeId = cardTypeId;
-            CardNumber = cardNumber;
-            CardSecurityNumber = cardSecurityNumber;
-            CardholderName = cardholderName;
-            CardExpiration = cardExpiration;
         }
     }
 }

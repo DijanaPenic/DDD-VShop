@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Billing.Integration.Events";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+
+message PaymentSucceededIntegrationEvent 
+{
+    Uuid order_id = 1;
+}

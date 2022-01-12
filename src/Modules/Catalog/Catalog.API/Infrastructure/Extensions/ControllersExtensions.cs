@@ -16,7 +16,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
             services.AddControllers(options =>
             {
                 options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
-                options.ModelBinderProviders.Insert(0, new GuidEntityBinderProvider());
+                options.ModelBinderProviders.Insert(0, new GuidModelBinderProvider());
             })
             .AddNewtonsoftJson(options =>
             {

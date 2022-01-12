@@ -35,10 +35,10 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
 
         public async Task Handle(IdentifiedEvent<OrderStatusSetToPaidIntegrationEvent> @event, CancellationToken cancellationToken)
         {
-            IList<OrderStockProcessedIntegrationEvent.OrderLine> confirmedOrderLines = 
-                new List<OrderStockProcessedIntegrationEvent.OrderLine>();
+            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> confirmedOrderLines = 
+                new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>();
 
-            foreach (OrderStatusSetToPaidIntegrationEvent.OrderLine orderLine in @event.Data.OrderLines)
+            foreach (OrderStatusSetToPaidIntegrationEvent.Types.OrderLine orderLine in @event.Data.OrderLines)
             {
                 CatalogProduct product = await _catalogContext.Products
                     .SingleOrDefaultAsync(p => p.Id == orderLine.ProductId, cancellationToken);
@@ -48,7 +48,7 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 Result<int> decreaseStockResult = product.DecreaseStock(orderLine.Quantity);
                 if (decreaseStockResult.IsError) return;
                 
-                confirmedOrderLines.Add(new OrderStockProcessedIntegrationEvent.OrderLine
+                confirmedOrderLines.Add(new OrderStockProcessedIntegrationEvent.Types.OrderLine
                 (
                     orderLine.ProductId,
                     orderLine.Quantity,

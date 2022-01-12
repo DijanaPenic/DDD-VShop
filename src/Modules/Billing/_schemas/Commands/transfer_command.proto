@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Billing.API.Application.Commands";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+import "google/protobuf/timestamp.proto";
+
+message TransferCommand 
+{
+    Uuid order_id = 1;
+    Decimal amount = 2;
+    int32 card_type_id = 3;
+    string card_number = 4;
+	string card_security_number = 5;
+	string cardholder_name = 6;
+	google.protobuf.Timestamp card_expiration = 7;
+}

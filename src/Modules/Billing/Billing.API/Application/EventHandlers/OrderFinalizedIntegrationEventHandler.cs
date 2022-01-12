@@ -29,7 +29,7 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
 
         public async Task Handle(IdentifiedEvent<OrderFinalizedIntegrationEvent> @event, CancellationToken cancellationToken)
         {
-            if (@event.Data.RefundAmount is 0) return;
+            if (@event.Data.RefundAmount == 0) return;
             
             bool isRefundSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (

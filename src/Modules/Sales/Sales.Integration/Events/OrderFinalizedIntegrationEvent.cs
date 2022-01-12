@@ -6,28 +6,24 @@ using VShop.SharedKernel.Messaging.Events;
 namespace VShop.Modules.Sales.Integration.Events
 {
     // Notification for Billing - need to perform partial or full refund.
-    public record OrderFinalizedIntegrationEvent //: IIntegrationEvent
+    public partial class OrderFinalizedIntegrationEvent : IIntegrationEvent
     {
-        public Guid OrderId { get; }
-        public decimal RefundAmount { get; }
-        public IList<OrderLine> OrderLines { get; }
-
-        public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IList<OrderLine> orderLines)
+        public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IEnumerable<Types.OrderLine> orderLines)
         {
             OrderId = orderId;
             RefundAmount = refundAmount;
-            OrderLines = orderLines;
+            OrderLines.Add(orderLines);
         }
 
-        public record OrderLine
+        public partial class Types
         {
-            public Guid ProductId { get; }
-            public int Quantity { get; }
-            
-            public OrderLine(Guid productId, int quantity)
+            public partial class OrderLine
             {
-                ProductId = productId;
-                Quantity = quantity;
+                public OrderLine(Guid productId, int quantity)
+                {
+                    ProductId = productId;
+                    Quantity = quantity;
+                }
             }
         }
     }
