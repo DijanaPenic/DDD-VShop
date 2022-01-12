@@ -6,6 +6,7 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -61,10 +62,8 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await handler();
                 
-                // TODO - convert.
-                //await readDataContext.SaveChangesAsync(message.Metadata.EffectiveTime, cancellationToken);
-                await readDataContext.SaveChangesAsync(cancellationToken);
-                
+                await readDataContext.SaveChangesAsync(message.Metadata.EffectiveTime.ToInstant(), cancellationToken);
+
                 await subscriptionContext.Database.UseTransactionAsync
                 (
                     readDataContext.CurrentTransaction.GetDbTransaction(),
