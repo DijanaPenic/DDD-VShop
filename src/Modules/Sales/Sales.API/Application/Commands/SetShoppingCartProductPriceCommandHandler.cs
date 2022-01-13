@@ -44,25 +44,4 @@
 //             return Result.Success;
 //         }
 //     }
-//     
-//     public record SetShoppingCartProductPriceCommand : Command
-//     {
-//         public Guid ShoppingCartId { get; init; }
-//         public Guid ProductId { get; init; }
-//         public decimal UnitPrice { get; init; }
-//         
-//         public SetShoppingCartProductPriceCommand() { }
-//
-//         public SetShoppingCartProductPriceCommand
-//         (
-//             Guid shoppingCartId,
-//             Guid productId,
-//             decimal unitPrice
-//         )
-//         {
-//             ShoppingCartId = shoppingCartId;
-//             ProductId = productId;
-//             UnitPrice = unitPrice;
-//         }
-//     }
 // }

@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+
+message FinalizeOrderCommand 
+{
+    Uuid order_id = 1;
+	repeated OrderLine order_lines = 2;
+	
+	message OrderLine 
+	{
+		Uuid product_id = 1;
+		int32 quantity = 2;
+		Decimal price = 3;
+	}
+}

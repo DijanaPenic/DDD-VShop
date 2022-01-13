@@ -46,22 +46,4 @@
 //             return Result.Success;
 //         }
 //     }
-//     
-//     public record AddShoppingCartProductCommand : Command
-//     {
-//         public Guid ShoppingCartId { get; init; }
-//         public AddShoppingCartItem ShoppingCartItem { get; init; }
-//         
-//         public AddShoppingCartProductCommand() { }
-//
-//         public AddShoppingCartProductCommand
-//         (
-//             Guid shoppingCartId,
-//             AddShoppingCartItem shoppingCartItem
-//         )
-//         {
-//             ShoppingCartId = shoppingCartId;
-//             ShoppingCartItem = shoppingCartItem;
-//         }
-//     }
 // }

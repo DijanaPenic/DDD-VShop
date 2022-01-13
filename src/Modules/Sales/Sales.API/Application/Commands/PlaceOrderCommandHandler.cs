@@ -57,22 +57,4 @@
 //             return order;
 //         }
 //     }
-//
-//     public record PlaceOrderCommand : Command<Order>
-//     {
-//         public Guid OrderId { get; init; }
-//         public Guid ShoppingCartId { get; init; }
-//         
-//         public PlaceOrderCommand() { }
-//
-//         public PlaceOrderCommand
-//         (
-//             Guid orderId,
-//             Guid shoppingCartId
-//         )
-//         {
-//             OrderId = orderId;
-//             ShoppingCartId = shoppingCartId;
-//         }
-//     }
 // }

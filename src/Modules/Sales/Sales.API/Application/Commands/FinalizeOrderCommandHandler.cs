@@ -89,28 +89,4 @@
 //             return Result.Success;
 //         }
 //     }
-//
-//     public record FinalizeOrderCommand : Command
-//     {
-//         public Guid OrderId { get; init; }
-//         public IList<OrderLine> OrderLines { get; init; }
-//         
-//         public FinalizeOrderCommand() { }
-//
-//         public FinalizeOrderCommand
-//         (
-//             Guid orderId,
-//             IList<OrderLine> orderLines
-//         )
-//         {
-//             OrderId = orderId;
-//             OrderLines = orderLines;
-//         }
-//         
-//         public record OrderLine
-//         {
-//             public Guid ProductId { get; init; }
-//             public int OutOfStockQuantity { get; init; }
-//         }
-//     }
 // }

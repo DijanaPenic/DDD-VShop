@@ -50,37 +50,4 @@
 //             return Result.Success;
 //         }
 //     }
-//     
-//     public record SetContactInformationCommand : Command
-//     {
-//         public Guid ShoppingCartId { get; init; }
-//         public string FirstName { get; init; }
-//         public string MiddleName { get; init; }
-//         public string LastName { get; init; }
-//         public string EmailAddress { get; init; }
-//         public string PhoneNumber { get; init; }
-//         public GenderType Gender { get; init; }
-//         
-//         public SetContactInformationCommand() { }
-//
-//         public SetContactInformationCommand
-//         (
-//             Guid shoppingCartId,
-//             string firstName,
-//             string middleName,
-//             string lastName,
-//             string emailAddress,
-//             string phoneNumber,
-//             GenderType gender
-//         )
-//         {
-//             ShoppingCartId = shoppingCartId;
-//             FirstName = firstName;
-//             MiddleName = middleName;
-//             LastName = lastName;
-//             EmailAddress = emailAddress;
-//             PhoneNumber = phoneNumber;
-//             Gender = gender;
-//         }
-//     }
 // }

@@ -40,16 +40,4 @@
 //             return Result.Success;
 //         }
 //     }
-//     
-//     public record CancelOrderCommand : Command
-//     {
-//         public Guid OrderId { get; init; }
-//         
-//         public CancelOrderCommand() { }
-//
-//         public CancelOrderCommand(Guid orderId)
-//         {
-//             OrderId = orderId;
-//         }
-//     }
 // }

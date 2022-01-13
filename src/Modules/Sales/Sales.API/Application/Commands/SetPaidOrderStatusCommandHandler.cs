@@ -55,16 +55,4 @@
 //             return Result.Success;
 //         }
 //     }
-//
-//     public record SetPaidOrderStatusCommand : Command
-//     {
-//         public Guid OrderId { get; init; }
-//         
-//         public SetPaidOrderStatusCommand() { }
-//
-//         public SetPaidOrderStatusCommand(Guid orderId)
-//         {
-//             OrderId = orderId;
-//         }
-//     }
 // }

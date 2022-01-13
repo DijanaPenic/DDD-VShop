@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+
+message SetDeliveryAddressCommand 
+{
+    Uuid shopping_cart_id = 1;
+	string city = 2;
+	string country_code = 3;
+	string postal_code = 4;
+	string state_province = 5;
+	string street_address = 6;
+}

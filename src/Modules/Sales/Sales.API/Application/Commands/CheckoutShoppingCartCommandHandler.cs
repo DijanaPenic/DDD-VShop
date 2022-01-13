@@ -51,18 +51,6 @@
 //         }
 //     }
 //
-//     public record CheckoutShoppingCartCommand : Command<CheckoutResponse>
-//     {
-//         public Guid ShoppingCartId { get; init; }
-//         
-//         public CheckoutShoppingCartCommand() { }
-//         
-//         public CheckoutShoppingCartCommand(Guid shoppingCartId)
-//         {
-//             ShoppingCartId = shoppingCartId;
-//         }
-//     }
-//
 //     public record CheckoutResponse
 //     {
 //         public Guid OrderId { get; }

@@ -4,7 +4,7 @@ namespace VShop.SharedKernel.Messaging.CustomTypes
     {
         private const decimal NanoFactor = 1_000_000_000;
 
-        public Decimal(long units, int nanos)
+        private Decimal(long units, int nanos)
         {
             Units = units;
             Nanos = nanos;

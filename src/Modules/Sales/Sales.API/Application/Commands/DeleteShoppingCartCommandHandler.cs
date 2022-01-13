@@ -40,16 +40,4 @@
 //             return Result.Success;
 //         }
 //     }
-//     
-//     public record DeleteShoppingCartCommand : Command
-//     {
-//         public Guid ShoppingCartId { get; init; }
-//         
-//         public DeleteShoppingCartCommand() { }
-//
-//         public DeleteShoppingCartCommand(Guid shoppingCartId)
-//         {
-//             ShoppingCartId = shoppingCartId;
-//         }
-//     }
 // }
