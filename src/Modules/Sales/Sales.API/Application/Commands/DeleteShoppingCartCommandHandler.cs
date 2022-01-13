@@ -30,14 +30,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 command.Metadata.MessageId,
                 cancellationToken
             );
+            
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
+            if (shoppingCart.IsRestored) return Result.Success;
 
-            if (shoppingCart.IsRestored)
-            {
-                await _shoppingCartStore.PublishAsync(shoppingCart.RestoredEvents, cancellationToken);
-                return Result.Success;
-            }
-                
             Result deleteResult = shoppingCart.Delete();
             if (deleteResult.IsError) return deleteResult.Error;
 

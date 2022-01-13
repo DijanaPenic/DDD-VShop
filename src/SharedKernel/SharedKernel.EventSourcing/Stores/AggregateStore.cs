@@ -77,7 +77,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IdentifiedEvent<IBaseEvent>> events = aggregate.QueuedEvents
+            IList<IdentifiedEvent<IBaseEvent>> events = aggregate.Events
                 .Select(@event => new IdentifiedEvent<IBaseEvent>
                 (
                     @event,
@@ -116,12 +116,16 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             if (events.Count is 0) return default;
 
             TAggregate aggregate = new();
+            aggregate.Load(events);
             
             IList<IdentifiedEvent<IBaseEvent>> processedEvents = events
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
-            
-            if(processedEvents.Any()) aggregate.Restore(processedEvents);
-            else aggregate.Load(events);
+
+            if (processedEvents.Any())
+            {
+                await PublishAsync(processedEvents, cancellationToken); 
+                aggregate.Restore();
+            }
 
             return aggregate;
         }

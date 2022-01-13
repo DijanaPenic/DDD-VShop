@@ -7,32 +7,26 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class ProcessManagerOutbox : IProcessManagerOutbox
     {
-        private readonly List<IMessage> _queuedMessages = new();
-        private readonly List<IIdentifiedMessage<IMessage>> _restoredMessages = new();
-        
-        public IReadOnlyList<IMessage> QueuedMessages => _queuedMessages;
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> RestoredMessages => _restoredMessages;
+        private readonly List<IMessage> _messages = new();
+
+        public IReadOnlyList<IMessage> Messages => _messages;
         public int Version { get; private set; } = -1;
         
         public void Add(IMessage message) 
-            => _queuedMessages.Add(message);
+            => _messages.Add(message);
         public void Add(IMessage message, Instant scheduledTime)
-            => _queuedMessages.Add(new ScheduledMessage(message, scheduledTime));
-        public void Restore(IEnumerable<IIdentifiedMessage<IMessage>> messages)
-            => _restoredMessages.AddRange(messages);
-        
+            => _messages.Add(new ScheduledMessage(message, scheduledTime));
+
         public void Clear()
         {
-            Version += _queuedMessages.Count;
-            _queuedMessages.Clear();
-            _restoredMessages.Clear();
+            Version += _messages.Count;
+            _messages.Clear();
         }
     }
     
     public interface IProcessManagerOutbox
     {
         public int Version { get; }
-        public IReadOnlyList<IMessage> QueuedMessages { get; }
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> RestoredMessages { get; }
+        public IReadOnlyList<IMessage> Messages { get; }
     }
 }

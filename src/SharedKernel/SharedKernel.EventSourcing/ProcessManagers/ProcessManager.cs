@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using NodaTime;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 
@@ -16,7 +15,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         public Guid Id { get; protected set; }
         public IProcessManagerInbox Inbox => _inbox;
         public IProcessManagerOutbox Outbox => _outbox;
-        public bool IsRestored => _outbox.RestoredMessages.Count > 0;
+        public bool IsRestored { get; private set; }
 
         protected abstract void ApplyEvent(IBaseEvent @event);
 
@@ -49,14 +48,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected void ScheduleReminder(IDomainEvent @event, Instant scheduledTime)
             => _outbox.Add(@event, scheduledTime);
 
-        public void Restore(IEnumerable<IIdentifiedMessage<IMessage>> history)
-            => _outbox.Restore(history); 
+        public void Restore() => IsRestored = true;
         
-        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> history)
+        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> inboxHistory)
         {
-            foreach (IIdentifiedEvent<IBaseEvent> inboxMessage in history)
+            foreach (IIdentifiedEvent<IBaseEvent> message in inboxHistory)
             {
-                ApplyEvent(inboxMessage.Data);
+                ApplyEvent(message.Data);
                 _inbox.Version++;
             }
         }

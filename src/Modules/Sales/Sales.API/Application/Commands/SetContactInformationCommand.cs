@@ -1,10 +1,11 @@
 using System;
 
 using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetContactInformationCommand
+    public partial class SetContactInformationCommand : IBaseCommand
     {
         public SetContactInformationCommand
         (

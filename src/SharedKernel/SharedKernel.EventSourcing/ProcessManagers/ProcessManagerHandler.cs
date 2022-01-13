@@ -47,12 +47,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 cancellationToken
             );
 
-            if (processManager.IsRestored)
-            {
-                await _processManagerStore.PublishAsync(processManager.Outbox.RestoredMessages, cancellationToken);
-                return;
-            }
-                
+            if (processManager.IsRestored) return;
+            
             processManager.Transition(@event, _clockService.Now);
 
             await _processManagerStore.SaveAndPublishAsync

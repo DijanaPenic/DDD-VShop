@@ -31,11 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             
-            if (shoppingCart is not null)
-            {
-                await _shoppingCartStore.PublishAsync(shoppingCart.RestoredEvents, cancellationToken);
-                return shoppingCart;
-            }
+            if (shoppingCart.IsRestored) return shoppingCart;
             
             Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
             (

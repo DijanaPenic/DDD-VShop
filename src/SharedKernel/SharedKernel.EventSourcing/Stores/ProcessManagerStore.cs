@@ -61,7 +61,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             );
             
             IList<IdentifiedMessage<IMessage>> outboxMessages = processManager
-                .Outbox.QueuedMessages
+                .Outbox.Messages
                 .Select(message => new IdentifiedMessage<IMessage>
                 (
                     message,
@@ -129,23 +129,23 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
+            IReadOnlyList<IIdentifiedMessage<IBaseEvent>> inboxMessages = await _eventStoreClient
+                .ReadStreamForwardAsync<IBaseEvent>(GetInboxStreamName(processManagerId), cancellationToken);
+            
             IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient
                 .ReadStreamForwardAsync<IMessage>(GetOutboxStreamName(processManagerId), cancellationToken);
 
             TProcess processManager = new();
 
+            processManager.Load(inboxMessages.Select(e => new IdentifiedEvent<IBaseEvent>(e)));
+            
             IList<IIdentifiedMessage<IMessage>> processedMessages = outboxMessages
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
-            
-            if(processedMessages.Any()) processManager.Restore(processedMessages);
-            else
+
+            if (processedMessages.Any())
             {
-                IReadOnlyList<IdentifiedEvent<IBaseEvent>> inboxMessages = (await _eventStoreClient
-                        .ReadStreamForwardAsync<IBaseEvent>(GetInboxStreamName(processManagerId), cancellationToken))
-                        .Select(e => new IdentifiedEvent<IBaseEvent>(e))
-                        .ToList();
-                
-                processManager.Load(inboxMessages);
+                await PublishAsync(processedMessages, cancellationToken); 
+                processManager.Restore();
             }
 
             return processManager;
