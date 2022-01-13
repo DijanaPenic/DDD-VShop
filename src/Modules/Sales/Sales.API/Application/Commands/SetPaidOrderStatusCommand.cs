@@ -1,8 +1,10 @@
 using System;
 
+using VShop.SharedKernel.Messaging.Commands;
+
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetPaidOrderStatusCommand
+    public partial class SetPaidOrderStatusCommand : IBaseCommand
     {
         public SetPaidOrderStatusCommand(Guid orderId)
         {

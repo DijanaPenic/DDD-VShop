@@ -26,18 +26,16 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           string.Concat(
             "CjxNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2ZpbmFsaXplX29y",
             "ZGVyX2NvbW1hbmQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwu",
-            "TWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8aOlNoYXJlZEtlcm5lbC9T",
-            "aGFyZWRLZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL2RlY2ltYWwucHJvdG8i",
-            "uAEKFEZpbmFsaXplT3JkZXJDb21tYW5kEhcKCG9yZGVyX2lkGAEgASgLMgUu",
-            "VXVpZBI0CgtvcmRlcl9saW5lcxgCIAMoCzIfLkZpbmFsaXplT3JkZXJDb21t",
-            "YW5kLk9yZGVyTGluZRpRCglPcmRlckxpbmUSGQoKcHJvZHVjdF9pZBgBIAEo",
-            "CzIFLlV1aWQSEAoIcXVhbnRpdHkYAiABKAUSFwoFcHJpY2UYAyABKAsyCC5E",
-            "ZWNpbWFsQi+qAixWU2hvcC5Nb2R1bGVzLlNhbGVzLkFQSS5BcHBsaWNhdGlv",
-            "bi5Db21tYW5kc2IGcHJvdG8z"));
+            "TWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8iqQEKFEZpbmFsaXplT3Jk",
+            "ZXJDb21tYW5kEhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZBI0CgtvcmRlcl9s",
+            "aW5lcxgCIAMoCzIfLkZpbmFsaXplT3JkZXJDb21tYW5kLk9yZGVyTGluZRpC",
+            "CglPcmRlckxpbmUSGQoKcHJvZHVjdF9pZBgBIAEoCzIFLlV1aWQSGgoST3V0",
+            "T2ZTdG9ja1F1YW50aXR5GAIgASgFQi+qAixWU2hvcC5Nb2R1bGVzLlNhbGVz",
+            "LkFQSS5BcHBsaWNhdGlvbi5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Messaging.CustomTypes.DecimalReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand), global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Parser, new[]{ "OrderId", "OrderLines" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Types.OrderLine), global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Types.OrderLine.Parser, new[]{ "ProductId", "Quantity", "Price" }, null, null, null, null)})
+            new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand), global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Parser, new[]{ "OrderId", "OrderLines" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Types.OrderLine), global::VShop.Modules.Sales.API.Application.Commands.FinalizeOrderCommand.Types.OrderLine.Parser, new[]{ "ProductId", "OutOfStockQuantity" }, null, null, null, null)})
           }));
     }
     #endregion
@@ -306,8 +304,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public OrderLine(OrderLine other) : this() {
           productId_ = other.productId_ != null ? other.productId_.Clone() : null;
-          quantity_ = other.quantity_;
-          price_ = other.price_ != null ? other.price_.Clone() : null;
+          outOfStockQuantity_ = other.outOfStockQuantity_;
           _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
         }
 
@@ -329,27 +326,15 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           }
         }
 
-        /// <summary>Field number for the "quantity" field.</summary>
-        public const int QuantityFieldNumber = 2;
-        private int quantity_;
+        /// <summary>Field number for the "OutOfStockQuantity" field.</summary>
+        public const int OutOfStockQuantityFieldNumber = 2;
+        private int outOfStockQuantity_;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-        public int Quantity {
-          get { return quantity_; }
+        public int OutOfStockQuantity {
+          get { return outOfStockQuantity_; }
           set {
-            quantity_ = value;
-          }
-        }
-
-        /// <summary>Field number for the "price" field.</summary>
-        public const int PriceFieldNumber = 3;
-        private global::VShop.SharedKernel.Messaging.CustomTypes.Decimal price_;
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-        public global::VShop.SharedKernel.Messaging.CustomTypes.Decimal Price {
-          get { return price_; }
-          set {
-            price_ = value;
+            outOfStockQuantity_ = value;
           }
         }
 
@@ -369,8 +354,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             return true;
           }
           if (!object.Equals(ProductId, other.ProductId)) return false;
-          if (Quantity != other.Quantity) return false;
-          if (!object.Equals(Price, other.Price)) return false;
+          if (OutOfStockQuantity != other.OutOfStockQuantity) return false;
           return Equals(_unknownFields, other._unknownFields);
         }
 
@@ -379,8 +363,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
         public override int GetHashCode() {
           int hash = 1;
           if (productId_ != null) hash ^= ProductId.GetHashCode();
-          if (Quantity != 0) hash ^= Quantity.GetHashCode();
-          if (price_ != null) hash ^= Price.GetHashCode();
+          if (OutOfStockQuantity != 0) hash ^= OutOfStockQuantity.GetHashCode();
           if (_unknownFields != null) {
             hash ^= _unknownFields.GetHashCode();
           }
@@ -403,13 +386,9 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             output.WriteRawTag(10);
             output.WriteMessage(ProductId);
           }
-          if (Quantity != 0) {
+          if (OutOfStockQuantity != 0) {
             output.WriteRawTag(16);
-            output.WriteInt32(Quantity);
-          }
-          if (price_ != null) {
-            output.WriteRawTag(26);
-            output.WriteMessage(Price);
+            output.WriteInt32(OutOfStockQuantity);
           }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(output);
@@ -425,13 +404,9 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             output.WriteRawTag(10);
             output.WriteMessage(ProductId);
           }
-          if (Quantity != 0) {
+          if (OutOfStockQuantity != 0) {
             output.WriteRawTag(16);
-            output.WriteInt32(Quantity);
-          }
-          if (price_ != null) {
-            output.WriteRawTag(26);
-            output.WriteMessage(Price);
+            output.WriteInt32(OutOfStockQuantity);
           }
           if (_unknownFields != null) {
             _unknownFields.WriteTo(ref output);
@@ -446,11 +421,8 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           if (productId_ != null) {
             size += 1 + pb::CodedOutputStream.ComputeMessageSize(ProductId);
           }
-          if (Quantity != 0) {
-            size += 1 + pb::CodedOutputStream.ComputeInt32Size(Quantity);
-          }
-          if (price_ != null) {
-            size += 1 + pb::CodedOutputStream.ComputeMessageSize(Price);
+          if (OutOfStockQuantity != 0) {
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(OutOfStockQuantity);
           }
           if (_unknownFields != null) {
             size += _unknownFields.CalculateSize();
@@ -470,14 +442,8 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             }
             ProductId.MergeFrom(other.ProductId);
           }
-          if (other.Quantity != 0) {
-            Quantity = other.Quantity;
-          }
-          if (other.price_ != null) {
-            if (price_ == null) {
-              Price = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
-            }
-            Price.MergeFrom(other.Price);
+          if (other.OutOfStockQuantity != 0) {
+            OutOfStockQuantity = other.OutOfStockQuantity;
           }
           _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
         }
@@ -502,14 +468,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
                 break;
               }
               case 16: {
-                Quantity = input.ReadInt32();
-                break;
-              }
-              case 26: {
-                if (price_ == null) {
-                  Price = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
-                }
-                input.ReadMessage(Price);
+                OutOfStockQuantity = input.ReadInt32();
                 break;
               }
             }
@@ -535,14 +494,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
                 break;
               }
               case 16: {
-                Quantity = input.ReadInt32();
-                break;
-              }
-              case 26: {
-                if (price_ == null) {
-                  Price = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
-                }
-                input.ReadMessage(Price);
+                OutOfStockQuantity = input.ReadInt32();
                 break;
               }
             }

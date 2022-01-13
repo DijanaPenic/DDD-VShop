@@ -21,7 +21,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             public partial class OrderLine
             {
-                
+                public OrderLine(Guid productId, int outOfStockQuantity)
+                {
+                    ProductId = productId;
+                    OutOfStockQuantity = outOfStockQuantity;
+                }
             }
         }
     }
