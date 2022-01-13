@@ -36,21 +36,18 @@ namespace VShop.Modules.Billing.API.Controllers
         public async Task<IActionResult> TransferAsync
         (
             [FromBody] TransferRequest request,
-            [FromHeader(Name = "x-request-id")] string requestId,
-            [FromHeader(Name = "x-correlation-id")]
-            string correlationId
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-            // TODO - missing header validation.
-            
-            IdentifiedCommand<TransferCommand> command = new
+            IdentifiedCommand<TransferCommand> identifiedCommand = new
             (
                 _mapper.Map<TransferCommand>(request),
-                Guid.Parse(requestId),
-                Guid.Parse(correlationId)
+                requestId,
+                correlationId
             );
             
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandBus.SendAsync(identifiedCommand);
 
             return HandleResult(result, Ok);
         }
