@@ -1,16 +1,13 @@
 ﻿using System;
 using NodaTime;
+using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ShoppingCartCheckoutRequestedDomainEvent //: IBaseEvent
+    public partial class ShoppingCartCheckoutRequestedDomainEvent : IDomainEvent
     {
-        public Guid ShoppingCartId { get; }
-        public Guid OrderId { get; }
-        public Instant ConfirmedAt { get; }
-
         public ShoppingCartCheckoutRequestedDomainEvent
         (
             Guid shoppingCartId,
@@ -20,7 +17,7 @@ namespace VShop.Modules.Sales.Domain.Events
         {
             ShoppingCartId = shoppingCartId;
             OrderId = orderId;
-            ConfirmedAt = confirmedAt;
+            ConfirmedAt = confirmedAt.ToTimestamp();
         }
     }
 }

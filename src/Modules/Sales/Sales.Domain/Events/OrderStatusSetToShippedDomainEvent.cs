@@ -4,10 +4,8 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderStatusSetToShippedDomainEvent //: DomainEvent
+    public partial class OrderStatusSetToShippedDomainEvent : IDomainEvent
     {
-        public Guid OrderId { get; }
-        
         public OrderStatusSetToShippedDomainEvent(Guid orderId)
         {
             OrderId = orderId;

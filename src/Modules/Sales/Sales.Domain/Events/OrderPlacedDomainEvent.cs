@@ -4,23 +4,8 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderPlacedDomainEvent //: DomainEvent
+    public partial class OrderPlacedDomainEvent : IDomainEvent
     {
-        public Guid OrderId { get; }
-        public decimal DeliveryCost { get; }
-        public int CustomerDiscount { get; }
-        public Guid CustomerId { get; }
-        public string FirstName { get; }
-        public string MiddleName { get; }
-        public string LastName { get; }
-        public string EmailAddress { get; }
-        public string PhoneNumber { get; }
-        public string City { get; }
-        public string CountryCode { get; }
-        public string PostalCode { get; }
-        public string StateProvince { get; }
-        public string StreetAddress { get; }
-
         public OrderPlacedDomainEvent
         (
             Guid orderId,

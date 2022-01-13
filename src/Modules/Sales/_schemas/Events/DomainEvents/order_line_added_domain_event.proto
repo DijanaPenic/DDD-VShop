@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+
+message OrderLineAddedDomainEvent 
+{
+    Uuid order_id = 1;
+    Uuid product_id = 2;
+    int32 quantity = 3;
+	Decimal unit_price = 4;
+}

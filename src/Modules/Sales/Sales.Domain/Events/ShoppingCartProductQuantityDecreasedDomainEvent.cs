@@ -4,12 +4,8 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record ShoppingCartProductQuantityDecreasedDomainEvent //: DomainEvent
+    public partial class ShoppingCartProductQuantityDecreasedDomainEvent : IDomainEvent
     {
-        public Guid ShoppingCartId { get; }
-        public Guid ProductId { get; }
-        public int Quantity { get; }
-
         public ShoppingCartProductQuantityDecreasedDomainEvent
         (
             Guid shoppingCartId,

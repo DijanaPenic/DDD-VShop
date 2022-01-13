@@ -4,12 +4,8 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderLineOutOfStockRemovedDomainEvent //: DomainEvent
+    public partial class OrderLineOutOfStockRemovedDomainEvent : IDomainEvent
     {
-        public Guid OrderId { get; }
-        public Guid ProductId { get; }
-        public int Quantity { get; }
-
         public OrderLineOutOfStockRemovedDomainEvent
         (
             Guid orderId,

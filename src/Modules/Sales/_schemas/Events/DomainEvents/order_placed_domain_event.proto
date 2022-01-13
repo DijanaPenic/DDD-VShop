@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+
+message OrderPlacedDomainEvent 
+{
+    Uuid order_id = 1;
+    Decimal delivery_cost = 2;
+    int32 customer_discount = 3;
+	Uuid customer_id = 4;
+    string first_name = 5;
+    string middle_name = 6;
+    string last_name = 7;
+    string email_address = 8;
+    string phone_number = 9;
+    string city = 10;
+    string country_code = 11;
+    string postal_code = 12;
+    string state_province = 13;
+    string street_address = 14;
+}

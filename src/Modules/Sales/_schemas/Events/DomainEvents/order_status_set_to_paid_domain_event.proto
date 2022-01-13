@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
+
+import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+
+message OrderStatusSetToPaidDomainEvent 
+{
+    Uuid order_id = 1;
+}

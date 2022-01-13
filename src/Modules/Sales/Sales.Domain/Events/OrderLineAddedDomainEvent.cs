@@ -4,13 +4,8 @@ using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public record OrderLineAddedDomainEvent //: DomainEvent
+    public partial class OrderLineAddedDomainEvent : IDomainEvent
     {
-        public Guid OrderId { get; }
-        public Guid ProductId { get; }
-        public int Quantity { get; }
-        public decimal UnitPrice { get; }
-
         public OrderLineAddedDomainEvent
         (
             Guid orderId,
