@@ -26,8 +26,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _logger = logger;
             _processManagerStore = processManagerStore;
         }
-        
-        protected async Task TransitionAsync(Guid processId, IIdentifiedEvent<IBaseEvent> @event, CancellationToken cancellationToken)
+
+        protected async Task TransitionAsync
+        (
+            Guid processId,
+            IIdentifiedEvent<IBaseEvent> @event,
+            CancellationToken cancellationToken
+        )
         {
             _logger.Information
             (
@@ -39,14 +44,24 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             (
                 processId,
                 @event.Metadata.MessageId,
-                @event.Metadata.CorrelationId,
                 cancellationToken
             );
 
-            if (processManager.Outbox.Messages.Count is 0)
-                processManager.Transition(@event, _clockService.Now);
-            
-            await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken);
+            if (processManager.IsRestored)
+            {
+                await _processManagerStore.PublishAsync(processManager.Outbox.RestoredMessages, cancellationToken);
+                return;
+            }
+                
+            processManager.Transition(@event, _clockService.Now);
+
+            await _processManagerStore.SaveAndPublishAsync
+            (
+                processManager,
+                @event.Metadata.MessageId,
+                @event.Metadata.CorrelationId,
+                cancellationToken
+            );
         }
     }
 }

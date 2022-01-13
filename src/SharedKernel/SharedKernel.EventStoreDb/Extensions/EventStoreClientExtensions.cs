@@ -19,13 +19,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             string streamSuffix,
             int expectedRevision,
             IEnumerable<IIdentifiedMessage<IMessage>> messages,
-            Instant now,
             CancellationToken cancellationToken = default
         ) => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
                 eventStoreClient.GetStreamName(streamSuffix),
                 StreamRevision.FromInt64(expectedRevision),
-                messages.ToEventData(now),
+                messages.ToEventData(),
                 cancellationToken: ct
             ), cancellationToken);
         
@@ -35,17 +34,16 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             string streamSuffix,
             StreamState expectedState,
             IEnumerable<IIdentifiedMessage<IMessage>> messages,
-            Instant now,
             CancellationToken cancellationToken = default
         ) => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
                 eventStoreClient.GetStreamName(streamSuffix),
                 expectedState,
-                messages.ToEventData(now),
+                messages.ToEventData(),
                 cancellationToken: ct
             ), cancellationToken);
         
-        public static async Task<IReadOnlyList<IIdentifiedMessage<TMessage>>> ReadStreamForwardAsync<TMessage>
+        public static async Task<IReadOnlyList<IdentifiedMessage<TMessage>>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamSuffix,
@@ -61,7 +59,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                     cancellationToken: ct
                 ), cancellationToken);
 
-            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<IIdentifiedMessage<TMessage>>();
+            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<IdentifiedMessage<TMessage>>();
 
             IList<ResolvedEvent> messages = await result.ToListAsync(cancellationToken);
 

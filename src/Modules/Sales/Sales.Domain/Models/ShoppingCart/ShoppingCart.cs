@@ -32,19 +32,14 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public int TotalShoppingCartItemCount => _shoppingCartItems.Count;
         public bool HasMinAmountForCheckout => ProductsCostWithDiscount >= Settings.MinShoppingCartAmountForCheckout;
 
-        public ShoppingCart() { }
-        private ShoppingCart(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
-        
         public static Result<ShoppingCart> Create
         (
             EntityId shoppingCartId,
             EntityId customerId,
-            Discount customerDiscount,
-            Guid causationId,
-            Guid correlationId
+            Discount customerDiscount
         )
         {
-            ShoppingCart shoppingCart = new(causationId, correlationId);
+            ShoppingCart shoppingCart = new();
 
             shoppingCart.RaiseEvent
             (

@@ -17,9 +17,7 @@ namespace VShop.Modules.Sales.Tests.Customizations
                 (
                     fixture.Create<EntityId>(),
                     fixture.Create<EntityId>(),
-                    fixture.Create<Discount>(),
-                    fixture.Create<Guid>(),
-                    fixture.Create<Guid>()
+                    fixture.Create<Discount>()
                 ).Data;
         
                 while(!shoppingCart.HasMinAmountForCheckout)

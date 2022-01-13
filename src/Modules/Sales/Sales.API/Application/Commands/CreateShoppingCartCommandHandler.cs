@@ -28,36 +28,42 @@ namespace VShop.Modules.Sales.API.Application.Commands
             (
                 EntityId.Create(command.Data.ShoppingCartId).Data, // TODO - improve validation in commands.
                 command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
                 cancellationToken
             );
             
-            if (shoppingCart is null)
+            if (shoppingCart is not null)
             {
-                Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
-                (
-                    EntityId.Create(command.Data.ShoppingCartId).Data,
-                    EntityId.Create(command.Data.CustomerId).Data,
-                    Discount.Create(command.Data.CustomerDiscount).Data,
-                    command.Metadata.MessageId,
-                    command.Metadata.CorrelationId
-                );
-                if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
-
-                shoppingCart = createShoppingCartResult.Data;
-                foreach (ShoppingCartItemCommand shoppingCartItem in command.Data.ShoppingCartItems)
-                {
-                    Result addProductResult = shoppingCart.AddProductQuantity
-                    (
-                        EntityId.Create(shoppingCartItem.ProductId).Data,
-                        ProductQuantity.Create(shoppingCartItem.Quantity).Data,
-                        Price.Create(shoppingCartItem.UnitPrice).Data
-                    );
-                    if (addProductResult.IsError) return addProductResult.Error;
-                }
+                await _shoppingCartStore.PublishAsync(shoppingCart.RestoredEvents, cancellationToken);
+                return shoppingCart;
             }
             
-            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
+            Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
+            (
+                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.Data.CustomerId).Data,
+                Discount.Create(command.Data.CustomerDiscount).Data
+            );
+            if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
+
+            shoppingCart = createShoppingCartResult.Data;
+            foreach (ShoppingCartItemCommand shoppingCartItem in command.Data.ShoppingCartItems)
+            {
+                Result addProductResult = shoppingCart.AddProductQuantity
+                (
+                    EntityId.Create(shoppingCartItem.ProductId).Data,
+                    ProductQuantity.Create(shoppingCartItem.Quantity).Data,
+                    Price.Create(shoppingCartItem.UnitPrice).Data
+                );
+                if (addProductResult.IsError) return addProductResult.Error;
+            }
+
+            await _shoppingCartStore.SaveAndPublishAsync
+            (
+                shoppingCart,
+                command.Metadata.MessageId,
+                command.Metadata.CorrelationId,
+                cancellationToken
+            );
 
             return shoppingCart;
         }

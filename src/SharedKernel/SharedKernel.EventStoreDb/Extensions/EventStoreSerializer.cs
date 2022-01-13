@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using NodaTime;
-using NodaTime.Serialization.Protobuf;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
@@ -13,7 +11,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        public static IIdentifiedMessage<TMessage> Deserialize<TMessage>(this ResolvedEvent resolvedEvent) 
+        public static IdentifiedMessage<TMessage> Deserialize<TMessage>(this ResolvedEvent resolvedEvent) 
             where TMessage : IMessage
         {
             object data = ProtobufSerializer.FromByteArray
@@ -30,25 +28,16 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return new IdentifiedMessage<TMessage>(message, metadata);
         }
 
-        public static IReadOnlyList<EventData> ToEventData<TMessage>
-        (
-            this IEnumerable<IIdentifiedMessage<TMessage>> messages,
-            Instant now
-        ) 
+        public static IReadOnlyList<EventData> ToEventData<TMessage>(this IEnumerable<IIdentifiedMessage<TMessage>> messages) 
             where TMessage : IMessage
-            => messages.Select((message, index) =>
-            {
-                message.Metadata.EffectiveTime = now.ToTimestamp(); // TODO - better way to handle this?
-
-                return new EventData
+            => messages.Select((message, index) => new EventData
                 (
                     GetDeterministicMessageId(message, index),
                     GetMessageTypeName(message.Data),
                     ProtobufSerializer.ToByteArray(message.Data),
                     ProtobufSerializer.ToByteArray(message.Metadata),
                     "application/octet-stream"
-                );
-            }).ToList();
+                )).ToList();
 
         // TODO - test idempotent behaviour without determ. guid.
         private static Uuid GetDeterministicMessageId<TMessage>(IIdentifiedMessage<TMessage> message, int index) 

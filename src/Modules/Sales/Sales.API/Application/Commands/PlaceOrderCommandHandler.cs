@@ -44,7 +44,6 @@
 //                     EntityId.Create(command.ShoppingCartId).Data,
 //                     EntityId.Create(command.OrderId).Data,
 //                     command.MessageId,
-//                     command.CorrelationId,
 //                     cancellationToken
 //                 );
 //                 if (createOrderResult.IsError) return createOrderResult.Error;

@@ -24,10 +24,6 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         public IReadOnlyList<OrderLine> OrderLines => _orderLines;
         public OrderStatus Status { get; private set; }
         public OrderCustomer Customer { get; private set; }
-        
-        public Order() { }
-        
-        private Order(Guid causationId, Guid correlationId) : base(causationId, correlationId) { }
 
         public static Result<Order> Create
         (
@@ -38,12 +34,10 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            Address deliveryAddress,
-            Guid causationId,
-            Guid correlationId
+            Address deliveryAddress
         )
         {
-            Order order = new(causationId, correlationId);
+            Order order = new();
             
             // order.RaiseEvent
             // (

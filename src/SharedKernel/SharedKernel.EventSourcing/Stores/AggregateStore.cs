@@ -11,9 +11,10 @@ using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -35,66 +36,105 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             _eventBus = eventBus;
         }
 
-        public async Task SaveAndPublishAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+        public async Task SaveAndPublishAsync
+        (
+            TAggregate aggregate,
+            Guid messageId,
+            Guid correlationId,
+            CancellationToken cancellationToken = default
+        )
         {
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
-            await SaveAsync(aggregate, cancellationToken);
+            IList<IdentifiedEvent<IBaseEvent>> events = await SaveAsync
+            (
+                aggregate,
+                messageId,
+                correlationId,
+                cancellationToken
+            );
 
             try
             {
-                // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-                foreach (IIdentifiedEvent<IDomainEvent> domainEvent in aggregate.DomainEvents)
-                    await _eventBus.Publish(domainEvent, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                await PublishAsync(events, cancellationToken);
             }
             finally
             {
                 aggregate.Clear();
             }
         }
-        
-        public async Task SaveAsync(TAggregate aggregate, CancellationToken cancellationToken = default)
+
+        // TODO - can I merge Publish and Save?
+        public async Task<IList<IdentifiedEvent<IBaseEvent>>> SaveAsync
+        (
+            TAggregate aggregate,
+            Guid messageId,
+            Guid correlationId,
+            CancellationToken cancellationToken = default
+        )
         {
             if (aggregate is null)
                 throw new ArgumentNullException(nameof(aggregate));
 
+            IList<IdentifiedEvent<IBaseEvent>> events = aggregate.QueuedEvents
+                .Select(@event => new IdentifiedEvent<IBaseEvent>
+                (
+                    @event,
+                    new MessageMetadata
+                    (
+                        SequentialGuid.Create(),
+                        messageId,
+                        correlationId,
+                        _clockService.Now
+                    )
+                )).ToList();
+            
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetStreamName(aggregate.Id),
                 aggregate.Version,
-                aggregate.Events,
-                _clockService.Now,
+                events,
                 cancellationToken
             );
+
+            return events;
         }
 
         public async Task<TAggregate> LoadAsync
         (
             EntityId aggregateId,
-            Guid causationId,
-            Guid correlationId,
+            Guid messageId,
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IIdentifiedMessage<IBaseEvent>> events = await _eventStoreClient
-                .ReadStreamForwardAsync<IBaseEvent>
-                (
-                    GetStreamName(aggregateId),
-                    cancellationToken
-                );
+            IReadOnlyList<IdentifiedEvent<IBaseEvent>> events = (await _eventStoreClient
+                .ReadStreamForwardAsync<IBaseEvent>(GetStreamName(aggregateId), cancellationToken))
+                .Select(e => new IdentifiedEvent<IBaseEvent>(e))
+                .ToList();
 
             if (events.Count is 0) return default;
 
             TAggregate aggregate = new();
-            aggregate.Load
-            (
-                events.Select(e => new IdentifiedEvent<IBaseEvent>(e)),
-                causationId,
-                correlationId
-            );
+            
+            IList<IdentifiedEvent<IBaseEvent>> processedEvents = events
+                .Where(e => e.Metadata.CausationId == messageId).ToList();
+            
+            if(processedEvents.Any()) aggregate.Restore(processedEvents);
+            else aggregate.Load(events);
 
             return aggregate;
+        }
+        
+        public async Task PublishAsync
+        (
+            IEnumerable<IIdentifiedEvent<IBaseEvent>> events,
+            CancellationToken cancellationToken = default
+        )
+        {
+            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
+            foreach (IIdentifiedEvent<IBaseEvent> @event in events)
+                await _eventBus.Publish(@event, EventPublishStrategy.SyncStopOnException, cancellationToken);
         }
 
         public static string GetStreamName(EntityId aggregateId) => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}";

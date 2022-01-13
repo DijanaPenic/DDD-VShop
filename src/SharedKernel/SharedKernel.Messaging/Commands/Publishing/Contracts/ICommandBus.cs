@@ -11,13 +11,13 @@ namespace VShop.SharedKernel.Messaging.Commands.Publishing.Contracts
 
         Task<Result> SendAsync<TCommand>
         (
-            IIdentifiedCommand<TCommand> command,
+            IdentifiedCommand<TCommand> command,
             CancellationToken cancellationToken = default
         ) where TCommand : IBaseCommand;
         
         Task<Result<TResponse>> SendAsync<TCommand, TResponse>
         (
-            IIdentifiedCommand<TCommand, TResponse> command,
+            IdentifiedCommand<TCommand, TResponse> command,
             CancellationToken cancellationToken = default
         ) where TCommand : IBaseCommand;
     }

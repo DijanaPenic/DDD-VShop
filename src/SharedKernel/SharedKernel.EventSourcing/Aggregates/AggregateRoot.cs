@@ -1,90 +1,50 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {
     public abstract class AggregateRoot
     {
-        private readonly List<IIdentifiedEvent<IBaseEvent>> _events = new();
+        private readonly List<IBaseEvent> _queuedEvents = new();
+        private readonly List<IIdentifiedEvent<IBaseEvent>> _restoredEvents = new();
         
-        public IReadOnlyList<IIdentifiedEvent<IBaseEvent>> Events => _events;
-        public IReadOnlyList<IIdentifiedEvent<IDomainEvent>> DomainEvents
-            => _events.OfType<IIdentifiedEvent<IDomainEvent>>().ToList();
+        public IReadOnlyList<IBaseEvent> QueuedEvents => _queuedEvents;
+        public IReadOnlyList<IIdentifiedEvent<IBaseEvent>> RestoredEvents => _restoredEvents;
+        public bool IsRestored => _restoredEvents.Count > 0;
         public EntityId Id { get; protected set; }
         public int Version { get; private set; } = -1;
-        public Guid CausationId { get; private set; }
-        public Guid CorrelationId { get; private set; }
-        
-        protected AggregateRoot() { }
-
-        protected AggregateRoot(Guid causationId, Guid correlationId)
-        {
-            CausationId = causationId;
-            CorrelationId = correlationId;
-        }
 
         protected abstract void ApplyEvent(IDomainEvent @event);
 
-        protected void RaiseEvent(IDomainEvent @event) => RaiseEvent(@event, GetMetadata());
-        
-        protected void RaiseEvent(IDomainEvent @event, MessageMetadata metadata)
+        protected void RaiseEvent(IDomainEvent @event)
         {
             ApplyEvent(@event);
-            _events.Add(new IdentifiedEvent<IDomainEvent>(@event, metadata));
+            _queuedEvents.Add(@event);
         }
-        
-        public void RaiseEvent(IIntegrationEvent @event) => RaiseEvent(@event, GetMetadata());
-        
-        public void RaiseEvent(IIntegrationEvent @event, MessageMetadata metadata)
-            => _events.Add(new IdentifiedEvent<IIntegrationEvent>(@event, metadata));
-        
-        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> history, Guid causationId, Guid correlationId)
+
+        public void RaiseEvent(IIntegrationEvent @event) => _queuedEvents.Add(@event);
+
+        public void Restore(IEnumerable<IIdentifiedEvent<IBaseEvent>> history)
+            => _restoredEvents.AddRange(history); 
+
+        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> history)
         {
-            CausationId = causationId;
-            CorrelationId = correlationId;
-            
-            // Truncate events following the specified causationId.
-            IList<IIdentifiedEvent<IBaseEvent>> historyList = history.ToList()
-                .RemoveRangeFollowingLast(e => e.Metadata.CausationId == CausationId);
-            
-            // Restore aggregate state (identified by causationId param).
-            (IEnumerable<IIdentifiedEvent<IBaseEvent>> pendingEvents, IEnumerable<IIdentifiedEvent<IBaseEvent>> processedEvents) = 
-                historyList.Split(e => e.Metadata.CausationId == CausationId);
-            
-            foreach (IIdentifiedEvent<IBaseEvent> @event in processedEvents)
+            foreach (IIdentifiedEvent<IBaseEvent> @event in history)
             {
                 if(@event.Data is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
-            }
-
-            foreach (IIdentifiedEvent<IBaseEvent> @event in pendingEvents)
-            {
-                switch (@event.Data)
-                {
-                    case IDomainEvent domainEvent:
-                        RaiseEvent(domainEvent, @event.Metadata);
-                        break;
-                    case IIntegrationEvent integrationEvent:
-                        RaiseEvent(integrationEvent, @event.Metadata);
-                        break;
-                }
             }
         }
 
         public void Clear()
         {
-            Version += _events.Count;
-            _events.Clear();
+            Version += _queuedEvents.Count;
+            _queuedEvents.Clear();
+            _restoredEvents.Clear();
         }
 
         protected void ApplyToEntity(IInternalEventHandler entity, IDomainEvent @event) => entity.Handle(@event);
-        private MessageMetadata GetMetadata() => new(SequentialGuid.Create(), CorrelationId, CausationId);
     }
 }

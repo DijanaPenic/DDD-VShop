@@ -21,9 +21,7 @@ namespace VShop.Modules.Sales.Tests.Customizations
                     fixture.Create<FullName>(),
                     fixture.Create<EmailAddress>(),
                     fixture.Create<PhoneNumber>(),
-                    fixture.Create<Address>(),
-                    fixture.Create<Guid>(),
-                    fixture.Create<Guid>()
+                    fixture.Create<Address>()
                 ).Data;
 
                 order.AddOrderLine

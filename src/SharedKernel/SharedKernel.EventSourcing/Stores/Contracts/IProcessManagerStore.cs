@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
@@ -11,14 +13,21 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         Task SaveAndPublishAsync
         (
             TProcess processManager,
+            Guid messageId,
+            Guid correlationId,
+            CancellationToken cancellationToken = default
+        );
+
+        Task PublishAsync
+        (
+            IEnumerable<IIdentifiedMessage<IMessage>> messages,
             CancellationToken cancellationToken = default
         );
 
         Task<TProcess> LoadAsync
         (
             Guid processManagerId,
-            Guid causationId,
-            Guid correlationId,
+            Guid messageId,
             CancellationToken cancellationToken = default
         );
     }

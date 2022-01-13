@@ -1,45 +1,38 @@
 ﻿using NodaTime;
-using System.Linq;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class ProcessManagerOutbox : IProcessManagerOutbox
     {
-        private readonly List<IIdentifiedMessage<IMessage>> _messages = new();
+        private readonly List<IMessage> _queuedMessages = new();
+        private readonly List<IIdentifiedMessage<IMessage>> _restoredMessages = new();
         
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages => _messages;
-        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages
-            => _messages.OfType<IIdentifiedMessage<IScheduledMessage>>().ToList();
-        public IReadOnlyList<IIdentifiedMessage<IBaseCommand>> Commands 
-            => _messages.OfType<IIdentifiedMessage<IBaseCommand>>().ToList();
-        public int Version { get; set; } = -1;
+        public IReadOnlyList<IMessage> QueuedMessages => _queuedMessages;
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> RestoredMessages => _restoredMessages;
+        public int Version { get; private set; } = -1;
         
-        public void Add(IMessage message, MessageMetadata metadata)
-            => _messages.Add(new IdentifiedMessage<IMessage>(message, metadata));
-        
-        public void Add(IMessage message, MessageMetadata metadata, Instant scheduledTime)
-            => _messages.Add(new IdentifiedMessage<IScheduledMessage>
-            (
-                new ScheduledMessage(message, scheduledTime),
-                metadata
-            ));
+        public void Add(IMessage message) 
+            => _queuedMessages.Add(message);
+        public void Add(IMessage message, Instant scheduledTime)
+            => _queuedMessages.Add(new ScheduledMessage(message, scheduledTime));
+        public void Restore(IEnumerable<IIdentifiedMessage<IMessage>> messages)
+            => _restoredMessages.AddRange(messages);
         
         public void Clear()
         {
-            Version += _messages.Count;
-            _messages.Clear();
+            Version += _queuedMessages.Count;
+            _queuedMessages.Clear();
+            _restoredMessages.Clear();
         }
     }
     
     public interface IProcessManagerOutbox
     {
         public int Version { get; }
-        public IReadOnlyList<IIdentifiedMessage<IMessage>> Messages { get; }
-        public IReadOnlyList<IIdentifiedMessage<IScheduledMessage>> ScheduledMessages { get; }
-        public IReadOnlyList<IIdentifiedMessage<IBaseCommand>> Commands { get; }
+        public IReadOnlyList<IMessage> QueuedMessages { get; }
+        public IReadOnlyList<IIdentifiedMessage<IMessage>> RestoredMessages { get; }
     }
 }

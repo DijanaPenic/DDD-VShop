@@ -31,7 +31,6 @@ namespace VShop.SharedKernel.Integration.Stores
                 GetStreamName(),
                 StreamState.Any,
                 new[] { @event },
-                _clockService.Now,
                 cancellationToken
             );
         }

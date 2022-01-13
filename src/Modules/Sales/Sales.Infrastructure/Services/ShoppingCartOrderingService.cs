@@ -23,7 +23,6 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             EntityId shoppingCartId,
             EntityId orderId,
             Guid causationId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -31,7 +30,6 @@ namespace VShop.Modules.Sales.Infrastructure.Services
             (
                 shoppingCartId,
                 causationId,
-                correlationId,
                 cancellationToken
             );
 
@@ -44,9 +42,7 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 shoppingCart.Customer.FullName,
                 shoppingCart.Customer.EmailAddress,
                 shoppingCart.Customer.PhoneNumber,
-                shoppingCart.Customer.DeliveryAddress,
-                causationId,
-                correlationId
+                shoppingCart.Customer.DeliveryAddress
             );
             if (createOrderResult.IsError) return createOrderResult.Error;
 
