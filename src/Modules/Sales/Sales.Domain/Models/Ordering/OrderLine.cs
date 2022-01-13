@@ -1,5 +1,6 @@
 ﻿using System;
 
+using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -21,15 +22,15 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             if (Quantity - value < 0)
                 return Result.ValidationError($"Cannot decrease quantity by {value}.");
             
-            // RaiseEvent
-            // (
-            //     new OrderLineOutOfStockRemovedDomainEvent
-            //     (
-            //         OrderId,
-            //         Id,
-            //         value
-            //     )
-            // );
+            RaiseEvent
+            (
+                new OrderLineOutOfStockRemovedDomainEvent
+                (
+                    OrderId,
+                    Id,
+                    value
+                )
+            );
 
             return Result.Success;
         }
@@ -38,15 +39,15 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         {
             switch (@event)
             {
-                // case OrderLineAddedDomainEvent e:
-                //     Id = new EntityId(e.ProductId);
-                //     OrderId = new EntityId(e.OrderId);
-                //     Quantity = new ProductQuantity(e.Quantity);
-                //     UnitPrice = new Price(e.UnitPrice);
-                //     break;
-                // case OrderLineOutOfStockRemovedDomainEvent e:
-                //     Quantity -= new ProductQuantity(e.Quantity);
-                //     break;
+                case OrderLineAddedDomainEvent e:
+                    Id = new EntityId(e.ProductId);
+                    OrderId = new EntityId(e.OrderId);
+                    Quantity = new ProductQuantity(e.Quantity);
+                    UnitPrice = new Price(e.UnitPrice);
+                    break;
+                case OrderLineOutOfStockRemovedDomainEvent e:
+                    Quantity -= new ProductQuantity(e.Quantity);
+                    break;
             }
         }
     }

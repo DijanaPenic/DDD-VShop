@@ -34,19 +34,19 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if (_isClosedForUpdates)
                 return Result.ValidationError(@"Updating contact information for the shopping cart is not allowed. 
                                                           The shopping cart has been closed for updates.");
-            // RaiseEvent
-            // (
-            //     new ShoppingCartContactInformationSetDomainEvent
-            //     (
-            //         Id,
-            //         fullName.FirstName,
-            //         fullName.MiddleName,
-            //         fullName.LastName,
-            //         emailAddress,
-            //         phoneNumber,
-            //         gender
-            //     )
-            // );
+            RaiseEvent
+            (
+                new ShoppingCartContactInformationSetDomainEvent
+                (
+                    Id,
+                    fullName.FirstName,
+                    fullName.MiddleName,
+                    fullName.LastName,
+                    emailAddress,
+                    phoneNumber,
+                    gender
+                )
+            );
             
             return Result.Success;
         }
@@ -56,18 +56,18 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             if(_isClosedForUpdates)
                 return Result.ValidationError(@"Updating delivery address for the shopping cart is not allowed. 
                                                             The shopping cart has been closed for updates.");
-            // RaiseEvent
-            // (
-            //     new ShoppingCartDeliveryAddressSetDomainEvent
-            //     (
-            //         Id,
-            //         deliveryAddress.City,
-            //         deliveryAddress.CountryCode,
-            //         deliveryAddress.PostalCode,
-            //         deliveryAddress.StateProvince,
-            //         deliveryAddress.StreetAddress
-            //     )
-            // );
+            RaiseEvent
+            (
+                new ShoppingCartDeliveryAddressSetDomainEvent
+                (
+                    Id,
+                    deliveryAddress.City,
+                    deliveryAddress.CountryCode,
+                    deliveryAddress.PostalCode,
+                    deliveryAddress.StateProvince,
+                    deliveryAddress.StreetAddress
+                )
+            );
             
             return Result.Success;
         }
@@ -81,25 +81,25 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Discount = new Discount(e.CustomerDiscount);
                     Id = new EntityId(e.ShoppingCartId);
                     break;
-                // case ShoppingCartContactInformationSetDomainEvent e:
-                //     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
-                //     EmailAddress = new EmailAddress(e.EmailAddress);
-                //     PhoneNumber = new PhoneNumber(e.PhoneNumber);
-                //     Gender = e.Gender;
-                //     break;
-                // case ShoppingCartDeliveryAddressSetDomainEvent e:
-                //     DeliveryAddress = new Address
-                //     (
-                //         e.City, 
-                //         e.CountryCode, 
-                //         e.PostalCode,
-                //         e.StateProvince, 
-                //         e.StreetAddress
-                //     );
-                //     break;
-                // case ShoppingCartCheckoutRequestedDomainEvent _:
-                //     _isClosedForUpdates = true;
-                //     break;
+                case ShoppingCartContactInformationSetDomainEvent e:
+                    FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
+                    EmailAddress = new EmailAddress(e.EmailAddress);
+                    PhoneNumber = new PhoneNumber(e.PhoneNumber);
+                    Gender = e.Gender;
+                    break;
+                case ShoppingCartDeliveryAddressSetDomainEvent e:
+                    DeliveryAddress = new Address
+                    (
+                        e.City, 
+                        e.CountryCode, 
+                        e.PostalCode,
+                        e.StateProvince, 
+                        e.StreetAddress
+                    );
+                    break;
+                case ShoppingCartCheckoutRequestedDomainEvent _:
+                    _isClosedForUpdates = true;
+                    break;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 
+using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
@@ -21,22 +22,22 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
         {
             switch (@event)
             {
-                // case OrderPlacedDomainEvent e:
-                //     Id = new EntityId(e.OrderId);
-                //     CustomerId = new EntityId(e.CustomerId);
-                //     Discount = new Discount(e.CustomerDiscount);
-                //     FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
-                //     EmailAddress = new EmailAddress(e.EmailAddress);
-                //     PhoneNumber = new PhoneNumber(e.PhoneNumber);
-                //     DeliveryAddress = new Address
-                //     (
-                //         e.City, 
-                //         e.CountryCode, 
-                //         e.PostalCode,
-                //         e.StateProvince, 
-                //         e.StreetAddress
-                //     );
-                //     break;
+                case OrderPlacedDomainEvent e:
+                    Id = new EntityId(e.OrderId);
+                    CustomerId = new EntityId(e.CustomerId);
+                    Discount = new Discount(e.CustomerDiscount);
+                    FullName = new FullName(e.FirstName, e.MiddleName, e.LastName);
+                    EmailAddress = new EmailAddress(e.EmailAddress);
+                    PhoneNumber = new PhoneNumber(e.PhoneNumber);
+                    DeliveryAddress = new Address
+                    (
+                        e.City, 
+                        e.CountryCode, 
+                        e.PostalCode,
+                        e.StateProvince, 
+                        e.StreetAddress
+                    );
+                    break;
             }
         }
     }

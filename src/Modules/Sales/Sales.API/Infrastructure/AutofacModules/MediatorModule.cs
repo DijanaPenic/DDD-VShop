@@ -7,6 +7,7 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Application.Commands;
+using VShop.Modules.Sales.API.Application.ProcessManagers;
 
 namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
 {
@@ -34,8 +35,8 @@ namespace VShop.Modules.Sales.API.Infrastructure.AutofacModules
                    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
             // Register event handlers
-            // builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
-            //        .AsClosedTypesOf(typeof(INotificationHandler<>));
+            builder.RegisterAssemblyTypes(typeof(OrderingProcessManagerHandler).Assembly)
+                   .AsClosedTypesOf(typeof(INotificationHandler<>));
             
             // Register behaviors
             builder.RegisterGeneric(typeof(ErrorCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));

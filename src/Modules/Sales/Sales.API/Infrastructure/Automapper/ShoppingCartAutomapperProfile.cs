@@ -12,13 +12,10 @@ namespace VShop.Modules.Sales.API.Infrastructure.Automapper
         {
             CreateMap<CreateShoppingCartRequest, CreateShoppingCartCommand>();
             CreateMap<CreateShoppingCartRequest.ShoppingCartItemRequest, ShoppingCartItemCommand>();
-
-            // CreateMap<DeleteShoppingCartCommand, BaseRequest>();
-            // CreateMap<CheckoutShoppingCartCommand, BaseRequest>();
-            // CreateMap<AddShoppingCartProductRequest, AddShoppingCartItem>();
-            // CreateMap<RemoveShoppingCartProductRequest, RemoveShoppingCartProductCommand>();
-            // CreateMap<SetContactInformationRequest, SetContactInformationCommand>();
-            // CreateMap<SetDeliveryAddressRequest, SetDeliveryAddressCommand>();
+            CreateMap<AddShoppingCartProductRequest, ShoppingCartItemCommand>();
+            CreateMap<RemoveShoppingCartProductRequest, RemoveShoppingCartProductCommand>();
+            CreateMap<SetContactInformationRequest, SetContactInformationCommand>();
+            CreateMap<SetDeliveryAddressRequest, SetDeliveryAddressCommand>();
         }
     }
 }

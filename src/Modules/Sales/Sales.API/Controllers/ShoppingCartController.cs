@@ -11,6 +11,7 @@ using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands;
+using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
@@ -38,6 +39,7 @@ namespace VShop.Modules.Sales.API.Controllers
         
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ShoppingCartInfo), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShoppingCartAsync([FromQuery] Guid customerId)
         {
@@ -66,181 +68,230 @@ namespace VShop.Modules.Sales.API.Controllers
             //     return BadRequest("Only one active shopping cart is supported per customer.");
             // }
             
-            IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command = new
+            IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> identifiedCommand = new
             (
                 _mapper.Map<CreateShoppingCartCommand>(request),
                 requestId,
                 correlationId
             );
 
-            Result<ShoppingCart> result = await _commandBus.SendAsync(command);
+            Result<ShoppingCart> result = await _commandBus.SendAsync(identifiedCommand);
 
             return HandleResult(result, Created);
         }
 
-        //
-        // [HttpDelete]
-        // [Route("{shoppingCartId:guid}")]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        // public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
-        // {
-        //     DeleteShoppingCartCommand command = _mapper.Map<DeleteShoppingCartCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId
-        //     };
-        //     
-        //     Result result = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(result, NoContent);
-        // }
-        //
-        // [HttpPut]
-        // [Route("{shoppingCartId:guid}/actions/checkout")]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType(typeof(CheckoutResponse), (int)HttpStatusCode.OK)]
-        // public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId, [FromBody] BaseRequest request)
-        // {
-        //     CheckoutShoppingCartCommand command = _mapper.Map<CheckoutShoppingCartCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId
-        //     };
-        //     
-        //     Result<CheckoutResponse> result = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(result, Ok);
-        // }
-        //
-        // [HttpPost]
-        // [Route("{shoppingCartId:guid}/products/{productId:guid}")]
-        // [Consumes("application/json")]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.Created)]
-        // public async Task<IActionResult> AddProductAsync
-        // (
-        //     [FromRoute] Guid shoppingCartId,
-        //     [FromRoute] Guid productId,
-        //     [FromBody] AddShoppingCartProductRequest request
-        // )
-        // {
-        //     AddShoppingCartProductCommand command = new
-        //     (
-        //         shoppingCartId,
-        //         _mapper.Map<AddShoppingCartItem>(request) with
-        //         {
-        //             ProductId = productId
-        //         }
-        //     )
-        //     {
-        //         MessageId = request.MessageId,
-        //         CorrelationId = request.CorrelationId
-        //     };
-        //
-        //     Result result = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(result, Created);
-        // }
-        //
-        // [HttpDelete]
-        // [Route("{shoppingCartId:guid}/products/{productId:guid}")]
-        // [Consumes("application/json")]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        // public async Task<IActionResult> SetProductPriceAsync
-        // (
-        //     [FromRoute] Guid shoppingCartId,
-        //     [FromRoute] Guid productId,
-        //     [FromBody] SetShoppingCartProductPriceRequest request
-        // )
-        // {
-        //     SetShoppingCartProductPriceCommand command = _mapper.Map<SetShoppingCartProductPriceCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId,
-        //         ProductId = productId
-        //     };
-        //     
-        //     Result commandResult = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(commandResult, NoContent);
-        // }
-        //
-        // [HttpDelete]
-        // [Route("{shoppingCartId:guid}/products/{productId:guid}")]
-        // [Consumes("application/json")]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        // public async Task<IActionResult> RemoveProductAsync
-        // (
-        //     [FromRoute] Guid shoppingCartId,
-        //     [FromRoute] Guid productId,
-        //     [FromBody] RemoveShoppingCartProductRequest request
-        // )
-        // {
-        //     RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId,
-        //         ProductId = productId
-        //     };
-        //     
-        //     Result commandResult = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(commandResult, NoContent);
-        // }
-        //
-        // [HttpPost]
-        // [Route("{shoppingCartId:guid}/customer/contact-information")]
-        // [Consumes("application/json")]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.OK)]
-        // public async Task<IActionResult> SetContactInformationAsync
-        // (
-        //     [FromRoute] Guid shoppingCartId,
-        //     [FromBody] SetContactInformationRequest request
-        // )
-        // {
-        //     SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId
-        //     };
-        //     
-        //     Result result = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(result, Ok);
-        // }
-        //
-        // [HttpPost]
-        // [Route("{shoppingCartId:guid}/customer/delivery-address")]
-        // [Consumes("application/json")]
-        // [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        // [ProducesResponseType((int)HttpStatusCode.OK)]
-        // public async Task<IActionResult> SetDeliveryAddressAsync
-        // (
-        //     [FromRoute] Guid shoppingCartId,
-        //     [FromBody] SetDeliveryAddressRequest request
-        // )
-        // {
-        //     SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request) with
-        //     {
-        //         ShoppingCartId = shoppingCartId
-        //     };
-        //
-        //     Result result = await _commandBus.SendAsync(command);
-        //
-        //     return HandleResult(result, Ok);
-        // }
+        [HttpDelete]
+        [Route("{shoppingCartId:guid}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> DeleteShoppingCartAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            IdentifiedCommand<DeleteShoppingCartCommand> identifiedCommand = new
+            (
+                new DeleteShoppingCartCommand(shoppingCartId),
+                requestId,
+                correlationId
+            );
+            
+            Result result = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(result, NoContent);
+        }
+        
+        [HttpPut]
+        [Route("{shoppingCartId:guid}/actions/checkout")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(CheckoutResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> CheckoutShoppingCartAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            IdentifiedCommand<CheckoutShoppingCartCommand, CheckoutResponse> identifiedCommand = new
+            (
+                new CheckoutShoppingCartCommand(shoppingCartId),
+                requestId,
+                correlationId
+            );
+            
+            Result<CheckoutResponse> result = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(result, Ok);
+        }
+        
+        [HttpPost]
+        [Route("{shoppingCartId:guid}/products/{productId:guid}")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> AddProductAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] AddShoppingCartProductRequest request,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            AddShoppingCartProductCommand command = new
+            (
+                shoppingCartId,
+                _mapper.Map<ShoppingCartItemCommand>(request)
+            )
+            {
+                ShoppingCartItem =
+                {
+                    ProductId = productId
+                }
+            };
+
+            IdentifiedCommand<AddShoppingCartProductCommand> identifiedCommand = new
+            (
+                command,
+                requestId,
+                correlationId
+            );
+        
+            Result result = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(result, Created);
+        }
+        
+        [HttpDelete]
+        [Route("{shoppingCartId:guid}/products/{productId:guid}")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> SetProductPriceAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] SetShoppingCartProductPriceRequest request,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            SetShoppingCartProductPriceCommand command = _mapper.Map<SetShoppingCartProductPriceCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+            command.ProductId = productId;
+
+            IdentifiedCommand<SetShoppingCartProductPriceCommand> identifiedCommand = new
+            (
+                command,
+                requestId,
+                correlationId
+            );
+            
+            Result commandResult = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(commandResult, NoContent);
+        }
+        
+        [HttpDelete]
+        [Route("{shoppingCartId:guid}/products/{productId:guid}")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveProductAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromRoute] Guid productId,
+            [FromBody] RemoveShoppingCartProductRequest request,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+            command.ProductId = productId;
+
+            IdentifiedCommand<RemoveShoppingCartProductCommand> identifiedCommand = new
+            (
+                command,
+                requestId,
+                correlationId
+            );
+            
+            Result commandResult = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(commandResult, NoContent);
+        }
+        
+        [HttpPost]
+        [Route("{shoppingCartId:guid}/customer/contact-information")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SetContactInformationAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromBody] SetContactInformationRequest request,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+
+            IdentifiedCommand<SetContactInformationCommand> identifiedCommand = new
+            (
+                command,
+                requestId,
+                correlationId
+            );
+
+            Result result = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(result, Ok);
+        }
+        
+        [HttpPost]
+        [Route("{shoppingCartId:guid}/customer/delivery-address")]
+        [Consumes("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SetDeliveryAddressAsync
+        (
+            [FromRoute] Guid shoppingCartId,
+            [FromBody] SetDeliveryAddressRequest request,
+            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+        )
+        {
+            SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
+            command.ShoppingCartId = shoppingCartId;
+
+            IdentifiedCommand<SetDeliveryAddressCommand> identifiedCommand = new
+            (
+                command,
+                requestId,
+                correlationId
+            );
+
+            Result result = await _commandBus.SendAsync(identifiedCommand);
+        
+            return HandleResult(result, Ok);
+        }
     }
 }
