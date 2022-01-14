@@ -1,5 +1,4 @@
 using Xunit;
-using System;
 using System.Linq;
 using FluentAssertions;
 
@@ -24,9 +23,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            Address deliveryAddress,
-            Guid causationId,
-            Guid correlationId
+            Address deliveryAddress
         )
         {
             // Act
@@ -39,9 +36,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
                 fullName,
                 emailAddress,
                 phoneNumber,
-                deliveryAddress,
-                causationId,
-                correlationId
+                deliveryAddress
             );
             
             // Assert
