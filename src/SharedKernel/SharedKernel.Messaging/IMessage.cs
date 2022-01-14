@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Messaging
 {
-    public interface IMessage : IProtoData
+    public interface IMessage : IMessageContext , IProtoData
     {
 
     }

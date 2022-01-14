@@ -4,7 +4,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetShoppingCartProductPriceCommand : IBaseCommand
+    public partial class SetShoppingCartProductPriceCommand : Command, IBaseCommand
     {
         public SetShoppingCartProductPriceCommand
         (

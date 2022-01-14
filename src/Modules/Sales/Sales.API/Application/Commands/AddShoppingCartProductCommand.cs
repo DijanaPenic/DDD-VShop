@@ -5,7 +5,7 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class AddShoppingCartProductCommand : IBaseCommand
+    public partial class AddShoppingCartProductCommand : Command, IBaseCommand
     {
         public AddShoppingCartProductCommand
         (

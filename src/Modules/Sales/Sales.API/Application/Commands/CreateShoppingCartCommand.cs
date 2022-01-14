@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.Messaging.Commands;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class CreateShoppingCartCommand : IBaseCommand
+    public partial class CreateShoppingCartCommand : Command<ShoppingCart>, IBaseCommand
     {
         public CreateShoppingCartCommand
         (

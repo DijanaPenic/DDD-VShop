@@ -28,13 +28,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<Order>> Handle
         (
-            IdentifiedCommand<PlaceOrderCommand, Order> command,
+            PlaceOrderCommand command,
             CancellationToken cancellationToken
         )
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.Data.OrderId).Data,
+                EntityId.Create(command.OrderId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -43,8 +43,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
-                EntityId.Create(command.Data.OrderId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
+                EntityId.Create(command.OrderId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );

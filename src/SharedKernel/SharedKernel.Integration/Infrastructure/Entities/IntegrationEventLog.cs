@@ -20,23 +20,27 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         // For database migrations.
         public IntegrationEventLog() { } 
         
-        public IntegrationEventLog(IIdentifiedMessage<IIntegrationEvent> @event, Guid transactionId)
+        public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
         {
             Id = @event.Metadata.MessageId;
-            TypeName = ToName(@event.Data.GetType());
-            Body = ProtobufSerializer.ToByteArray(@event.Data);
+            TypeName = ToName(@event.GetType());
+            Body = ProtobufSerializer.ToByteArray(@event);
             Metadata = ProtobufSerializer.ToByteArray(@event.Metadata);
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;
         }
+
+        public IIntegrationEvent GetEvent()
+        {
+            IIntegrationEvent integrationEvent = (IIntegrationEvent)ProtobufSerializer
+                .FromByteArray(Body, ToType(TypeName));
+
+            integrationEvent.Metadata = ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata);
+
+            return integrationEvent;
+        }
         
-        public IIdentifiedEvent<IIntegrationEvent> GetEvent()
-            => new IdentifiedEvent<IIntegrationEvent>
-            (
-                ProtobufSerializer.FromByteArray(Body, ToType(TypeName)) as IIntegrationEvent, 
-                ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata)
-            );
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }

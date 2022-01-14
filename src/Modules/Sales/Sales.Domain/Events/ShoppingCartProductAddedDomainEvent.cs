@@ -1,10 +1,11 @@
 ﻿using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class ShoppingCartProductAddedDomainEvent : IDomainEvent
+    public partial class ShoppingCartProductAddedDomainEvent : MessageContext, IDomainEvent
     {
         public ShoppingCartProductAddedDomainEvent
         (

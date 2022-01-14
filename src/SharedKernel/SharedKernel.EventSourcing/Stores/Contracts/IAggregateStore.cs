@@ -19,7 +19,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
             CancellationToken cancellationToken = default
         );
         
-        Task<IList<IdentifiedEvent<IBaseEvent>>> SaveAsync
+        Task<IList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,
             Guid causationId,
@@ -29,7 +29,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 
         Task PublishAsync
         (
-            IEnumerable<IIdentifiedEvent<IBaseEvent>> events,
+            IEnumerable<IBaseEvent> events,
             CancellationToken cancellationToken = default
         );
 

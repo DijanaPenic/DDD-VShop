@@ -10,9 +10,9 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         private readonly List<IMessage> _messages = new();
 
         public IReadOnlyList<IMessage> Messages => _messages;
-        public int Version { get; private set; } = -1;
+        public int Version { get; set; } = -1;
         
-        public void Add(IMessage message) 
+        public void Add(IMessage message)
             => _messages.Add(message);
         public void Add(IMessage message, Instant scheduledTime)
             => _messages.Add(new ScheduledMessage(message, scheduledTime));

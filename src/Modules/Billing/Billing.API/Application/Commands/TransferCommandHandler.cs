@@ -35,11 +35,11 @@ namespace VShop.Modules.Billing.API.Application.Commands
             _billingIntegrationEventService = billingIntegrationEventService;
         }
 
-        public async Task<Result> Handle(IdentifiedCommand<TransferCommand> command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(TransferCommand command, CancellationToken cancellationToken)
         {
             bool isTransferSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (
-                command.Data.OrderId,
+                command.OrderId,
                 PaymentType.Transfer,
                 cancellationToken
             );
@@ -48,30 +48,36 @@ namespace VShop.Modules.Billing.API.Application.Commands
 
             Result transferResult = await _paymentService.TransferAsync
             (
-                command.Data.OrderId,
-                command.Data.Amount,
-                command.Data.CardTypeId,
-                command.Data.CardNumber,
-                command.Data.CardSecurityNumber,
-                command.Data.CardholderName,
-                command.Data.CardExpiration.ToInstant(),
+                command.OrderId,
+                command.Amount,
+                command.CardTypeId,
+                command.CardNumber,
+                command.CardSecurityNumber,
+                command.CardholderName,
+                command.CardExpiration.ToInstant(),
                 cancellationToken
             );
             Payment transfer = new()
             {
                 Id = SequentialGuid.Create(),
-                OrderId = command.Data.OrderId,
+                OrderId = command.OrderId,
                 Status = transferResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
                 Error = transferResult.IsError ? transferResult.Error.ToString() : string.Empty,
                 Type = PaymentType.Transfer
             };
             await _paymentRepository.SaveAsync(transfer, cancellationToken);
 
-            IIdentifiedEvent<IIntegrationEvent> paymentIntegrationEvent = new IdentifiedEvent<IIntegrationEvent>
+            MessageMetadata metadata = new
             (
-                transferResult.IsError ? new PaymentFailedIntegrationEvent(command.Data.OrderId) : new PaymentSucceededIntegrationEvent(command.Data.OrderId),
-                new MessageMetadata(SequentialGuid.Create(), command.Metadata.CorrelationId, command.Metadata.MessageId)
+                SequentialGuid.Create(),
+                command.Metadata.MessageId,
+                command.Metadata.CorrelationId
             );
+
+            IIntegrationEvent paymentIntegrationEvent = transferResult.IsError
+                ? new PaymentFailedIntegrationEvent(command.OrderId, metadata)
+                : new PaymentSucceededIntegrationEvent(command.OrderId, metadata);
+
 
             await _billingIntegrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
             

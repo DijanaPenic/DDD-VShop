@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System.Reflection;
 using System.Data.Common;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace VShop.SharedKernel.PostgresDb

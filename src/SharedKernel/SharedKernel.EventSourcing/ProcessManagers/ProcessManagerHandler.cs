@@ -30,7 +30,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
         protected async Task TransitionAsync
         (
             Guid processId,
-            IIdentifiedEvent<IBaseEvent> @event,
+            IBaseEvent @event,
             CancellationToken cancellationToken
         )
         {

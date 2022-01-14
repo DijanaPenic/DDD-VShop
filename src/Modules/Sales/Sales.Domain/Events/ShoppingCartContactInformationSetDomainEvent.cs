@@ -1,11 +1,12 @@
 ﻿using System;
 
-using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Domain.Enums;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class ShoppingCartContactInformationSetDomainEvent : IDomainEvent
+    public partial class ShoppingCartContactInformationSetDomainEvent : MessageContext, IDomainEvent
     {
         public ShoppingCartContactInformationSetDomainEvent
         (

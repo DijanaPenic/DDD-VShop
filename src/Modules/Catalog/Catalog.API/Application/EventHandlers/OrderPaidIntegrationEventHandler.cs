@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Helpers;
@@ -33,12 +32,12 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
             _catalogIntegrationEventService = catalogIntegrationEventService;
         }
 
-        public async Task Handle(IdentifiedEvent<OrderStatusSetToPaidIntegrationEvent> @event, CancellationToken cancellationToken)
+        public async Task Handle(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
         {
             IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> confirmedOrderLines = 
                 new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>();
 
-            foreach (OrderStatusSetToPaidIntegrationEvent.Types.OrderLine orderLine in @event.Data.OrderLines)
+            foreach (OrderStatusSetToPaidIntegrationEvent.Types.OrderLine orderLine in @event.OrderLines)
             {
                 CatalogProduct product = await _catalogContext.Products
                     .SingleOrDefaultAsync(p => p.Id == orderLine.ProductId, cancellationToken);
@@ -56,18 +55,18 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 ));
             }
 
-            IIdentifiedEvent<OrderStockProcessedIntegrationEvent> orderStockConfirmedIntegrationEvent =
-                new IdentifiedEvent<OrderStockProcessedIntegrationEvent>
+            OrderStockProcessedIntegrationEvent orderStockConfirmedIntegrationEvent = new
+            (
+                @event.OrderId,
+                confirmedOrderLines,
+                new MessageMetadata
                 (
-                    new OrderStockProcessedIntegrationEvent(@event.Data.OrderId, confirmedOrderLines),
-                    new MessageMetadata
-                    (
-                        SequentialGuid.Create(),
-                        @event.Metadata.CorrelationId,
-                        @event.Metadata.MessageId
-                    )
-                );
-            
+                    SequentialGuid.Create(),
+                    @event.Metadata.CorrelationId,
+                    @event.Metadata.MessageId
+                )
+            );
+
             Guid transactionId = await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>
             {
                 await _catalogContext.SaveChangesAsync(cancellationToken);

@@ -21,13 +21,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<FinalizeOrderCommand> command,
+            FinalizeOrderCommand command,
             CancellationToken cancellationToken
         )
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.Data.OrderId).Data,
+                EntityId.Create(command.OrderId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -38,7 +38,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             decimal initialPaymentAmount = order.FinalAmount;
                 
             // Remove out of stock items from the order.
-            IEnumerable<FinalizeOrderCommand.Types.OrderLine> outOfStockOrderLines = command.Data.OrderLines
+            IEnumerable<FinalizeOrderCommand.Types.OrderLine> outOfStockOrderLines = command.OrderLines
                 .Where(ol => ol.OutOfStockQuantity > 0);
             
             foreach (FinalizeOrderCommand.Types.OrderLine outOfStockOrderLine in outOfStockOrderLines)

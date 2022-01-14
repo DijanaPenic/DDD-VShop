@@ -19,28 +19,28 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<SetContactInformationCommand> command,
+            SetContactInformationCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
 
-            Result<FullName> fullNameResult = FullName.Create(command.Data.FirstName, command.Data.MiddleName,
-                command.Data.LastName);
+            Result<FullName> fullNameResult = FullName.Create(command.FirstName, command.MiddleName,
+                command.LastName);
             if (fullNameResult.IsError) return fullNameResult.Error;
             
             Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
             (
                 fullNameResult.Data,
-                EmailAddress.Create(command.Data.EmailAddress).Data,
-                PhoneNumber.Create(command.Data.PhoneNumber).Data,
-                command.Data.Gender
+                EmailAddress.Create(command.EmailAddress).Data,
+                PhoneNumber.Create(command.PhoneNumber).Data,
+                command.Gender
             );
             if (setContactInformationResult.IsError) return setContactInformationResult.Error;
 

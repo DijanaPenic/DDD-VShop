@@ -21,13 +21,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<SetPaidOrderStatusCommand> command,
+            SetPaidOrderStatusCommand command,
             CancellationToken cancellationToken
         )
         {
             Order order = await _orderStore.LoadAsync
             (
-                EntityId.Create(command.Data.OrderId).Data,
+                EntityId.Create(command.OrderId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );

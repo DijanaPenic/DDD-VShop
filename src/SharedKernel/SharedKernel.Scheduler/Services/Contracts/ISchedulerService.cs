@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Scheduler.Services.Contracts
     {
         Task ScheduleMessageAsync
         (
-            IIdentifiedMessage<IScheduledMessage> message,
+            IScheduledMessage message,
             CancellationToken cancellationToken = default
         );
     }

@@ -20,13 +20,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<DeleteShoppingCartCommand> command,
+            DeleteShoppingCartCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );

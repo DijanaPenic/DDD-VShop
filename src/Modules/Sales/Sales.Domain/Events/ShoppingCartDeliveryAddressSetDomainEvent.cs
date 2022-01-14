@@ -1,10 +1,11 @@
 ﻿using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class ShoppingCartDeliveryAddressSetDomainEvent : IDomainEvent
+    public partial class ShoppingCartDeliveryAddressSetDomainEvent : MessageContext, IDomainEvent
     {
         public ShoppingCartDeliveryAddressSetDomainEvent
         (

@@ -27,13 +27,13 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
             _paymentRepository = paymentRepository;
         }
 
-        public async Task Handle(IdentifiedEvent<OrderFinalizedIntegrationEvent> @event, CancellationToken cancellationToken)
+        public async Task Handle(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
         {
-            if (@event.Data.RefundAmount == 0) return;
+            if (@event.RefundAmount == 0) return;
             
             bool isRefundSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (
-                @event.Data.OrderId,
+                @event.OrderId,
                 PaymentType.Transfer,
                 cancellationToken
             );
@@ -41,15 +41,15 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
             
             Result refundResult = await _paymentService.RefundAsync
             (
-                @event.Data.OrderId,
-                @event.Data.RefundAmount,
+                @event.OrderId,
+                @event.RefundAmount,
                 cancellationToken
             );
 
             Payment refund = new()
             {
                 Id = SequentialGuid.Create(),
-                OrderId = @event.Data.OrderId,
+                OrderId = @event.OrderId,
                 Status = refundResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
                 Error = refundResult.IsError ? refundResult.Error.ToString() : string.Empty,
                 Type = PaymentType.Refund

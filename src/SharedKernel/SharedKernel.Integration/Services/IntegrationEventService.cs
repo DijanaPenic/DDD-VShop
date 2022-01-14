@@ -80,7 +80,7 @@ namespace VShop.SharedKernel.Integration.Services
             }
         }
 
-        public async Task SaveEventAsync(IIdentifiedEvent<IIntegrationEvent> @event, CancellationToken cancellationToken = default)
+        public async Task SaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
             _logger.Information
             (

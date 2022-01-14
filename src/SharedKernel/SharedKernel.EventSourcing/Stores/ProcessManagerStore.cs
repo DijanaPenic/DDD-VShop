@@ -60,19 +60,17 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 cancellationToken
             );
             
-            IList<IdentifiedMessage<IMessage>> outboxMessages = processManager
-                .Outbox.Messages
-                .Select(message => new IdentifiedMessage<IMessage>
+            IList<IMessage> outboxMessages = processManager.Outbox.Messages.Select(message =>
+            {
+                message.Metadata = new MessageMetadata
                 (
-                    message,
-                    new MessageMetadata
-                    (
-                        SequentialGuid.Create(),
-                        messageId,
-                        correlationId,
-                        _clockService.Now
-                    )
-                )).ToList();
+                    SequentialGuid.Create(),
+                    messageId,
+                    correlationId,
+                    _clockService.Now
+                );
+                return message;
+            }).ToList();
             
             await _eventStoreClient.AppendToStreamAsync
             (
@@ -92,19 +90,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
 
-        public async Task PublishAsync
-        (
-            IEnumerable<IIdentifiedMessage<IMessage>> messages,
-            CancellationToken cancellationToken = default
-        )
+        public async Task PublishAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default)
         {
-            foreach (IIdentifiedMessage<IMessage> message in messages)
+            foreach (IMessage message in messages)
             {
-                switch (message.Data)
+                switch (message)
                 {
                     case IBaseCommand:
                     {
-                        // TODO - test; should not work.
                         object commandResult = await _commandBus.SendAsync(message, cancellationToken);
                     
                         if (commandResult is IResult { Value: ApplicationError error })
@@ -114,7 +107,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                     case IScheduledMessage scheduledMessage:
                         await _messageSchedulerService.ScheduleMessageAsync
                         (
-                            new IdentifiedMessage<IScheduledMessage>(scheduledMessage, message.Metadata),
+                            scheduledMessage,
                             cancellationToken
                         );
                         break;
@@ -129,17 +122,16 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IIdentifiedMessage<IBaseEvent>> inboxMessages = await _eventStoreClient
+            IReadOnlyList<IBaseEvent> inboxMessages = await _eventStoreClient
                 .ReadStreamForwardAsync<IBaseEvent>(GetInboxStreamName(processManagerId), cancellationToken);
             
-            IReadOnlyList<IIdentifiedMessage<IMessage>> outboxMessages = await _eventStoreClient
+            IReadOnlyList<IMessage> outboxMessages = await _eventStoreClient
                 .ReadStreamForwardAsync<IMessage>(GetOutboxStreamName(processManagerId), cancellationToken);
 
             TProcess processManager = new();
-
-            processManager.Load(inboxMessages.Select(e => new IdentifiedEvent<IBaseEvent>(e)));
+            processManager.Load(inboxMessages, outboxMessages);
             
-            IList<IIdentifiedMessage<IMessage>> processedMessages = outboxMessages
+            IList<IMessage> processedMessages = outboxMessages
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
 
             if (!processedMessages.Any()) return processManager;

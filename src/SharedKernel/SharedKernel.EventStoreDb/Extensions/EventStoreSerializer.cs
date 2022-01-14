@@ -7,12 +7,13 @@ using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
+using IProtoData = Google.Protobuf.IMessage;
+
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        public static IdentifiedMessage<TMessage> Deserialize<TMessage>(this ResolvedEvent resolvedEvent) 
-            where TMessage : IMessage
+        public static TMessage Deserialize<TMessage>(this ResolvedEvent resolvedEvent) where TMessage : IMessage
         {
             object data = ProtobufSerializer.FromByteArray
             (
@@ -20,30 +21,29 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 MessageTypeMapper.ToType(resolvedEvent.Event.EventType)
             );
 
-            if (data is not TMessage message) throw new Exception("Invalid message type!");
+            if (data is not TMessage message) return default;
 
-            MessageMetadata metadata = ProtobufSerializer.FromByteArray
+            message.Metadata = ProtobufSerializer.FromByteArray
                 <MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
 
-            return new IdentifiedMessage<TMessage>(message, metadata);
+            return message;
         }
 
-        public static IReadOnlyList<EventData> ToEventData<TMessage>(this IEnumerable<IIdentifiedMessage<TMessage>> messages) 
+        public static IReadOnlyList<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages) 
             where TMessage : IMessage
             => messages.Select((message, index) => new EventData
                 (
                     GetDeterministicMessageId(message, index),
-                    GetMessageTypeName(message.Data),
-                    ProtobufSerializer.ToByteArray(message.Data),
+                    GetMessageTypeName(message),
+                    ProtobufSerializer.ToByteArray(message),
                     ProtobufSerializer.ToByteArray(message.Metadata),
                     "application/octet-stream"
                 )).ToList();
 
         // TODO - test idempotent behaviour without determ. guid.
-        private static Uuid GetDeterministicMessageId<TMessage>(IIdentifiedMessage<TMessage> message, int index) 
-            where TMessage : IMessage
+        private static Uuid GetDeterministicMessageId<TMessage>(TMessage message, int index) where TMessage : IMessage
         {
-            string messageName = GetMessageTypeName(message.Data);
+            string messageName = GetMessageTypeName(message);
             
             Guid deterministicId = DeterministicGuid.Create
             (

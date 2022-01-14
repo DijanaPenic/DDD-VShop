@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class FinalizeOrderCommand : IBaseCommand
+    public partial class FinalizeOrderCommand : Command, IBaseCommand
     {
         public FinalizeOrderCommand
         (

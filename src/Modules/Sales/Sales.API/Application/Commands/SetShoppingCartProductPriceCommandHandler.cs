@@ -19,13 +19,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<SetShoppingCartProductPriceCommand> command,
+            SetShoppingCartProductPriceCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -35,8 +35,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Result setProductPriceResult = shoppingCart.SetProductPrice
             (
-                EntityId.Create(command.Data.ProductId).Data,
-                Price.Create(command.Data.UnitPrice).Data
+                EntityId.Create(command.ProductId).Data,
+                Price.Create(command.UnitPrice).Data
             );
             if (setProductPriceResult.IsError) return setProductPriceResult.Error;
 

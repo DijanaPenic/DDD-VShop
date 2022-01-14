@@ -1,10 +1,11 @@
 ﻿using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class OrderPlacedDomainEvent : IDomainEvent
+    public partial class OrderPlacedDomainEvent : MessageContext, IDomainEvent
     {
         public OrderPlacedDomainEvent
         (

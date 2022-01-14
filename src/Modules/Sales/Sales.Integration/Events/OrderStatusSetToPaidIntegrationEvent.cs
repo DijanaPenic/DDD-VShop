@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 
 namespace VShop.Modules.Sales.Integration.Events
 {
     // Notification for Catalog - need to perform the "out of stock" check.
-    public partial class OrderStatusSetToPaidIntegrationEvent : IIntegrationEvent
+    public partial class OrderStatusSetToPaidIntegrationEvent : MessageContext, IIntegrationEvent
     {
         public OrderStatusSetToPaidIntegrationEvent(Guid orderId, IEnumerable<Types.OrderLine> orderLines)
         {

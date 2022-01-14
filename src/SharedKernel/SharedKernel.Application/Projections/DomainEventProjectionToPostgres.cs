@@ -42,8 +42,8 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIdentifiedMessage<IMessage> message = resolvedEvent.Deserialize<IMessage>();
-            if(message.Data is not IDomainEvent domainEvent) return;
+            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>();
+            if(domainEvent is null) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();
             TDbContext readDataContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
@@ -62,7 +62,7 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await handler();
                 
-                await readDataContext.SaveChangesAsync(message.Metadata.EffectiveTime.ToInstant(), cancellationToken);
+                await readDataContext.SaveChangesAsync(domainEvent.Metadata.EffectiveTime.ToInstant(), cancellationToken);
 
                 await subscriptionContext.Database.UseTransactionAsync
                 (

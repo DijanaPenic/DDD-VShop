@@ -17,7 +17,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             this EventStoreClient eventStoreClient,
             string streamSuffix,
             int expectedRevision,
-            IEnumerable<IIdentifiedMessage<IMessage>> messages,
+            IEnumerable<IMessage> messages,
             CancellationToken cancellationToken = default
         ) => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
@@ -32,7 +32,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             this EventStoreClient eventStoreClient,
             string streamSuffix,
             StreamState expectedState,
-            IEnumerable<IIdentifiedMessage<IMessage>> messages,
+            IEnumerable<IMessage> messages,
             CancellationToken cancellationToken = default
         ) => RetryWrapper.ExecuteAsync((ct) => eventStoreClient.AppendToStreamAsync
             (
@@ -42,7 +42,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 cancellationToken: ct
             ), cancellationToken);
         
-        public static async Task<IReadOnlyList<IdentifiedMessage<TMessage>>> ReadStreamForwardAsync<TMessage>
+        public static async Task<IReadOnlyList<TMessage>> ReadStreamForwardAsync<TMessage>
         (
             this EventStoreClient eventStoreClient,
             string streamSuffix,
@@ -58,7 +58,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                     cancellationToken: ct
                 ), cancellationToken);
 
-            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<IdentifiedMessage<TMessage>>();
+            if ((await result.ReadState) is ReadState.StreamNotFound) return new List<TMessage>();
 
             IList<ResolvedEvent> messages = await result.ToListAsync(cancellationToken);
 

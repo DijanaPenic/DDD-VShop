@@ -4,11 +4,9 @@ using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.SharedKernel.Messaging.Commands.Publishing.Contracts
 {
-    public interface ICommandHandler<TCommand, TResponse> 
-        : IRequestHandler<IdentifiedCommand<TCommand, TResponse>, Result<TResponse>>
-        where TCommand : IBaseCommand { }
+    public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>>
+        where TCommand : IRequest<Result<TResponse>> { }
     
-    public interface ICommandHandler<TCommand> 
-        : IRequestHandler<IdentifiedCommand<TCommand>, Result>
-        where TCommand : IBaseCommand { }
+    public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, Result>
+        where TCommand : IRequest<Result>  { }
 }

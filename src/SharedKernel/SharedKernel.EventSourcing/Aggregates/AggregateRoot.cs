@@ -25,11 +25,11 @@ namespace VShop.SharedKernel.EventSourcing.Aggregates
 
         public void Restore() => IsRestored = true;
 
-        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> history)
+        public void Load(IEnumerable<IBaseEvent> history)
         {
-            foreach (IIdentifiedEvent<IBaseEvent> @event in history)
+            foreach (IBaseEvent @event in history)
             {
-                if(@event.Data is IDomainEvent domainEvent) ApplyEvent(domainEvent);
+                if(@event is IDomainEvent domainEvent) ApplyEvent(domainEvent);
                 Version++;
             }
         }

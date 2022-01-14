@@ -8,14 +8,14 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {
     public class ProcessManagerInbox : IProcessManagerInbox
     {
-        private readonly List<IIdentifiedEvent<IBaseEvent>> _events = new();
+        private readonly List<IBaseEvent> _events = new();
         
-        public IReadOnlyList<IIdentifiedEvent<IBaseEvent>> Events => _events;
+        public IReadOnlyList<IBaseEvent> Events => _events;
         public int Version { get; set; } = -1;
         public IDictionary<Type, Action<IBaseEvent, Instant>> MessageHandlers { get; }
             = new Dictionary<Type, Action<IBaseEvent, Instant>>();
 
-        public void Add(IIdentifiedEvent<IBaseEvent> @event) => _events.Add(@event);
+        public void Add(IBaseEvent @event) => _events.Add(@event);
         public void Clear()
         {
             Version += _events.Count;
@@ -26,6 +26,6 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
     public interface IProcessManagerInbox
     {
         public int Version { get; }
-        IReadOnlyList<IIdentifiedEvent<IBaseEvent>> Events { get; }
+        IReadOnlyList<IBaseEvent> Events { get; }
     }
 }

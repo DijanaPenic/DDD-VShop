@@ -19,13 +19,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
         
         public async Task<Result> Handle
         (
-            IdentifiedCommand<SetDeliveryAddressCommand> command,
+            SetDeliveryAddressCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -35,11 +35,11 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
             Result<Address> addressResult = Address.Create
             (
-                command.Data.City,
-                command.Data.CountryCode,
-                command.Data.PostalCode,
-                command.Data.StateProvince,
-                command.Data.StreetAddress
+                command.City,
+                command.CountryCode,
+                command.PostalCode,
+                command.StateProvince,
+                command.StreetAddress
             );
             if (addressResult.IsError) return addressResult.Error;
             

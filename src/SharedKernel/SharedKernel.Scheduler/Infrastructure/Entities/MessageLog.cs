@@ -20,22 +20,23 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
         // For database migrations.
         public MessageLog() { } 
         
-        public MessageLog(IIdentifiedMessage<IScheduledMessage> message)
+        public MessageLog(IScheduledMessage message)
         {
             Id = message.Metadata.MessageId;
-            Body = ProtobufSerializer.ToByteArray(message.Data);
+            Body = ProtobufSerializer.ToByteArray(message);
             Metadata = ProtobufSerializer.ToByteArray(message.Metadata);
             Status = MessageStatus.Scheduled;
-            TypeName = message.Data.TypeName;
-            ScheduledTime = message.Data.ScheduledTime.ToInstant();
+            TypeName = message.TypeName;
+            ScheduledTime = message.ScheduledTime.ToInstant();
         }
-        
-        public IIdentifiedMessage<IMessage> GetMessage()
-            => new IdentifiedMessage<IMessage>
-            (
-                ProtobufSerializer.FromByteArray(Body, ToType(TypeName)) as IMessage, 
-                ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata)
-            );
+
+        public IMessage GetMessage()
+        {
+            IMessage message = (IMessage)ProtobufSerializer.FromByteArray(Body, ToType(TypeName));
+            message.Metadata = ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata);
+
+            return message;
+        }
         
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }

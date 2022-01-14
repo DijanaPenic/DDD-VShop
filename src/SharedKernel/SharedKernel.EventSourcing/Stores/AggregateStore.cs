@@ -44,16 +44,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            if (aggregate is null)
-                throw new ArgumentNullException(nameof(aggregate));
+            if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IdentifiedEvent<IBaseEvent>> events = await SaveAsync
-            (
-                aggregate,
-                messageId,
-                correlationId,
-                cancellationToken
-            );
+            IList<IBaseEvent> events = await SaveAsync(aggregate, messageId, correlationId, cancellationToken);
 
             try
             {
@@ -66,7 +59,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         }
 
         // TODO - can I merge Publish and Save?
-        public async Task<IList<IdentifiedEvent<IBaseEvent>>> SaveAsync
+        public async Task<IList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,
             Guid messageId,
@@ -74,21 +67,19 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            if (aggregate is null)
-                throw new ArgumentNullException(nameof(aggregate));
+            if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IdentifiedEvent<IBaseEvent>> events = aggregate.Events
-                .Select(@event => new IdentifiedEvent<IBaseEvent>
+            IList<IBaseEvent> events = aggregate.Events.Select(@event =>
+            {
+                @event.Metadata = new MessageMetadata
                 (
-                    @event,
-                    new MessageMetadata
-                    (
-                        SequentialGuid.Create(),
-                        messageId,
-                        correlationId,
-                        _clockService.Now
-                    )
-                )).ToList();
+                    SequentialGuid.Create(),
+                    messageId,
+                    correlationId,
+                    _clockService.Now
+                );
+                return @event;
+            }).ToList();
             
             await _eventStoreClient.AppendToStreamAsync
             (
@@ -108,17 +99,15 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IdentifiedEvent<IBaseEvent>> events = (await _eventStoreClient
-                .ReadStreamForwardAsync<IBaseEvent>(GetStreamName(aggregateId), cancellationToken))
-                .Select(e => new IdentifiedEvent<IBaseEvent>(e))
-                .ToList();
+            IReadOnlyList<IBaseEvent> events = await _eventStoreClient
+                .ReadStreamForwardAsync<IBaseEvent>(GetStreamName(aggregateId), cancellationToken);
 
             if (events.Count is 0) return default;
 
             TAggregate aggregate = new();
             aggregate.Load(events);
             
-            IList<IdentifiedEvent<IBaseEvent>> processedEvents = events
+            IList<IBaseEvent> processedEvents = events
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
 
             if (!processedEvents.Any()) return aggregate;
@@ -131,12 +120,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         
         public async Task PublishAsync
         (
-            IEnumerable<IIdentifiedEvent<IBaseEvent>> events,
+            IEnumerable<IBaseEvent> events,
             CancellationToken cancellationToken = default
         )
         {
             // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
-            foreach (IIdentifiedEvent<IBaseEvent> @event in events)
+            foreach (IBaseEvent @event in events)
                 await _eventBus.Publish(@event, EventPublishStrategy.SyncStopOnException, cancellationToken);
         }
 

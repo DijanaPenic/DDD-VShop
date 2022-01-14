@@ -20,13 +20,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result> Handle
         (
-            IdentifiedCommand<RemoveShoppingCartProductCommand> command,
+            RemoveShoppingCartProductCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
+                EntityId.Create(command.ShoppingCartId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -36,8 +36,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result removeProductResult = shoppingCart.RemoveProductQuantity
             (
-                EntityId.Create(command.Data.ProductId).Data,
-                ProductQuantity.Create(command.Data.Quantity).Data
+                EntityId.Create(command.ProductId).Data,
+                ProductQuantity.Create(command.Quantity).Data
             );
             if (removeProductResult.IsError) return removeProductResult.Error;
 

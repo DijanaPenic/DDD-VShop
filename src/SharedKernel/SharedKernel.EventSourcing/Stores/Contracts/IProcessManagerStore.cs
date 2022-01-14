@@ -20,7 +20,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 
         Task PublishAsync
         (
-            IEnumerable<IIdentifiedMessage<IMessage>> messages,
+            IEnumerable<IMessage> messages,
             CancellationToken cancellationToken = default
         );
 

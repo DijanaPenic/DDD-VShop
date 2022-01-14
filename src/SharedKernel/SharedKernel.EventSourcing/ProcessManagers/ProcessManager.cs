@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NodaTime;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Commands;
 
@@ -24,15 +26,15 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             => _inbox.MessageHandlers[typeof(TEvent)] = 
                 (message, now) => handler(message as TEvent, now);
 
-        public void Transition(IIdentifiedEvent<IBaseEvent> @event, Instant now)
+        public void Transition(IBaseEvent @event, Instant now)
         {
-            ApplyEvent(@event.Data);
+            ApplyEvent(@event);
             _inbox.Add(@event);
 
-            Type eventType = @event.Data.GetType();
+            Type eventType = @event.GetType();
             
             if (_inbox.MessageHandlers.ContainsKey(eventType))
-                _inbox.MessageHandlers[eventType](@event.Data, now);
+                _inbox.MessageHandlers[eventType](@event, now);
             
             // else - don't need to have event handler events for all events. Some events can only trigger 
             // process manager status change.
@@ -50,13 +52,15 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 
         public void Restore() => IsRestored = true;
         
-        public void Load(IEnumerable<IIdentifiedEvent<IBaseEvent>> inboxHistory)
+        public void Load(IEnumerable<IBaseEvent> inboxHistory, IEnumerable<IMessage> outboxHistory)
         {
-            foreach (IIdentifiedEvent<IBaseEvent> message in inboxHistory)
+            foreach (IBaseEvent message in inboxHistory)
             {
-                ApplyEvent(message.Data);
+                ApplyEvent(message);
                 _inbox.Version++;
             }
+
+            _outbox.Version = outboxHistory.Count() -1;
         }
         
         public void Clear()

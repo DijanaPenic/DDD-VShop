@@ -9,7 +9,7 @@ using Type = System.Type;
 
 namespace VShop.SharedKernel.Messaging
 {
-    public partial class ScheduledMessage : IScheduledMessage
+    public partial class ScheduledMessage : MessageContext, IScheduledMessage
     {
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
@@ -18,7 +18,14 @@ namespace VShop.SharedKernel.Messaging
             ScheduledTime = scheduledTime.ToTimestamp();
         }
         
-        public object GetMessage() => ProtobufSerializer.FromByteString(Body, ToType(TypeName));
+        public IMessage GetMessage()
+        {
+            IMessage message = (IMessage)ProtobufSerializer.FromByteString(Body, ToType(TypeName));
+            message.Metadata = Metadata;
+
+            return message;
+        }
+        
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }
@@ -28,6 +35,6 @@ namespace VShop.SharedKernel.Messaging
         ByteString Body { get; }
         string TypeName { get; }
         Timestamp ScheduledTime { get; }
-        object GetMessage();
+        IMessage GetMessage();
     }
 }

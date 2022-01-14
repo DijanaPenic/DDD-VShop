@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
@@ -41,17 +40,16 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                IIdentifiedMessage<IMessage> message = messageLog.GetMessage();
-                
-                switch (message.Data)
+                // TODO - investigate. It's not working.
+                switch (messageLog.GetMessage())
                 {
-                    case IBaseCommand:
-                        await _commandBus.SendAsync(message, cancellationToken);  // TODO - need to test this. Should not work.
+                    case IBaseCommand command:
+                        await _commandBus.SendAsync(command, cancellationToken);
                         break;
-                    case IBaseEvent:
+                    case IBaseEvent @event:
                         await _eventBus.Publish
                         (
-                            message as IIdentifiedEvent<IBaseEvent>, // TODO - need to test this. Should be null.
+                            @event,
                             EventPublishStrategy.SyncStopOnException,
                             cancellationToken
                         );

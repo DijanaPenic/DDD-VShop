@@ -6,7 +6,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
-    public partial class TransferCommand : IBaseCommand
+    public partial class TransferCommand : Command, IBaseCommand
     {
         public TransferCommand
         (

@@ -21,7 +21,7 @@ namespace VShop.SharedKernel.Integration.Stores
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task SaveAsync(IIdentifiedEvent<IIntegrationEvent> @event, CancellationToken cancellationToken = default)
+        public async Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));

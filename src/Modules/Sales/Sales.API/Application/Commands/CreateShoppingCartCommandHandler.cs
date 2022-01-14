@@ -20,13 +20,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
 
         public async Task<Result<ShoppingCart>> Handle
         (
-            IdentifiedCommand<CreateShoppingCartCommand, ShoppingCart> command,
+            CreateShoppingCartCommand command,
             CancellationToken cancellationToken
         )
         {
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data, // TODO - improve validation in commands.
+                EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
                 command.Metadata.MessageId,
                 cancellationToken
             );
@@ -35,14 +35,14 @@ namespace VShop.Modules.Sales.API.Application.Commands
             
             Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
             (
-                EntityId.Create(command.Data.ShoppingCartId).Data,
-                EntityId.Create(command.Data.CustomerId).Data,
-                Discount.Create(command.Data.CustomerDiscount).Data
+                EntityId.Create(command.ShoppingCartId).Data,
+                EntityId.Create(command.CustomerId).Data,
+                Discount.Create(command.CustomerDiscount).Data
             );
             if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
             shoppingCart = createShoppingCartResult.Data;
-            foreach (ShoppingCartItemCommand shoppingCartItem in command.Data.ShoppingCartItems)
+            foreach (ShoppingCartItemCommand shoppingCartItem in command.ShoppingCartItems)
             {
                 Result addProductResult = shoppingCart.AddProductQuantity
                 (
