@@ -31,7 +31,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
             
-            if (shoppingCart.IsRestored) return shoppingCart;
+            if (shoppingCart is not null) return shoppingCart;
             
             Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
             (

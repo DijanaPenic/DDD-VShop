@@ -121,11 +121,10 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             IList<IdentifiedEvent<IBaseEvent>> processedEvents = events
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
 
-            if (processedEvents.Any())
-            {
-                await PublishAsync(processedEvents, cancellationToken); 
-                aggregate.Restore();
-            }
+            if (!processedEvents.Any()) return aggregate;
+            
+            await PublishAsync(processedEvents, cancellationToken); 
+            aggregate.Restore();
 
             return aggregate;
         }

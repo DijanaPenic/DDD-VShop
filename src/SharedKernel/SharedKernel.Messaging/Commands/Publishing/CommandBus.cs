@@ -22,7 +22,8 @@ namespace VShop.SharedKernel.Messaging.Commands.Publishing
         (
             IdentifiedCommand<TCommand, TResponse> command,
             CancellationToken cancellationToken = default
-        ) where TCommand : IBaseCommand
+        )
+            where TCommand : IBaseCommand
             => TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
 
         public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)

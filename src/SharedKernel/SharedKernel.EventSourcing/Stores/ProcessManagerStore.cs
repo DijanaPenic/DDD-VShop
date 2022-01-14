@@ -142,11 +142,10 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             IList<IIdentifiedMessage<IMessage>> processedMessages = outboxMessages
                 .Where(e => e.Metadata.CausationId == messageId).ToList();
 
-            if (processedMessages.Any())
-            {
-                await PublishAsync(processedMessages, cancellationToken); 
-                processManager.Restore();
-            }
+            if (!processedMessages.Any()) return processManager;
+            
+            await PublishAsync(processedMessages, cancellationToken); 
+            processManager.Restore();
 
             return processManager;
         }

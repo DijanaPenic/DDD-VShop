@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
                 cancellationToken
             );
 
-            if (order.IsRestored) return order;
+            if (order is not null) return order;
             
             Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
             (

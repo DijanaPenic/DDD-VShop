@@ -9,22 +9,16 @@ namespace VShop.Modules.Sales.API.Infrastructure.SchedulerMigrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<byte[]>(
-                name: "body",
-                schema: "scheduler",
-                table: "message_log",
-                type: "bytea",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "text");
-
             migrationBuilder.AddColumn<byte[]>(
                 name: "metadata",
                 schema: "scheduler",
                 table: "message_log",
                 type: "bytea",
                 nullable: false,
-                defaultValue: new byte[0]);
+                defaultValue: Array.Empty<byte>());
+
+            migrationBuilder.Sql("alter table scheduler.message_log alter column body type bytea using body::bytea");
+            migrationBuilder.Sql("alter table scheduler.message_log alter column body set default \'\\x\'::bytea");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -42,6 +36,9 @@ namespace VShop.Modules.Sales.API.Infrastructure.SchedulerMigrations
                 nullable: false,
                 oldClrType: typeof(byte[]),
                 oldType: "bytea");
+            
+            migrationBuilder.Sql("alter table scheduler.message_log alter column body type text using body::text");
+            migrationBuilder.Sql("alter table scheduler.message_log alter column body type text drop default");
         }
     }
 }

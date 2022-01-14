@@ -170,7 +170,7 @@ namespace VShop.Modules.Sales.API.Controllers
             return HandleResult(result, Created);
         }
         
-        [HttpDelete]
+        [HttpPut]
         [Route("{shoppingCartId:guid}/products/{productId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
