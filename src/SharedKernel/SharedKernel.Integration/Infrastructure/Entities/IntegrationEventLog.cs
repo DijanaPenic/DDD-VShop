@@ -1,4 +1,5 @@
 ﻿using System;
+using Google.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
@@ -24,8 +25,8 @@ namespace VShop.SharedKernel.Integration.Infrastructure.Entities
         {
             Id = @event.Metadata.MessageId;
             TypeName = ToName(@event.GetType());
-            Body = ProtobufSerializer.ToByteArray(@event);
-            Metadata = ProtobufSerializer.ToByteArray(@event.Metadata);
+            Body = @event.ToByteArray();
+            Metadata = @event.Metadata.ToByteArray();
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;

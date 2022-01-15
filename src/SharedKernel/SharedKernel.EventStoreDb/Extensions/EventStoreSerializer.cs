@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 using EventStore.Client;
-
+using Google.Protobuf;
 using VShop.SharedKernel.Messaging;
 
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Types;
 
 using Uuid = EventStore.Client.Uuid;
-using IProtoData = Google.Protobuf.IMessage;
+using IMessage = VShop.SharedKernel.Messaging.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
@@ -37,8 +37,8 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 (
                     GetDeterministicMessageId(message, index),
                     GetMessageTypeName(message),
-                    ProtobufSerializer.ToByteArray(message),
-                    ProtobufSerializer.ToByteArray(message.Metadata),
+                    message.ToByteArray(),
+                    message.Metadata.ToByteArray(),
                     "application/octet-stream"
                 )).ToList();
 

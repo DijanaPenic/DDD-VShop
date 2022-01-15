@@ -6,8 +6,6 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
 {
     public static class ProtobufSerializer
     {
-        public static byte[] ToByteArray(IMessage data) => data.ToByteArray();
-
         public static TData FromByteArray<TData>(byte[] data) where TData : IMessage
             => (TData)FromByteArray(data, typeof(TData));
         
@@ -20,8 +18,6 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
             
             return message;
         }
-        
-        public static ByteString ToByteString(IMessage data) => data.ToByteString();
 
         public static IMessage FromByteString(ByteString data, Type type)
         {

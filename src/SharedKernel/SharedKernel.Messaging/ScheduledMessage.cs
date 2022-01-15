@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.Messaging
     {
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
-            Body = ProtobufSerializer.ToByteString(message);
+            Body = message.ToByteString();
             TypeName = ToName(message.GetType());
             ScheduledTime = scheduledTime.ToTimestamp();
         }

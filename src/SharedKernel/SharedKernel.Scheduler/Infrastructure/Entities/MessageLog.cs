@@ -1,10 +1,13 @@
 ﻿using System;
+using Google.Protobuf;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Serialization;
+
+using IMessage = VShop.SharedKernel.Messaging.IMessage;
 
 namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
 {
@@ -23,13 +26,13 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
         public MessageLog(IScheduledMessage message)
         {
             Id = message.Metadata.MessageId;
-            Body = ProtobufSerializer.ToByteArray(message);
-            Metadata = ProtobufSerializer.ToByteArray(message.Metadata);
+            Body = message.Body.ToByteArray();
+            Metadata = message.Metadata.ToByteArray();
             Status = MessageStatus.Scheduled;
             TypeName = message.TypeName;
             ScheduledTime = message.ScheduledTime.ToInstant();
         }
-
+        
         public IMessage GetMessage()
         {
             IMessage message = (IMessage)ProtobufSerializer.FromByteArray(Body, ToType(TypeName));
