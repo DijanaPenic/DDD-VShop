@@ -24,6 +24,7 @@ using VShop.Modules.Billing.Integration.Events;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
+    [Collection("Non-Parallel Tests Collection")]
     public class OrderingProcessManagerIntegrationTests
     {
         [Theory]
