@@ -1,5 +1,6 @@
 using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
@@ -13,7 +14,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             string countryCode,
             string postalCode,
             string stateProvince,
-            string streetAddress
+            string streetAddress,
+            MessageMetadata metadata = default
         )
         {
             ShoppingCartId = shoppingCartId;
@@ -22,6 +24,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             PostalCode = postalCode;
             StateProvince = stateProvince;
             StreetAddress = streetAddress;
+            Metadata = metadata;
         }
     }
 }

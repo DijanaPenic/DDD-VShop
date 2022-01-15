@@ -13,24 +13,29 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
         public static Task<ShoppingCart> GetShoppingCartAsync(EntityId shoppingCartId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>, ShoppingCart>
                (
-                    store => store.LoadAsync
-                    (
-                        shoppingCartId, 
-                        SequentialGuid.Create(),
-                        SequentialGuid.Create()
-                    )
+                    store => store.LoadAsync(shoppingCartId, SequentialGuid.Create())
                );
         
         public static Task SaveAndPublishAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>
                (
-                    store => store.SaveAndPublishAsync(shoppingCart)
+                   store => store.SaveAndPublishAsync
+                   (
+                       shoppingCart,
+                       SequentialGuid.Create(),
+                       SequentialGuid.Create()
+                   )
                );
         
         public static Task SaveAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>
             (
-                store => store.SaveAsync(shoppingCart)
+                store => store.SaveAsync
+                (
+                    shoppingCart,
+                    SequentialGuid.Create(),
+                    SequentialGuid.Create()
+                )
             );
     }
 }

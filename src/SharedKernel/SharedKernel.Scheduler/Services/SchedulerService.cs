@@ -28,20 +28,23 @@ namespace VShop.SharedKernel.Scheduler.Services
             CancellationToken cancellationToken = default
         )
         {
-            await LogScheduledMessageAsync(message, cancellationToken);
-                
+            string messageId = message.Metadata.MessageId.Value;
+            IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+            
+            ITrigger existingTrigger = await scheduler.GetTrigger(new TriggerKey(messageId), cancellationToken);
+            if(existingTrigger is not null) return;
+
             IJobDetail job = JobBuilder.Create<ProcessMessageJob>()
-                .WithIdentity(message.Metadata.MessageId.Value)
+                .WithIdentity(messageId)
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity(message.Metadata.MessageId.Value)
+                .WithIdentity(messageId)
                 .StartAt(message.ScheduledTime.ToDateTimeOffset())
                 .Build();
-
-            IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-
+            
             await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await LogScheduledMessageAsync(message, cancellationToken);
         }
 
         private Task LogScheduledMessageAsync
@@ -51,7 +54,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         )
         {
             MessageLog messageLog = new(message);
-            _schedulerContext.MessageLogs.Add(messageLog); // TODO - idempotent issue.
+            _schedulerContext.MessageLogs.Add(messageLog);
 
             return _schedulerContext.SaveChangesAsync(cancellationToken);
         }

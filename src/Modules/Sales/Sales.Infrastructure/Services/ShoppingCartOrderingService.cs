@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using VShop.Modules.Sales.Domain.Enums;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -21,7 +21,6 @@ namespace VShop.Modules.Sales.Infrastructure.Services
         public async Task<Result<Order>> CreateOrderAsync
         (
             EntityId shoppingCartId,
-            EntityId orderId,
             Guid causationId,
             CancellationToken cancellationToken = default
         )
@@ -33,9 +32,12 @@ namespace VShop.Modules.Sales.Infrastructure.Services
                 cancellationToken
             );
 
+            if (shoppingCart.Status is not ShoppingCartStatus.PendingCheckout)
+                return Result.ValidationError($"Shopping cart must be in '{ShoppingCartStatus.PendingCheckout}' status.");
+
             Result<Order> createOrderResult = Order.Create
             (
-                orderId,
+                shoppingCart.OrderId,
                 shoppingCart.DeliveryCost,
                 shoppingCart.Customer.CustomerId,
                 shoppingCart.Customer.Discount,

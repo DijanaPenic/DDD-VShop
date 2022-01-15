@@ -26,6 +26,7 @@ namespace VShop.SharedKernel.Messaging
             return message;
         }
         
+        public static string ToName<T>() => ToName(typeof(T));
         public static string ToName(Type type) => MessageTypeMapper.ToName(type);
         public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }

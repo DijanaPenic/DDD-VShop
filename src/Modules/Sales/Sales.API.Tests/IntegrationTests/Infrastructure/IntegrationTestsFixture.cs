@@ -91,13 +91,20 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 return action(service);
             });
 
-        public static Task<Result> SendAsync(ICommand command)
+        public static Task<Result> SendAsync(Command command)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
                 return commandBus.SendAsync(command);
             });
 
+        public static Task<Result<TResult>> SendAsync<TResult>(Command<TResult> command)
+            => ExecuteScopeAsync(sp =>
+            {
+                ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
+                return commandBus.SendAsync(command);
+            });
+        
         public static Task PublishAsync(IDomainEvent @event)
             => ExecuteScopeAsync(sp =>
             {
@@ -110,13 +117,6 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             {
                 IEventBus eventBus = sp.GetRequiredService<IEventBus>();
                 return eventBus.Publish(@event);
-            });
-        
-        public static Task<Result<TData>> SendAsync<TData>(ICommand<TData> command)
-            => ExecuteScopeAsync(sp =>
-            {
-                ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
-                return commandBus.SendAsync(command);
             });
 
         private static async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
@@ -10,11 +11,13 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public FinalizeOrderCommand
         (
             Guid orderId,
-            IEnumerable<Types.OrderLine> orderLines
+            IEnumerable<Types.OrderLine> orderLines,
+            MessageMetadata metadata = default
         )
         {
             OrderId = orderId;
             OrderLines.Add(orderLines);
+            Metadata = metadata;
         }
         
         public partial class Types

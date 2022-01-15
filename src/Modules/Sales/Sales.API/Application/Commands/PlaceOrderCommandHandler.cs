@@ -44,7 +44,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,
-                EntityId.Create(command.OrderId).Data,
                 command.Metadata.MessageId,
                 cancellationToken
             );

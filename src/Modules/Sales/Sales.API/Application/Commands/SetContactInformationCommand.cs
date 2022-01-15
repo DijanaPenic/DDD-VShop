@@ -1,5 +1,6 @@
 using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Domain.Enums;
 
@@ -15,7 +16,8 @@ namespace VShop.Modules.Sales.API.Application.Commands
             string lastName,
             string emailAddress,
             string phoneNumber,
-            GenderType gender
+            GenderType gender,
+            MessageMetadata metadata = default
         )
         {
             ShoppingCartId = shoppingCartId;
@@ -25,6 +27,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             EmailAddress = emailAddress;
             PhoneNumber = phoneNumber;
             Gender = gender;
+            Metadata = metadata;
         }
     }
 }

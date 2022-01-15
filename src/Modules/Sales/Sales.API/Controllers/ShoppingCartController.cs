@@ -90,10 +90,11 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-            DeleteShoppingCartCommand command = new(shoppingCartId)
-            {
-                Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId)
-            };
+            DeleteShoppingCartCommand command = new
+            (
+                shoppingCartId,
+                new MessageMetadata(requestId, Guid.Empty, correlationId)
+            );
 
             Result result = await _commandBus.SendAsync(command);
         
@@ -113,10 +114,11 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-            CheckoutShoppingCartCommand command = new(shoppingCartId)
-            {
-                Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId)
-            };
+            CheckoutShoppingCartCommand command = new
+            (
+                shoppingCartId,
+                new MessageMetadata(requestId, Guid.Empty, correlationId)
+            );
 
             Result<CheckoutResponse> result = await _commandBus.SendAsync(command);
         
@@ -142,11 +144,11 @@ namespace VShop.Modules.Sales.API.Controllers
             AddShoppingCartProductCommand command = new
             (
                 shoppingCartId,
-                _mapper.Map<ShoppingCartItemCommand>(request)
+                _mapper.Map<ShoppingCartItemCommand>(request),
+                new MessageMetadata(requestId, Guid.Empty, correlationId)
             )
             {
-                ShoppingCartItem = { ProductId = productId },
-                Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId)
+                ShoppingCartItem = { ProductId = productId }
             };
 
             Result result = await _commandBus.SendAsync(command);

@@ -4,6 +4,8 @@ using AutoFixture;
 
 using VShop.SharedKernel.Tests.Extensions;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Messaging.CustomTypes;
+using Decimal = System.Decimal;
 
 namespace VShop.SharedKernel.Tests
 {
@@ -35,6 +37,8 @@ namespace VShop.SharedKernel.Tests
             CommonFixture.Register(() => ProductQuantity.Create(CommonFixture.CreateInt(1, 10)).Data);
             CommonFixture.Register(() => Price.Create(CommonFixture.CreateDecimal(10, 100)).Data);
             CommonFixture.Register(() => Discount.Create(CommonFixture.CreateInt(0, 100)).Data);
+            CommonFixture.Register(Uuid.NewSequentialUuId);
+            CommonFixture.Register(() => (Messaging.CustomTypes.Decimal)CommonFixture.CreateDecimal(10, 100));
         } 
     }
 }

@@ -13,7 +13,6 @@ namespace VShop.Modules.Sales.Domain.Services
         Task<Result<Order>> CreateOrderAsync
         (
             EntityId shoppingCartId,
-            EntityId orderId,
             Guid causationId,
             CancellationToken cancellationToken = default
         );

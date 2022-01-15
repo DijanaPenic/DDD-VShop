@@ -37,18 +37,13 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
             )
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
                (
-                    store => store.LoadAsync(processManagerId, causationId, correlationId)
+                    store => store.LoadAsync(processManagerId, causationId)
                );
 
         public static Task<Order> GetOrderAsync(EntityId orderId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<Order>, Order>
                (
-                    store => store.LoadAsync
-                    (
-                        orderId, 
-                        SequentialGuid.Create(), 
-                        SequentialGuid.Create()
-                    )
+                    store => store.LoadAsync(orderId, SequentialGuid.Create())
                );
     }
 }

@@ -1,5 +1,6 @@
 using System;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
@@ -10,12 +11,14 @@ namespace VShop.Modules.Sales.API.Application.Commands
         (
             Guid shoppingCartId,
             Guid productId,
-            int quantity
+            int quantity,
+            MessageMetadata metadata = default
         )
         {
             ShoppingCartId = shoppingCartId;
             ProductId = productId;
             Quantity = quantity;
+            Metadata = metadata;
         }
     }
 }

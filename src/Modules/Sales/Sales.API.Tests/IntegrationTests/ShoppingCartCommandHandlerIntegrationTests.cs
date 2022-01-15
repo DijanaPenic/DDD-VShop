@@ -1,9 +1,9 @@
 using Xunit;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
@@ -15,6 +15,8 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+
+using Address = VShop.SharedKernel.Domain.ValueObjects.Address;
 
 namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 {
@@ -28,7 +30,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            AddShoppingCartItem[] shoppingCartItems
+            ShoppingCartItemCommand[] shoppingCartItems,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -37,7 +40,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 shoppingCartId,
                 customerId,
                 customerDiscount,
-                shoppingCartItems
+                shoppingCartItems, 
+                commandMetadata
             );
 
             // Act
@@ -57,7 +61,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            AddShoppingCartItem[] shoppingCartItems
+            ShoppingCartItemCommand[] shoppingCartItems,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -66,7 +71,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 shoppingCartId,
                 customerId,
                 customerDiscount,
-                shoppingCartItems
+                shoppingCartItems, 
+                commandMetadata
             );
             await IntegrationTestsFixture.SendAsync(command);
 
@@ -79,7 +85,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Changes_product_price_in_the_shopping_cart(ShoppingCart shoppingCart)
+        public async Task Changes_product_price_in_the_shopping_cart
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -89,7 +99,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem.Id,
-                shoppingCartItem.UnitPrice.Value + 1
+                shoppingCartItem.UnitPrice.Value + 1, 
+                commandMetadata
             );
             
             // Act
@@ -109,7 +120,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Changing_product_price_in_the_shopping_cart_is_idempotent(ShoppingCart shoppingCart)
+        public async Task Changing_product_price_in_the_shopping_cart_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -119,7 +134,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem.Id,
-                shoppingCartItem.UnitPrice.Value + 1
+                shoppingCartItem.UnitPrice.Value + 1, 
+                commandMetadata
             );
             
             await IntegrationTestsFixture.SendAsync(command);
@@ -136,7 +152,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
-            AddShoppingCartItem shoppingCartItem
+            ShoppingCartItemCommand shoppingCartItem,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -145,7 +162,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             AddShoppingCartProductCommand command = new
             (
                 shoppingCart.Id,
-                shoppingCartItem
+                shoppingCartItem,
+                commandMetadata
             );
             
             // Act
@@ -167,7 +185,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
-            AddShoppingCartItem shoppingCartItem
+            ShoppingCartItemCommand shoppingCartItem,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -176,7 +195,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             AddShoppingCartProductCommand command = new
             (
                 shoppingCart.Id,
-                shoppingCartItem
+                shoppingCartItem,
+                commandMetadata
             );
             
             await IntegrationTestsFixture.SendAsync(command);
@@ -190,7 +210,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removes_a_product_from_the_shopping_cart(ShoppingCart shoppingCart)
+        public async Task Removes_a_product_from_the_shopping_cart
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -200,7 +224,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem.Id,
-                shoppingCartItem.Quantity
+                shoppingCartItem.Quantity, 
+                commandMetadata
             );
             
             // Act
@@ -219,7 +244,11 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
+        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -229,7 +258,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             (
                 shoppingCart.Id,
                 shoppingCartItem.Id,
-                shoppingCartItem.Quantity
+                shoppingCartItem.Quantity, 
+                commandMetadata
             );
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -248,7 +278,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             FullName fullName,
             GenderType gender,
             EmailAddress emailAddress,
-            PhoneNumber phoneNumber
+            PhoneNumber phoneNumber,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -262,7 +293,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 fullName.LastName,
                 emailAddress,
                 phoneNumber,
-                gender
+                gender, 
+                commandMetadata
             );
             
             // Act
@@ -287,7 +319,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             FullName fullName,
             GenderType gender,
             EmailAddress emailAddress,
-            PhoneNumber phoneNumber
+            PhoneNumber phoneNumber,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -301,7 +334,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 fullName.LastName,
                 emailAddress,
                 phoneNumber,
-                gender
+                gender, 
+                commandMetadata
             );
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -317,7 +351,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Sets_a_customer_delivery_address
         (
             ShoppingCart shoppingCart,
-            Address deliveryAddress
+            Address deliveryAddress,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -330,7 +365,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 deliveryAddress.CountryCode,
                 deliveryAddress.PostalCode,
                 deliveryAddress.StateProvince,
-                deliveryAddress.StreetAddress
+                deliveryAddress.StreetAddress, 
+                commandMetadata
             );
             
             // Act
@@ -349,7 +385,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Setting_a_customer_delivery_address_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            Address deliveryAddress
+            Address deliveryAddress,
+            MessageMetadata commandMetadata
         )
         {
             // Arrange
@@ -362,7 +399,8 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
                 deliveryAddress.CountryCode,
                 deliveryAddress.PostalCode,
                 deliveryAddress.StateProvince,
-                deliveryAddress.StreetAddress
+                deliveryAddress.StreetAddress, 
+                commandMetadata
             );
             
             // Act
@@ -374,12 +412,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deletes_the_shopping_cart(ShoppingCart shoppingCart)
+        public async Task Deletes_the_shopping_cart
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            DeleteShoppingCartCommand command = new(shoppingCart.Id);
+            DeleteShoppingCartCommand command = new(shoppingCart.Id, commandMetadata);
             
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -393,12 +435,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deleting_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
+        public async Task Deleting_the_shopping_cart_command_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            MessageMetadata commandMetadata
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
-            DeleteShoppingCartCommand command = new(shoppingCart.Id);
+            DeleteShoppingCartCommand command = new(shoppingCart.Id, commandMetadata);
             
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -411,12 +457,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_places_an_order(ShoppingCart shoppingCart)
+         public async Task Shopping_cart_checkout_places_an_order
+         (
+             ShoppingCart shoppingCart,
+             MessageMetadata commandMetadata
+         )
          {
              // Arrange
              await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
-             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
+             CheckoutShoppingCartCommand command = new(shoppingCart.Id, commandMetadata);
              
              // Act
              Result<CheckoutResponse> result = await IntegrationTestsFixture.SendAsync(command);
@@ -438,12 +488,16 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_command_is_idempotent(ShoppingCart shoppingCart)
+         public async Task Shopping_cart_checkout_command_is_idempotent
+         (
+             ShoppingCart shoppingCart,
+             MessageMetadata commandMetadata
+         )
          {
              // Arrange
              await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
-             CheckoutShoppingCartCommand command = new(shoppingCart.Id);
+             CheckoutShoppingCartCommand command = new(shoppingCart.Id, commandMetadata);
              
              await IntegrationTestsFixture.SendAsync(command);
              

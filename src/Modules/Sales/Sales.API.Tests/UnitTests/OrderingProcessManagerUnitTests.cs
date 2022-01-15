@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition(shoppingCartCheckoutRequestedDomainEvent, clockService.Now);
             
             // Assert
-            PlaceOrderCommand placeOrderCommand = processManager.Outbox.Commands
+            PlaceOrderCommand placeOrderCommand = processManager.Outbox.Messages
                 .OfType<PlaceOrderCommand>()
                 .SingleOrDefault();
             placeOrderCommand.Should().NotBeNull();
@@ -103,12 +103,12 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition(orderPlacedDomainEvent, clockService.Now);
             
             // Assert
-            DeleteShoppingCartCommand deleteShoppingCartCommand = processManager.Outbox.Commands
+            DeleteShoppingCartCommand deleteShoppingCartCommand = processManager.Outbox.Messages
                 .OfType<DeleteShoppingCartCommand>()
                 .SingleOrDefault();
             deleteShoppingCartCommand.Should().NotBeNull();
 
-            IScheduledMessage paymentReminder = processManager.Outbox.ScheduledMessages
+            IScheduledMessage paymentReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
                 .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<PaymentGracePeriodExpiredDomainEvent>());
             paymentReminder.Should().NotBeNull();
 
@@ -127,7 +127,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -167,7 +168,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
 
             int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId);
+            PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId, paymentMetadata);
 
             // Act
             processManager.Transition(paymentFailedIntegrationEvent, clockService.Now);
@@ -251,7 +252,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -291,7 +293,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
 
@@ -318,7 +320,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -358,7 +361,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentFailedIntegrationEvent(orderId),
+                new PaymentFailedIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
 
@@ -368,7 +371,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
             
             // Assert
-            CancelOrderCommand cancelOrderCommand = processManager.Outbox.Commands
+            CancelOrderCommand cancelOrderCommand = processManager.Outbox.Messages
                 .OfType<CancelOrderCommand>()
                 .SingleOrDefault();
             cancelOrderCommand.Should().NotBeNull();
@@ -388,7 +391,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -428,7 +432,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentFailedIntegrationEvent(orderId),
+                new PaymentFailedIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -460,7 +464,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -499,13 +504,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 clockService.Now
             );
 
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, paymentMetadata);
 
             // Act
             processManager.Transition(paymentSucceededIntegrationEvent, clockService.Now);
             
             // Assert
-            SetPaidOrderStatusCommand setPaidOrderStatusCommand = processManager.Outbox.Commands
+            SetPaidOrderStatusCommand setPaidOrderStatusCommand = processManager.Outbox.Messages
                 .OfType<SetPaidOrderStatusCommand>()
                 .SingleOrDefault();
             setPaidOrderStatusCommand.Should().NotBeNull();
@@ -525,7 +530,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -565,7 +571,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
 
@@ -575,7 +581,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition(orderStatusSetToPaidDomainEvent, clockService.Now);
             
             // Assert
-            IScheduledMessage stockReminder = processManager.Outbox.ScheduledMessages
+            IScheduledMessage stockReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
                 .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>());
             stockReminder.Should().NotBeNull();
 
@@ -594,7 +600,8 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata
         )
         {
             // Arrange
@@ -634,7 +641,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -667,7 +674,9 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             Address deliveryAddress,
             PhoneNumber phoneNumber,
             EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.OrderLine> orderLines
+            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines,
+            MessageMetadata paymentMetadata,
+            MessageMetadata stockMetadata
         )
         {
             // Arrange
@@ -707,7 +716,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -717,7 +726,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new OrderStockProcessedIntegrationEvent(orderId, orderLines),
+                new OrderStockProcessedIntegrationEvent(orderId, orderLines, stockMetadata),
                 clockService.Now
             );
             
@@ -745,7 +754,9 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             Address deliveryAddress,
             PhoneNumber phoneNumber,
             EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.OrderLine> orderLines
+            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines,
+            MessageMetadata paymentMetadata,
+            MessageMetadata stockMetadata
         )
         {
             // Arrange
@@ -785,7 +796,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -794,13 +805,13 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 clockService.Now
             );
 
-            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines);
+            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines, stockMetadata);
 
             // Act
             processManager.Transition(orderStockProcessedIntegrationEvent, clockService.Now);
             
             // Assert
-            FinalizeOrderCommand finalizeOrderCommand = processManager.Outbox.Commands
+            FinalizeOrderCommand finalizeOrderCommand = processManager.Outbox.Messages
                 .OfType<FinalizeOrderCommand>()
                 .SingleOrDefault();
             finalizeOrderCommand.Should().NotBeNull();
@@ -820,7 +831,9 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata,
+            MessageMetadata stockMetadata
         )
         {
             // Arrange
@@ -860,7 +873,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -873,10 +886,10 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 new OrderStockProcessedIntegrationEvent
                 (
                     orderId,
-                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }
+                    }, stockMetadata
                 ),
                 clockService.Now
             );
@@ -887,7 +900,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             processManager.Transition(orderStatusSetToPendingShippingDomainEvent, clockService.Now);
             
             // Assert
-            IScheduledMessage shippingReminder = processManager.Outbox.ScheduledMessages
+            IScheduledMessage shippingReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
                 .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<ShippingGracePeriodExpiredDomainEvent>());
             shippingReminder.Should().NotBeNull();
 
@@ -906,7 +919,9 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata,
+            MessageMetadata stockMetadata
         )
         {
             // Arrange
@@ -946,7 +961,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -959,10 +974,10 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 new OrderStockProcessedIntegrationEvent
                 (
                     orderId,
-                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }
+                    }, stockMetadata
                 ),
                 clockService.Now
             );
@@ -995,7 +1010,9 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress
+            EmailAddress emailAddress,
+            MessageMetadata paymentMetadata,
+            MessageMetadata stockMetadata
         )
         {
             // Arrange
@@ -1035,7 +1052,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId),
+                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
                 clockService.Now
             );
             processManager.Transition
@@ -1048,10 +1065,10 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
                 new OrderStockProcessedIntegrationEvent
                 (
                     orderId,
-                    new List<OrderStockProcessedIntegrationEvent.OrderLine>
+                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }
+                    }, stockMetadata
                 ),
                 clockService.Now
             );
