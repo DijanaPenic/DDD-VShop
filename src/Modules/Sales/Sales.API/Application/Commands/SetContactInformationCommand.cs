@@ -17,7 +17,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             string emailAddress,
             string phoneNumber,
             Gender gender,
-            MessageMetadata metadata = default
+            MessageMetadata metadata
         )
         {
             ShoppingCartId = shoppingCartId;

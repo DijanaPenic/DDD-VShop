@@ -1,14 +1,15 @@
 ﻿using NodaTime;
 using System.Linq;
 
+using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
 // TODO - email alert support.
 namespace VShop.Modules.Sales.API.Application.ProcessManagers
@@ -33,11 +34,11 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         }
 
         private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, Instant _) 
-            => RaiseCommand(new PlaceOrderCommand(OrderId, ShoppingCartId));
+            => RaiseCommand(new PlaceOrderCommand(OrderId, ShoppingCartId, new MessageMetadata()));
 
         private void Handle(OrderPlacedDomainEvent @event, Instant now)
         {
-            RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
+            RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId, new MessageMetadata()));
             
             // Schedule a reminder for payment.
             ScheduleReminder
@@ -51,14 +52,14 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
         {
             // User didn't manage to pay so we need to cancel the order.
             if (Status is OrderingProcessManagerStatus.OrderPaymentFailed)
-                RaiseCommand(new CancelOrderCommand(OrderId));
+                RaiseCommand(new CancelOrderCommand(OrderId, new MessageMetadata()));
             
             // Send an alert for the OrderPlaced status. The payment department
             // never replied with PaymentSucceededIntegrationEvent or PaymentFailedIntegrationEvent.
         }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
-            => RaiseCommand(new SetPaidOrderStatusCommand(OrderId));
+            => RaiseCommand(new SetPaidOrderStatusCommand(OrderId, new MessageMetadata()));
 
         private void Handle(OrderStatusSetToPaidDomainEvent @event, Instant now)
         {
@@ -87,7 +88,8 @@ namespace VShop.Modules.Sales.API.Application.ProcessManagers
                 (
                     ol.ProductId,
                     ol.OutOfStockQuantity
-                ))
+                )),
+                new MessageMetadata()
             ));
         }
         

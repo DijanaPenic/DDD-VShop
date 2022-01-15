@@ -7,7 +7,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
 {
     public partial class CancelOrderCommand : Command, IBaseCommand
     {
-        public CancelOrderCommand(Guid orderId, MessageMetadata metadata = default)
+        public CancelOrderCommand(Guid orderId, MessageMetadata metadata)
         {
             OrderId = orderId;
             Metadata = metadata;

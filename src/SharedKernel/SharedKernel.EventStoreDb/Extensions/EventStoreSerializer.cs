@@ -37,7 +37,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 (
                     GetDeterministicMessageId(message, index),
                     GetMessageTypeName(message),
-                    message.ToByteArray(),
+                    message.ToByteArray(), // Message.Metadata won't be deserialized here.
                     message.Metadata.ToByteArray(),
                     "application/octet-stream"
                 )).ToList();

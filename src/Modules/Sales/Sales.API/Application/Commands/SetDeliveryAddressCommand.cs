@@ -15,7 +15,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             string postalCode,
             string stateProvince,
             string streetAddress,
-            MessageMetadata metadata = default
+            MessageMetadata metadata
         )
         {
             ShoppingCartId = shoppingCartId;

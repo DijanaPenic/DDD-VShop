@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             Guid customerId,
             int customerDiscount,
             IEnumerable<ShoppingCartItemCommand> shoppingCartItems,
-            MessageMetadata metadata = default
+            MessageMetadata metadata
         )
         {
             ShoppingCartId = shoppingCartId;

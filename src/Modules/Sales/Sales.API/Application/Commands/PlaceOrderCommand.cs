@@ -12,7 +12,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         (
             Guid orderId,
             Guid shoppingCartId,
-            MessageMetadata metadata = default
+            MessageMetadata metadata
         )
         {
             OrderId = orderId;
