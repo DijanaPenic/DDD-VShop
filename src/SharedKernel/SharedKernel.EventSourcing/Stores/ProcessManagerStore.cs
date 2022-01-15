@@ -96,9 +96,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             {
                 switch (message)
                 {
-                    case IBaseCommand:
+                    case IBaseCommand command:
                     {
-                        object commandResult = await _commandBus.SendAsync(message, cancellationToken);
+                        object commandResult = await _commandBus.SendAsync(command, cancellationToken);
                     
                         if (commandResult is IResult { Value: ApplicationError error })
                             throw new Exception(error.ToString());

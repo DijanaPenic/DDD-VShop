@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
 
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
@@ -43,7 +45,9 @@ namespace VShop.SharedKernel.Scheduler.Services
                 switch (messageLog.GetMessage())
                 {
                     case IBaseCommand command:
-                        await _commandBus.SendAsync(command, cancellationToken);
+                        object commandResult = await _commandBus.SendAsync(command, cancellationToken);
+                        if (commandResult is IResult { Value: ApplicationError error })
+                            throw new Exception(error.ToString());
                         break;
                     case IBaseEvent @event:
                         await _eventBus.Publish
@@ -74,8 +78,13 @@ namespace VShop.SharedKernel.Scheduler.Services
                     ml => ml.Status == MessageStatus.Scheduled && ml.Id == messageId,
                     cancellationToken
                 );
-        
-        private async Task SetMessageStatusAsync(MessageLog messageLog, MessageStatus status, CancellationToken cancellationToken)
+
+        private async Task SetMessageStatusAsync
+        (
+            MessageLog messageLog,
+            MessageStatus status,
+            CancellationToken cancellationToken
+        )
         {
             messageLog.Status = status;
             

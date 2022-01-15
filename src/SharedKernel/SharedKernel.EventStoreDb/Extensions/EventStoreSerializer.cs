@@ -41,8 +41,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                     message.Metadata.ToByteArray(),
                     "application/octet-stream"
                 )).ToList();
-
-        // TODO - test idempotent behaviour without determ. guid.
+        
         private static Uuid GetDeterministicMessageId<TMessage>(TMessage message, int index) where TMessage : IMessage
         {
             string messageName = GetMessageTypeName(message);
