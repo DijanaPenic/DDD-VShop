@@ -40,7 +40,6 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                // TODO - investigate. It's not working.
                 switch (messageLog.GetMessage())
                 {
                     case IBaseCommand command:

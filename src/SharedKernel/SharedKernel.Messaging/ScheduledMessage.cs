@@ -14,6 +14,7 @@ namespace VShop.SharedKernel.Messaging
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
             Body = message.ToByteString();
+            Metadata = message.Metadata;
             TypeName = ToName(message.GetType());
             ScheduledTime = scheduledTime.ToTimestamp();
         }
