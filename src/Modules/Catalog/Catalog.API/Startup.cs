@@ -1,14 +1,11 @@
 using Autofac;
 using Serilog;
-using Newtonsoft.Json;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
-using NodaTime.Serialization.JsonNet;
 
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -31,17 +28,7 @@ namespace VShop.Modules.Catalog.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
-            
-            // Configure Json serializer
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                DateParseHandling = DateParseHandling.None,
-                Converters = new List<JsonConverter>
-                {
-                    NodaConverters.InstantConverter
-                }
-            };
-            
+
             // Configure clock service
             services.AddTransient<IClockService, ClockService>();
         }

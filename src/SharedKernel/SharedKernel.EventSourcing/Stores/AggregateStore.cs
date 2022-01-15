@@ -58,7 +58,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
 
-        // TODO - can I merge Publish and Save?
         public async Task<IList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,

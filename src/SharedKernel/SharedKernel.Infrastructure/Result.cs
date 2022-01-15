@@ -3,6 +3,7 @@ using OneOf.Types;
 using Newtonsoft.Json;
 
 using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.Infrastructure
 {
@@ -12,7 +13,10 @@ namespace VShop.SharedKernel.Infrastructure
         public static implicit operator Result<TData>(TData data) => new(new Success<TData>(data));
         public static implicit operator Result<TData>(ApplicationError error) => new(error);
         public TData Data => AsT0.Value;
-        public override string ToString() => IsError ? Error.ToString() : JsonConvert.SerializeObject(Data);
+        
+        public override string ToString() => IsError 
+            ? Error.ToString() 
+            : JsonConvert.SerializeObject(Data, DefaultJsonSerializer.Settings);
     }
     
     public class Result : ResultBase<Success>
@@ -21,6 +25,7 @@ namespace VShop.SharedKernel.Infrastructure
         public static implicit operator Result(Success success) => new(success);
         public static implicit operator Result(ApplicationError error) => new(error);
         public static Success Success => new();
+        
         public override string ToString() => IsError ? Error.ToString() : "Success";
     }
     
