@@ -1,9 +1,9 @@
 ﻿using System;
 
-using VShop.SharedKernel.Domain.Enums;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.Modules.Sales.Domain.Events;
 
@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
         public EntityId CustomerId { get; private set; }
         public FullName FullName { get; private set; }
         public EmailAddress EmailAddress { get; private set; }
-        public GenderType Gender { get; private set; }
+        public Gender Gender { get; private set; }
         public PhoneNumber PhoneNumber { get; private set; }
         public Address DeliveryAddress { get; private set; }
         public Discount Discount { get; private set; }
@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
             FullName fullName, 
             EmailAddress emailAddress, 
             PhoneNumber phoneNumber, 
-            GenderType gender
+            Gender gender
         )
         {
             if (_isClosedForUpdates)

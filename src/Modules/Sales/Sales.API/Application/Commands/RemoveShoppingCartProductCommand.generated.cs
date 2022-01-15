@@ -25,14 +25,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CkpNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL3JlbW92ZV9zaG9w",
-            "cGluZ19jYXJ0X3Byb2R1Y3RfY29tbWFuZC5wcm90bxo3U2hhcmVkS2VybmVs",
-            "L1NoYXJlZEtlcm5lbC5NZXNzYWdpbmcvX3NjaGVtYXMvdXVpZC5wcm90byJw",
-            "CiBSZW1vdmVTaG9wcGluZ0NhcnRQcm9kdWN0Q29tbWFuZBIfChBzaG9wcGlu",
-            "Z19jYXJ0X2lkGAEgASgLMgUuVXVpZBIZCgpwcm9kdWN0X2lkGAIgASgLMgUu",
-            "VXVpZBIQCghxdWFudGl0eRgDIAEoBUIvqgIsVlNob3AuTW9kdWxlcy5TYWxl",
-            "cy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
+            "cGluZ19jYXJ0X3Byb2R1Y3RfY29tbWFuZC5wcm90bxo8U2hhcmVkS2VybmVs",
+            "L1NoYXJlZEtlcm5lbC5JbmZyYXN0cnVjdHVyZS9fc2NoZW1hcy91dWlkLnBy",
+            "b3RvInAKIFJlbW92ZVNob3BwaW5nQ2FydFByb2R1Y3RDb21tYW5kEh8KEHNo",
+            "b3BwaW5nX2NhcnRfaWQYASABKAsyBS5VdWlkEhkKCnByb2R1Y3RfaWQYAiAB",
+            "KAsyBS5VdWlkEhAKCHF1YW50aXR5GAMgASgFQi+qAixWU2hvcC5Nb2R1bGVz",
+            "LlNhbGVzLkFQSS5BcHBsaWNhdGlvbi5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.RemoveShoppingCartProductCommand), global::VShop.Modules.Sales.API.Application.Commands.RemoveShoppingCartProductCommand.Parser, new[]{ "ShoppingCartId", "ProductId", "Quantity" }, null, null, null, null)
           }));
@@ -89,10 +89,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -101,10 +101,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "product_id" field.</summary>
     public const int ProductIdFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid productId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid productId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ProductId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ProductId {
       get { return productId_; }
       set {
         productId_ = value;
@@ -236,13 +236,13 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
       if (other.productId_ != null) {
         if (productId_ == null) {
-          ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ProductId.MergeFrom(other.ProductId);
       }
@@ -266,14 +266,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;
@@ -299,14 +299,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;

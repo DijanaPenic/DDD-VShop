@@ -25,15 +25,15 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CkJNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL3NldF9kZWxpdmVy",
-            "eV9hZGRyZXNzX2NvbW1hbmQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRL",
-            "ZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8ipQEKGVNldERl",
-            "bGl2ZXJ5QWRkcmVzc0NvbW1hbmQSHwoQc2hvcHBpbmdfY2FydF9pZBgBIAEo",
-            "CzIFLlV1aWQSDAoEY2l0eRgCIAEoCRIUCgxjb3VudHJ5X2NvZGUYAyABKAkS",
-            "EwoLcG9zdGFsX2NvZGUYBCABKAkSFgoOc3RhdGVfcHJvdmluY2UYBSABKAkS",
-            "FgoOc3RyZWV0X2FkZHJlc3MYBiABKAlCL6oCLFZTaG9wLk1vZHVsZXMuU2Fs",
-            "ZXMuQVBJLkFwcGxpY2F0aW9uLkNvbW1hbmRzYgZwcm90bzM="));
+            "eV9hZGRyZXNzX2NvbW1hbmQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRL",
+            "ZXJuZWwuSW5mcmFzdHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90byKlAQoZ",
+            "U2V0RGVsaXZlcnlBZGRyZXNzQ29tbWFuZBIfChBzaG9wcGluZ19jYXJ0X2lk",
+            "GAEgASgLMgUuVXVpZBIMCgRjaXR5GAIgASgJEhQKDGNvdW50cnlfY29kZRgD",
+            "IAEoCRITCgtwb3N0YWxfY29kZRgEIAEoCRIWCg5zdGF0ZV9wcm92aW5jZRgF",
+            "IAEoCRIWCg5zdHJlZXRfYWRkcmVzcxgGIAEoCUIvqgIsVlNob3AuTW9kdWxl",
+            "cy5TYWxlcy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.SetDeliveryAddressCommand), global::VShop.Modules.Sales.API.Application.Commands.SetDeliveryAddressCommand.Parser, new[]{ "ShoppingCartId", "City", "CountryCode", "PostalCode", "StateProvince", "StreetAddress" }, null, null, null, null)
           }));
@@ -93,10 +93,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -315,7 +315,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
@@ -351,7 +351,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
@@ -393,7 +393,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;

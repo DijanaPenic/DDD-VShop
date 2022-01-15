@@ -8,11 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;

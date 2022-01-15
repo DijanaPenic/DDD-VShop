@@ -25,13 +25,13 @@ namespace VShop.Modules.Sales.Domain.Events {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ClNNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
-            "c2hvcHBpbmdfY2FydF9kZWxldGVkX2RvbWFpbl9ldmVudC5wcm90bxo3U2hh",
-            "cmVkS2VybmVsL1NoYXJlZEtlcm5lbC5NZXNzYWdpbmcvX3NjaGVtYXMvdXVp",
-            "ZC5wcm90byJBCh5TaG9wcGluZ0NhcnREZWxldGVkRG9tYWluRXZlbnQSHwoQ",
-            "c2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWRCJKoCIVZTaG9wLk1vZHVs",
-            "ZXMuU2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
+            "c2hvcHBpbmdfY2FydF9kZWxldGVkX2RvbWFpbl9ldmVudC5wcm90bxo8U2hh",
+            "cmVkS2VybmVsL1NoYXJlZEtlcm5lbC5JbmZyYXN0cnVjdHVyZS9fc2NoZW1h",
+            "cy91dWlkLnByb3RvIkEKHlNob3BwaW5nQ2FydERlbGV0ZWREb21haW5FdmVu",
+            "dBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZEIkqgIhVlNob3Au",
+            "TW9kdWxlcy5TYWxlcy5Eb21haW4uRXZlbnRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeletedDomainEvent), global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeletedDomainEvent.Parser, new[]{ "ShoppingCartId" }, null, null, null, null)
           }));
@@ -86,10 +86,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -183,7 +183,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
@@ -204,7 +204,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
@@ -226,7 +226,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;

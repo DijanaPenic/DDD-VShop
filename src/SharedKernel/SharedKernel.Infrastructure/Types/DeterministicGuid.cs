@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace VShop.SharedKernel.Infrastructure.Helpers
+namespace VShop.SharedKernel.Infrastructure.Types
 {
 	// This algorithm follows RFC 4122, and is designed not to clash with GUIDs that are generated in other namespaces.
 	// https://www.ietf.org/rfc/rfc4122.txt

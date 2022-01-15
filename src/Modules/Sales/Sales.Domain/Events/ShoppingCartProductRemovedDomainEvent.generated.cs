@@ -26,13 +26,13 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "CltNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "c2hvcHBpbmdfY2FydF9wcm9kdWN0X3JlbW92ZWRfZG9tYWluX2V2ZW50LnBy",
-            "b3RvGjdTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLk1lc3NhZ2luZy9fc2No",
-            "ZW1hcy91dWlkLnByb3RvImMKJVNob3BwaW5nQ2FydFByb2R1Y3RSZW1vdmVk",
-            "RG9tYWluRXZlbnQSHwoQc2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQS",
-            "GQoKcHJvZHVjdF9pZBgCIAEoCzIFLlV1aWRCJKoCIVZTaG9wLk1vZHVsZXMu",
-            "U2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
+            "b3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLkluZnJhc3RydWN0dXJl",
+            "L19zY2hlbWFzL3V1aWQucHJvdG8iYwolU2hvcHBpbmdDYXJ0UHJvZHVjdFJl",
+            "bW92ZWREb21haW5FdmVudBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUu",
+            "VXVpZBIZCgpwcm9kdWN0X2lkGAIgASgLMgUuVXVpZEIkqgIhVlNob3AuTW9k",
+            "dWxlcy5TYWxlcy5Eb21haW4uRXZlbnRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.ShoppingCartProductRemovedDomainEvent), global::VShop.Modules.Sales.Domain.Events.ShoppingCartProductRemovedDomainEvent.Parser, new[]{ "ShoppingCartId", "ProductId" }, null, null, null, null)
           }));
@@ -88,10 +88,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -100,10 +100,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "product_id" field.</summary>
     public const int ProductIdFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid productId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid productId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ProductId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ProductId {
       get { return productId_; }
       set {
         productId_ = value;
@@ -210,13 +210,13 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
       if (other.productId_ != null) {
         if (productId_ == null) {
-          ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ProductId.MergeFrom(other.ProductId);
       }
@@ -237,14 +237,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;
@@ -266,14 +266,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;

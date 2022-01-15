@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
@@ -26,7 +27,7 @@ namespace VShop.Modules.Sales.Domain.Events
         )
         {
             OrderId = orderId;
-            DeliveryCost = deliveryCost;
+            DeliveryCost = deliveryCost.ToMoney();
             CustomerDiscount = customerDiscount;
             CustomerId = customerId;
             FirstName = firstName;

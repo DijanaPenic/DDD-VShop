@@ -4,10 +4,9 @@ using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Entities;
@@ -49,7 +48,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
             Result transferResult = await _paymentService.TransferAsync
             (
                 command.OrderId,
-                command.Amount,
+                command.Amount.DecimalValue,
                 command.CardTypeId,
                 command.CardNumber,
                 command.CardSecurityNumber,

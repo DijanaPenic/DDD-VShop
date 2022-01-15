@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace VShop.SharedKernel.Infrastructure.Helpers
+namespace VShop.SharedKernel.Infrastructure.Types
 {
     public static class SequentialGuid
     {

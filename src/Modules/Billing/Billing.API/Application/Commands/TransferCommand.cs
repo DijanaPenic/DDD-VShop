@@ -3,6 +3,7 @@ using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
@@ -20,7 +21,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
         )
         {
             OrderId = orderId;
-            Amount = amount;
+            Amount = amount.ToMoney();
             CardTypeId = cardTypeId;
             CardNumber = cardNumber;
             CardSecurityNumber = cardSecurityNumber;

@@ -2,8 +2,8 @@ using Xunit;
 using System.Linq;
 using FluentAssertions;
 
-using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -463,7 +463,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            GenderType genderType
+            Gender genderType
         )
         {
             // Arrange
@@ -485,7 +485,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
             FullName fullName,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
-            GenderType genderType
+            Gender genderType
         )
         {
             // Arrange

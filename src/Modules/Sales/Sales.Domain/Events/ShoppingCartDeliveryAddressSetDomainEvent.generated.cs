@@ -26,15 +26,15 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "CmBNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "c2hvcHBpbmdfY2FydF9kZWxpdmVyeV9hZGRyZXNzX3NldF9kb21haW5fZXZl",
-            "bnQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuTWVzc2FnaW5n",
-            "L19zY2hlbWFzL3V1aWQucHJvdG8itQEKKVNob3BwaW5nQ2FydERlbGl2ZXJ5",
-            "QWRkcmVzc1NldERvbWFpbkV2ZW50Eh8KEHNob3BwaW5nX2NhcnRfaWQYASAB",
-            "KAsyBS5VdWlkEgwKBGNpdHkYAiABKAkSFAoMY291bnRyeV9jb2RlGAMgASgJ",
-            "EhMKC3Bvc3RhbF9jb2RlGAQgASgJEhYKDnN0YXRlX3Byb3ZpbmNlGAUgASgJ",
-            "EhYKDnN0cmVldF9hZGRyZXNzGAYgASgJQiSqAiFWU2hvcC5Nb2R1bGVzLlNh",
-            "bGVzLkRvbWFpbi5FdmVudHNiBnByb3RvMw=="));
+            "bnQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuSW5mcmFzdHJ1",
+            "Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90byK1AQopU2hvcHBpbmdDYXJ0RGVs",
+            "aXZlcnlBZGRyZXNzU2V0RG9tYWluRXZlbnQSHwoQc2hvcHBpbmdfY2FydF9p",
+            "ZBgBIAEoCzIFLlV1aWQSDAoEY2l0eRgCIAEoCRIUCgxjb3VudHJ5X2NvZGUY",
+            "AyABKAkSEwoLcG9zdGFsX2NvZGUYBCABKAkSFgoOc3RhdGVfcHJvdmluY2UY",
+            "BSABKAkSFgoOc3RyZWV0X2FkZHJlc3MYBiABKAlCJKoCIVZTaG9wLk1vZHVs",
+            "ZXMuU2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeliveryAddressSetDomainEvent), global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeliveryAddressSetDomainEvent.Parser, new[]{ "ShoppingCartId", "City", "CountryCode", "PostalCode", "StateProvince", "StreetAddress" }, null, null, null, null)
           }));
@@ -94,10 +94,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -316,7 +316,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
@@ -352,7 +352,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
@@ -394,7 +394,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;

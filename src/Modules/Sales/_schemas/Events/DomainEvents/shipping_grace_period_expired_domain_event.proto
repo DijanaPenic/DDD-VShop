@@ -1,7 +1,7 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.Domain.Events.Reminders";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
 
 message ShippingGracePeriodExpiredDomainEvent 
 {

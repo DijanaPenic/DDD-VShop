@@ -2,6 +2,7 @@ using System;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -17,7 +18,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         {
             ShoppingCartId = shoppingCartId;
             ProductId = productId;
-            UnitPrice = unitPrice;
+            UnitPrice = unitPrice.ToMoney();
             Metadata = metadata;
         }
     }

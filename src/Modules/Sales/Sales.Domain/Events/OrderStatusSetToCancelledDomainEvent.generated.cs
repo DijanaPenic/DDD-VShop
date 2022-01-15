@@ -26,12 +26,12 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "CltNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "b3JkZXJfc3RhdHVzX3NldF90b19jYW5jZWxsZWRfZG9tYWluX2V2ZW50LnBy",
-            "b3RvGjdTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLk1lc3NhZ2luZy9fc2No",
-            "ZW1hcy91dWlkLnByb3RvIj8KJE9yZGVyU3RhdHVzU2V0VG9DYW5jZWxsZWRE",
-            "b21haW5FdmVudBIXCghvcmRlcl9pZBgBIAEoCzIFLlV1aWRCJKoCIVZTaG9w",
-            "Lk1vZHVsZXMuU2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
+            "b3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLkluZnJhc3RydWN0dXJl",
+            "L19zY2hlbWFzL3V1aWQucHJvdG8iPwokT3JkZXJTdGF0dXNTZXRUb0NhbmNl",
+            "bGxlZERvbWFpbkV2ZW50EhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZEIkqgIh",
+            "VlNob3AuTW9kdWxlcy5TYWxlcy5Eb21haW4uRXZlbnRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.OrderStatusSetToCancelledDomainEvent), global::VShop.Modules.Sales.Domain.Events.OrderStatusSetToCancelledDomainEvent.Parser, new[]{ "OrderId" }, null, null, null, null)
           }));
@@ -86,10 +86,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "order_id" field.</summary>
     public const int OrderIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid orderId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid orderId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid OrderId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid OrderId {
       get { return orderId_; }
       set {
         orderId_ = value;
@@ -183,7 +183,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.orderId_ != null) {
         if (orderId_ == null) {
-          OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         OrderId.MergeFrom(other.OrderId);
       }
@@ -204,7 +204,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;
@@ -226,7 +226,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;

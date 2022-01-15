@@ -1,8 +1,6 @@
 using System;
 
-using VShop.SharedKernel.Infrastructure.Helpers;
-
-namespace VShop.SharedKernel.Messaging.CustomTypes
+namespace VShop.SharedKernel.Infrastructure.Types
 {
     public partial class Uuid
     {

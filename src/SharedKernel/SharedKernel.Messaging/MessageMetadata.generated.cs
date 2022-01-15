@@ -25,15 +25,16 @@ namespace VShop.SharedKernel.Messaging {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CkNTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLk1lc3NhZ2luZy9fc2NoZW1h",
-            "cy9tZXNzYWdlX21ldGFkYXRhLnByb3RvGjdTaGFyZWRLZXJuZWwvU2hhcmVk",
-            "S2VybmVsLk1lc3NhZ2luZy9fc2NoZW1hcy91dWlkLnByb3RvGh9nb29nbGUv",
-            "cHJvdG9idWYvdGltZXN0YW1wLnByb3RvIpwBCg9NZXNzYWdlTWV0YWRhdGES",
-            "GQoKbWVzc2FnZV9pZBgBIAEoCzIFLlV1aWQSHQoOY29ycmVsYXRpb25faWQY",
-            "AiABKAsyBS5VdWlkEhsKDGNhdXNhdGlvbl9pZBgDIAEoCzIFLlV1aWQSMgoO",
-            "ZWZmZWN0aXZlX3RpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
-            "YW1wQh+qAhxWU2hvcC5TaGFyZWRLZXJuZWwuTWVzc2FnaW5nYgZwcm90bzM="));
+            "cy9tZXNzYWdlX21ldGFkYXRhLnByb3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVk",
+            "S2VybmVsLkluZnJhc3RydWN0dXJlL19zY2hlbWFzL3V1aWQucHJvdG8aH2dv",
+            "b2dsZS9wcm90b2J1Zi90aW1lc3RhbXAucHJvdG8inAEKD01lc3NhZ2VNZXRh",
+            "ZGF0YRIZCgptZXNzYWdlX2lkGAEgASgLMgUuVXVpZBIdCg5jb3JyZWxhdGlv",
+            "bl9pZBgCIAEoCzIFLlV1aWQSGwoMY2F1c2F0aW9uX2lkGAMgASgLMgUuVXVp",
+            "ZBIyCg5lZmZlY3RpdmVfdGltZRgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5U",
+            "aW1lc3RhbXBCH6oCHFZTaG9wLlNoYXJlZEtlcm5lbC5NZXNzYWdpbmdiBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.SharedKernel.Messaging.MessageMetadata), global::VShop.SharedKernel.Messaging.MessageMetadata.Parser, new[]{ "MessageId", "CorrelationId", "CausationId", "EffectiveTime" }, null, null, null, null)
           }));
@@ -91,10 +92,10 @@ namespace VShop.SharedKernel.Messaging {
 
     /// <summary>Field number for the "message_id" field.</summary>
     public const int MessageIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid messageId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid messageId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid MessageId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid MessageId {
       get { return messageId_; }
       set {
         messageId_ = value;
@@ -103,10 +104,10 @@ namespace VShop.SharedKernel.Messaging {
 
     /// <summary>Field number for the "correlation_id" field.</summary>
     public const int CorrelationIdFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid correlationId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid correlationId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid CorrelationId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid CorrelationId {
       get { return correlationId_; }
       set {
         correlationId_ = value;
@@ -115,10 +116,10 @@ namespace VShop.SharedKernel.Messaging {
 
     /// <summary>Field number for the "causation_id" field.</summary>
     public const int CausationIdFieldNumber = 3;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid causationId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid causationId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid CausationId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid CausationId {
       get { return causationId_; }
       set {
         causationId_ = value;
@@ -263,19 +264,19 @@ namespace VShop.SharedKernel.Messaging {
       }
       if (other.messageId_ != null) {
         if (messageId_ == null) {
-          MessageId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          MessageId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         MessageId.MergeFrom(other.MessageId);
       }
       if (other.correlationId_ != null) {
         if (correlationId_ == null) {
-          CorrelationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          CorrelationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         CorrelationId.MergeFrom(other.CorrelationId);
       }
       if (other.causationId_ != null) {
         if (causationId_ == null) {
-          CausationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          CausationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         CausationId.MergeFrom(other.CausationId);
       }
@@ -302,21 +303,21 @@ namespace VShop.SharedKernel.Messaging {
             break;
           case 10: {
             if (messageId_ == null) {
-              MessageId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              MessageId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(MessageId);
             break;
           }
           case 18: {
             if (correlationId_ == null) {
-              CorrelationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CorrelationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CorrelationId);
             break;
           }
           case 26: {
             if (causationId_ == null) {
-              CausationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CausationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CausationId);
             break;
@@ -345,21 +346,21 @@ namespace VShop.SharedKernel.Messaging {
             break;
           case 10: {
             if (messageId_ == null) {
-              MessageId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              MessageId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(MessageId);
             break;
           }
           case 18: {
             if (correlationId_ == null) {
-              CorrelationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CorrelationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CorrelationId);
             break;
           }
           case 26: {
             if (causationId_ == null) {
-              CausationId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CausationId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CausationId);
             break;

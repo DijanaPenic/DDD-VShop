@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.SharedKernel.Infrastructure.Types";
+
+enum Gender
+{
+	FEMALE = 0;
+	MALE = 1;
+	OTHER = 2;
+}

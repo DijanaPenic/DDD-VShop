@@ -1,8 +1,8 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.Integration.Events";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
-import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/type/money.proto";
 
 message OrderStatusSetToPaidIntegrationEvent 
 {
@@ -13,6 +13,6 @@ message OrderStatusSetToPaidIntegrationEvent
 	{
 		Uuid product_id = 1;
 		int32 quantity = 2;
-		Decimal price = 3;
+		google.type.Money price = 3;
 	}
 }

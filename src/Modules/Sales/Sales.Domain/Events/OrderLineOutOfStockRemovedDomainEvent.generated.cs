@@ -26,13 +26,13 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "Cl1Nb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "b3JkZXJfbGluZV9vdXRfb2Zfc3RvY2tfcmVtb3ZlZF9kb21haW5fZXZlbnQu",
-            "cHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuTWVzc2FnaW5nL19z",
-            "Y2hlbWFzL3V1aWQucHJvdG8ibQolT3JkZXJMaW5lT3V0T2ZTdG9ja1JlbW92",
-            "ZWREb21haW5FdmVudBIXCghvcmRlcl9pZBgBIAEoCzIFLlV1aWQSGQoKcHJv",
-            "ZHVjdF9pZBgCIAEoCzIFLlV1aWQSEAoIcXVhbnRpdHkYAyABKAVCJKoCIVZT",
-            "aG9wLk1vZHVsZXMuU2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
+            "cHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuSW5mcmFzdHJ1Y3R1",
+            "cmUvX3NjaGVtYXMvdXVpZC5wcm90byJtCiVPcmRlckxpbmVPdXRPZlN0b2Nr",
+            "UmVtb3ZlZERvbWFpbkV2ZW50EhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZBIZ",
+            "Cgpwcm9kdWN0X2lkGAIgASgLMgUuVXVpZBIQCghxdWFudGl0eRgDIAEoBUIk",
+            "qgIhVlNob3AuTW9kdWxlcy5TYWxlcy5Eb21haW4uRXZlbnRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.OrderLineOutOfStockRemovedDomainEvent), global::VShop.Modules.Sales.Domain.Events.OrderLineOutOfStockRemovedDomainEvent.Parser, new[]{ "OrderId", "ProductId", "Quantity" }, null, null, null, null)
           }));
@@ -89,10 +89,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "order_id" field.</summary>
     public const int OrderIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid orderId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid orderId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid OrderId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid OrderId {
       get { return orderId_; }
       set {
         orderId_ = value;
@@ -101,10 +101,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "product_id" field.</summary>
     public const int ProductIdFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid productId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid productId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ProductId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ProductId {
       get { return productId_; }
       set {
         productId_ = value;
@@ -236,13 +236,13 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.orderId_ != null) {
         if (orderId_ == null) {
-          OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         OrderId.MergeFrom(other.OrderId);
       }
       if (other.productId_ != null) {
         if (productId_ == null) {
-          ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ProductId.MergeFrom(other.ProductId);
       }
@@ -266,14 +266,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;
@@ -299,14 +299,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;
           }
           case 18: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;

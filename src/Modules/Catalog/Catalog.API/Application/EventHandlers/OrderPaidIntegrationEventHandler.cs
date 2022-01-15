@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
 using VShop.SharedKernel.Integration.Utilities;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.Modules.Sales.Integration.Events;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.Modules.Catalog.API.Application.EventHandlers
 {

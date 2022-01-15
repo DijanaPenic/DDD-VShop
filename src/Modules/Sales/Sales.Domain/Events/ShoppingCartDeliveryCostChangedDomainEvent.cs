@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
@@ -14,7 +15,7 @@ namespace VShop.Modules.Sales.Domain.Events
         )
         {
             ShoppingCartId = shoppingCartId;
-            DeliveryCost = deliveryCost;
+            DeliveryCost = deliveryCost.ToMoney();
         }
     }
 }

@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using EventStore.Client;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Infrastructure.Helpers;
-using VShop.SharedKernel.Infrastructure.Serialization;
 
+using VShop.SharedKernel.Infrastructure.Serialization;
+using VShop.SharedKernel.Infrastructure.Types;
+
+using Uuid = EventStore.Client.Uuid;
 using IProtoData = Google.Protobuf.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions

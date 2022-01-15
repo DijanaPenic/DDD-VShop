@@ -1,0 +1,7 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.SharedKernel.Infrastructure.Types";
+
+message Uuid 
+{
+    string value = 1;
+}

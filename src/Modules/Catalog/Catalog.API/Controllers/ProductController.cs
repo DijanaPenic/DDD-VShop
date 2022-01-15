@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Parameters.Paging;
 using VShop.SharedKernel.Infrastructure.Parameters.Options;

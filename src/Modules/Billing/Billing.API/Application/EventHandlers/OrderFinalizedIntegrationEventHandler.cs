@@ -1,10 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Entities;
@@ -29,7 +28,7 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
 
         public async Task Handle(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
         {
-            if (@event.RefundAmount == 0) return;
+            if (@event.RefundAmount.DecimalValue == 0) return;
             
             bool isRefundSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (
@@ -42,7 +41,7 @@ namespace VShop.Modules.Billing.API.Application.EventHandlers
             Result refundResult = await _paymentService.RefundAsync
             (
                 @event.OrderId,
-                @event.RefundAmount,
+                @event.RefundAmount.DecimalValue,
                 cancellationToken
             );
 

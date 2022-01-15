@@ -26,17 +26,17 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "CmNNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "c2hvcHBpbmdfY2FydF9jb250YWN0X2luZm9ybWF0aW9uX3NldF9kb21haW5f",
-            "ZXZlbnQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuTWVzc2Fn",
-            "aW5nL19zY2hlbWFzL3V1aWQucHJvdG8aO1NoYXJlZEtlcm5lbC9TaGFyZWRL",
-            "ZXJuZWwuRG9tYWluL19zY2hlbWFzL2dlbmRlcl90eXBlLnByb3RvItUBCixT",
-            "aG9wcGluZ0NhcnRDb250YWN0SW5mb3JtYXRpb25TZXREb21haW5FdmVudBIf",
-            "ChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZBISCgpmaXJzdF9uYW1l",
-            "GAIgASgJEhMKC21pZGRsZV9uYW1lGAMgASgJEhEKCWxhc3RfbmFtZRgEIAEo",
-            "CRIVCg1lbWFpbF9hZGRyZXNzGAUgASgJEhQKDHBob25lX251bWJlchgGIAEo",
-            "CRIbCgZnZW5kZXIYByABKA4yCy5HZW5kZXJUeXBlQiSqAiFWU2hvcC5Nb2R1",
-            "bGVzLlNhbGVzLkRvbWFpbi5FdmVudHNiBnByb3RvMw=="));
+            "ZXZlbnQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuSW5mcmFz",
+            "dHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90bxo+U2hhcmVkS2VybmVsL1No",
+            "YXJlZEtlcm5lbC5JbmZyYXN0cnVjdHVyZS9fc2NoZW1hcy9nZW5kZXIucHJv",
+            "dG8i0QEKLFNob3BwaW5nQ2FydENvbnRhY3RJbmZvcm1hdGlvblNldERvbWFp",
+            "bkV2ZW50Eh8KEHNob3BwaW5nX2NhcnRfaWQYASABKAsyBS5VdWlkEhIKCmZp",
+            "cnN0X25hbWUYAiABKAkSEwoLbWlkZGxlX25hbWUYAyABKAkSEQoJbGFzdF9u",
+            "YW1lGAQgASgJEhUKDWVtYWlsX2FkZHJlc3MYBSABKAkSFAoMcGhvbmVfbnVt",
+            "YmVyGAYgASgJEhcKBmdlbmRlchgHIAEoDjIHLkdlbmRlckIkqgIhVlNob3Au",
+            "TW9kdWxlcy5TYWxlcy5Eb21haW4uRXZlbnRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Domain.Enums.GenderTypeReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.SharedKernel.Infrastructure.Types.GenderReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.ShoppingCartContactInformationSetDomainEvent), global::VShop.Modules.Sales.Domain.Events.ShoppingCartContactInformationSetDomainEvent.Parser, new[]{ "ShoppingCartId", "FirstName", "MiddleName", "LastName", "EmailAddress", "PhoneNumber", "Gender" }, null, null, null, null)
           }));
@@ -97,10 +97,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -169,10 +169,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "gender" field.</summary>
     public const int GenderFieldNumber = 7;
-    private global::VShop.SharedKernel.Domain.Enums.GenderType gender_ = global::VShop.SharedKernel.Domain.Enums.GenderType.Female;
+    private global::VShop.SharedKernel.Infrastructure.Types.Gender gender_ = global::VShop.SharedKernel.Infrastructure.Types.Gender.Female;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Domain.Enums.GenderType Gender {
+    public global::VShop.SharedKernel.Infrastructure.Types.Gender Gender {
       get { return gender_; }
       set {
         gender_ = value;
@@ -214,7 +214,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       if (LastName.Length != 0) hash ^= LastName.GetHashCode();
       if (EmailAddress.Length != 0) hash ^= EmailAddress.GetHashCode();
       if (PhoneNumber.Length != 0) hash ^= PhoneNumber.GetHashCode();
-      if (Gender != global::VShop.SharedKernel.Domain.Enums.GenderType.Female) hash ^= Gender.GetHashCode();
+      if (Gender != global::VShop.SharedKernel.Infrastructure.Types.Gender.Female) hash ^= Gender.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -257,7 +257,7 @@ namespace VShop.Modules.Sales.Domain.Events {
         output.WriteRawTag(50);
         output.WriteString(PhoneNumber);
       }
-      if (Gender != global::VShop.SharedKernel.Domain.Enums.GenderType.Female) {
+      if (Gender != global::VShop.SharedKernel.Infrastructure.Types.Gender.Female) {
         output.WriteRawTag(56);
         output.WriteEnum((int) Gender);
       }
@@ -295,7 +295,7 @@ namespace VShop.Modules.Sales.Domain.Events {
         output.WriteRawTag(50);
         output.WriteString(PhoneNumber);
       }
-      if (Gender != global::VShop.SharedKernel.Domain.Enums.GenderType.Female) {
+      if (Gender != global::VShop.SharedKernel.Infrastructure.Types.Gender.Female) {
         output.WriteRawTag(56);
         output.WriteEnum((int) Gender);
       }
@@ -327,7 +327,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       if (PhoneNumber.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(PhoneNumber);
       }
-      if (Gender != global::VShop.SharedKernel.Domain.Enums.GenderType.Female) {
+      if (Gender != global::VShop.SharedKernel.Infrastructure.Types.Gender.Female) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Gender);
       }
       if (_unknownFields != null) {
@@ -344,7 +344,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
@@ -363,7 +363,7 @@ namespace VShop.Modules.Sales.Domain.Events {
       if (other.PhoneNumber.Length != 0) {
         PhoneNumber = other.PhoneNumber;
       }
-      if (other.Gender != global::VShop.SharedKernel.Domain.Enums.GenderType.Female) {
+      if (other.Gender != global::VShop.SharedKernel.Infrastructure.Types.Gender.Female) {
         Gender = other.Gender;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -383,7 +383,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
@@ -409,7 +409,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           }
           case 56: {
-            Gender = (global::VShop.SharedKernel.Domain.Enums.GenderType) input.ReadEnum();
+            Gender = (global::VShop.SharedKernel.Infrastructure.Types.Gender) input.ReadEnum();
             break;
           }
         }
@@ -429,7 +429,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
@@ -455,7 +455,7 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           }
           case 56: {
-            Gender = (global::VShop.SharedKernel.Domain.Enums.GenderType) input.ReadEnum();
+            Gender = (global::VShop.SharedKernel.Infrastructure.Types.Gender) input.ReadEnum();
             break;
           }
         }

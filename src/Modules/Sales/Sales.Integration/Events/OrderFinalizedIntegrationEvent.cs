@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.Integration.Events
 {
@@ -12,7 +13,7 @@ namespace VShop.Modules.Sales.Integration.Events
         public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IEnumerable<Types.OrderLine> orderLines)
         {
             OrderId = orderId;
-            RefundAmount = refundAmount;
+            RefundAmount = refundAmount.ToMoney();
             OrderLines.Add(orderLines);
         }
 

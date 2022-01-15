@@ -1,13 +1,13 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.Integration.Events";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
-import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/type/money.proto";
 
 message OrderFinalizedIntegrationEvent 
 {
 	Uuid order_id = 1;
-	Decimal refund_amount = 2;
+	google.type.Money refund_amount = 2;
 	repeated OrderLine order_lines = 3;
 	
 	message OrderLine 

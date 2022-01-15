@@ -202,7 +202,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Status = ShoppingCartStatus.AwaitingConfirmation;
                     break;
                 case ShoppingCartDeliveryCostChangedDomainEvent e:
-                    DeliveryCost = new Price(e.DeliveryCost);
+                    DeliveryCost = new Price(e.DeliveryCost.DecimalValue);
                     break;
                 case ShoppingCartCheckoutRequestedDomainEvent e:
                     ApplyToEntity(Customer, e);

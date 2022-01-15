@@ -25,18 +25,18 @@ namespace VShop.Modules.Billing.API.Application.Commands {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CjhNb2R1bGVzL0JpbGxpbmcvX3NjaGVtYXMvQ29tbWFuZHMvdHJhbnNmZXJf",
-            "Y29tbWFuZC5wcm90bxo3U2hhcmVkS2VybmVsL1NoYXJlZEtlcm5lbC5NZXNz",
-            "YWdpbmcvX3NjaGVtYXMvdXVpZC5wcm90bxo6U2hhcmVkS2VybmVsL1NoYXJl",
-            "ZEtlcm5lbC5NZXNzYWdpbmcvX3NjaGVtYXMvZGVjaW1hbC5wcm90bxofZ29v",
-            "Z2xlL3Byb3RvYnVmL3RpbWVzdGFtcC5wcm90byLbAQoPVHJhbnNmZXJDb21t",
-            "YW5kEhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZBIYCgZhbW91bnQYAiABKAsy",
-            "CC5EZWNpbWFsEhQKDGNhcmRfdHlwZV9pZBgDIAEoBRITCgtjYXJkX251bWJl",
-            "chgEIAEoCRIcChRjYXJkX3NlY3VyaXR5X251bWJlchgFIAEoCRIXCg9jYXJk",
-            "aG9sZGVyX25hbWUYBiABKAkSMwoPY2FyZF9leHBpcmF0aW9uGAcgASgLMhou",
-            "Z29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIxqgIuVlNob3AuTW9kdWxlcy5C",
-            "aWxsaW5nLkFQSS5BcHBsaWNhdGlvbi5Db21tYW5kc2IGcHJvdG8z"));
+            "Y29tbWFuZC5wcm90bxo8U2hhcmVkS2VybmVsL1NoYXJlZEtlcm5lbC5JbmZy",
+            "YXN0cnVjdHVyZS9fc2NoZW1hcy91dWlkLnByb3RvGhdnb29nbGUvdHlwZS9t",
+            "b25leS5wcm90bxofZ29vZ2xlL3Byb3RvYnVmL3RpbWVzdGFtcC5wcm90byLl",
+            "AQoPVHJhbnNmZXJDb21tYW5kEhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZBIi",
+            "CgZhbW91bnQYAiABKAsyEi5nb29nbGUudHlwZS5Nb25leRIUCgxjYXJkX3R5",
+            "cGVfaWQYAyABKAUSEwoLY2FyZF9udW1iZXIYBCABKAkSHAoUY2FyZF9zZWN1",
+            "cml0eV9udW1iZXIYBSABKAkSFwoPY2FyZGhvbGRlcl9uYW1lGAYgASgJEjMK",
+            "D2NhcmRfZXhwaXJhdGlvbhgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1l",
+            "c3RhbXBCMaoCLlZTaG9wLk1vZHVsZXMuQmlsbGluZy5BUEkuQXBwbGljYXRp",
+            "b24uQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Messaging.CustomTypes.DecimalReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Type.MoneyReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Billing.API.Application.Commands.TransferCommand), global::VShop.Modules.Billing.API.Application.Commands.TransferCommand.Parser, new[]{ "OrderId", "Amount", "CardTypeId", "CardNumber", "CardSecurityNumber", "CardholderName", "CardExpiration" }, null, null, null, null)
           }));
@@ -97,10 +97,10 @@ namespace VShop.Modules.Billing.API.Application.Commands {
 
     /// <summary>Field number for the "order_id" field.</summary>
     public const int OrderIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid orderId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid orderId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid OrderId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid OrderId {
       get { return orderId_; }
       set {
         orderId_ = value;
@@ -109,10 +109,10 @@ namespace VShop.Modules.Billing.API.Application.Commands {
 
     /// <summary>Field number for the "amount" field.</summary>
     public const int AmountFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Decimal amount_;
+    private global::Google.Type.Money amount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Decimal Amount {
+    public global::Google.Type.Money Amount {
       get { return amount_; }
       set {
         amount_ = value;
@@ -344,13 +344,13 @@ namespace VShop.Modules.Billing.API.Application.Commands {
       }
       if (other.orderId_ != null) {
         if (orderId_ == null) {
-          OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         OrderId.MergeFrom(other.OrderId);
       }
       if (other.amount_ != null) {
         if (amount_ == null) {
-          Amount = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+          Amount = new global::Google.Type.Money();
         }
         Amount.MergeFrom(other.Amount);
       }
@@ -389,14 +389,14 @@ namespace VShop.Modules.Billing.API.Application.Commands {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;
           }
           case 18: {
             if (amount_ == null) {
-              Amount = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              Amount = new global::Google.Type.Money();
             }
             input.ReadMessage(Amount);
             break;
@@ -441,14 +441,14 @@ namespace VShop.Modules.Billing.API.Application.Commands {
             break;
           case 10: {
             if (orderId_ == null) {
-              OrderId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              OrderId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(OrderId);
             break;
           }
           case 18: {
             if (amount_ == null) {
-              Amount = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              Amount = new global::Google.Type.Money();
             }
             input.ReadMessage(Amount);
             break;

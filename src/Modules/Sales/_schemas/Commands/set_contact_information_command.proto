@@ -1,8 +1,8 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
-import "SharedKernel/SharedKernel.Domain/_schemas/gender_type.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/gender.proto";
 
 message SetContactInformationCommand 
 {
@@ -12,5 +12,5 @@ message SetContactInformationCommand
 	string last_name = 4;
 	string email_address = 5;
 	string phone_number = 6;
-	GenderType gender = 7;
+	Gender gender = 7;
 }

@@ -2,7 +2,7 @@ using System;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
-using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             string lastName,
             string emailAddress,
             string phoneNumber,
-            GenderType gender,
+            Gender gender,
             MessageMetadata metadata = default
         )
         {

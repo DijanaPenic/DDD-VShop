@@ -79,7 +79,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Id = new EntityId(e.ProductId);
                     ShoppingCartId = new EntityId(e.ShoppingCartId);
                     Quantity = new ProductQuantity(e.Quantity);
-                    UnitPrice = new Price(e.UnitPrice);
+                    UnitPrice = new Price(e.UnitPrice.DecimalValue);
                     break;
                 case ShoppingCartProductQuantityIncreasedDomainEvent e:
                     Quantity += new ProductQuantity(e.Quantity);
@@ -88,7 +88,7 @@ namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
                     Quantity -= new ProductQuantity(e.Quantity);
                     break;
                 case ShoppingCartProductPriceChangedDomainEvent e:
-                    UnitPrice = new Price(e.UnitPrice);
+                    UnitPrice = new Price(e.UnitPrice.DecimalValue);
                     break;
             }
         }

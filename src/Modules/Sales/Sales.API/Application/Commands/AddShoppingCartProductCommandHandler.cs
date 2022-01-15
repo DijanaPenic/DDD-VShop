@@ -37,7 +37,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             (
                 EntityId.Create(command.ShoppingCartItem.ProductId).Data,
                 ProductQuantity.Create(command.ShoppingCartItem.Quantity).Data,
-                Price.Create(command.ShoppingCartItem.UnitPrice).Data
+                Price.Create(command.ShoppingCartItem.UnitPrice.DecimalValue).Data
             );
             if (addProductResult.IsError) return addProductResult.Error;
         

@@ -1,6 +1,6 @@
 ﻿using System;
 
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.SharedKernel.Infrastructure.Extensions
 {

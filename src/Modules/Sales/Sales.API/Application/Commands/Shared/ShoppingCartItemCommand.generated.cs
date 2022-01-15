@@ -25,15 +25,15 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CkBNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL3Nob3BwaW5nX2Nh",
-            "cnRfaXRlbV9jb21tYW5kLnByb3RvGjdTaGFyZWRLZXJuZWwvU2hhcmVkS2Vy",
-            "bmVsLk1lc3NhZ2luZy9fc2NoZW1hcy91dWlkLnByb3RvGjpTaGFyZWRLZXJu",
-            "ZWwvU2hhcmVkS2VybmVsLk1lc3NhZ2luZy9fc2NoZW1hcy9kZWNpbWFsLnBy",
-            "b3RvImQKF1Nob3BwaW5nQ2FydEl0ZW1Db21tYW5kEhkKCnByb2R1Y3RfaWQY",
-            "ASABKAsyBS5VdWlkEhwKCnVuaXRfcHJpY2UYAiABKAsyCC5EZWNpbWFsEhAK",
-            "CHF1YW50aXR5GAMgASgFQjaqAjNWU2hvcC5Nb2R1bGVzLlNhbGVzLkFQSS5B",
-            "cHBsaWNhdGlvbi5Db21tYW5kcy5TaGFyZWRiBnByb3RvMw=="));
+            "cnRfaXRlbV9jb21tYW5kLnByb3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVkS2Vy",
+            "bmVsLkluZnJhc3RydWN0dXJlL19zY2hlbWFzL3V1aWQucHJvdG8aF2dvb2ds",
+            "ZS90eXBlL21vbmV5LnByb3RvIm4KF1Nob3BwaW5nQ2FydEl0ZW1Db21tYW5k",
+            "EhkKCnByb2R1Y3RfaWQYASABKAsyBS5VdWlkEiYKCnVuaXRfcHJpY2UYAiAB",
+            "KAsyEi5nb29nbGUudHlwZS5Nb25leRIQCghxdWFudGl0eRgDIAEoBUI2qgIz",
+            "VlNob3AuTW9kdWxlcy5TYWxlcy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHMu",
+            "U2hhcmVkYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Messaging.CustomTypes.DecimalReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Type.MoneyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand), global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand.Parser, new[]{ "ProductId", "UnitPrice", "Quantity" }, null, null, null, null)
           }));
@@ -90,10 +90,10 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
 
     /// <summary>Field number for the "product_id" field.</summary>
     public const int ProductIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid productId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid productId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ProductId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ProductId {
       get { return productId_; }
       set {
         productId_ = value;
@@ -102,10 +102,10 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
 
     /// <summary>Field number for the "unit_price" field.</summary>
     public const int UnitPriceFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Decimal unitPrice_;
+    private global::Google.Type.Money unitPrice_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Decimal UnitPrice {
+    public global::Google.Type.Money UnitPrice {
       get { return unitPrice_; }
       set {
         unitPrice_ = value;
@@ -237,13 +237,13 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
       }
       if (other.productId_ != null) {
         if (productId_ == null) {
-          ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ProductId.MergeFrom(other.ProductId);
       }
       if (other.unitPrice_ != null) {
         if (unitPrice_ == null) {
-          UnitPrice = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+          UnitPrice = new global::Google.Type.Money();
         }
         UnitPrice.MergeFrom(other.UnitPrice);
       }
@@ -267,14 +267,14 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
             break;
           case 10: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;
           }
           case 18: {
             if (unitPrice_ == null) {
-              UnitPrice = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              UnitPrice = new global::Google.Type.Money();
             }
             input.ReadMessage(UnitPrice);
             break;
@@ -300,14 +300,14 @@ namespace VShop.Modules.Sales.API.Application.Commands.Shared {
             break;
           case 10: {
             if (productId_ == null) {
-              ProductId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ProductId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ProductId);
             break;
           }
           case 18: {
             if (unitPrice_ == null) {
-              UnitPrice = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              UnitPrice = new global::Google.Type.Money();
             }
             input.ReadMessage(UnitPrice);
             break;

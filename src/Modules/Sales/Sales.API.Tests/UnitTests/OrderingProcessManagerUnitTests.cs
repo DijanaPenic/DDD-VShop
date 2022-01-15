@@ -5,7 +5,7 @@ using FluentAssertions;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Domain.Events;

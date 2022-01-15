@@ -148,7 +148,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
             {
                 case OrderPlacedDomainEvent e:
                     Id = new EntityId(e.OrderId);
-                    DeliveryCost = new Price(e.DeliveryCost);
+                    DeliveryCost = new Price(e.DeliveryCost.DecimalValue);
                     Status = OrderStatus.Processing;
                 
                     // one-to-one relationship

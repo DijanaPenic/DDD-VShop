@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Helpers;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;

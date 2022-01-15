@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Projections
                     {
                         Quantity = e.Quantity,
                         ProductId = e.ProductId,
-                        UnitPrice = e.UnitPrice,
+                        UnitPrice = e.UnitPrice.DecimalValue,
                         ShoppingCartInfoId = e.ShoppingCartId
                     });
             

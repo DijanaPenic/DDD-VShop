@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using VShop.SharedKernel.Domain.Enums;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
@@ -22,6 +22,6 @@ namespace VShop.Modules.Sales.API.Models
         public string PhoneNumber { get; init; }
         
         [Required]
-        public GenderType Gender { get; init; }
+        public Gender Gender { get; init; }
     }
 }

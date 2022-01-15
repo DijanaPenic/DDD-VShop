@@ -25,17 +25,17 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CkJNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2NyZWF0ZV9zaG9w",
-            "cGluZ19jYXJ0X2NvbW1hbmQucHJvdG8aN1NoYXJlZEtlcm5lbC9TaGFyZWRL",
-            "ZXJuZWwuTWVzc2FnaW5nL19zY2hlbWFzL3V1aWQucHJvdG8aQE1vZHVsZXMv",
-            "U2FsZXMvX3NjaGVtYXMvQ29tbWFuZHMvc2hvcHBpbmdfY2FydF9pdGVtX2Nv",
-            "bW1hbmQucHJvdG8iqgEKGUNyZWF0ZVNob3BwaW5nQ2FydENvbW1hbmQSHwoQ",
-            "c2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQSGgoLY3VzdG9tZXJfaWQY",
-            "AiABKAsyBS5VdWlkEhkKEWN1c3RvbWVyX2Rpc2NvdW50GAMgASgFEjUKE3No",
-            "b3BwaW5nX2NhcnRfaXRlbXMYBCADKAsyGC5TaG9wcGluZ0NhcnRJdGVtQ29t",
-            "bWFuZEIvqgIsVlNob3AuTW9kdWxlcy5TYWxlcy5BUEkuQXBwbGljYXRpb24u",
-            "Q29tbWFuZHNiBnByb3RvMw=="));
+            "cGluZ19jYXJ0X2NvbW1hbmQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRL",
+            "ZXJuZWwuSW5mcmFzdHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90bxpATW9k",
+            "dWxlcy9TYWxlcy9fc2NoZW1hcy9Db21tYW5kcy9zaG9wcGluZ19jYXJ0X2l0",
+            "ZW1fY29tbWFuZC5wcm90byKqAQoZQ3JlYXRlU2hvcHBpbmdDYXJ0Q29tbWFu",
+            "ZBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZBIaCgtjdXN0b21l",
+            "cl9pZBgCIAEoCzIFLlV1aWQSGQoRY3VzdG9tZXJfZGlzY291bnQYAyABKAUS",
+            "NQoTc2hvcHBpbmdfY2FydF9pdGVtcxgEIAMoCzIYLlNob3BwaW5nQ2FydEl0",
+            "ZW1Db21tYW5kQi+qAixWU2hvcC5Nb2R1bGVzLlNhbGVzLkFQSS5BcHBsaWNh",
+            "dGlvbi5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand), global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand.Parser, new[]{ "ShoppingCartId", "CustomerId", "CustomerDiscount", "ShoppingCartItems" }, null, null, null, null)
           }));
@@ -93,10 +93,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -105,10 +105,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "customer_id" field.</summary>
     public const int CustomerIdFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid customerId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid customerId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid CustomerId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid CustomerId {
       get { return customerId_; }
       set {
         customerId_ = value;
@@ -256,13 +256,13 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
       if (other.customerId_ != null) {
         if (customerId_ == null) {
-          CustomerId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          CustomerId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         CustomerId.MergeFrom(other.CustomerId);
       }
@@ -287,14 +287,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (customerId_ == null) {
-              CustomerId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CustomerId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CustomerId);
             break;
@@ -324,14 +324,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (customerId_ == null) {
-              CustomerId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              CustomerId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(CustomerId);
             break;

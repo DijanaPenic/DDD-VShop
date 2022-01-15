@@ -1,13 +1,13 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
-import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/type/money.proto";
 
 message OrderPlacedDomainEvent 
 {
     Uuid order_id = 1;
-    Decimal delivery_cost = 2;
+    google.type.Money delivery_cost = 2;
     int32 customer_discount = 3;
 	Uuid customer_id = 4;
     string first_name = 5;

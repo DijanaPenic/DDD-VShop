@@ -1,12 +1,12 @@
 ﻿syntax = "proto3";
 option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
 
-import "SharedKernel/SharedKernel.Messaging/_schemas/uuid.proto";
-import "SharedKernel/SharedKernel.Messaging/_schemas/decimal.proto";
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/type/money.proto";
 
 message ShoppingCartProductPriceChangedDomainEvent 
 {
     Uuid shopping_cart_id = 1;
     Uuid product_id = 2;
-	Decimal unit_price = 3;
+	google.type.Money unit_price = 3;
 }

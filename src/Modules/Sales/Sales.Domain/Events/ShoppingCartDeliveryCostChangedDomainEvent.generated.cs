@@ -26,15 +26,14 @@ namespace VShop.Modules.Sales.Domain.Events {
           string.Concat(
             "CmFNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0V2ZW50cy9Eb21haW5FdmVudHMv",
             "c2hvcHBpbmdfY2FydF9kZWxpdmVyeV9jb3N0X2NoYW5nZWRfZG9tYWluX2V2",
-            "ZW50LnByb3RvGjdTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLk1lc3NhZ2lu",
-            "Zy9fc2NoZW1hcy91dWlkLnByb3RvGjpTaGFyZWRLZXJuZWwvU2hhcmVkS2Vy",
-            "bmVsLk1lc3NhZ2luZy9fc2NoZW1hcy9kZWNpbWFsLnByb3RvIm4KKlNob3Bw",
-            "aW5nQ2FydERlbGl2ZXJ5Q29zdENoYW5nZWREb21haW5FdmVudBIfChBzaG9w",
-            "cGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZBIfCg1kZWxpdmVyeV9jb3N0GAIg",
-            "ASgLMgguRGVjaW1hbEIkqgIhVlNob3AuTW9kdWxlcy5TYWxlcy5Eb21haW4u",
-            "RXZlbnRzYgZwcm90bzM="));
+            "ZW50LnByb3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLkluZnJhc3Ry",
+            "dWN0dXJlL19zY2hlbWFzL3V1aWQucHJvdG8aF2dvb2dsZS90eXBlL21vbmV5",
+            "LnByb3RvIngKKlNob3BwaW5nQ2FydERlbGl2ZXJ5Q29zdENoYW5nZWREb21h",
+            "aW5FdmVudBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZBIpCg1k",
+            "ZWxpdmVyeV9jb3N0GAIgASgLMhIuZ29vZ2xlLnR5cGUuTW9uZXlCJKoCIVZT",
+            "aG9wLk1vZHVsZXMuU2FsZXMuRG9tYWluLkV2ZW50c2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Messaging.CustomTypes.UuidReflection.Descriptor, global::VShop.SharedKernel.Messaging.CustomTypes.DecimalReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Type.MoneyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeliveryCostChangedDomainEvent), global::VShop.Modules.Sales.Domain.Events.ShoppingCartDeliveryCostChangedDomainEvent.Parser, new[]{ "ShoppingCartId", "DeliveryCost" }, null, null, null, null)
           }));
@@ -90,10 +89,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "shopping_cart_id" field.</summary>
     public const int ShoppingCartIdFieldNumber = 1;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Uuid shoppingCartId_;
+    private global::VShop.SharedKernel.Infrastructure.Types.Uuid shoppingCartId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Uuid ShoppingCartId {
+    public global::VShop.SharedKernel.Infrastructure.Types.Uuid ShoppingCartId {
       get { return shoppingCartId_; }
       set {
         shoppingCartId_ = value;
@@ -102,10 +101,10 @@ namespace VShop.Modules.Sales.Domain.Events {
 
     /// <summary>Field number for the "delivery_cost" field.</summary>
     public const int DeliveryCostFieldNumber = 2;
-    private global::VShop.SharedKernel.Messaging.CustomTypes.Decimal deliveryCost_;
+    private global::Google.Type.Money deliveryCost_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.SharedKernel.Messaging.CustomTypes.Decimal DeliveryCost {
+    public global::Google.Type.Money DeliveryCost {
       get { return deliveryCost_; }
       set {
         deliveryCost_ = value;
@@ -212,13 +211,13 @@ namespace VShop.Modules.Sales.Domain.Events {
       }
       if (other.shoppingCartId_ != null) {
         if (shoppingCartId_ == null) {
-          ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+          ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
         }
         ShoppingCartId.MergeFrom(other.ShoppingCartId);
       }
       if (other.deliveryCost_ != null) {
         if (deliveryCost_ == null) {
-          DeliveryCost = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+          DeliveryCost = new global::Google.Type.Money();
         }
         DeliveryCost.MergeFrom(other.DeliveryCost);
       }
@@ -239,14 +238,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (deliveryCost_ == null) {
-              DeliveryCost = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              DeliveryCost = new global::Google.Type.Money();
             }
             input.ReadMessage(DeliveryCost);
             break;
@@ -268,14 +267,14 @@ namespace VShop.Modules.Sales.Domain.Events {
             break;
           case 10: {
             if (shoppingCartId_ == null) {
-              ShoppingCartId = new global::VShop.SharedKernel.Messaging.CustomTypes.Uuid();
+              ShoppingCartId = new global::VShop.SharedKernel.Infrastructure.Types.Uuid();
             }
             input.ReadMessage(ShoppingCartId);
             break;
           }
           case 18: {
             if (deliveryCost_ == null) {
-              DeliveryCost = new global::VShop.SharedKernel.Messaging.CustomTypes.Decimal();
+              DeliveryCost = new global::Google.Type.Money();
             }
             input.ReadMessage(DeliveryCost);
             break;

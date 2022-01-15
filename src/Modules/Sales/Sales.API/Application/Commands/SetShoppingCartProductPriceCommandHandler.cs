@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             Result setProductPriceResult = shoppingCart.SetProductPrice
             (
                 EntityId.Create(command.ProductId).Data,
-                Price.Create(command.UnitPrice).Data
+                Price.Create(command.UnitPrice.DecimalValue).Data
             );
             if (setProductPriceResult.IsError) return setProductPriceResult.Error;
 

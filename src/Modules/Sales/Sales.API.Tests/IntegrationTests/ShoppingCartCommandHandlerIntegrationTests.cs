@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Domain.Enums;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -115,7 +115,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             ShoppingCartItem shoppingCartItemFromDb = shoppingCartFromDb.Items
                 .SingleOrDefault(sci => sci.Id.Value == command.ProductId);
             shoppingCartItemFromDb.Should().NotBeNull();
-            shoppingCartItemFromDb!.UnitPrice.Value.Should().Be(command.UnitPrice);
+            shoppingCartItemFromDb!.UnitPrice.Value.Should().Be(command.UnitPrice.DecimalValue);
         }
         
         [Theory]
@@ -276,7 +276,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             FullName fullName,
-            GenderType gender,
+            Gender gender,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             MessageMetadata commandMetadata
@@ -317,7 +317,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         (
             ShoppingCart shoppingCart,
             FullName fullName,
-            GenderType gender,
+            Gender gender,
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             MessageMetadata commandMetadata

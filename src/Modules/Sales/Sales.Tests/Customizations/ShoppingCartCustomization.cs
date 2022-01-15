@@ -1,8 +1,8 @@
-using System;
+
 using AutoFixture;
 
-using VShop.SharedKernel.Domain.Enums;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Tests.Customizations
@@ -36,7 +36,7 @@ namespace VShop.Modules.Sales.Tests.Customizations
                     fixture.Create<FullName>(),
                     fixture.Create<EmailAddress>(),
                     fixture.Create<PhoneNumber>(),
-                    fixture.Create<GenderType>()
+                    fixture.Create<Gender>()
                 );
 
                 return shoppingCart;

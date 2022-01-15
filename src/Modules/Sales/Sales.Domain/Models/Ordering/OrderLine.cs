@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.Domain.Models.Ordering
                     Id = new EntityId(e.ProductId);
                     OrderId = new EntityId(e.OrderId);
                     Quantity = new ProductQuantity(e.Quantity);
-                    UnitPrice = new Price(e.UnitPrice);
+                    UnitPrice = new Price(e.UnitPrice.DecimalValue);
                     break;
                 case OrderLineOutOfStockRemovedDomainEvent e:
                     Quantity -= new ProductQuantity(e.Quantity);
