@@ -62,7 +62,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
                 );
             });
 
-            MessageMappings.MapMessageTypes();
+            MessageMappings.Initialize();
         }
     }
 }

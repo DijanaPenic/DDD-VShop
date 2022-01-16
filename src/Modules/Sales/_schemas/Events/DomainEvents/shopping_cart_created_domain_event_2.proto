@@ -1,0 +1,7 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Sales.Domain.Events";
+
+message ShoppingCartCreatedDomainEvent2
+{
+    string description = 1;
+}

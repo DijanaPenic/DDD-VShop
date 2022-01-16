@@ -126,7 +126,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                 );
             });
 
-            MessageMappings.MapMessageTypes();
+            MessageMappings.Initialize();
         }
     }
 }

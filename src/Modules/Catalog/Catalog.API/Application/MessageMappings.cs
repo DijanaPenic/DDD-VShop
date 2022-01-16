@@ -2,18 +2,30 @@
 using VShop.Modules.Catalog.Integration.Events;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
+using static VShop.SharedKernel.Messaging.MessageTransformations;
 
 namespace VShop.Modules.Catalog.API.Application
 {
     public static class MessageMappings
     {
-        public static void MapMessageTypes()
+        public static void Initialize()
+        {
+            MapMessageTypes();
+            MapMessageTransformations();
+        }
+        
+        private static void MapMessageTypes()
         {
             // Configure integration events - local
             AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
             
             // Configure integration events - remote
             AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
+        }
+        
+        private static void MapMessageTransformations()
+        {
+
         }
     }
 }

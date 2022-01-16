@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using EventStore.Client;
 using Google.Protobuf;
-using VShop.SharedKernel.Messaging;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Types;
 
@@ -23,7 +23,15 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 MessageTypeMapper.ToType(resolvedEvent.Event.EventType)
             );
 
-            if (data is not TMessage message) return default;
+            object UpcastMessage()
+                => MessageTransformations.TryTransform
+                (
+                    resolvedEvent.Event.EventType,
+                    data,
+                    out object transformed
+                ) ? transformed : data;
+
+            if (UpcastMessage() is not TMessage message) return default;
 
             message.Metadata = ProtobufSerializer.FromByteArray
                 <MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());

@@ -7,12 +7,19 @@ using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 
 using static VShop.SharedKernel.Messaging.MessageTypeMapper;
+using static VShop.SharedKernel.Messaging.MessageTransformations;
 
 namespace VShop.Modules.Sales.API.Application
 {
     public static class MessageMappings
     {
-        public static void MapMessageTypes()
+        public static void Initialize()
+        {
+            MapMessageTypes();
+            MapMessageTransformations();
+        }
+            
+        private static void MapMessageTypes()
         {
             // Configure domain events
             AddCustomMap<ShoppingCartProductPriceChangedDomainEvent>(nameof(ShoppingCartProductPriceChangedDomainEvent));
@@ -55,6 +62,12 @@ namespace VShop.Modules.Sales.API.Application
 
             // Configure scheduled message
             AddCustomMap<ScheduledMessage>(nameof(ScheduledMessage));
+        }
+
+        private static void MapMessageTransformations()
+        {
+            // CAUTION: this is just a showcase example.
+            //Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
         }
     }
 }
