@@ -1,4 +1,3 @@
-
 using AutoFixture;
 
 using VShop.SharedKernel.Domain.ValueObjects;
