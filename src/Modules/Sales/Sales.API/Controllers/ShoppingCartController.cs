@@ -61,13 +61,6 @@ namespace VShop.Modules.Sales.API.Controllers
             [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-            // TODO - uncomment; should this check be performed by API gateway, command handler or bounded context API?
-            // ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(request.CustomerId);
-            // if (shoppingCart is not null)
-            // {
-            //     return BadRequest("Only one active shopping cart is supported per customer.");
-            // }
-
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 

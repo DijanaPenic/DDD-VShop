@@ -5,17 +5,26 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
     public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
-        
-        public CreateShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
-            => _shoppingCartStore = shoppingCartStore;
+        private readonly IShoppingCartQueryService _queryService;
+
+        public CreateShoppingCartCommandHandler
+        (
+            IAggregateStore<ShoppingCart> shoppingCartStore,
+            IShoppingCartQueryService queryService
+        )
+        {
+            _shoppingCartStore = shoppingCartStore;
+            _queryService = queryService;
+        }
 
         public async Task<Result<ShoppingCart>> Handle
         (
@@ -23,6 +32,10 @@ namespace VShop.Modules.Sales.API.Application.Commands
             CancellationToken cancellationToken
         )
         {
+            bool hasShoppingCart = (await _queryService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
+            if (hasShoppingCart)
+                return Result.ValidationError("Only one active shopping cart is supported per customer.");
+            
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
