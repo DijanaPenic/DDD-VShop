@@ -5,7 +5,7 @@ using VShop.Modules.Sales.Infrastructure.Entities;
 
 namespace VShop.Modules.Sales.API.Application.Queries
 {
-    public interface IShoppingCartQueryService
+    public interface IShoppingCartReadService
     {
         Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId);
     }

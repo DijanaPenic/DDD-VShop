@@ -23,18 +23,18 @@ namespace VShop.Modules.Sales.API.Controllers
     {
         private readonly ICommandBus _commandBus;
         private readonly IMapper _mapper;
-        private readonly IShoppingCartQueryService _queryService;
+        private readonly IShoppingCartReadService _readService;
 
         public ShoppingCartController
         (
             ICommandBus commandBus,
             IMapper mapper,
-            IShoppingCartQueryService queryService
+            IShoppingCartReadService readService
         )
         {
             _commandBus = commandBus;
             _mapper = mapper;
-            _queryService = queryService;
+            _readService = readService;
         }
         
         [HttpGet]
@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType(typeof(ShoppingCartInfo), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShoppingCartAsync([FromQuery] Guid customerId)
         {
-            ShoppingCartInfo shoppingCart = await _queryService.GetActiveShoppingCartByCustomerIdAsync(customerId);
+            ShoppingCartInfo shoppingCart = await _readService.GetActiveShoppingCartByCustomerIdAsync(customerId);
             if (shoppingCart is null) return NotFound();
 
             return Ok(shoppingCart);
@@ -154,7 +154,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> SetProductPriceAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -171,7 +171,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 
             Result commandResult = await _commandBus.SendAsync(command);
         
-            return HandleResult(commandResult, NoContent);
+            return HandleResult(commandResult, Ok);
         }
         
         [HttpDelete]

@@ -23,8 +23,6 @@ namespace VShop.Modules.Sales.API.Application.Commands
             CancellationToken cancellationToken
         )
         {
-            throw new Exception("TEST");
-            
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,

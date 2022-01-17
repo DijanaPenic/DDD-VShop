@@ -14,16 +14,16 @@ namespace VShop.Modules.Sales.API.Application.Commands
     public class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
-        private readonly IShoppingCartQueryService _queryService;
+        private readonly IShoppingCartReadService _readService;
 
         public CreateShoppingCartCommandHandler
         (
             IAggregateStore<ShoppingCart> shoppingCartStore,
-            IShoppingCartQueryService queryService
+            IShoppingCartReadService readService
         )
         {
             _shoppingCartStore = shoppingCartStore;
-            _queryService = queryService;
+            _readService = readService;
         }
 
         public async Task<Result<ShoppingCart>> Handle
@@ -32,7 +32,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             CancellationToken cancellationToken
         )
         {
-            bool hasShoppingCart = (await _queryService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
+            bool hasShoppingCart = (await _readService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
             if (hasShoppingCart)
                 return Result.ValidationError("Only one active shopping cart is supported per customer.");
             

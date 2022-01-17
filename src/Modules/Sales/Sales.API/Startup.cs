@@ -35,7 +35,7 @@ namespace VShop.Modules.Sales.API
             services.AddSchedulerServices(Configuration.GetConnectionString("PostgresDb"));
 
             // Configure query services
-            services.AddTransient<IShoppingCartQueryService, ShoppingCartQueryService>();
+            services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();
             
             // Configure domain services
             services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();

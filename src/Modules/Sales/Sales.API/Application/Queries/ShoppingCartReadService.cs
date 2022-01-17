@@ -8,11 +8,11 @@ using VShop.Modules.Sales.Infrastructure.Entities;
 
 namespace VShop.Modules.Sales.API.Application.Queries
 {
-    public class ShoppingCartQueryService : IShoppingCartQueryService 
+    public class ShoppingCartReadService : IShoppingCartReadService 
     {
         private readonly SalesDbContext _salesDbContext;
         
-        public ShoppingCartQueryService(SalesDbContext salesDbContext) => _salesDbContext = salesDbContext;
+        public ShoppingCartReadService(SalesDbContext salesDbContext) => _salesDbContext = salesDbContext;
 
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {
