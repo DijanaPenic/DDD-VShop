@@ -11,7 +11,7 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Subscription
 {
-    [DbContext(typeof(SubscriptionContext))]
+    [DbContext(typeof(SubscriptionDbContext))]
     partial class SubscriptionContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

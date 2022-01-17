@@ -27,12 +27,12 @@ namespace VShop.Modules.Catalog.API.Controllers
     public class ProductController : ApplicationControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogDbContext _catalogDbContext;
         
-        public ProductController(IMapper mapper, CatalogContext catalogContext)
+        public ProductController(IMapper mapper, CatalogDbContext catalogDbContext)
         {
             _mapper = mapper;
-            _catalogContext = catalogContext;
+            _catalogDbContext = catalogDbContext;
         }
         
         [HttpPost]
@@ -47,8 +47,8 @@ namespace VShop.Modules.Catalog.API.Controllers
             product.Id = SequentialGuid.Create();
             product.IsDeleted = false;
 
-            await _catalogContext.AddAsync(product);
-            await _catalogContext.SaveChangesAsync();
+            await _catalogDbContext.AddAsync(product);
+            await _catalogDbContext.SaveChangesAsync();
 
             return Created(product);
         }
@@ -66,15 +66,15 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromBody] ProductRequest request
         )
         {
-            CatalogProduct product = await _catalogContext.Products.FindAsync(productId);
+            CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
             if (product is null || product.IsDeleted is true)
                 return NotFound("Requested product cannot be found.");
 
             _mapper.Map(request, product);
 
-            _catalogContext.Update(product);
-            await _catalogContext.SaveChangesAsync();
+            _catalogDbContext.Update(product);
+            await _catalogDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -88,15 +88,15 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] Guid productId)
         {
-            CatalogProduct product = await _catalogContext.Products.FindAsync(productId);
+            CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
             if (product is null || product.IsDeleted is true)
                 return NotFound("Requested product cannot be found.");
 
             product.IsDeleted = true;
 
-            _catalogContext.Update(product);
-            await _catalogContext.SaveChangesAsync();
+            _catalogDbContext.Update(product);
+            await _catalogDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -114,7 +114,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromQuery] string include = DefaultParameters.Include
         )
         {
-            CatalogProduct product = await _catalogContext.Products
+            CatalogProduct product = await _catalogDbContext.Products
                 .Include(OptionsFactory.Create(include))
                 .SingleOrDefaultAsync(c => c.Id == productId);
             
@@ -145,7 +145,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             Result<Expression<Func<CatalogProduct, bool>>> getProductsByIdsExpressionResult = GetProductsByIdsExpression(ids);
             if (getProductsByIdsExpressionResult.IsError) return BadRequest(getProductsByIdsExpressionResult.Error.ToString());
             
-            IList<CatalogProduct> products = await _catalogContext.Products
+            IList<CatalogProduct> products = await _catalogDbContext.Products
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(p => p.IsDeleted == false)
                 .Filter(string.IsNullOrWhiteSpace(searchString) ? null : p => p.Name.Contains(searchString))

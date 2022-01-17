@@ -12,7 +12,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions
         Task ProjectAsync
         (
             ResolvedEvent resolvedEvent,
-            Func<SubscriptionContext, Task> checkpointUpdate,
+            Func<SubscriptionDbContext, Task> checkpointUpdate,
             CancellationToken cancellationToken = default
         );
     }

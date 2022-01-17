@@ -10,7 +10,7 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Subscription
 {
-    [DbContext(typeof(SubscriptionContext))]
+    [DbContext(typeof(SubscriptionDbContext))]
     [Migration("20211126122200_InitialCreate")]
     partial class InitialCreate
     {

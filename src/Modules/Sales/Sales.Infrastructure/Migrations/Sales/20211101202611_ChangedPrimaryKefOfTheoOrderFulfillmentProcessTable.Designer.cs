@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Sales
 {
-    [DbContext(typeof(SalesContext))]
+    [DbContext(typeof(SalesDbContext))]
     [Migration("20211101202611_ChangedPrimaryKefOfTheoOrderFulfillmentProcessTable")]
     partial class ChangedPrimaryKefOfTheoOrderFulfillmentProcessTable
     {

@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityCon
     {
         public void Configure(EntityTypeBuilder<Checkpoint> builder)
         {
-            builder.ToTable("checkpoint", SubscriptionContext.SubscriptionSchema);
+            builder.ToTable("checkpoint", SubscriptionDbContext.SubscriptionSchema);
             
             builder.HasKey(c => c.SubscriptionId);
             builder.Property(c => c.Position);

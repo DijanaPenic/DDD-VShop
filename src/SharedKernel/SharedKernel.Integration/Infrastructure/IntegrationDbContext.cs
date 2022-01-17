@@ -7,13 +7,13 @@ using VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations;
 
 namespace VShop.SharedKernel.Integration.Infrastructure
 {
-    public class IntegrationContext : DbContextBase
+    public class IntegrationDbContext : DbContextBase
     {
         public const string IntegrationSchema = "integration";
 
         public DbSet<IntegrationEventLog> IntegrationEventLogs { get; set; }
         
-        public IntegrationContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public IntegrationDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

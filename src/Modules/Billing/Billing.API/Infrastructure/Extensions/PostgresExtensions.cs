@@ -4,6 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Billing.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Services;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {
@@ -14,14 +15,16 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                typeof(BillingContext).Assembly
+                typeof(BillingDbContext).Assembly
             ));
-            services.AddDbContext<BillingContext>();
-            services.AddDbContext<IntegrationContext>();
-            services.AddDbContext<SubscriptionContext>();
+            services.AddDbContext<BillingDbContext>();
+            services.AddDbContext<IntegrationDbContext>();
+            services.AddDbContext<SubscriptionDbContext>();
             
             // Register the main dbContext provider.
-            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<BillingContext>);
+            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<BillingDbContext>);
+
+            services.AddHostedService<DatabaseInitializerHostedService>();
         }
     }
 }

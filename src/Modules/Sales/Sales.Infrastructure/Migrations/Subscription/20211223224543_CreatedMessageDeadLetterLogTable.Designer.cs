@@ -11,7 +11,7 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Subscription
 {
-    [DbContext(typeof(SubscriptionContext))]
+    [DbContext(typeof(SubscriptionDbContext))]
     [Migration("20211223224543_CreatedMessageDeadLetterLogTable")]
     partial class CreatedMessageDeadLetterLogTable
     {

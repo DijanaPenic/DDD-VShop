@@ -25,12 +25,12 @@ namespace VShop.Modules.Catalog.API.Controllers
     public class CategoryController : ApplicationControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogDbContext _catalogDbContext;
         
-        public CategoryController(IMapper mapper, CatalogContext catalogContext)
+        public CategoryController(IMapper mapper, CatalogDbContext catalogDbContext)
         {
             _mapper = mapper;
-            _catalogContext = catalogContext;
+            _catalogDbContext = catalogDbContext;
         }
         
         [HttpPost]
@@ -45,8 +45,8 @@ namespace VShop.Modules.Catalog.API.Controllers
             category.Id = SequentialGuid.Create();
             category.IsDeleted = false;
 
-            await _catalogContext.AddAsync(category);
-            await _catalogContext.SaveChangesAsync();
+            await _catalogDbContext.AddAsync(category);
+            await _catalogDbContext.SaveChangesAsync();
 
             return Created(category);
         }
@@ -64,15 +64,15 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromBody] CategoryRequest request
         )
         {
-            CatalogCategory category = await _catalogContext.Categories.FindAsync(categoryId);
+            CatalogCategory category = await _catalogDbContext.Categories.FindAsync(categoryId);
             
             if (category is null || category.IsDeleted is true)
                 return NotFound("Requested category cannot be found.");
 
             _mapper.Map(request, category);
 
-            _catalogContext.Update(category);
-            await _catalogContext.SaveChangesAsync();
+            _catalogDbContext.Update(category);
+            await _catalogDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -86,15 +86,15 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteCategoryAsync([FromRoute] Guid categoryId)
         {
-            CatalogCategory category = await _catalogContext.Categories.FindAsync(categoryId);
+            CatalogCategory category = await _catalogDbContext.Categories.FindAsync(categoryId);
             
             if (category is null || category.IsDeleted is true)
                 return NotFound("Requested category cannot be found.");
 
             category.IsDeleted = true;
 
-            _catalogContext.Update(category);
-            await _catalogContext.SaveChangesAsync();
+            _catalogDbContext.Update(category);
+            await _catalogDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -112,7 +112,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromQuery] string include = DefaultParameters.Include
         )
         {
-            CatalogCategory category = await _catalogContext.Categories
+            CatalogCategory category = await _catalogDbContext.Categories
                 .Include(OptionsFactory.Create(include))
                 .SingleOrDefaultAsync(c => c.Id == categoryId);
 
@@ -139,7 +139,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromQuery] string sortOrder = DefaultParameters.SortOrder
         )
         {
-            IList<CatalogCategory> categories = await _catalogContext.Categories
+            IList<CatalogCategory> categories = await _catalogDbContext.Categories
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(c => c.IsDeleted == false)
                 .Filter(string.IsNullOrWhiteSpace(searchString) ? null : p => p.Name.Contains(searchString))
@@ -172,7 +172,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             [FromQuery] string sortOrder = DefaultParameters.SortOrder
         )
         {
-            IList<CatalogProduct> products = await _catalogContext.Products
+            IList<CatalogProduct> products = await _catalogDbContext.Products
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(c => c.IsDeleted == false && c.CategoryId == categoryId)
                 .Filter(string.IsNullOrWhiteSpace(searchString) ? null : c => c.Name.Contains(searchString))

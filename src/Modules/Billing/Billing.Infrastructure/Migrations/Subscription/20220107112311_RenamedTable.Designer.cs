@@ -11,7 +11,7 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Subscription
 {
-    [DbContext(typeof(SubscriptionContext))]
+    [DbContext(typeof(SubscriptionDbContext))]
     [Migration("20220107112311_RenamedTable")]
     partial class RenamedTable
     {

@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<MessageLog> builder)
         {
-            builder.ToTable("message_log", SchedulerContext.SchedulerSchema);
+            builder.ToTable("message_log", SchedulerDbContext.SchedulerSchema);
             
             builder.HasKey(ml => ml.Id);
             builder.Property(ml => ml.TypeName).IsRequired();

@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-using VShop.SharedKernel.PostgresDb;
-
-namespace VShop.SharedKernel.Integration.Utilities
+namespace VShop.SharedKernel.PostgresDb.Utilities
 {
     public class ResilientTransaction
     {

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Sales
 {
-    [DbContext(typeof(SalesContext))]
+    [DbContext(typeof(SalesDbContext))]
     [Migration("20211103153139_UsedProductIdAsThePrimaryKeyInShoppingCartItemTable")]
     partial class UsedProductIdAsThePrimaryKeyInShoppingCartItemTable
     {

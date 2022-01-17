@@ -7,14 +7,14 @@ using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityConfigu
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure
 {
-    public class SubscriptionContext : DbContextBase
+    public class SubscriptionDbContext : DbContextBase
     {
         public const string SubscriptionSchema = "subscription";
         
         public DbSet<Checkpoint> Checkpoints { get; set; }
         public DbSet<MessageDeadLetterLog> MessageDeadLetterLogs { get; set; }
 
-        public SubscriptionContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public SubscriptionDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

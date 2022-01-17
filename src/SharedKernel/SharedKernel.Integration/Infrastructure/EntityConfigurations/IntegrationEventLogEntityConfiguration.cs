@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<IntegrationEventLog> builder)
         {
-            builder.ToTable("integration_event_queue", IntegrationContext.IntegrationSchema);
+            builder.ToTable("integration_event_queue", IntegrationDbContext.IntegrationSchema);
             
             builder.HasKey(el => el.Id);
             builder.Property(el => el.TypeName).IsRequired();

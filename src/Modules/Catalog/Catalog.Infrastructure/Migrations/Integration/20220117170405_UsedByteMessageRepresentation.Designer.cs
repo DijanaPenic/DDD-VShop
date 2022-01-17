@@ -12,7 +12,7 @@ using VShop.SharedKernel.Integration.Infrastructure;
 
 namespace VShop.Modules.Catalog.Infrastructure.Migrations.Integration
 {
-    [DbContext(typeof(IntegrationContext))]
+    [DbContext(typeof(IntegrationDbContext))]
     [Migration("20220117170405_UsedByteMessageRepresentation")]
     partial class UsedByteMessageRepresentation
     {

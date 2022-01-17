@@ -7,13 +7,13 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Infrastructure
 {
-    public class SchedulerContext : DbContextBase
+    public class SchedulerDbContext : DbContextBase
     {
         public const string SchedulerSchema = "scheduler";
 
         public DbSet<MessageLog> MessageLogs { get; set; }
 
-        public SchedulerContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public SchedulerDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

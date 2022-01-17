@@ -10,7 +10,7 @@ using NodaTime;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Billing
 {
-    [DbContext(typeof(BillingContext))]
+    [DbContext(typeof(BillingDbContext))]
     [Migration("20211221190336_EnabledXminConcurrenyToken")]
     partial class EnabledXminConcurrenyToken
     {

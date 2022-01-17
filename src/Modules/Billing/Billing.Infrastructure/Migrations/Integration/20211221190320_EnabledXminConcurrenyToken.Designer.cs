@@ -11,7 +11,7 @@ using VShop.SharedKernel.Integration.Infrastructure;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Integration
 {
-    [DbContext(typeof(IntegrationContext))]
+    [DbContext(typeof(IntegrationDbContext))]
     [Migration("20211221190320_EnabledXminConcurrenyToken")]
     partial class EnabledXminConcurrenyToken
     {

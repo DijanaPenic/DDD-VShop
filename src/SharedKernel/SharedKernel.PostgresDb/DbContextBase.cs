@@ -1,9 +1,8 @@
-﻿using System;
+﻿using NodaTime;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using NodaTime;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -12,7 +11,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb
 {
-    public class DbContextBase : DbContext
+    public abstract class DbContextBase : DbContext
     {
         private readonly IClockService _clockService;
         

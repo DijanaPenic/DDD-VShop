@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             orderFromDb.Status.Should().Be(OrderStatus.Paid);
             
             // A reminder message should have been scheduled.
-            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext>(async dbContext =>
+            await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext>(async dbContext =>
             {
                  string typeName = ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>();
                  

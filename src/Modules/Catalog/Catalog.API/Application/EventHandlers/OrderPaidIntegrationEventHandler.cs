@@ -7,28 +7,28 @@ using Microsoft.EntityFrameworkCore;
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Integration.Utilities;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.PostgresDb.Utilities;
 
 namespace VShop.Modules.Catalog.API.Application.EventHandlers
 {
     public class OrderPaidIntegrationEventHandler : IEventHandler<OrderStatusSetToPaidIntegrationEvent>
     {
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogDbContext _catalogDbContext;
         private readonly IIntegrationEventService _catalogIntegrationEventService;
 
         public OrderPaidIntegrationEventHandler
         (
-            CatalogContext catalogContext,
+            CatalogDbContext catalogDbContext,
             IIntegrationEventService catalogIntegrationEventService
         )
         {
-            _catalogContext = catalogContext;
+            _catalogDbContext = catalogDbContext;
             _catalogIntegrationEventService = catalogIntegrationEventService;
         }
 
@@ -39,7 +39,7 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
 
             foreach (OrderStatusSetToPaidIntegrationEvent.Types.OrderLine orderLine in @event.OrderLines)
             {
-                CatalogProduct product = await _catalogContext.Products
+                CatalogProduct product = await _catalogDbContext.Products
                     .SingleOrDefaultAsync(p => p.Id == orderLine.ProductId, cancellationToken);
 
                 if (product is null) return;
@@ -67,9 +67,9 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                 )
             );
 
-            Guid transactionId = await ResilientTransaction.New(_catalogContext).ExecuteAsync(async () =>
+            Guid transactionId = await ResilientTransaction.New(_catalogDbContext).ExecuteAsync(async () =>
             {
-                await _catalogContext.SaveChangesAsync(cancellationToken);
+                await _catalogDbContext.SaveChangesAsync(cancellationToken);
                 await _catalogIntegrationEventService.SaveEventAsync
                 (
                     orderStockConfirmedIntegrationEvent,

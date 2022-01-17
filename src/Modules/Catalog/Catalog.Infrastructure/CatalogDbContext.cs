@@ -7,14 +7,14 @@ using VShop.Modules.Catalog.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Catalog.Infrastructure
 {
-    public class CatalogContext : DbContextBase
+    public class CatalogDbContext : DbContextBase
     {
         public const string CatalogSchema = "catalog";
 
         public DbSet<CatalogProduct> Products { get; set; }
         public DbSet<CatalogCategory> Categories { get; set; }
 
-        public CatalogContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public CatalogDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -10,13 +10,13 @@ namespace VShop.Modules.Sales.API.Application.Queries
 {
     public class ShoppingCartQueryService : IShoppingCartQueryService 
     {
-        private readonly SalesContext _salesContext;
+        private readonly SalesDbContext _salesDbContext;
         
-        public ShoppingCartQueryService(SalesContext salesContext) => _salesContext = salesContext;
+        public ShoppingCartQueryService(SalesDbContext salesDbContext) => _salesDbContext = salesDbContext;
 
         public Task<ShoppingCartInfo> GetActiveShoppingCartByCustomerIdAsync(Guid customerId)
         {
-            return _salesContext.ShoppingCarts
+            return _salesDbContext.ShoppingCarts
                 .Include(sc => sc.Items)
                 .SingleOrDefaultAsync(sc => sc.CustomerId == customerId && sc.Status != ShoppingCartStatus.Closed);
         }

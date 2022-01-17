@@ -11,14 +11,14 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
 {
     public class PaymentRepository : IPaymentRepository
     {
-        private readonly BillingContext _dbContext;
+        private readonly BillingDbContext _dbDbContext;
 
-        public PaymentRepository(BillingContext dbContext) => _dbContext = dbContext;
+        public PaymentRepository(BillingDbContext dbDbContext) => _dbDbContext = dbDbContext;
 
         public async Task SaveAsync(Payment paymentTransfer, CancellationToken cancellationToken)
         {
-            await _dbContext.Payments.AddAsync(paymentTransfer, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbDbContext.Payments.AddAsync(paymentTransfer, cancellationToken);
+            await _dbDbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<Payment>> GetByOrderIdAsync
@@ -26,12 +26,12 @@ namespace VShop.Modules.Billing.Infrastructure.Repositories
             Guid orderId,
             PaymentStatus status,
             CancellationToken cancellationToken
-        ) => await _dbContext.Payments
+        ) => await _dbDbContext.Payments
             .Where(p => p.OrderId == orderId && p.Status == status)
             .ToListAsync(cancellationToken);
 
         public Task<bool> IsPaymentSuccessAsync(Guid orderId, PaymentType type, CancellationToken cancellationToken)
-            =>  _dbContext.Payments.AnyAsync
+            =>  _dbDbContext.Payments.AnyAsync
             (
                 p => p.OrderId == orderId && p.Status == PaymentStatus.Success && p.Type == type,
                 cancellationToken

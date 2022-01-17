@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Integration.Infrastructure;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure;
@@ -14,14 +15,16 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                typeof(CatalogContext).Assembly
+                typeof(CatalogDbContext).Assembly
             ));
-            services.AddDbContext<CatalogContext>();
-            services.AddDbContext<IntegrationContext>();
-            services.AddDbContext<SubscriptionContext>();
+            services.AddDbContext<CatalogDbContext>();
+            services.AddDbContext<IntegrationDbContext>();
+            services.AddDbContext<SubscriptionDbContext>();
             
             // Register the main dbContext provider.
-            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<CatalogContext>);
+            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<CatalogDbContext>);
+            
+            services.AddHostedService<DatabaseInitializerHostedService>();
         }
     }
 }

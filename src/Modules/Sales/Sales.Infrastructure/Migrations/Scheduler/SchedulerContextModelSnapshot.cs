@@ -11,7 +11,7 @@ using VShop.SharedKernel.Scheduler.Infrastructure;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Scheduler
 {
-    [DbContext(typeof(SchedulerContext))]
+    [DbContext(typeof(SchedulerDbContext))]
     partial class SchedulerContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

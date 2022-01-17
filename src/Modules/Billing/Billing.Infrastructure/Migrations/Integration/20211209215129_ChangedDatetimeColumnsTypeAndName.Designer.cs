@@ -11,7 +11,7 @@ using VShop.SharedKernel.Integration.Infrastructure;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Integration
 {
-    [DbContext(typeof(IntegrationContext))]
+    [DbContext(typeof(IntegrationDbContext))]
     [Migration("20211209215129_ChangedDatetimeColumnsTypeAndName")]
     partial class ChangedDatetimeColumnsTypeAndName
     {

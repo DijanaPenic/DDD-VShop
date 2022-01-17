@@ -11,7 +11,7 @@ using VShop.Modules.Billing.Infrastructure;
 
 namespace VShop.Modules.Billing.Migrations.Infrastructure
 {
-    [DbContext(typeof(BillingContext))]
+    [DbContext(typeof(BillingDbContext))]
     partial class BillingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

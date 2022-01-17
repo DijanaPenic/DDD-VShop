@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfo> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCarts.FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
 
             void Validation(ShoppingCartInfo shoppingCartInfo)
@@ -52,7 +52,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfo>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -80,7 +80,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfoItem> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
@@ -95,7 +95,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfoItem>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -124,7 +124,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfoItem> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
@@ -134,7 +134,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfoItem>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -160,7 +160,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfo> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCartId);
 
@@ -173,7 +173,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfo>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -195,7 +195,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfo> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
@@ -208,7 +208,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfo>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -226,7 +226,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfo> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfo> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCarts
                     .FirstOrDefaultAsync(sc => sc.Id == shoppingCart.Id);
 
@@ -239,7 +239,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfo>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfo>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -267,7 +267,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfoItem> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
@@ -280,7 +280,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfoItem>(Sampling, Validation),
                 TimeoutMillis
             );
         }
@@ -308,7 +308,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await ShoppingCartHelper.SaveAsync(shoppingCart);
         
             // Assert
-            Task<ShoppingCartInfoItem> Sampling(SalesContext dbContext) 
+            Task<ShoppingCartInfoItem> Sampling(SalesDbContext dbContext) 
                 => dbContext.ShoppingCartItems
                     .FirstOrDefaultAsync(sc => sc.ShoppingCartInfoId == shoppingCartId);
 
@@ -321,7 +321,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.AssertEventuallyAsync
             (
                 clockService,
-                new DatabaseProbe<SalesContext, ShoppingCartInfoItem>(Sampling, Validation),
+                new DatabaseProbe<SalesDbContext, ShoppingCartInfoItem>(Sampling, Validation),
                 TimeoutMillis
             );
         }

@@ -2,14 +2,8 @@ using System;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Autofac.Extensions.DependencyInjection;
-
-using VShop.Modules.Catalog.Infrastructure;
-using VShop.SharedKernel.Integration.Infrastructure;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
 
 namespace VShop.Modules.Catalog.API
 {
@@ -27,8 +21,6 @@ namespace VShop.Modules.Catalog.API
             {
                 IHost host = CreateHostBuilder(args).Build();
 
-                RunDatabaseMigrations(host);
-                
                 host.Run();
 
                 Log.Information("Stopped cleanly");
@@ -66,23 +58,5 @@ namespace VShop.Modules.Catalog.API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-        
-        private static void RunDatabaseMigrations(IHost host)
-        {
-            using IServiceScope scope = host.Services
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
-
-            IServiceProvider serviceProvider = scope.ServiceProvider;
-            
-            using CatalogContext catalogContext = serviceProvider.GetService<CatalogContext>();
-            catalogContext?.Database.Migrate();
-            
-            using IntegrationContext integrationContext = serviceProvider.GetService<IntegrationContext>();
-            integrationContext?.Database.Migrate();
-            
-            using SubscriptionContext subscriptionContext = serviceProvider.GetService<SubscriptionContext>();
-            subscriptionContext?.Database.Migrate();
-        }
     }
 }

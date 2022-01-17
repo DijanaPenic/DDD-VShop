@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.Integration.Projections
         public async Task ProjectAsync
         (
             ResolvedEvent resolvedEvent,
-            Func<SubscriptionContext, Task> checkpointUpdate,
+            Func<SubscriptionDbContext, Task> checkpointUpdate,
             CancellationToken cancellationToken = default
         )
         {
@@ -48,9 +48,9 @@ namespace VShop.SharedKernel.Integration.Projections
             
             // Update the checkpoint after successful projection.
             using IServiceScope scope = _serviceProvider.CreateScope();
-            SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+            SubscriptionDbContext subscriptionDbContext = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
             
-            await checkpointUpdate(subscriptionContext);
+            await checkpointUpdate(subscriptionDbContext);
         }
     }
 }

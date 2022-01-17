@@ -40,7 +40,7 @@ namespace VShop.SharedKernel.Integration.Projections
         public async Task ProjectAsync
         (
             ResolvedEvent resolvedEvent,
-            Func<SubscriptionContext, Task> checkpointUpdate,
+            Func<SubscriptionDbContext, Task> checkpointUpdate,
             CancellationToken cancellationToken = default
         )
         {
@@ -50,12 +50,12 @@ namespace VShop.SharedKernel.Integration.Projections
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
             
             using IServiceScope scope = _serviceProvider.CreateScope();
-            SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+            SubscriptionDbContext subscriptionDbContext = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
 
-            IExecutionStrategy strategy = subscriptionContext.Database.CreateExecutionStrategy();
+            IExecutionStrategy strategy = subscriptionDbContext.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
             {
-                await subscriptionContext.BeginTransactionAsync(cancellationToken);
+                await subscriptionDbContext.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
@@ -68,7 +68,7 @@ namespace VShop.SharedKernel.Integration.Projections
                 }
                 catch (Exception ex)
                 {
-                    subscriptionContext.MessageDeadLetterLogs.Add(new MessageDeadLetterLog
+                    subscriptionDbContext.MessageDeadLetterLogs.Add(new MessageDeadLetterLog
                     {
                         Id = SequentialGuid.Create(),
                         StreamId = resolvedEvent.OriginalStreamId,
@@ -78,12 +78,12 @@ namespace VShop.SharedKernel.Integration.Projections
                         Status = MessageProcessingStatus.Failed,
                         Error = $"{ex.Message}{ex.StackTrace}"
                     });
-                    await subscriptionContext.SaveChangesAsync(cancellationToken);
+                    await subscriptionDbContext.SaveChangesAsync(cancellationToken);
                 }
                 
-                await checkpointUpdate(subscriptionContext);
+                await checkpointUpdate(subscriptionDbContext);
                 
-                await subscriptionContext.CommitCurrentTransactionAsync(cancellationToken);
+                await subscriptionDbContext.CommitCurrentTransactionAsync(cancellationToken);
             });
         }
     }

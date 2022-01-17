@@ -95,7 +95,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             public bool IsSatisfied() => _messageLog is { Status: MessageStatus.Finished };
 
             public async Task SampleAsync()
-                => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerContext, MessageLog>
+                => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext, MessageLog>
                     (
                         dbContext => dbContext.MessageLogs
                         .OrderByDescending(ml => ml.DateCreated)

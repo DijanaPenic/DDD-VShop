@@ -9,7 +9,7 @@ namespace VShop.Modules.Billing.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
-            builder.ToTable("payment", BillingContext.PaymentSchema);
+            builder.ToTable("payment", BillingDbContext.PaymentSchema);
             
             builder.HasKey(pt => pt.Id);
             builder.Property(pt => pt.OrderId).IsRequired();

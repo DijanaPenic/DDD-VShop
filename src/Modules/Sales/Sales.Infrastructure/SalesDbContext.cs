@@ -7,7 +7,7 @@ using VShop.Modules.Sales.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Sales.Infrastructure
 {
-    public class SalesContext : DbContextBase
+    public class SalesDbContext : DbContextBase
     {
         public const string ShoppingCartSchema = "shopping_cart";
         public const string OrderSchema = "order";
@@ -15,7 +15,7 @@ namespace VShop.Modules.Sales.Infrastructure
         public DbSet<ShoppingCartInfo> ShoppingCarts { get; set; }
         public DbSet<ShoppingCartInfoItem> ShoppingCartItems { get; set; }
 
-        public SalesContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public SalesDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -7,13 +7,13 @@ using VShop.Modules.Billing.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Billing.Infrastructure
 {
-    public class BillingContext : DbContextBase
+    public class BillingDbContext : DbContextBase
     {
         public const string PaymentSchema = "payment";
 
         public DbSet<Payment> Payments { get; set; }
 
-        public BillingContext(IClockService clockService, IDbContextBuilder contextBuilder) 
+        public BillingDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

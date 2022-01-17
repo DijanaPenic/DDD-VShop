@@ -10,7 +10,7 @@ using NodaTime;
 
 namespace VShop.Modules.Catalog.Infrastructure.Migrations.Catalog
 {
-    [DbContext(typeof(CatalogContext))]
+    [DbContext(typeof(CatalogDbContext))]
     [Migration("20211226190918_InitialCreate")]
     partial class InitialCreate
     {

@@ -11,7 +11,7 @@ using VShop.Modules.Catalog.Infrastructure;
 
 namespace VShop.Modules.Catalog.Infrastructure.Migrations.Catalog
 {
-    [DbContext(typeof(CatalogContext))]
+    [DbContext(typeof(CatalogDbContext))]
     partial class CatalogContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

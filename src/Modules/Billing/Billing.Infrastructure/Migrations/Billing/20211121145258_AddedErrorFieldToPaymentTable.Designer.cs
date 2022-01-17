@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace VShop.Modules.Billing.Infrastructure.Migrations.Billing
 {
-    [DbContext(typeof(BillingContext))]
+    [DbContext(typeof(BillingDbContext))]
     [Migration("20211121145258_AddedErrorFieldToPaymentTable")]
     partial class AddedErrorFieldToPaymentTable
     {

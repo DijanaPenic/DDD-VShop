@@ -133,9 +133,9 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
         
         private static async Task RunRelationalDatabaseMigrationsAsync()
         { 
-            await MigratePostgresDatabaseAsync<SalesContext>();
-            await MigratePostgresDatabaseAsync<SchedulerContext>();
-            await MigratePostgresDatabaseAsync<SubscriptionContext>();
+            await MigratePostgresDatabaseAsync<SalesDbContext>();
+            await MigratePostgresDatabaseAsync<SchedulerDbContext>();
+            await MigratePostgresDatabaseAsync<SubscriptionDbContext>();
         }
         
         private static Task MigratePostgresDatabaseAsync<TDbContext>() 

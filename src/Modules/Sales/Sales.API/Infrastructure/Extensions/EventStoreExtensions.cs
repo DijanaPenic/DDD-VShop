@@ -64,7 +64,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
                     new SubscriptionConfig
                     (
                         "ReadModels",
-                        new DomainEventProjectionToPostgres<SalesContext>
+                        new DomainEventProjectionToPostgres<SalesDbContext>
                         (
                             logger,
                             provider,

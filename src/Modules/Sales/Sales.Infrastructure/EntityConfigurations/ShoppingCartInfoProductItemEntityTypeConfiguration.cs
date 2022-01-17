@@ -9,7 +9,7 @@ namespace VShop.Modules.Sales.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ShoppingCartInfoItem> builder)
         {
-            builder.ToTable("shopping_cart_info_product_item", SalesContext.ShoppingCartSchema);
+            builder.ToTable("shopping_cart_info_product_item", SalesDbContext.ShoppingCartSchema);
             
             builder.HasKey(sci => new { sci.ProductId, sci.ShoppingCartInfoId });
             builder.Property(sci => sci.Quantity).IsRequired();

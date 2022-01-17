@@ -73,9 +73,9 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             _logger.Information("Subscription to all '{SubscriptionId}' started", _subscriptionName);
 
             using IServiceScope scope = _serviceProvider.CreateScope();
-            SubscriptionContext subscriptionContext = scope.ServiceProvider.GetRequiredService<SubscriptionContext>();
+            SubscriptionDbContext subscriptionDbContext = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
             
-            Checkpoint checkpoint = await subscriptionContext.Checkpoints
+            Checkpoint checkpoint = await subscriptionDbContext.Checkpoints
                 .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionName, cancellationToken);
 
             await _eventStoreClient.SubscribeToAllAsync
@@ -105,7 +105,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
             try
             {
-                async Task CheckpointUpdate(SubscriptionContext subscriptionContext)
+                async Task CheckpointUpdate(SubscriptionDbContext subscriptionContext)
                 {
                     Checkpoint checkpoint = await subscriptionContext.Checkpoints
                         .FirstOrDefaultAsync(c => c.SubscriptionId == _subscriptionName, cancellationToken);

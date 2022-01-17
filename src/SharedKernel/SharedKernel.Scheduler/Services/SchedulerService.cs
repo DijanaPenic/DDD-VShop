@@ -3,23 +3,22 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
-
-using SchedulerContext = VShop.SharedKernel.Scheduler.Infrastructure.SchedulerContext;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
     public class SchedulerService : ISchedulerService
     {
         private readonly ISchedulerFactory _schedulerFactory;
-        private readonly SchedulerContext _schedulerContext;
+        private readonly SchedulerDbContext _schedulerDbContext;
 
-        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerContext schedulerContext)
+        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerDbContext schedulerDbContext)
         {
             _schedulerFactory = schedulerFactory;
-            _schedulerContext = schedulerContext;
+            _schedulerDbContext = schedulerDbContext;
         }
 
         public async Task ScheduleMessageAsync
@@ -54,9 +53,9 @@ namespace VShop.SharedKernel.Scheduler.Services
         )
         {
             MessageLog messageLog = new(message);
-            _schedulerContext.MessageLogs.Add(messageLog);
+            _schedulerDbContext.MessageLogs.Add(messageLog);
 
-            return _schedulerContext.SaveChangesAsync(cancellationToken);
+            return _schedulerDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

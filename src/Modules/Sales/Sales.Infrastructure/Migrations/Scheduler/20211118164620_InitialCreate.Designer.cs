@@ -9,7 +9,7 @@ using VShop.SharedKernel.Scheduler.Infrastructure;
 
 namespace VShop.Modules.Sales.Infrastructure.Migrations.Scheduler
 {
-    [DbContext(typeof(SchedulerContext))]
+    [DbContext(typeof(SchedulerDbContext))]
     [Migration("20211118164620_InitialCreate")]
     partial class InitialCreate
     {

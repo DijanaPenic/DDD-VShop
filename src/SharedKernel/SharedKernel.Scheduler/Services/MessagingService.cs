@@ -22,14 +22,14 @@ namespace VShop.SharedKernel.Scheduler.Services
         private readonly ILogger _logger;
         private readonly ICommandBus _commandBus;
         private readonly IEventBus _eventBus;
-        private readonly SchedulerContext _schedulerContext;
+        private readonly SchedulerDbContext _schedulerDbContext;
 
-        public MessagingService(ILogger logger, ICommandBus commandBus, IEventBus eventBus, SchedulerContext schedulerContext)
+        public MessagingService(ILogger logger, ICommandBus commandBus, IEventBus eventBus, SchedulerDbContext schedulerDbContext)
         {
             _logger = logger;
             _commandBus = commandBus;
             _eventBus = eventBus;
-            _schedulerContext = schedulerContext;
+            _schedulerDbContext = schedulerDbContext;
         }
 
         public async Task SendMessageAsync(Guid messageId, CancellationToken cancellationToken)
@@ -72,7 +72,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         }
 
         private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
-            => _schedulerContext.MessageLogs
+            => _schedulerDbContext.MessageLogs
                 .FirstOrDefaultAsync
                 (
                     ml => ml.Status == MessageStatus.Scheduled && ml.Id == messageId,
@@ -88,9 +88,9 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             messageLog.Status = status;
             
-            _schedulerContext.Entry(messageLog).Property(ml => ml.Status).IsModified = true;
+            _schedulerDbContext.Entry(messageLog).Property(ml => ml.Status).IsModified = true;
             
-            await _schedulerContext.SaveChangesAsync(cancellationToken);
+            await _schedulerDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }
