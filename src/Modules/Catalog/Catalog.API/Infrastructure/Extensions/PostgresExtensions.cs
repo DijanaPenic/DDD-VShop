@@ -14,7 +14,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                typeof(Startup).Assembly
+                typeof(CatalogContext).Assembly
             ));
             services.AddDbContext<CatalogContext>();
             services.AddDbContext<IntegrationContext>();

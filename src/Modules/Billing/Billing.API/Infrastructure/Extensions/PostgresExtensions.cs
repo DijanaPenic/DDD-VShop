@@ -14,7 +14,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                typeof(Startup).Assembly
+                typeof(BillingContext).Assembly
             ));
             services.AddDbContext<BillingContext>();
             services.AddDbContext<IntegrationContext>();

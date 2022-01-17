@@ -14,7 +14,7 @@ namespace VShop.Modules.Sales.API.Infrastructure.Extensions
             services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
             (
                 connectionString,
-                typeof(Startup).Assembly
+                typeof(SalesContext).Assembly
             ));
             services.AddDbContext<SalesContext>();
             services.AddDbContext<SchedulerContext>();

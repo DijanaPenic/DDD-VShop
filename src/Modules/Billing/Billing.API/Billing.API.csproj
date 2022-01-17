@@ -38,9 +38,4 @@
       <ProjectReference Include="..\Billing.Integration\Billing.Integration.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Infrastructure\IntegrationMigrations" />
-      <Folder Include="Infrastructure\Migrations" />
-    </ItemGroup>
-
 </Project>

@@ -36,8 +36,4 @@
       <ProjectReference Include="..\Catalog.Integration\Catalog.Integration.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Infrastructure\Migrations" />
-    </ItemGroup>
-
 </Project>
