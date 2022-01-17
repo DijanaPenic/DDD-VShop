@@ -18,10 +18,10 @@ namespace VShop.SharedKernel.Application
         protected IActionResult Created() 
             => StatusCode(StatusCodes.Status201Created);
         
-        protected IActionResult HandleResult<TData>
+        protected IActionResult HandleResult<TResult>
         (
-            Result<TData> result,
-            Func<TData, IActionResult> handleSuccess
+            Result<TResult> result,
+            Func<TResult, IActionResult> handleSuccess
         ) => result.Match
         (
             successResult => handleSuccess(successResult.Value),
