@@ -2,10 +2,10 @@
 option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
 
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
-import "Modules/Sales/_schemas/Commands/shopping_cart_item_command.proto";
+import "Modules/Sales/_schemas/Commands/shopping_cart_product_command_dto.proto";
 
 message AddShoppingCartProductCommand 
 {
     Uuid shopping_cart_id = 1;
-    ShoppingCartItemCommand shopping_cart_item = 2;
+    ShoppingCartProductCommandDto shopping_cart_item = 2;
 }

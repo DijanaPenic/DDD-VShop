@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Runtime.Intrinsics.Arm;
 using NodaTime;
 using FluentValidation;
 
 namespace VShop.Modules.Billing.API.Models
 {
-    public record TransferRequest : BaseRequest
+    public record TransferRequest
     {
         public Guid OrderId { get; init; }
         public decimal Amount { get; init; }
@@ -20,8 +19,6 @@ namespace VShop.Modules.Billing.API.Models
     {
         public TransferRequestValidator()
         {
-            RuleFor(pr => pr.MessageId).NotEmpty();
-            RuleFor(pr => pr.CorrelationId).NotEmpty();
             RuleFor(pr => pr.OrderId).NotEmpty();
             RuleFor(pr => pr.Amount).NotEmpty().GreaterThan(0);
             RuleFor(pr => pr.CardTypeId).NotEmpty();

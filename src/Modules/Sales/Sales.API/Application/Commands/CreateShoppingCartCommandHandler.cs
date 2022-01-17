@@ -54,7 +54,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             if (createShoppingCartResult.IsError) return createShoppingCartResult.Error;
 
             shoppingCart = createShoppingCartResult.Data;
-            foreach (ShoppingCartItemCommand shoppingCartItem in command.ShoppingCartItems)
+            foreach (ShoppingCartProductCommandDto shoppingCartItem in command.ShoppingCartItems)
             {
                 Result addProductResult = shoppingCart.AddProductQuantity
                 (

@@ -30,7 +30,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            ShoppingCartItemCommand[] shoppingCartItems,
+            ShoppingCartProductCommandDto[] shoppingCartItems,
             MessageMetadata commandMetadata
         )
         {
@@ -61,7 +61,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            ShoppingCartItemCommand[] shoppingCartItems,
+            ShoppingCartProductCommandDto[] shoppingCartItems,
             MessageMetadata commandMetadata
         )
         {
@@ -152,7 +152,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
-            ShoppingCartItemCommand shoppingCartItem,
+            ShoppingCartProductCommandDto shoppingCartItem,
             MessageMetadata commandMetadata
         )
         {
@@ -185,7 +185,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         public async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
-            ShoppingCartItemCommand shoppingCartItem,
+            ShoppingCartProductCommandDto shoppingCartItem,
             MessageMetadata commandMetadata
         )
         {

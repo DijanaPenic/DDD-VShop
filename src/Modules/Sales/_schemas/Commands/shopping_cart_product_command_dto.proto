@@ -4,7 +4,7 @@ option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands.Shared";
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
 import "google/type/money.proto";
 
-message ShoppingCartItemCommand
+message ShoppingCartProductCommandDto
 {
     Uuid product_id = 1;
     google.type.Money unit_price = 2;

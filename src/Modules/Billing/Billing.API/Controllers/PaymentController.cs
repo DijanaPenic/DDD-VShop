@@ -40,7 +40,6 @@ namespace VShop.Modules.Billing.API.Controllers
             [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
-
             TransferCommand command = _mapper.Map<TransferCommand>(request);
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
             

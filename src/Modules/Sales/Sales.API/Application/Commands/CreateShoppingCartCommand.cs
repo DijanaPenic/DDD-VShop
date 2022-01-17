@@ -15,7 +15,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
             Guid shoppingCartId,
             Guid customerId,
             int customerDiscount,
-            IEnumerable<ShoppingCartItemCommand> shoppingCartItems,
+            IEnumerable<ShoppingCartProductCommandDto> shoppingCartItems,
             MessageMetadata metadata
         )
         {

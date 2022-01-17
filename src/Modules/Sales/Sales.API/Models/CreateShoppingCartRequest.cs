@@ -16,9 +16,9 @@ namespace VShop.Modules.Sales.API.Models
         [Required, Discount]
         public int CustomerDiscount { get; init; }
         
-        public ShoppingCartItemRequest[] ShoppingCartItems { get; init; }
+        public ShoppingCartProductRequestDto[] ShoppingCartItems { get; init; }
         
-        public record ShoppingCartItemRequest
+        public record ShoppingCartProductRequestDto
         {
             [Required, EntityId]
             public Guid ProductId { get; init; }

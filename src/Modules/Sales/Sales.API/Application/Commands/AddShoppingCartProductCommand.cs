@@ -11,7 +11,7 @@ namespace VShop.Modules.Sales.API.Application.Commands
         public AddShoppingCartProductCommand
         (
             Guid shoppingCartId,
-            ShoppingCartItemCommand shoppingCartItem,
+            ShoppingCartProductCommandDto shoppingCartItem,
             MessageMetadata metadata
         )
         {

@@ -27,14 +27,14 @@ namespace VShop.Modules.Sales.API.Application.Commands {
             "CkdNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2FkZF9zaG9wcGlu",
             "Z19jYXJ0X3Byb2R1Y3RfY29tbWFuZC5wcm90bxo8U2hhcmVkS2VybmVsL1No",
             "YXJlZEtlcm5lbC5JbmZyYXN0cnVjdHVyZS9fc2NoZW1hcy91dWlkLnByb3Rv",
-            "GkBNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL3Nob3BwaW5nX2Nh",
-            "cnRfaXRlbV9jb21tYW5kLnByb3RvInYKHUFkZFNob3BwaW5nQ2FydFByb2R1",
-            "Y3RDb21tYW5kEh8KEHNob3BwaW5nX2NhcnRfaWQYASABKAsyBS5VdWlkEjQK",
-            "EnNob3BwaW5nX2NhcnRfaXRlbRgCIAEoCzIYLlNob3BwaW5nQ2FydEl0ZW1D",
-            "b21tYW5kQi+qAixWU2hvcC5Nb2R1bGVzLlNhbGVzLkFQSS5BcHBsaWNhdGlv",
-            "bi5Db21tYW5kc2IGcHJvdG8z"));
+            "GkdNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL3Nob3BwaW5nX2Nh",
+            "cnRfcHJvZHVjdF9jb21tYW5kX2R0by5wcm90byJ8Ch1BZGRTaG9wcGluZ0Nh",
+            "cnRQcm9kdWN0Q29tbWFuZBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUu",
+            "VXVpZBI6ChJzaG9wcGluZ19jYXJ0X2l0ZW0YAiABKAsyHi5TaG9wcGluZ0Nh",
+            "cnRQcm9kdWN0Q29tbWFuZER0b0IvqgIsVlNob3AuTW9kdWxlcy5TYWxlcy5B",
+            "UEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDtoReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.AddShoppingCartProductCommand), global::VShop.Modules.Sales.API.Application.Commands.AddShoppingCartProductCommand.Parser, new[]{ "ShoppingCartId", "ShoppingCartItem" }, null, null, null, null)
           }));
@@ -102,10 +102,10 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "shopping_cart_item" field.</summary>
     public const int ShoppingCartItemFieldNumber = 2;
-    private global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand shoppingCartItem_;
+    private global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto shoppingCartItem_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand ShoppingCartItem {
+    public global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto ShoppingCartItem {
       get { return shoppingCartItem_; }
       set {
         shoppingCartItem_ = value;
@@ -218,7 +218,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
       }
       if (other.shoppingCartItem_ != null) {
         if (shoppingCartItem_ == null) {
-          ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand();
+          ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto();
         }
         ShoppingCartItem.MergeFrom(other.ShoppingCartItem);
       }
@@ -246,7 +246,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           }
           case 18: {
             if (shoppingCartItem_ == null) {
-              ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand();
+              ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto();
             }
             input.ReadMessage(ShoppingCartItem);
             break;
@@ -275,7 +275,7 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           }
           case 18: {
             if (shoppingCartItem_ == null) {
-              ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand();
+              ShoppingCartItem = new global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto();
             }
             input.ReadMessage(ShoppingCartItem);
             break;

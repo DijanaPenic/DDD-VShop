@@ -26,16 +26,16 @@ namespace VShop.Modules.Sales.API.Application.Commands {
           string.Concat(
             "CkJNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2NyZWF0ZV9zaG9w",
             "cGluZ19jYXJ0X2NvbW1hbmQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRL",
-            "ZXJuZWwuSW5mcmFzdHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90bxpATW9k",
-            "dWxlcy9TYWxlcy9fc2NoZW1hcy9Db21tYW5kcy9zaG9wcGluZ19jYXJ0X2l0",
-            "ZW1fY29tbWFuZC5wcm90byKqAQoZQ3JlYXRlU2hvcHBpbmdDYXJ0Q29tbWFu",
-            "ZBIfChBzaG9wcGluZ19jYXJ0X2lkGAEgASgLMgUuVXVpZBIaCgtjdXN0b21l",
-            "cl9pZBgCIAEoCzIFLlV1aWQSGQoRY3VzdG9tZXJfZGlzY291bnQYAyABKAUS",
-            "NQoTc2hvcHBpbmdfY2FydF9pdGVtcxgEIAMoCzIYLlNob3BwaW5nQ2FydEl0",
-            "ZW1Db21tYW5kQi+qAixWU2hvcC5Nb2R1bGVzLlNhbGVzLkFQSS5BcHBsaWNh",
-            "dGlvbi5Db21tYW5kc2IGcHJvdG8z"));
+            "ZXJuZWwuSW5mcmFzdHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90bxpHTW9k",
+            "dWxlcy9TYWxlcy9fc2NoZW1hcy9Db21tYW5kcy9zaG9wcGluZ19jYXJ0X3By",
+            "b2R1Y3RfY29tbWFuZF9kdG8ucHJvdG8isAEKGUNyZWF0ZVNob3BwaW5nQ2Fy",
+            "dENvbW1hbmQSHwoQc2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQSGgoL",
+            "Y3VzdG9tZXJfaWQYAiABKAsyBS5VdWlkEhkKEWN1c3RvbWVyX2Rpc2NvdW50",
+            "GAMgASgFEjsKE3Nob3BwaW5nX2NhcnRfaXRlbXMYBCADKAsyHi5TaG9wcGlu",
+            "Z0NhcnRQcm9kdWN0Q29tbWFuZER0b0IvqgIsVlNob3AuTW9kdWxlcy5TYWxl",
+            "cy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommandReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDtoReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand), global::VShop.Modules.Sales.API.Application.Commands.CreateShoppingCartCommand.Parser, new[]{ "ShoppingCartId", "CustomerId", "CustomerDiscount", "ShoppingCartItems" }, null, null, null, null)
           }));
@@ -129,12 +129,12 @@ namespace VShop.Modules.Sales.API.Application.Commands {
 
     /// <summary>Field number for the "shopping_cart_items" field.</summary>
     public const int ShoppingCartItemsFieldNumber = 4;
-    private static readonly pb::FieldCodec<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand> _repeated_shoppingCartItems_codec
-        = pb::FieldCodec.ForMessage(34, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand.Parser);
-    private readonly pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand> shoppingCartItems_ = new pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand>();
+    private static readonly pb::FieldCodec<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto> _repeated_shoppingCartItems_codec
+        = pb::FieldCodec.ForMessage(34, global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto.Parser);
+    private readonly pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto> shoppingCartItems_ = new pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartItemCommand> ShoppingCartItems {
+    public pbc::RepeatedField<global::VShop.Modules.Sales.API.Application.Commands.Shared.ShoppingCartProductCommandDto> ShoppingCartItems {
       get { return shoppingCartItems_; }
     }
 

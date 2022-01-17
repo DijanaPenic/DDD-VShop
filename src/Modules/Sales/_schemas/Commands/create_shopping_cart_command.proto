@@ -2,12 +2,12 @@
 option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
 
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
-import "Modules/Sales/_schemas/Commands/shopping_cart_item_command.proto";
+import "Modules/Sales/_schemas/Commands/shopping_cart_product_command_dto.proto";
 
 message CreateShoppingCartCommand 
 {
     Uuid shopping_cart_id = 1;
     Uuid customer_id = 2;
     int32 customer_discount = 3;
-    repeated ShoppingCartItemCommand shopping_cart_items = 4;
+    repeated ShoppingCartProductCommandDto shopping_cart_items = 4;
 }

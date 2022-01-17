@@ -136,7 +136,7 @@ namespace VShop.Modules.Sales.API.Controllers
             AddShoppingCartProductCommand command = new
             (
                 shoppingCartId,
-                _mapper.Map<ShoppingCartItemCommand>(request),
+                _mapper.Map<ShoppingCartProductCommandDto>(request),
                 new MessageMetadata(requestId, Guid.Empty, correlationId)
             )
             {
