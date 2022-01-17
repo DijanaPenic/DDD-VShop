@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class RemoveShoppingCartProductCommand : Command, IBaseCommand
+    public partial class RemoveShoppingCartProductCommand : MessageContext, ICommand
     {
         public RemoveShoppingCartProductCommand
         (

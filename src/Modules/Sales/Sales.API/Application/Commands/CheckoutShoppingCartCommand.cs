@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class CheckoutShoppingCartCommand : Command<CheckoutResponse>, IBaseCommand
+    public partial class CheckoutShoppingCartCommand : MessageContext, ICommand<CheckoutResponse>
     {
         public CheckoutShoppingCartCommand(Guid shoppingCartId, MessageMetadata metadata)
         {

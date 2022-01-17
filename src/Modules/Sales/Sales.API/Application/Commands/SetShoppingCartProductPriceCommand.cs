@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetShoppingCartProductPriceCommand : Command, IBaseCommand
+    public partial class SetShoppingCartProductPriceCommand : MessageContext, ICommand
     {
         public SetShoppingCartProductPriceCommand
         (

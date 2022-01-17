@@ -2,12 +2,13 @@ using System;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
+using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Commands;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {
-    public partial class TransferCommand : Command, IBaseCommand
+    public partial class TransferCommand : MessageContext, ICommand
     {
         public TransferCommand
         (

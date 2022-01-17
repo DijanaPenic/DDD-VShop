@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class CancelOrderCommand : Command, IBaseCommand
+    public partial class CancelOrderCommand : MessageContext, ICommand
     {
         public CancelOrderCommand(Guid orderId, MessageMetadata metadata)
         {

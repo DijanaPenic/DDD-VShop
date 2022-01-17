@@ -5,7 +5,7 @@ using VShop.SharedKernel.Messaging.Commands;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetDeliveryAddressCommand : Command, IBaseCommand
+    public partial class SetDeliveryAddressCommand : MessageContext, ICommand
     {
         public SetDeliveryAddressCommand
         (

@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class SetContactInformationCommand : Command, IBaseCommand
+    public partial class SetContactInformationCommand : MessageContext, ICommand
     {
         public SetContactInformationCommand
         (

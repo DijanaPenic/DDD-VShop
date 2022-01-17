@@ -8,7 +8,7 @@ using VShop.Modules.Sales.API.Application.Commands.Shared;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {
-    public partial class CreateShoppingCartCommand : Command<ShoppingCart>, IBaseCommand
+    public partial class CreateShoppingCartCommand : MessageContext, ICommand<ShoppingCart>
     {
         public CreateShoppingCartCommand
         (

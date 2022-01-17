@@ -91,14 +91,14 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
                 return action(service);
             });
 
-        public static Task<Result> SendAsync(Command command)
+        public static Task<Result> SendAsync(ICommand command)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
                 return commandBus.SendAsync(command);
             });
 
-        public static Task<Result<TResult>> SendAsync<TResult>(Command<TResult> command)
+        public static Task<Result<TResult>> SendAsync<TResult>(ICommand<TResult> command)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandBus commandBus = sp.GetRequiredService<ICommandBus>();
