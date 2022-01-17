@@ -133,7 +133,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         public async Task<IActionResult> GetCategoriesAsync
         (
             [FromQuery] string include = DefaultParameters.Include,
-            [FromQuery] string searchString = DefaultParameters.SearchString,
+            [FromQuery] string searchPhrase = DefaultParameters.SearchPhrase,
             [FromQuery] int pageIndex = DefaultParameters.PageIndex,
             [FromQuery] int pageSize = DefaultParameters.PageSize,
             [FromQuery] string sortOrder = DefaultParameters.SortOrder
@@ -142,7 +142,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             IList<CatalogCategory> categories = await _catalogDbContext.Categories
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(c => c.IsDeleted == false)
-                .Filter(string.IsNullOrWhiteSpace(searchString) ? null : p => p.Name.Contains(searchString))
+                .Filter(searchPhrase, nameof(CatalogCategory.Name))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))
                 .ToListAsync();
@@ -166,7 +166,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         (
             [FromRoute] Guid categoryId,
             [FromQuery] string include = DefaultParameters.Include,
-            [FromQuery] string searchString = DefaultParameters.SearchString,
+            [FromQuery] string searchPhrase = DefaultParameters.SearchPhrase,
             [FromQuery] int pageIndex = DefaultParameters.PageIndex,
             [FromQuery] int pageSize = DefaultParameters.PageSize,
             [FromQuery] string sortOrder = DefaultParameters.SortOrder
@@ -175,7 +175,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             IList<CatalogProduct> products = await _catalogDbContext.Products
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(c => c.IsDeleted == false && c.CategoryId == categoryId)
-                .Filter(string.IsNullOrWhiteSpace(searchString) ? null : c => c.Name.Contains(searchString))
+                .Filter(searchPhrase, nameof(CatalogCategory.Name))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))
                 .ToListAsync();

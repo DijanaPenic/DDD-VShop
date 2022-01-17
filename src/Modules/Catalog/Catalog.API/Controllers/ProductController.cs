@@ -135,7 +135,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         public async Task<IActionResult> GetProductsAsync
         (
             [FromQuery] string include = DefaultParameters.Include,
-            [FromQuery] string searchString = DefaultParameters.SearchString,
+            [FromQuery] string searchPhrase = DefaultParameters.SearchPhrase,
             [FromQuery] int pageIndex = DefaultParameters.PageIndex,
             [FromQuery] int pageSize = DefaultParameters.PageSize,
             [FromQuery] string sortOrder = DefaultParameters.SortOrder,
@@ -144,11 +144,11 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             Result<Expression<Func<CatalogProduct, bool>>> getProductsByIdsExpressionResult = GetProductsByIdsExpression(ids);
             if (getProductsByIdsExpressionResult.IsError) return BadRequest(getProductsByIdsExpressionResult.Error.ToString());
-            
+
             IList<CatalogProduct> products = await _catalogDbContext.Products
                 .OrderBy(SortingFactory.Create(sortOrder))
                 .Filter(p => p.IsDeleted == false)
-                .Filter(string.IsNullOrWhiteSpace(searchString) ? null : p => p.Name.Contains(searchString))
+                .Filter(searchPhrase, nameof(CatalogProduct.Name))
                 .Filter(getProductsByIdsExpressionResult.Data)
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))

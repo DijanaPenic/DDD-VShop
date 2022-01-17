@@ -35,33 +35,100 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
         (
             this IQueryable<TSource> source,
             IPagingParameters pagingParameters
-        ) => source.Skip((pagingParameters.PageIndex - 1) * pagingParameters.PageSize).Take(pagingParameters.PageSize);
+        ) 
+            where TSource : class
+            => source.Skip((pagingParameters.PageIndex - 1) * pagingParameters.PageSize).Take(pagingParameters.PageSize);
         
         public static IQueryable<TSource> Filter<TSource>
         (
             this IQueryable<TSource> source,
             Expression<Func<TSource, bool>> filterExpression
-        ) => filterExpression is not null ? source.Where(filterExpression) : source;
+        ) 
+            where TSource : class
+            => filterExpression is not null ? source.Where(filterExpression) : source;
+
+        public static IQueryable<TSource> Filter<TSource>
+        (
+            this IQueryable<TSource> source,
+            string filterPhrase,
+            params string[] matchExpressions
+        ) where TSource : class
+        {
+            // If the incoming request is empty, skip the search.
+            if (string.IsNullOrWhiteSpace(filterPhrase)) return source;
+
+            // Get our generic object.
+            ParameterExpression entity = Expression.Parameter(typeof(TSource), "entity");
+
+            // Get the Like Method from EF.Functions.
+            MethodInfo efLikeMethod = typeof(DbFunctionsExtensions).GetMethod
+            (
+                "Like",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new[] { typeof(DbFunctions), typeof(string), typeof(string) },
+                null
+            );
+            if (efLikeMethod is null) throw new Exception("EF.Functions.Like not found.");
+
+            // We make a pattern for the search.
+            ConstantExpression pattern = Expression.Constant($"%{filterPhrase}%", typeof(string));
+
+            // Here we will collect a single search request for all properties.
+            Expression body = Expression.Constant(false);
+
+            foreach (string propertyName in matchExpressions)
+            {
+                // Get property from our object.
+                MemberExpression property = Expression.Property(entity, propertyName);
+
+                // Сall the method with all the required arguments.
+                Expression expr = Expression.Call
+                (
+                    efLikeMethod,
+                    Expression.Property
+                    (
+                        null,
+                        typeof(EF),
+                        nameof(EF.Functions)
+                    ),
+                    property,
+                    pattern
+                );
+
+                // Add to the main request.
+                body = Expression.OrElse(body, expr);
+            }
+
+            // Compose and pass the expression to Where.
+            Expression<Func<TSource, bool>> expression = Expression.Lambda<Func<TSource, bool>>(body, entity);
+            
+            return source.Where(expression);
+        }
 
         private static IQueryable<TSource> OrderBy<TSource>
         (
             this IQueryable<TSource> source,
             string orderBy,
             bool isFirstParam
-        ) => OrderBy(source, orderBy, false, isFirstParam);
+        ) 
+            where TSource : class
+            => OrderBy(source, orderBy, false, isFirstParam);
         
         private static IQueryable<TSource> OrderByDescending<TSource>
         (
             this IQueryable<TSource> source,
             string orderBy,
             bool isFirstParam
-        ) => OrderBy(source, orderBy, true, isFirstParam);
+        ) 
+            where TSource : class
+            => OrderBy(source, orderBy, true, isFirstParam);
 
         public static IQueryable<TSource> OrderBy<TSource>
         (
             this IQueryable<TSource> source,
             ISortingParameters sortingParameters
-        )
+        ) where TSource : class
         {
             if (sortingParameters?.Sorters is null) return source;
 
@@ -87,7 +154,7 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
             string orderBy,
             bool descending,
             bool isFirstParam
-        )
+        ) where TSource : class
         {
             try
             {
