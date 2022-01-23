@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
-using VShop.SharedKernel.Integration.Infrastructure;
+using VShop.SharedKernel.Integration.DAL;
 
 #nullable disable
 
@@ -24,7 +24,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Migrations.Integration
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VShop.SharedKernel.Integration.Infrastructure.Entities.IntegrationEventLog", b =>
+            modelBuilder.Entity("VShop.SharedKernel.Integration.DAL.Entities.IntegrationEventLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

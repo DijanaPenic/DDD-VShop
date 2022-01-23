@@ -2,8 +2,8 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.Integration.Infrastructure;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.SharedKernel.Integration.DAL;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.Modules.Catalog.Infrastructure;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions

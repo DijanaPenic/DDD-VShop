@@ -23,7 +23,7 @@ namespace VShop.Modules.Sales.Infrastructure.Migrations.Subscription
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities.Checkpoint", b =>
+            modelBuilder.Entity("VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities.Checkpoint", b =>
                 {
                     b.Property<string>("SubscriptionId")
                         .HasColumnType("text")

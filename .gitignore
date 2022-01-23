@@ -1,3 +1,5 @@
 ﻿.idea/
 obj/
 bin/
+src/VShop.sln.DotSettings.user
+*.user
