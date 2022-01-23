@@ -1,12 +1,11 @@
-﻿using System;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
-namespace VShop.SharedKernel.Integration.Infrastructure.Entities
+namespace VShop.SharedKernel.Integration.DAL.Entities
 {
     public class IntegrationEventLog : DbEntityBase
     {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 
 using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Integration.Infrastructure.Entities;
+using VShop.SharedKernel.Integration.DAL.Entities;
 
 namespace VShop.SharedKernel.Integration.Stores.Contracts
 {

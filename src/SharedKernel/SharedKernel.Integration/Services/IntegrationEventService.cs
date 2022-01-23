@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Serilog;
+﻿using Serilog;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
-using VShop.SharedKernel.Integration.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Integration.Services
 {

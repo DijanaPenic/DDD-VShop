@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using EventStore.Client;
+﻿using EventStore.Client;
 
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;

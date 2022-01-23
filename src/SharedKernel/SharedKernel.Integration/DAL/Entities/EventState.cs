@@ -1,4 +1,4 @@
-﻿namespace VShop.SharedKernel.Integration.Infrastructure.Entities
+﻿namespace VShop.SharedKernel.Integration.DAL.Entities
 {
     public enum EventState
     {

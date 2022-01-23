@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.SharedKernel.Integration.Infrastructure.Entities;
+using VShop.SharedKernel.Integration.DAL.Entities;
 
-namespace VShop.SharedKernel.Integration.Infrastructure.EntityConfigurations
+namespace VShop.SharedKernel.Integration.DAL.EntityConfigurations
 {
     public class IntegrationEventLogEntityConfiguration : IEntityTypeConfiguration<IntegrationEventLog>
     {
