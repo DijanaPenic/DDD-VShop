@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.SharedKernel.Infrastructure.Messaging";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/protobuf/timestamp.proto";
+
+message MessageMetadata 
+{
+    Uuid message_id = 1;
+    Uuid correlation_id = 2;
+    Uuid causation_id = 3;
+    google.protobuf.Timestamp effective_time = 4;
+}

@@ -2,9 +2,9 @@
 
 using VShop.Modules.Sales.Domain.Events;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
+using VShop.SharedKernel.Infrastructure.Events;
 
 namespace VShop.Modules.Sales.Domain.Models.Ordering
 {

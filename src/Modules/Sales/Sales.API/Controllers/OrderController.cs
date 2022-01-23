@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Application;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.API;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Controllers
 {

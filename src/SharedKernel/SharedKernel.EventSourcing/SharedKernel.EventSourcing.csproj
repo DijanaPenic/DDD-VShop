@@ -12,7 +12,6 @@
       <ProjectReference Include="..\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj" />
       <ProjectReference Include="..\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
-      <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
       <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
       <ProjectReference Include="..\SharedKernel.Scheduler\SharedKernel.Scheduler.csproj" />
     </ItemGroup>

@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.Modules.Sales.Integration.Events;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.PostgresDb.Utilities;
 

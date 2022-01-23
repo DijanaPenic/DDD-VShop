@@ -2,8 +2,8 @@ using System;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Billing.API.Application.Commands

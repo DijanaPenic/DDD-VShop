@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

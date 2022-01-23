@@ -1,8 +1,8 @@
 using System;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands;
+using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

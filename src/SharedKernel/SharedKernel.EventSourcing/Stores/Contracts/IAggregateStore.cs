@@ -2,10 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
+using VShop.SharedKernel.Infrastructure.Events;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 {

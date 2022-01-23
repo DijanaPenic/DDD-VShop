@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.API.Application.Queries;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

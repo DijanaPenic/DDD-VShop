@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Application;
+using VShop.SharedKernel.API;
 using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.API.Application.Queries;
@@ -14,6 +12,8 @@ using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Controllers
 {

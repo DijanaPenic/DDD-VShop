@@ -6,11 +6,11 @@ using MediatR;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

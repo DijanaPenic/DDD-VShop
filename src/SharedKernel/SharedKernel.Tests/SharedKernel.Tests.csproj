@@ -17,7 +17,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
-      <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
     </ItemGroup>
 
     <ItemGroup>

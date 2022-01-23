@@ -3,11 +3,11 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Threading;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {

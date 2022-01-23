@@ -5,12 +5,12 @@ using Serilog;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Events.Publishing;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
-using VShop.SharedKernel.Messaging.Commands;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Publishing;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;

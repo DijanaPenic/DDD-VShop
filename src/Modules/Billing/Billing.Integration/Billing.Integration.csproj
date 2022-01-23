@@ -11,7 +11,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj" />
-      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
       <ProjectReference Include="..\Billing.Infrastructure\Billing.Infrastructure.csproj" />
     </ItemGroup>
 

@@ -4,12 +4,12 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Application;
+using VShop.SharedKernel.API;
 using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Billing.API.Models;
 using VShop.Modules.Billing.API.Application.Commands;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.API.Controllers
 {

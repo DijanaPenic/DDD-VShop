@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Entities;
-using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Events;
 
 namespace VShop.Modules.Sales.API.Projections
 {

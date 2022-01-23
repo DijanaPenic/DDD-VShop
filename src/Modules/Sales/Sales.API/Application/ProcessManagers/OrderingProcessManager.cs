@@ -1,15 +1,15 @@
 ﻿using NodaTime;
 using System.Linq;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.ProcessManagers;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 // TODO - email alert support.
 namespace VShop.Modules.Sales.API.Application.ProcessManagers

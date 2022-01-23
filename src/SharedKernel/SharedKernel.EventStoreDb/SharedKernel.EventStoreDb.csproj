@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
-      <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
     </ItemGroup>
 
     <ItemGroup>

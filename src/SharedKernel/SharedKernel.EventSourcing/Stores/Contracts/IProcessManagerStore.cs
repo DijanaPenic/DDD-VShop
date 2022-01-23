@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Commands;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

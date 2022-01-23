@@ -4,15 +4,14 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Events.Publishing;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Publishing;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {

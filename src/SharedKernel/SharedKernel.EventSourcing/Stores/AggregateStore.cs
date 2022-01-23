@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Events.Publishing;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Publishing;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {

@@ -1,9 +1,8 @@
 ﻿using Autofac;
 using MediatR;
-
-using VShop.SharedKernel.Messaging.Events.Publishing;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.Modules.Catalog.API.Application.EventHandlers;
+using VShop.SharedKernel.Infrastructure.Events.Publishing;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
 {

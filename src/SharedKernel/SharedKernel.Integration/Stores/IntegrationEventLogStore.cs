@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-
+using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Integration.DAL.Entities;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores

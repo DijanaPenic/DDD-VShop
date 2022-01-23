@@ -1,13 +1,12 @@
-﻿using VShop.SharedKernel.Messaging;
-using VShop.Modules.Sales.Domain.Events;
+﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.API.Application.Commands;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
-using static VShop.SharedKernel.Messaging.MessageTypeMapper;
-using static VShop.SharedKernel.Messaging.MessageTransformations;
+using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Sales.API.Application
 {

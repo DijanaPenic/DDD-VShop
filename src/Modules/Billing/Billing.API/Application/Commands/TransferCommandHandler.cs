@@ -2,9 +2,6 @@
 using System.Threading.Tasks;
 using NodaTime.Serialization.Protobuf;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Integration.Services.Contracts;
@@ -12,6 +9,9 @@ using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Repositories;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.API.Application.Commands
 {

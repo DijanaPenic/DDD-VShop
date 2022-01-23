@@ -1,7 +1,6 @@
 ﻿using Serilog;
-
+using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;

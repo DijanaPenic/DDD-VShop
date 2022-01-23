@@ -15,8 +15,8 @@ using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

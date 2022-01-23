@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using NodaTime;
-
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Messaging.Commands;
+    
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {

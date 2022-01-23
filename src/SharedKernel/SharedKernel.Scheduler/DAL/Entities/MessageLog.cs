@@ -2,11 +2,11 @@
 using NodaTime.Serialization.Protobuf;
 using Google.Protobuf;
 
-using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
-using IMessage = VShop.SharedKernel.Messaging.IMessage;
+using IMessage = VShop.SharedKernel.Infrastructure.Messaging.IMessage;
 
 namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {

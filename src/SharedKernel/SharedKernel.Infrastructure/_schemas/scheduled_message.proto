@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.SharedKernel.Infrastructure.Messaging";
+
+import "google/protobuf/timestamp.proto";
+
+message ScheduledMessage 
+{
+    bytes body = 1;
+    string type_name = 2;
+    google.protobuf.Timestamp scheduled_time = 3;
+}

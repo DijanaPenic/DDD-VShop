@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-using VShop.SharedKernel.Messaging.Events;
+using VShop.SharedKernel.Infrastructure.Events;
 
 namespace VShop.SharedKernel.Integration.Services.Contracts
 {

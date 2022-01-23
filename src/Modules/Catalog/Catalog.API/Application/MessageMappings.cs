@@ -1,8 +1,8 @@
 ﻿using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 
-using static VShop.SharedKernel.Messaging.MessageTypeMapper;
-using static VShop.SharedKernel.Messaging.MessageTransformations;
+using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
+using static VShop.SharedKernel.Infrastructure.Messaging.MessageTransformations;
 
 namespace VShop.Modules.Catalog.API.Application
 {

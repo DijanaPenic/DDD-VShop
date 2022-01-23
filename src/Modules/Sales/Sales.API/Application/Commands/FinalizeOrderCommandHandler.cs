@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Messaging.Commands.Publishing.Contracts;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.Domain.Models.Ordering;
+using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 
 namespace VShop.Modules.Sales.API.Application.Commands
 {

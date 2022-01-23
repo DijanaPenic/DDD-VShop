@@ -1,7 +1,5 @@
-﻿using System;
-
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
+﻿using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.Integration.Events
 {

@@ -12,7 +12,7 @@ using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
-using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {

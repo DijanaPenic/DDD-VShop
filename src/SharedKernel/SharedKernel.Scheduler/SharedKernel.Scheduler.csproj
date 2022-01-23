@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
       <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
     </ItemGroup>
 

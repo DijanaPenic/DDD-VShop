@@ -1,8 +1,8 @@
 ﻿using Google.Protobuf;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.Integration.DAL.Entities

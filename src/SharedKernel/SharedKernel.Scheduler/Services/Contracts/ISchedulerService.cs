@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-using VShop.SharedKernel.Messaging;
+﻿using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Scheduler.Services.Contracts
 {
