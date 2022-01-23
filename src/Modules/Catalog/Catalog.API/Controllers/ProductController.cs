@@ -8,7 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.API;
+using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Extensions;

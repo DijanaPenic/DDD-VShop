@@ -4,10 +4,10 @@ using Autofac;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.Modules.Billing.API.Application.Commands;
 using VShop.Modules.Billing.API.Application.EventHandlers;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Infrastructure.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
 {
@@ -26,10 +26,10 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             });
             
             // Register event bus
-            builder.RegisterType<EventBus>().As<IEventBus>().SingleInstance();
+            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
 
             // Register command bus
-            builder.RegisterType<CommandBus>().As<ICommandBus>().SingleInstance();
+            builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
 
             // Register command handlers
             builder.RegisterAssemblyTypes(typeof(TransferCommand).Assembly)

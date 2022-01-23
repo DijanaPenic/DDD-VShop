@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Serilog;
 using Serilog.Context;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
-using VShop.SharedKernel.Application.Decorators.Contracts;
 
 namespace VShop.SharedKernel.Application.Decorators
 {
     public class TransactionCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
+        where TCommand : IRequest<TResponse>
         where TResponse : IResult
     {
         private readonly ILogger _logger;

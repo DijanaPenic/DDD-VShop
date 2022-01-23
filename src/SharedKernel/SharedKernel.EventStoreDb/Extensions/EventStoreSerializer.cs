@@ -9,7 +9,7 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
 using Uuid = EventStore.Client.Uuid;
-using IMessage = VShop.SharedKernel.Infrastructure.Messaging.IMessage;
+using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {

@@ -13,10 +13,10 @@ using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Commands;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -24,20 +24,20 @@ namespace VShop.SharedKernel.EventSourcing.Stores
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
-        private readonly ICommandBus _commandBus;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly ISchedulerService _messageSchedulerService;
 
         public ProcessManagerStore
         (
             IClockService clockService,
             EventStoreClient eventStoreClient,
-            ICommandBus commandBus,
+            ICommandDispatcher commandDispatcher,
             ISchedulerService messageSchedulerService
         )
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
-            _commandBus = commandBus;
+            _commandDispatcher = commandDispatcher;
             _messageSchedulerService = messageSchedulerService;
         }
         
@@ -98,7 +98,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 {
                     case IBaseCommand command:
                     {
-                        object commandResult = await _commandBus.SendAsync(command, cancellationToken);
+                        object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
                     
                         if (commandResult is IResult { Value: ApplicationError error })
                             throw new Exception(error.ToString());

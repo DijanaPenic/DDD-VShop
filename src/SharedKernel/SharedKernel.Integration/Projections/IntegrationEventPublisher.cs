@@ -4,14 +4,14 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.Infrastructure.Events;
-using VShop.SharedKernel.Infrastructure.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -19,18 +19,18 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IEventBus _eventBus;
+        private readonly IEventDispatcher _eventDispatcher;
 
         public IntegrationEventPublisher
         (
             ILogger logger,
             IServiceProvider serviceProvider,
-            IEventBus eventBus
+            IEventDispatcher eventDispatcher
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _eventBus = eventBus;
+            _eventDispatcher = eventDispatcher;
         }
 
         public async Task ProjectAsync
@@ -55,10 +55,10 @@ namespace VShop.SharedKernel.Integration.Projections
 
                 try
                 {
-                    await _eventBus.Publish
+                    await _eventDispatcher.PublishAsync
                     (
                         integrationEvent,
-                        EventPublishStrategy.SyncStopOnException,
+                        NotificationDispatchStrategy.SyncStopOnException,
                         cancellationToken
                     );
                 }

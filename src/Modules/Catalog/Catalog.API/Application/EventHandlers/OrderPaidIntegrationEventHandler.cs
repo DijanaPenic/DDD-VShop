@@ -10,7 +10,7 @@ using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.Modules.Sales.Integration.Events;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.PostgresDb.Utilities;

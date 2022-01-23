@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.API", "Modules\Sales\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Domain", "Modules\Sales\Sales.Domain\Sales.Domain.csproj", "{D7149FAA-9DD5-4BA8-A5DE-0A5C2FA26336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Core", "Modules\Sales\Sales.Core\Sales.Core.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Infrastructure", "Modules\Sales\Sales.Infrastructure\Sales.Infrastructure.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedKernel", "SharedKernel", "{3DA93557-2604-4C17-8A86-25460DBC8EB9}"
 EndProject
@@ -21,8 +21,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.PostgresDb", "SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj", "{A0E178B3-14A0-4E12-9FCD-62D139519990}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Domain", "SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj", "{959AB583-3EF6-4348-85D1-CCA0B3175FD4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Application", "SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj", "{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Integration", "Modules\Sales\Sales.Integration\Sales.Integration.csproj", "{9EAFD370-7391-48A4-8810-842B618A7A21}"
 EndProject
@@ -56,7 +54,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Infrastructure", "M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Integration", "Modules\Catalog\Catalog.Integration\Catalog.Integration.csproj", "{D874663D-34B1-4D34-9DD8-072BA15A9404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.API", "SharedKernel\SharedKernel.API\SharedKernel.API.csproj", "{CC89BC61-BD9A-483C-BEE4-D3E78F6661EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Application", "SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj", "{CC89BC61-BD9A-483C-BEE4-D3E78F6661EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bootstrapper", "Bootstrapper", "{2FD1DEA5-9922-474A-973F-553A27A9E9FC}"
 EndProject
@@ -77,7 +75,6 @@ Global
 		{6196DF60-B0C1-41DD-AD70-58BB3A43D72F} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{A0E178B3-14A0-4E12-9FCD-62D139519990} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{959AB583-3EF6-4348-85D1-CCA0B3175FD4} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
-		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{9EAFD370-7391-48A4-8810-842B618A7A21} = {AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}
 		{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9} = {3E419930-4E41-43FF-91B9-ABEAFB6A742F}
@@ -130,10 +127,6 @@ Global
 		{959AB583-3EF6-4348-85D1-CCA0B3175FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959AB583-3EF6-4348-85D1-CCA0B3175FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{959AB583-3EF6-4348-85D1-CCA0B3175FD4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ABB74E0-A888-4F40-B1D9-4C8FBF4AD1BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9EAFD370-7391-48A4-8810-842B618A7A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9EAFD370-7391-48A4-8810-842B618A7A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EAFD370-7391-48A4-8810-842B618A7A21}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure.Entities;
-using VShop.Modules.Catalog.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Catalog.Infrastructure
 {
@@ -21,9 +20,6 @@ namespace VShop.Modules.Catalog.Infrastructure
             => ContextBuilder.ConfigureContext(optionsBuilder);
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.ApplyConfiguration(new CatalogProductEntityTypeConfiguration());
-            builder.ApplyConfiguration(new CatalogCategoryEntityTypeConfiguration());
-        }
+            => builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

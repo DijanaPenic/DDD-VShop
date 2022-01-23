@@ -11,9 +11,8 @@ using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
-using VShop.SharedKernel.Infrastructure.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
@@ -22,18 +21,18 @@ namespace VShop.SharedKernel.EventSourcing.Stores
     {
         private readonly IClockService _clockService;
         private readonly EventStoreClient _eventStoreClient;
-        private readonly IEventBus _eventBus;
+        private readonly IEventDispatcher _eventDispatcher;
 
         public AggregateStore
         (
             IClockService clockService,
             EventStoreClient eventStoreClient,
-            IEventBus eventBus
+            IEventDispatcher eventDispatcher
         )
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
-            _eventBus = eventBus;
+            _eventDispatcher = eventDispatcher;
         }
 
         public async Task SaveAndPublishAsync
@@ -125,7 +124,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
             foreach (IBaseEvent @event in events)
-                await _eventBus.Publish(@event, EventPublishStrategy.SyncStopOnException, cancellationToken);
+                await _eventDispatcher.PublishAsync(@event, NotificationDispatchStrategy.SyncStopOnException, cancellationToken);
         }
 
         public static string GetStreamName(EntityId aggregateId) => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}";

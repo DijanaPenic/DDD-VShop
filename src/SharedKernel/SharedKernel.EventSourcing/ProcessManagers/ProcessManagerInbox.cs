@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using NodaTime;
-using VShop.SharedKernel.Infrastructure.Events;
+
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers
 {

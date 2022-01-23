@@ -1,14 +1,13 @@
 ﻿using MediatR;
 using Serilog;
-using System.Threading;
-using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Application.Decorators.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.SharedKernel.Application.Decorators
 {
     public class LoggingCommandDecorator<TCommand, TResponse> : ICommandDecorator<TCommand, TResponse>
+        where TCommand : IRequest<TResponse>
         where TResponse : IResult
     {
         private readonly ILogger _logger;

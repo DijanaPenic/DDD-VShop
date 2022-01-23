@@ -3,7 +3,6 @@
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Entities;
-using VShop.Modules.Billing.Infrastructure.EntityConfigurations;
 
 namespace VShop.Modules.Billing.Infrastructure
 {
@@ -20,6 +19,6 @@ namespace VShop.Modules.Billing.Infrastructure
             => ContextBuilder.ConfigureContext(optionsBuilder);
         
         protected override void OnModelCreating(ModelBuilder builder)
-            => builder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
+            => builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

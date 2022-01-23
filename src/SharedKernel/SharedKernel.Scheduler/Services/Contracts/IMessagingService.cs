@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace VShop.SharedKernel.Scheduler.Services.Contracts
+﻿namespace VShop.SharedKernel.Scheduler.Services.Contracts
 {
     public interface IMessagingService
     {

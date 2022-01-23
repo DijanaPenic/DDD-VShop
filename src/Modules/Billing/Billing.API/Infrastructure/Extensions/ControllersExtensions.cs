@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using NodaTime.Serialization.JsonNet;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.API.Providers;
+using VShop.SharedKernel.Application.Providers;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions
 {

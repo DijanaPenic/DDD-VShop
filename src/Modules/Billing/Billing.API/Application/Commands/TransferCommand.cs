@@ -3,6 +3,7 @@ using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.Infrastructure.Commands;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
 

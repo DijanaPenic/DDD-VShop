@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
 {

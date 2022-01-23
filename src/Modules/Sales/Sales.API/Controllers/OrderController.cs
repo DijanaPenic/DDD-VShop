@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.API;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Application;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
@@ -10,16 +10,16 @@ namespace VShop.Modules.Sales.API.Controllers
     [Route("api/orders")]
     public class OrderController : ApplicationControllerBase
     {
-        private readonly ICommandBus _commandBus;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
 
         public OrderController
         (
-            ICommandBus commandBus,
+            ICommandDispatcher commandDispatcher,
             IMapper mapper
         )
         {
-            _commandBus = commandBus;
+            _commandDispatcher = commandDispatcher;
             _mapper = mapper;
         }
         
@@ -28,7 +28,7 @@ namespace VShop.Modules.Sales.API.Controllers
         // [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         // [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         // [ProducesResponseType(typeof(Order), (int)HttpStatusCode.Created)]
-        // public async Task<IActionResult> PlaceOrderAsync([FromBody] PalceOrderRequest request)
+        // public async Task<IActionResult> PlaceOrderAsync([FromBody] PlaceOrderRequest request)
         // {
         //     PlaceOrderCommand command = _mapper.Map<PlaceOrderCommand>(request);
         //     

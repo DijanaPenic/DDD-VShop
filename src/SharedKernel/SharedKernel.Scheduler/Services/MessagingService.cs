@@ -1,34 +1,35 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Commands;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Events;
-using VShop.SharedKernel.Infrastructure.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Errors;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
     public class MessagingService : IMessagingService
     {
         private readonly ILogger _logger;
-        private readonly ICommandBus _commandBus;
-        private readonly IEventBus _eventBus;
+        private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IEventDispatcher _eventDispatcher;
         private readonly SchedulerDbContext _schedulerDbContext;
 
-        public MessagingService(ILogger logger, ICommandBus commandBus, IEventBus eventBus, SchedulerDbContext schedulerDbContext)
+        public MessagingService
+        (
+            ILogger logger,
+            ICommandDispatcher commandDispatcher,
+            IEventDispatcher eventDispatcher,
+            SchedulerDbContext schedulerDbContext
+        )
         {
             _logger = logger;
-            _commandBus = commandBus;
-            _eventBus = eventBus;
+            _commandDispatcher = commandDispatcher;
+            _eventDispatcher = eventDispatcher;
             _schedulerDbContext = schedulerDbContext;
         }
 
@@ -45,15 +46,15 @@ namespace VShop.SharedKernel.Scheduler.Services
                 switch (messageLog.GetMessage())
                 {
                     case IBaseCommand command:
-                        object commandResult = await _commandBus.SendAsync(command, cancellationToken);
+                        object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
                         if (commandResult is IResult { Value: ApplicationError error })
                             throw new Exception(error.ToString());
                         break;
                     case IBaseEvent @event:
-                        await _eventBus.Publish
+                        await _eventDispatcher.PublishAsync
                         (
                             @event,
-                            EventPublishStrategy.SyncStopOnException,
+                            NotificationDispatchStrategy.SyncStopOnException,
                             cancellationToken
                         );
                         break;

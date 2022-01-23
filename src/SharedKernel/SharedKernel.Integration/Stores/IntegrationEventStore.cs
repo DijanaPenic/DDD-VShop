@@ -1,7 +1,8 @@
 ﻿using EventStore.Client;
+
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores
 {

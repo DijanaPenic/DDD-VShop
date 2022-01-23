@@ -4,7 +4,7 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 
 using VShop.SharedKernel.Infrastructure.Serialization;
-
+using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 using Type = System.Type;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging

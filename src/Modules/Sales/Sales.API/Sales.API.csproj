@@ -6,6 +6,7 @@
         <AssemblyName>VShop.Modules.Sales.API</AssemblyName>
         <RootNamespace>VShop.Modules.Sales.API</RootNamespace>
         <LangVersion>10</LangVersion>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,8 +17,8 @@
         <PackageReference Include="EventStore.Client.Grpc.Streams" Version="21.2.0" />
         <PackageReference Include="FluentValidation" Version="10.3.6" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.6" />
-        <PackageReference Include="MediatR" Version="9.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+        <PackageReference Include="MediatR" Version="10.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
@@ -32,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.API\SharedKernel.API.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
@@ -41,7 +42,7 @@
       <ProjectReference Include="..\..\Billing\Billing.Integration\Billing.Integration.csproj" />
       <ProjectReference Include="..\..\Catalog\Catalog.Integration\Catalog.Integration.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
-      <ProjectReference Include="..\Sales.Core\Sales.Core.csproj" />
+      <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
       <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
     </ItemGroup>
 

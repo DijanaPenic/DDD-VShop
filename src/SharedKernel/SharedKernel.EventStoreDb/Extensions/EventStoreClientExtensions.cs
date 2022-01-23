@@ -7,6 +7,7 @@ using EventStore.Client;
 using VShop.SharedKernel.EventStoreDb.Policies;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {

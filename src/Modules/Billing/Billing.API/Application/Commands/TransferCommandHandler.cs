@@ -9,8 +9,8 @@ using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Repositories;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.API.Application.Commands

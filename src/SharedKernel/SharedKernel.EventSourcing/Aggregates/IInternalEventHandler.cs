@@ -1,4 +1,4 @@
-﻿using VShop.SharedKernel.Infrastructure.Events;
+﻿using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {

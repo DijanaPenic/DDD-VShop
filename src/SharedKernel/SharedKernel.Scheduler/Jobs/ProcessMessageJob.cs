@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Quartz;
+﻿using Quartz;
 using Serilog;
 
 using VShop.SharedKernel.Scheduler.Services.Contracts;

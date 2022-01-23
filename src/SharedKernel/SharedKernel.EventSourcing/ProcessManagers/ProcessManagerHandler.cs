@@ -2,8 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.ProcessManagers

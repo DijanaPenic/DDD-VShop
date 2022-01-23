@@ -6,7 +6,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
-using IMessage = VShop.SharedKernel.Infrastructure.Messaging.IMessage;
+using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {

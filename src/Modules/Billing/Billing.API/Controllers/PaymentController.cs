@@ -4,11 +4,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.API;
+using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Billing.API.Models;
 using VShop.Modules.Billing.API.Application.Commands;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.API.Controllers
@@ -17,12 +17,12 @@ namespace VShop.Modules.Billing.API.Controllers
     [Route("api/payment")]
     public class PaymentController : ApplicationControllerBase
     {
-        private readonly ICommandBus _commandBus;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
         
-        public PaymentController(ICommandBus commandBus, IMapper mapper)
+        public PaymentController(ICommandDispatcher commandDispatcher, IMapper mapper)
         {
-            _commandBus = commandBus;
+            _commandDispatcher = commandDispatcher;
             _mapper = mapper;
         }
 
@@ -43,7 +43,7 @@ namespace VShop.Modules.Billing.API.Controllers
             TransferCommand command = _mapper.Map<TransferCommand>(request);
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
             
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
 
             return HandleResult(result, Ok);
         }

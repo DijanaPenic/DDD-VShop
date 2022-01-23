@@ -1,12 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
+
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Entities;
 using VShop.Modules.Billing.Infrastructure.Repositories;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Billing.API.Application.EventHandlers
 {

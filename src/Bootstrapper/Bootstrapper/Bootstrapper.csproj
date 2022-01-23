@@ -7,7 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Serilog" Version="2.10.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Modules\Sales\Sales.API\Sales.API.csproj" />
+      <ProjectReference Include="..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
+      <ProjectReference Include="..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

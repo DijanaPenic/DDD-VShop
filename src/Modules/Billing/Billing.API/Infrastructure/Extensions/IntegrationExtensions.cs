@@ -7,7 +7,7 @@ using VShop.Modules.Billing.API.Application;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Stores.Contracts;
@@ -54,7 +54,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.Extensions
                         (
                             logger,
                             provider,
-                            provider.GetRequiredService<IEventBus>()
+                            provider.GetRequiredService<IEventDispatcher>()
                         ),
                         new SubscriptionFilterOptions(StreamFilter.RegularExpression
                             (new Regex(@".*\/integration$")))

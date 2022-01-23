@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using VShop.SharedKernel.Infrastructure.Events;
+﻿using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Services.Contracts
 {

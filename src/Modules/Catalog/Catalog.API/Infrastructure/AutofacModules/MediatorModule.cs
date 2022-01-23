@@ -1,8 +1,9 @@
 ﻿using Autofac;
 using MediatR;
+
+using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.Modules.Catalog.API.Application.EventHandlers;
-using VShop.SharedKernel.Infrastructure.Events.Publishing;
-using VShop.SharedKernel.Infrastructure.Events.Publishing.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
 {
@@ -21,7 +22,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
             });
             
             // Register event bus
-            builder.RegisterType<EventBus>().As<IEventBus>().SingleInstance();
+            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
 
             // Register event handlers
             builder.RegisterAssemblyTypes(typeof(OrderPaidIntegrationEventHandler).Assembly)

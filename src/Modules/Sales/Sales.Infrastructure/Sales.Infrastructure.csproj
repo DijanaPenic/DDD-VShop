@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>VShop.Modules.Sales.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Modules.Sales.Infrastructure</RootNamespace>
+        <LangVersion>10</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\..\Billing\Billing.Integration\Billing.Integration.csproj" />
+      <ProjectReference Include="..\..\Catalog\Catalog.Integration\Catalog.Integration.csproj" />
+      <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
+      <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.3.3" />
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.3.3" />
+      <PackageReference Include="Quartz.Plugins" Version="3.3.3" />
+      <PackageReference Include="Quartz.Serialization.Json" Version="3.3.3" />
+    </ItemGroup>
+
+</Project>

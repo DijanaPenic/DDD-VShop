@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.API;
+using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Sales.API.Models;
-using VShop.Modules.Sales.Core.Queries;
-using VShop.Modules.Sales.Core.Commands;
-using VShop.Modules.Sales.Core.Commands.Shared;
-using VShop.Modules.Sales.Core.DAL.Entities;
+using VShop.Modules.Sales.Infrastructure.Queries;
+using VShop.Modules.Sales.Infrastructure.Commands;
+using VShop.Modules.Sales.Infrastructure.Commands.Shared;
+using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Controllers
@@ -21,18 +21,18 @@ namespace VShop.Modules.Sales.API.Controllers
     [Route("api/shopping-carts")]
     public class ShoppingCartController : ApplicationControllerBase
     {
-        private readonly ICommandBus _commandBus;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
         private readonly IShoppingCartReadService _readService;
 
         public ShoppingCartController
         (
-            ICommandBus commandBus,
+            ICommandDispatcher commandDispatcher,
             IMapper mapper,
             IShoppingCartReadService readService
         )
         {
-            _commandBus = commandBus;
+            _commandDispatcher = commandDispatcher;
             _mapper = mapper;
             _readService = readService;
         }
@@ -64,7 +64,7 @@ namespace VShop.Modules.Sales.API.Controllers
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
-            Result<ShoppingCart> result = await _commandBus.SendAsync(command);
+            Result<ShoppingCart> result = await _commandDispatcher.SendAsync(command);
 
             return HandleResult(result, Created);
         }
@@ -88,7 +88,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 new MessageMetadata(requestId, Guid.Empty, correlationId)
             );
 
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, NoContent);
         }
@@ -112,7 +112,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 new MessageMetadata(requestId, Guid.Empty, correlationId)
             );
 
-            Result<CheckoutResponse> result = await _commandBus.SendAsync(command);
+            Result<CheckoutResponse> result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
         }
@@ -143,7 +143,7 @@ namespace VShop.Modules.Sales.API.Controllers
                 ShoppingCartItem = { ProductId = productId }
             };
 
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Created);
         }
@@ -169,7 +169,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ProductId = productId;
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
                 
-            Result commandResult = await _commandBus.SendAsync(command);
+            Result commandResult = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(commandResult, Ok);
         }
@@ -195,7 +195,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ProductId = productId;
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
-            Result commandResult = await _commandBus.SendAsync(command);
+            Result commandResult = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(commandResult, NoContent);
         }
@@ -219,7 +219,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
             
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
         }
@@ -243,7 +243,7 @@ namespace VShop.Modules.Sales.API.Controllers
             command.ShoppingCartId = shoppingCartId;
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
-            Result result = await _commandBus.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
         }

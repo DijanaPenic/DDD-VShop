@@ -1,6 +1,7 @@
 ﻿using System;
+
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Aggregates
 {

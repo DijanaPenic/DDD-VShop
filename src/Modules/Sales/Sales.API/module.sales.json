@@ -1,0 +1,8 @@
+{
+  "Sales": {
+    "Module": {
+      "Name": "Sales",
+      "Enabled": true
+    }
+  }
+}

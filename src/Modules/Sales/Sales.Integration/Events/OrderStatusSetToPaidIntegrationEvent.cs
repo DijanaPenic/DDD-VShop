@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Events;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Integration.Events
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -12,7 +9,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Application.Projections
 {
@@ -56,8 +53,12 @@ namespace VShop.SharedKernel.Application.Projections
                 Func<Task> handler = _projector(readDataContext, domainEvent);
         
                 if (handler is null) return;
-        
-                _logger.Debug("Projecting domain event: {Message}", domainEvent);
+
+                _logger.Debug
+                (
+                    "Projecting domain event {Type}: {@Message}",
+                    domainEvent.GetType().Name, domainEvent
+                );
 
                 await handler();
                 

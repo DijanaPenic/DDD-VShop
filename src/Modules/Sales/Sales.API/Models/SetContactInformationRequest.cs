@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.API.ValidationAttributes;
+using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {

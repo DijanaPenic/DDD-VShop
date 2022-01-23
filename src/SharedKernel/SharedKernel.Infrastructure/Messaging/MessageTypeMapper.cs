@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
+    // TODO - automate registration.
     public static class MessageTypeMapper
     {
         private static readonly ConcurrentDictionary<Type, string> TypeNameMap = new();
@@ -18,8 +19,11 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             TypeMap.AddOrUpdate(mappedMessageTypeName, messageType, (_, _) => messageType);
         }
 
+        // SubscriptionToAllBackgroundService
         public static string ToName<TMessage>() => ToName(typeof(TMessage));
         
+        // IntegrationEventLog
+        // EventStoreSerializer
         public static string ToName(Type messageType) => TypeNameMap.GetOrAdd(messageType, (_) =>
         {
             string messageTypeName = messageType.FullName?.Replace(".", "_");
@@ -29,6 +33,11 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             return messageTypeName;
         });
 
+        // EventStoreSerializer
+        // ScheduledMessage
+        // SubscriptionToAllBackgroundService
+        // MessageLog
+        // IntegrationEventLog
         public static Type ToType(string messageTypeName) => TypeMap.GetOrAdd(messageTypeName, (_) =>
         {
             Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(messageTypeName.Replace("_", "."));

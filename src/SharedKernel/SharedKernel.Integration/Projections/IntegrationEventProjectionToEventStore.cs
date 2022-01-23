@@ -1,10 +1,11 @@
 ﻿using Serilog;
 using EventStore.Client;
+
 using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
-using VShop.SharedKernel.Infrastructure.Events;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
