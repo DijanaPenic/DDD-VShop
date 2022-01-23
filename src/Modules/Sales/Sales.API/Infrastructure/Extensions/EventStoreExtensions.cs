@@ -3,9 +3,10 @@ using EventStore.Client;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.Infrastructure;
-using VShop.Modules.Sales.API.Projections;
+using VShop.Modules.Sales.Core;
 using VShop.Modules.Sales.API.Application;
+using VShop.Modules.Sales.Core.DAL;
+using VShop.Modules.Sales.Core.DAL.Projections;
 using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.EventSourcing.Stores;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;

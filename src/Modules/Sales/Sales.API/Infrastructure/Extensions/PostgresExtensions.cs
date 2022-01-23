@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
-using VShop.Modules.Sales.Infrastructure;
-using VShop.SharedKernel.Scheduler.DAL;
+using VShop.Modules.Sales.Core.DAL;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

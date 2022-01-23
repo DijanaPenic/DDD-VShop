@@ -41,12 +41,8 @@
       <ProjectReference Include="..\..\Billing\Billing.Integration\Billing.Integration.csproj" />
       <ProjectReference Include="..\..\Catalog\Catalog.Integration\Catalog.Integration.csproj" />
       <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
-      <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
+      <ProjectReference Include="..\Sales.Core\Sales.Core.csproj" />
       <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Application\Commands\Shared" />
     </ItemGroup>
 
 </Project>

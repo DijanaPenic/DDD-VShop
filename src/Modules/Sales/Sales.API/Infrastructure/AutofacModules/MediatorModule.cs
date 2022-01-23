@@ -2,8 +2,8 @@
 using Autofac;
 
 using VShop.SharedKernel.Application.Decorators;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.ProcessManagers;
+using VShop.Modules.Sales.Core.Commands;
+using VShop.Modules.Sales.Core.ProcessManagers;
 using VShop.SharedKernel.Infrastructure.Commands.Publishing;
 using VShop.SharedKernel.Infrastructure.Commands.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Publishing;

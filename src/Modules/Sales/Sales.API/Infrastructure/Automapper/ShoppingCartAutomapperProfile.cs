@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Google.Type;
+
 using VShop.Modules.Sales.API.Models;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
+using VShop.Modules.Sales.Core.Commands;
+using VShop.Modules.Sales.Core.Commands.Shared;
 using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Automapper
