@@ -2,9 +2,9 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.Scheduler.Infrastructure;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.Modules.Sales.Infrastructure;
+using VShop.SharedKernel.Scheduler.DAL;
 
 namespace VShop.Modules.Sales.API.Infrastructure.Extensions
 {

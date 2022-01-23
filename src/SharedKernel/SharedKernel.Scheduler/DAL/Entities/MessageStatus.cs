@@ -1,4 +1,4 @@
-﻿namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
+﻿namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {
     public enum MessageStatus
     {

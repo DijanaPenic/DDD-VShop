@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Scheduler.Infrastructure;
+using VShop.SharedKernel.Scheduler.DAL;
+using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
-using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {

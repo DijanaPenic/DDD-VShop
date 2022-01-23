@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
-using VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations;
+using VShop.SharedKernel.Scheduler.DAL.Entities;
+using VShop.SharedKernel.Scheduler.DAL.EntityConfigurations;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
-namespace VShop.SharedKernel.Scheduler.Infrastructure
+namespace VShop.SharedKernel.Scheduler.DAL
 {
     public class SchedulerDbContext : DbContextBase
     {

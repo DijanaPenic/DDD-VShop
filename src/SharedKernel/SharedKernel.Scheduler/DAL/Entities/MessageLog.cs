@@ -1,7 +1,6 @@
-﻿using System;
-using Google.Protobuf;
-using NodaTime;
+﻿using NodaTime;
 using NodaTime.Serialization.Protobuf;
+using Google.Protobuf;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.PostgresDb;
@@ -9,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Serialization;
 
 using IMessage = VShop.SharedKernel.Messaging.IMessage;
 
-namespace VShop.SharedKernel.Scheduler.Infrastructure.Entities
+namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {
     public class MessageLog : DbEntityBase
     {

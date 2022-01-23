@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
+using VShop.SharedKernel.Scheduler.DAL.Entities;
 
-namespace VShop.SharedKernel.Scheduler.Infrastructure.EntityConfigurations
+namespace VShop.SharedKernel.Scheduler.DAL.EntityConfigurations
 {
     internal class ScheduledCommandLogEntityConfiguration : IEntityTypeConfiguration<MessageLog>
     {
