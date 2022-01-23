@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Client;
+﻿using EventStore.Client;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions
 {

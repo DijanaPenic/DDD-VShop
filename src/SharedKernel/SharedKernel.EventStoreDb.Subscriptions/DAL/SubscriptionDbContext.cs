@@ -2,10 +2,10 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.EntityConfigurations;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Configurations;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure
+namespace VShop.SharedKernel.EventStoreDb.Subscriptions.DAL
 {
     public class SubscriptionDbContext : DbContextBase
     {

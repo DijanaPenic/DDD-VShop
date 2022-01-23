@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Serilog;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
 using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -14,8 +11,8 @@ using VShop.SharedKernel.Messaging.Events.Publishing.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
 
 namespace VShop.SharedKernel.Integration.Projections
 {

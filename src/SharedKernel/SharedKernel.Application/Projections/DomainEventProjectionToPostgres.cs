@@ -12,7 +12,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Messaging.Events;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 
 namespace VShop.SharedKernel.Application.Projections
 {

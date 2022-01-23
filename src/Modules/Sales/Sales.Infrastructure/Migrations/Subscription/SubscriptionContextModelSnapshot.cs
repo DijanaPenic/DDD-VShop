@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 
 #nullable disable
 

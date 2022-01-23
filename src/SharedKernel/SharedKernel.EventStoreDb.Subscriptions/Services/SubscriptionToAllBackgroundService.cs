@@ -1,15 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Messaging;
 using VShop.SharedKernel.Infrastructure.Threading;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Infrastructure.Entities;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
