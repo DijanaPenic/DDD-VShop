@@ -4,16 +4,16 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MediatR;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure;
@@ -58,10 +58,10 @@ public class SalesModule : IModule
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(_ => logger.ForContext("Module", "Sales"));
-
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandDecorator<,>));
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(RetryPolicyCommandDecorator<,>));
         
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));
+
         ServiceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(ServiceProvider);
     }
