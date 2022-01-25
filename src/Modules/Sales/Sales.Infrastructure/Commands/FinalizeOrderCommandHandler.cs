@@ -12,7 +12,7 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public class FinalizeOrderCommandHandler : ICommandHandler<FinalizeOrderCommand>
+    internal class FinalizeOrderCommandHandler : ICommandHandler<FinalizeOrderCommand>
     {
         private readonly IAggregateStore<Order> _orderStore;
 

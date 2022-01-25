@@ -1,4 +1,7 @@
-﻿namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace VShop.SharedKernel.Infrastructure.Services.Contracts
 {
     public interface ISubscriptionBackgroundService
     {

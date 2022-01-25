@@ -9,7 +9,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.DAL.Projections
 {
-    public static class ShoppingCartInfoProjection
+    internal static class ShoppingCartInfoProjection
     {
         public static Func<Task> ProjectAsync(SalesDbContext salesDbContext, IDomainEvent @event)
             => @event switch

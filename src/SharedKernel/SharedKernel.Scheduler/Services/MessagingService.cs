@@ -9,12 +9,14 @@ using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
     public class MessagingService : IMessagingService
     {
         private readonly ILogger _logger;
+        private readonly IMessageRegistry _messageRegistry;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IEventDispatcher _eventDispatcher;
         private readonly SchedulerDbContext _schedulerDbContext;
@@ -22,12 +24,14 @@ namespace VShop.SharedKernel.Scheduler.Services
         public MessagingService
         (
             ILogger logger,
+            IMessageRegistry messageRegistry,
             ICommandDispatcher commandDispatcher,
             IEventDispatcher eventDispatcher,
             SchedulerDbContext schedulerDbContext
         )
         {
             _logger = logger;
+            _messageRegistry = messageRegistry;
             _commandDispatcher = commandDispatcher;
             _eventDispatcher = eventDispatcher;
             _schedulerDbContext = schedulerDbContext;
@@ -43,7 +47,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                switch (messageLog.GetMessage())
+                switch (messageLog.GetMessage(_messageRegistry))
                 {
                     case IBaseCommand command:
                         object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);

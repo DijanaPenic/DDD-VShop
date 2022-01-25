@@ -4,7 +4,7 @@ using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
@@ -12,11 +12,18 @@ namespace VShop.SharedKernel.Scheduler.Services
     {
         private readonly ISchedulerFactory _schedulerFactory;
         private readonly SchedulerDbContext _schedulerDbContext;
+        private readonly IMessageRegistry _messageRegistry;
 
-        public SchedulerService(ISchedulerFactory schedulerFactory, SchedulerDbContext schedulerDbContext)
+        public SchedulerService
+        (
+            ISchedulerFactory schedulerFactory,
+            SchedulerDbContext schedulerDbContext,
+            IMessageRegistry messageRegistry
+        )
         {
             _schedulerFactory = schedulerFactory;
             _schedulerDbContext = schedulerDbContext;
+            _messageRegistry = messageRegistry;
         }
 
         public async Task ScheduleMessageAsync
@@ -50,7 +57,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             CancellationToken cancellationToken = default
         )
         {
-            MessageLog messageLog = new(message);
+            MessageLog messageLog = new(message, _messageRegistry);
             _schedulerDbContext.MessageLogs.Add(messageLog);
 
             return _schedulerDbContext.SaveChangesAsync(cancellationToken);

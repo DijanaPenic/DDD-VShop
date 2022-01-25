@@ -11,7 +11,7 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public class SetPaidOrderStatusCommandHandler : ICommandHandler<SetPaidOrderStatusCommand>
+    internal class SetPaidOrderStatusCommandHandler : ICommandHandler<SetPaidOrderStatusCommand>
     {
         private readonly IAggregateStore<Order> _orderStore;
 

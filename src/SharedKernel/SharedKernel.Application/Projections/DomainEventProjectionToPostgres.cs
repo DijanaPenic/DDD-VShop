@@ -10,6 +10,7 @@ using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Application.Projections
 {
@@ -17,17 +18,20 @@ namespace VShop.SharedKernel.Application.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMessageRegistry _messageRegistry;
         private readonly Projector _projector;
 
         public DomainEventProjectionToPostgres
         (
             ILogger logger,
             IServiceProvider serviceProvider,
+            IMessageRegistry messageRegistry,
             Projector projector
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
+            _messageRegistry = messageRegistry;
             _projector = projector;
         }
 
@@ -38,7 +42,7 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>();
+            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>(_messageRegistry);
             if(domainEvent is null) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();

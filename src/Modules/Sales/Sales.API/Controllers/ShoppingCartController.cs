@@ -19,7 +19,7 @@ namespace VShop.Modules.Sales.API.Controllers
 {
     [ApiController]
     [Route("api/shopping-carts")]
-    public class ShoppingCartController : ApplicationControllerBase
+    internal class ShoppingCartController : ApplicationControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;

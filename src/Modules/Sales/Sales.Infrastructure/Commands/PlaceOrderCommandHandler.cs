@@ -10,7 +10,7 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Order>
+    internal class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Order>
     {
         private readonly IAggregateStore<Order> _orderStore;
         private readonly IShoppingCartOrderingService _shoppingCartOrderingService;

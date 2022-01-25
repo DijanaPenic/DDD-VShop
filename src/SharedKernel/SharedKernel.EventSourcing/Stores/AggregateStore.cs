@@ -3,10 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using EventStore.Client;
 
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
@@ -20,13 +19,13 @@ namespace VShop.SharedKernel.EventSourcing.Stores
     public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot, new()
     {
         private readonly IClockService _clockService;
-        private readonly EventStoreClient _eventStoreClient;
+        private readonly CustomEventStoreClient _eventStoreClient;
         private readonly IEventDispatcher _eventDispatcher;
 
         public AggregateStore
         (
             IClockService clockService,
-            EventStoreClient eventStoreClient,
+            CustomEventStoreClient eventStoreClient,
             IEventDispatcher eventDispatcher
         )
         {

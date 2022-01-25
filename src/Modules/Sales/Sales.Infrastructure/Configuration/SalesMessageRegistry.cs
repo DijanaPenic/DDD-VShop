@@ -1,16 +1,16 @@
-﻿using VShop.Modules.Billing.Integration.Events;
-using VShop.Modules.Catalog.Integration.Events;
-using VShop.Modules.Sales.Domain.Events;
+﻿using VShop.Modules.Sales.Domain.Events;
 using VShop.Modules.Sales.Domain.Events.Reminders;
-using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Integration.Events;
+using VShop.Modules.Sales.Infrastructure.Commands;
+using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Sales.Infrastructure.Configuration
 {
-    public static class MessageRegistration
+    internal static class SalesMessageRegistry
     {
-        private static MessageRegistry MapMessageTypes()
+        public static MessageRegistry Register()
         {
             MessageRegistry registry = new();
             
@@ -59,4 +59,10 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration
             return registry;
         }
     }
+    
+//     private static void MapMessageTransformations()
+//     {
+//         // CAUTION: this is just a showcase example.
+//         //Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
+//     }
 }

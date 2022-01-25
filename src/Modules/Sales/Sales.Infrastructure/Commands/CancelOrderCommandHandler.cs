@@ -9,7 +9,7 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand>
+    internal class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand>
     {
         private readonly IAggregateStore<Order> _orderStore;
 

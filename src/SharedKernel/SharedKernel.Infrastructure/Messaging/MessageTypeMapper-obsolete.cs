@@ -18,12 +18,9 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             TypeNameMap.AddOrUpdate(messageType, mappedMessageTypeName, (_, _) => mappedMessageTypeName);
             TypeMap.AddOrUpdate(mappedMessageTypeName, messageType, (_, _) => messageType);
         }
-
-        // SubscriptionToAllBackgroundService
-        public static string ToName<TMessage>() => ToName(typeof(TMessage));
         
-        // IntegrationEventLog
-        // EventStoreSerializer
+        public static string ToName<TMessage>() => ToName(typeof(TMessage));
+
         public static string ToName(Type messageType) => TypeNameMap.GetOrAdd(messageType, (_) =>
         {
             string messageTypeName = messageType.FullName?.Replace(".", "_");
@@ -32,12 +29,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
 
             return messageTypeName;
         });
-
-        // EventStoreSerializer
-        // ScheduledMessage
-        // SubscriptionToAllBackgroundService
-        // MessageLog
-        // IntegrationEventLog
+        
         public static Type ToType(string messageTypeName) => TypeMap.GetOrAdd(messageTypeName, (_) =>
         {
             Type type = GetFirstMatchingTypeFromCurrentDomainAssembly(messageTypeName.Replace("_", "."));

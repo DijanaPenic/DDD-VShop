@@ -9,7 +9,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand>
+    internal class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         

@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Threading;
-using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {
-    public class SubscriptionToAllBackgroundService : ISubscriptionBackgroundService
+    public class EventStoreSubscriptionBackgroundService : ISubscriptionBackgroundService
     {
         private CancellationTokenSource _cancellationTokenSource;
         private Task _executingTask;
@@ -20,20 +20,23 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
         private readonly ILogger _logger;
         private readonly EventStoreClient _eventStoreClient;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMessageRegistry _messageRegistry;
         private readonly SubscriptionConfig _subscriptionConfig;
         private readonly string _subscriptionName;
 
-        public SubscriptionToAllBackgroundService
+        public EventStoreSubscriptionBackgroundService
         (
             ILogger logger,
             EventStoreClient eventStoreClient,
             IServiceProvider serviceProvider,
+            IMessageRegistry messageRegistry,
             SubscriptionConfig subscriptionConfig
         )
         {
             _logger = logger;
             _eventStoreClient = eventStoreClient;
             _serviceProvider = serviceProvider;
+            _messageRegistry = messageRegistry;
             _subscriptionConfig = subscriptionConfig;
             _subscriptionName = $"{eventStoreClient.ConnectionName}-{_subscriptionConfig.SubscriptionId}";
         }
@@ -98,7 +101,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             CancellationToken cancellationToken
         )
         {
-            if (IsMessageWithEmptyData(resolvedEvent) || IsCheckpointMessage(resolvedEvent) || !IsSubscribedToMessage(resolvedEvent)) return;
+            if (IsMessageWithEmptyData(resolvedEvent) || IsCheckpoint(resolvedEvent) || !IsSubscribedToMessage(resolvedEvent)) return;
 
             try
             {
@@ -145,9 +148,9 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
             return true;
         }
 
-        private bool IsCheckpointMessage(ResolvedEvent resolvedEvent)
+        private bool IsCheckpoint(ResolvedEvent resolvedEvent)
         {
-            if (resolvedEvent.Event.EventType != MessageTypeMapper.ToName<Checkpoint>()) return false;
+            if (resolvedEvent.Event.EventType != _messageRegistry.GetName<Checkpoint>()) return false;
 
             _logger.Information("Checkpoint event - ignoring");
             
@@ -156,7 +159,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
         private bool IsSubscribedToMessage(ResolvedEvent resolvedEvent)
         {
-            if (MessageTypeMapper.ToType(resolvedEvent.Event.EventType) is not null) return true;
+            if (_messageRegistry.GetType(resolvedEvent.Event.EventType) is not null) return true;
             
             _logger.Information("Unknown event - ignoring");
             
@@ -183,7 +186,7 @@ namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 
         private void Resubscribe()
         {
-            while (true)
+            while(true)
             {
                 bool resubscribed = false;
                 try

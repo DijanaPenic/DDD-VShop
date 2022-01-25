@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores.Contracts
 {
-    public interface IIntegrationEventLogStore
+    public interface IIntegrationEventOutbox
     {
         Task<IReadOnlyList<IntegrationEventLog>> RetrieveEventsPendingPublishAsync(Guid transactionId, CancellationToken cancellationToken = default);
         Task SaveEventAsync(IIntegrationEvent @event, IDbContextTransaction transaction, CancellationToken cancellationToken = default);

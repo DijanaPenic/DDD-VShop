@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
 {
-    public class SubscriptionHostedService : IHostedService
+    public class EventStoreSubscriptionHostedService : IHostedService
     {
         private readonly IEnumerable<ISubscriptionBackgroundService> _subscribeBackgroundServices;
 
-        public SubscriptionHostedService(IEnumerable<ISubscriptionBackgroundService> subscribeBackgroundServices)
+        public EventStoreSubscriptionHostedService(IEnumerable<ISubscriptionBackgroundService> subscribeBackgroundServices)
             => _subscribeBackgroundServices = subscribeBackgroundServices;
 
         public async Task StartAsync(CancellationToken cancellationToken)

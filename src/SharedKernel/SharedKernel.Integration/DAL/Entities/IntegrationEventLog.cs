@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
@@ -20,10 +21,10 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         // For database migrations.
         public IntegrationEventLog() { } 
         
-        public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId)
+        public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId, IMessageRegistry messageRegistry)
         {
             Id = @event.Metadata.MessageId;
-            TypeName = ToName(@event.GetType());
+            TypeName = messageRegistry.GetName(@event.GetType());
             Body = @event.ToByteArray();
             Metadata = @event.Metadata.ToByteArray();
             State = EventState.NotPublished;
@@ -31,17 +32,14 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
             TransactionId = transactionId;
         }
 
-        public IIntegrationEvent GetEvent()
+        public IIntegrationEvent GetEvent(IMessageRegistry messageRegistry)
         {
             IIntegrationEvent integrationEvent = (IIntegrationEvent)ProtobufSerializer
-                .FromByteArray(Body, ToType(TypeName));
+                .FromByteArray(Body, messageRegistry.GetType(TypeName));
 
             integrationEvent.Metadata = ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata);
 
             return integrationEvent;
         }
-        
-        public static string ToName(Type type) => MessageTypeMapper.ToName(type);
-        public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
     }
 }

@@ -6,6 +6,7 @@ using Google.Protobuf;
 
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
 using Uuid = EventStore.Client.Uuid;
@@ -15,12 +16,13 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        public static TMessage Deserialize<TMessage>(this ResolvedEvent resolvedEvent) where TMessage : IMessage
+        public static TMessage Deserialize<TMessage>(this ResolvedEvent resolvedEvent, IMessageRegistry messageRegistry)
+            where TMessage : IMessage
         {
             object data = ProtobufSerializer.FromByteArray
             (
                 resolvedEvent.Event.Data.Span.ToArray(),
-                MessageTypeMapper.ToType(resolvedEvent.Event.EventType)
+                messageRegistry.GetType(resolvedEvent.Event.EventType)
             );
 
             object UpcastMessage()
@@ -39,21 +41,29 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             return message;
         }
 
-        public static IReadOnlyList<EventData> ToEventData<TMessage>(this IEnumerable<TMessage> messages) 
+        public static IReadOnlyList<EventData> ToEventData<TMessage>
+        (
+            this IEnumerable<TMessage> messages,
+            IMessageRegistry messageRegistry
+        ) 
             where TMessage : IMessage
-            => messages.Select((message, index) => new EventData
+            => messages.Select((message, index) =>
+            {
+                string messageName = messageRegistry.GetName(message.GetType());
+
+                return new EventData
                 (
-                    GetDeterministicMessageId(message, index),
-                    GetMessageTypeName(message),
+                    GetDeterministicMessageId(message, messageName, index),
+                    messageName,
                     message.ToByteArray(), // Message.Metadata won't be deserialized here.
                     message.Metadata.ToByteArray(),
                     "application/octet-stream"
-                )).ToList();
+                );
+            }).ToList();
         
-        private static Uuid GetDeterministicMessageId<TMessage>(TMessage message, int index) where TMessage : IMessage
+        private static Uuid GetDeterministicMessageId<TMessage>(TMessage message, string messageName, int index) 
+            where TMessage : IMessage
         {
-            string messageName = GetMessageTypeName(message);
-            
             Guid deterministicId = DeterministicGuid.Create
             (
                 message.Metadata.CausationId,
@@ -62,7 +72,5 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 
             return Uuid.FromGuid(deterministicId);
         }
-
-        private static string GetMessageTypeName(IMessage data) => MessageTypeMapper.ToName(data.GetType());
     }
 }

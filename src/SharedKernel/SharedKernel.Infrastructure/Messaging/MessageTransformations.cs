@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
+    // TODO - need to support multiple domains.
     public static class MessageTransformations
     {
         private static readonly Dictionary<string, Func<object, object>> TransformationMap = new();
@@ -16,7 +17,6 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             }
 
             result = transformObject(input);
-            
             return true;
         }
 

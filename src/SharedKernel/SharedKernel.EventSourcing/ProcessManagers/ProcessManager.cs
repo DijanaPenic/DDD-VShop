@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using NodaTime;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;

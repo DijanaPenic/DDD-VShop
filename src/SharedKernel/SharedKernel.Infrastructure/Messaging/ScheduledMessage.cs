@@ -1,11 +1,10 @@
 ﻿using NodaTime;
 using NodaTime.Serialization.Protobuf;
 using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
 
-using VShop.SharedKernel.Infrastructure.Serialization;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+
 using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
-using Type = System.Type;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
@@ -15,28 +14,8 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
         {
             Body = message.ToByteString();
             Metadata = message.Metadata;
-            TypeName = ToName(message.GetType());
+            TypeName = message.GetType().FullName;
             ScheduledTime = scheduledTime.ToTimestamp();
         }
-        
-        public IMessage GetMessage()
-        {
-            IMessage message = (IMessage)ProtobufSerializer.FromByteString(Body, ToType(TypeName));
-            message.Metadata = Metadata;
-
-            return message;
-        }
-        
-        public static string ToName<T>() => ToName(typeof(T));
-        public static string ToName(Type type) => MessageTypeMapper.ToName(type);
-        public static Type ToType(string typeName) => MessageTypeMapper.ToType(typeName);
-    }
-
-    public interface IScheduledMessage : IMessage
-    {
-        ByteString Body { get; }
-        string TypeName { get; }
-        Timestamp ScheduledTime { get; }
-        IMessage GetMessage();
     }
 }

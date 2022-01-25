@@ -8,13 +8,13 @@ using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 // TODO - email alert support.
 namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
 {
-    public class OrderingProcessManager : ProcessManager
+    internal class OrderingProcessManager : ProcessManager
     {
         public EntityId ShoppingCartId { get; private set; }
         public EntityId OrderId { get; private set; }

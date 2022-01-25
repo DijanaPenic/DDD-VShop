@@ -4,16 +4,21 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores
 {
-    public class IntegrationEventLogStore : IIntegrationEventLogStore
+    public class IntegrationEventOutbox : IIntegrationEventOutbox
     {
         private readonly IntegrationDbContext _integrationDbContext;
-        
-        public IntegrationEventLogStore(IntegrationDbContext integrationDbContext)
-            => _integrationDbContext = integrationDbContext;
+        private readonly MessageRegistry _messageRegistry;
+
+        public IntegrationEventOutbox(IntegrationDbContext integrationDbContext, MessageRegistry messageRegistry)
+        {
+            _integrationDbContext = integrationDbContext;
+            _messageRegistry = messageRegistry;
+        }
 
         public async Task<IReadOnlyList<IntegrationEventLog>> RetrieveEventsPendingPublishAsync
         (
@@ -34,7 +39,7 @@ namespace VShop.SharedKernel.Integration.Stores
         {
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
 
-            IntegrationEventLog eventLogEntry = new(@event, transaction.TransactionId);
+            IntegrationEventLog eventLogEntry = new(@event, transaction.TransactionId, _messageRegistry);
 
             await _integrationDbContext.Database.UseTransactionAsync(transaction.GetDbTransaction(), cancellationToken);
             await _integrationDbContext.IntegrationEventLogs.AddAsync(eventLogEntry, cancellationToken);

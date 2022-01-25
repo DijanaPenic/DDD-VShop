@@ -1,6 +1,6 @@
 ﻿namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
 {
-    public enum OrderingProcessManagerStatus
+    internal enum OrderingProcessManagerStatus
     {
         CheckoutRequested = 1,
         OrderPlaced = 2,

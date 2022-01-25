@@ -8,7 +8,7 @@ namespace VShop.Modules.Sales.API.Controllers
 {
     [ApiController]
     [Route("api/orders")]
-    public class OrderController : ApplicationControllerBase
+    internal class OrderController : ApplicationControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;

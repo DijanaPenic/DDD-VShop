@@ -3,13 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using EventStore.Client;
 
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -23,14 +22,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
     public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
     {
         private readonly IClockService _clockService;
-        private readonly EventStoreClient _eventStoreClient;
+        private readonly CustomEventStoreClient _eventStoreClient;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly ISchedulerService _messageSchedulerService;
 
         public ProcessManagerStore
         (
             IClockService clockService,
-            EventStoreClient eventStoreClient,
+            CustomEventStoreClient eventStoreClient,
             ICommandDispatcher commandDispatcher,
             ISchedulerService messageSchedulerService
         )
@@ -142,9 +141,11 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             return processManager;
         }
         
-        public static string GetInboxStreamName(Guid processManagerId) => $"{GetStreamPrefix(processManagerId)}/inbox";
+        public static string GetInboxStreamName(Guid processManagerId) 
+            => $"{GetStreamPrefix(processManagerId)}/inbox";
         
-        public static string GetOutboxStreamName(Guid processManagerId) => $"{GetStreamPrefix(processManagerId)}/outbox";
+        public static string GetOutboxStreamName(Guid processManagerId) 
+            => $"{GetStreamPrefix(processManagerId)}/outbox";
         
         private static string GetStreamPrefix(Guid processManagerId)
         {

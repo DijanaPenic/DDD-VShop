@@ -4,7 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 
 namespace VShop.Modules.Sales.Infrastructure.DAL.Entities
 {
-    public class ShoppingCartInfoItem : DbEntityBase
+    internal class ShoppingCartInfoItem : DbEntityBase
     {
         public Guid ProductId { get; set; }
         public Guid ShoppingCartInfoId { get; set; }

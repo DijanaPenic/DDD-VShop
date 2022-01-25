@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -19,17 +20,20 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMessageRegistry _messageRegistry;
         private readonly IEventDispatcher _eventDispatcher;
 
         public IntegrationEventPublisher
         (
             ILogger logger,
             IServiceProvider serviceProvider,
+            IMessageRegistry messageRegistry,
             IEventDispatcher eventDispatcher
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
+            _messageRegistry = messageRegistry;
             _eventDispatcher = eventDispatcher;
         }
 
@@ -40,7 +44,7 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>();
+            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry);
             if (integrationEvent is null) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
@@ -70,7 +74,10 @@ namespace VShop.SharedKernel.Integration.Projections
                         StreamId = resolvedEvent.OriginalStreamId,
                         MessageType = resolvedEvent.Event.EventType,
                         MessageId = resolvedEvent.Event.EventId.ToGuid(),
+                        
+                        // TODO - need to accommodate proto type.
                         MessageData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span),
+                        
                         Status = MessageProcessingStatus.Failed,
                         Error = $"{ex.Message}{ex.StackTrace}"
                     });

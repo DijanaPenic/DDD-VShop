@@ -9,6 +9,5 @@ public interface IModule
 {
     string Name { get; }
     Assembly[] Assemblies { get; set; }
-    IServiceProvider ServiceProvider { get; }
     void Use(IConfiguration configuration, ILogger logger);
 }

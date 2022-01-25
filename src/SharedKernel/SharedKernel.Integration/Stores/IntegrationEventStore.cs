@@ -1,6 +1,6 @@
 ﻿using EventStore.Client;
 
-using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
@@ -8,9 +8,9 @@ namespace VShop.SharedKernel.Integration.Stores
 {
     public class IntegrationEventStore : IIntegrationEventStore
     {
-        private readonly EventStoreClient _eventStoreClient;
+        private readonly CustomEventStoreClient _eventStoreClient;
 
-        public IntegrationEventStore(EventStoreClient eventStoreClient) => _eventStoreClient = eventStoreClient;
+        public IntegrationEventStore(CustomEventStoreClient eventStoreClient) => _eventStoreClient = eventStoreClient;
 
         public async Task SaveAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {

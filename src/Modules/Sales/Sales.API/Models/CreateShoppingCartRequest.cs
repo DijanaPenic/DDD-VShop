@@ -5,7 +5,7 @@ using VShop.SharedKernel.Application.ValidationAttributes;
 
 namespace VShop.Modules.Sales.API.Models
 {
-    public record CreateShoppingCartRequest
+    internal record CreateShoppingCartRequest
     {
         [Required, EntityId]
         public Guid ShoppingCartId { get; init; }

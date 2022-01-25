@@ -8,7 +8,7 @@ using VShop.Modules.Sales.Domain.Enums;
 
 namespace VShop.Modules.Sales.Infrastructure.Queries
 {
-    public class ShoppingCartReadService : IShoppingCartReadService 
+    internal class ShoppingCartReadService : IShoppingCartReadService 
     {
         private readonly SalesDbContext _salesDbContext;
         

@@ -5,33 +5,37 @@ using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Services
 {
     public class IntegrationEventService : IIntegrationEventService
     {
         private readonly ILogger _logger;
-        private readonly DbContextBase _dbContext;
-        private readonly IIntegrationEventStore _integrationEventRepository;
-        private readonly IIntegrationEventLogStore _integrationEventLogRepository;
+        private readonly IMessageRegistry _messageRegistry;
+        private readonly MainDbContextProvider _dbContextProvider;
+        private readonly IIntegrationEventStore _integrationEventStore;
+        private readonly IIntegrationEventOutbox _integrationEventOutbox;
 
         public IntegrationEventService
         (
             ILogger logger,
+            IMessageRegistry messageRegistry,
             MainDbContextProvider dbContextProvider,
-            IIntegrationEventStore integrationEventRepository,
-            IIntegrationEventLogStore integrationEventLogRepository
+            IIntegrationEventStore integrationEventStore,
+            IIntegrationEventOutbox integrationEventOutbox
         )
         {
             _logger = logger;
-            _dbContext = dbContextProvider();
-            _integrationEventRepository = integrationEventRepository;
-            _integrationEventLogRepository = integrationEventLogRepository;
+            _messageRegistry = messageRegistry;
+            _dbContextProvider = dbContextProvider;
+            _integrationEventStore = integrationEventStore;
+            _integrationEventOutbox = integrationEventOutbox;
         }
 
         public async Task PublishEventsAsync(Guid transactionId, CancellationToken cancellationToken = default)
         {
-            IEnumerable<IntegrationEventLog> pendingEventLogs = await _integrationEventLogRepository
+            IEnumerable<IntegrationEventLog> pendingEventLogs = await _integrationEventOutbox
                 .RetrieveEventsPendingPublishAsync(transactionId, cancellationToken);
 
             foreach (IntegrationEventLog pendingEventLog in pendingEventLogs)
@@ -44,19 +48,19 @@ namespace VShop.SharedKernel.Integration.Services
 
                 try
                 {
-                    await _integrationEventLogRepository.MarkEventAsInProgressAsync
+                    await _integrationEventOutbox.MarkEventAsInProgressAsync
                     (
                         pendingEventLog.Id,
                         cancellationToken
                     );
 
-                    await _integrationEventRepository.SaveAsync
+                    await _integrationEventStore.SaveAsync
                     (
-                        pendingEventLog.GetEvent(),
+                        pendingEventLog.GetEvent(_messageRegistry),
                         cancellationToken
                     );
 
-                    await _integrationEventLogRepository.MarkEventAsPublishedAsync
+                    await _integrationEventOutbox.MarkEventAsPublishedAsync
                     (
                         pendingEventLog.Id,
                         cancellationToken
@@ -71,7 +75,7 @@ namespace VShop.SharedKernel.Integration.Services
                         pendingEventLog.Id
                     );
 
-                    await _integrationEventLogRepository.MarkEventAsFailedAsync(pendingEventLog.Id, cancellationToken);
+                    await _integrationEventOutbox.MarkEventAsFailedAsync(pendingEventLog.Id, cancellationToken);
                 }
             }
         }
@@ -84,7 +88,7 @@ namespace VShop.SharedKernel.Integration.Services
                 @event.Metadata.MessageId, @event
             );
             
-            await _integrationEventLogRepository.SaveEventAsync(@event, _dbContext.CurrentTransaction, cancellationToken);
+            await _integrationEventOutbox.SaveEventAsync(@event, _dbContextProvider().CurrentTransaction, cancellationToken);
         }
     }
 }

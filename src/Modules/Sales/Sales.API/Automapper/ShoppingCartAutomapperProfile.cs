@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Sales.API.Automapper
 {
-    public class ShoppingCartAutomapperProfile : Profile
+    internal class ShoppingCartAutomapperProfile : Profile
     {
         public ShoppingCartAutomapperProfile()
         {

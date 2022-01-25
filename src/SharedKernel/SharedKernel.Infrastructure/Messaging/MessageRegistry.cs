@@ -22,7 +22,8 @@ public class MessageRegistry : IMessageRegistry
     
     private bool TryGetByType(Type type, out string typeName) => _typeMap.TryGetValue(type, out typeName);
     private bool TryGetByName(string typeName, out Type type) => _nameMap.TryGetValue(typeName, out type);
-    
+
+    public string GetName<T>() => GetName(typeof(T));
     public string GetName(Type type) => TryGetByType(type, out string name) ? name : null;
     public Type GetType(string name) => TryGetByName(name, out Type type) ? type : null;
 }

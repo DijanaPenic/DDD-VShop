@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 
 namespace VShop.Modules.Sales.Infrastructure.DAL
 {
-    public class SalesDbContext : DbContextBase
+    internal class SalesDbContext : DbContextBase
     {
         public const string ShoppingCartSchema = "shopping_cart";
         public const string OrderSchema = "order";

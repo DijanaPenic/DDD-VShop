@@ -13,7 +13,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
 {
-    public class OrderingProcessManagerHandler : ProcessManagerHandler<OrderingProcessManager>,
+    internal class OrderingProcessManagerHandler : ProcessManagerHandler<OrderingProcessManager>,
         IEventHandler<ShoppingCartCheckoutRequestedDomainEvent>,
         IEventHandler<OrderPlacedDomainEvent>,
         IEventHandler<PaymentGracePeriodExpiredDomainEvent>,

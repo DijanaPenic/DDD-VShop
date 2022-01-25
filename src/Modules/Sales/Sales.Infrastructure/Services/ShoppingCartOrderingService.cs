@@ -3,16 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.Modules.Sales.Domain.Enums;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Services
 {
-    public class ShoppingCartOrderingService : IShoppingCartOrderingService
+    internal class ShoppingCartOrderingService : IShoppingCartOrderingService
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
 

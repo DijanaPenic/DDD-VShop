@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
-using VShop.SharedKernel.Infrastructure.Services;
 
 using ILogger = Serilog.ILogger;
 
