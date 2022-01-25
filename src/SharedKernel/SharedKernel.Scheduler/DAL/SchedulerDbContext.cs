@@ -11,7 +11,7 @@ namespace VShop.SharedKernel.Scheduler.DAL
     {
         public const string SchedulerSchema = "scheduler";
 
-        public DbSet<MessageLog> MessageLogs { get; set; }
+        public DbSet<ScheduledMessageLog> MessageLogs { get; set; }
 
         public SchedulerDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }

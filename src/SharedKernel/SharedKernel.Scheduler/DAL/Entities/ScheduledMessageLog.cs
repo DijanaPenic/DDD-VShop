@@ -11,8 +11,7 @@ using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {
-    // TODO - rename database table.
-    public class MessageLog : DbEntityBase
+    public class ScheduledMessageLog : DbEntityBase
     {
         public Guid Id { get; }
         public byte[] Body { get; }
@@ -22,9 +21,9 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
         public MessageStatus Status { get; set; }
         
         // For database migrations.
-        public MessageLog() { } 
+        public ScheduledMessageLog() { } 
         
-        public MessageLog(IScheduledMessage message, IMessageRegistry messageRegistry)
+        public ScheduledMessageLog(IScheduledMessage message, IMessageRegistry messageRegistry)
         {
             Id = message.Metadata.MessageId;
             Body = message.Body.ToByteArray();

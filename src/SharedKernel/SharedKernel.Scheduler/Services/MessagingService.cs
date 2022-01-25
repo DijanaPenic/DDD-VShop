@@ -39,15 +39,15 @@ namespace VShop.SharedKernel.Scheduler.Services
 
         public async Task SendMessageAsync(Guid messageId, CancellationToken cancellationToken)
         {
-            MessageLog message = await GetScheduledMessageAsync(messageId, cancellationToken);
-            await SendMessageAsync(message, cancellationToken);
+            ScheduledMessageLog scheduledMessage = await GetScheduledMessageAsync(messageId, cancellationToken);
+            await SendMessageAsync(scheduledMessage, cancellationToken);
         }
         
-        private async Task SendMessageAsync(MessageLog messageLog, CancellationToken cancellationToken)
+        private async Task SendMessageAsync(ScheduledMessageLog scheduledMessageLog, CancellationToken cancellationToken)
         {
             try
             {
-                switch (messageLog.GetMessage(_messageRegistry))
+                switch (scheduledMessageLog.GetMessage(_messageRegistry))
                 {
                     case IBaseCommand command:
                         object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
@@ -66,17 +66,17 @@ namespace VShop.SharedKernel.Scheduler.Services
                         throw new Exception("Unknown target type.");
                 }
 
-                await SetMessageStatusAsync(messageLog, MessageStatus.Finished, cancellationToken);
+                await SetMessageStatusAsync(scheduledMessageLog, MessageStatus.Finished, cancellationToken);
             }                                                                                                                    
             catch (Exception ex)                                                                                                  
             {                                                                                                                    
                 _logger.Error(ex, "Unhandled error has occurred");
                                                                                                                                  
-                await SetMessageStatusAsync(messageLog, MessageStatus.Failed, cancellationToken);                                
+                await SetMessageStatusAsync(scheduledMessageLog, MessageStatus.Failed, cancellationToken);                                
             }
         }
 
-        private Task<MessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
+        private Task<ScheduledMessageLog> GetScheduledMessageAsync(Guid messageId, CancellationToken cancellationToken)
             => _schedulerDbContext.MessageLogs
                 .FirstOrDefaultAsync
                 (
@@ -86,14 +86,14 @@ namespace VShop.SharedKernel.Scheduler.Services
 
         private async Task SetMessageStatusAsync
         (
-            MessageLog messageLog,
+            ScheduledMessageLog scheduledMessageLog,
             MessageStatus status,
             CancellationToken cancellationToken
         )
         {
-            messageLog.Status = status;
+            scheduledMessageLog.Status = status;
             
-            _schedulerDbContext.Entry(messageLog).Property(ml => ml.Status).IsModified = true;
+            _schedulerDbContext.Entry(scheduledMessageLog).Property(ml => ml.Status).IsModified = true;
             
             await _schedulerDbContext.SaveChangesAsync(cancellationToken);
         }

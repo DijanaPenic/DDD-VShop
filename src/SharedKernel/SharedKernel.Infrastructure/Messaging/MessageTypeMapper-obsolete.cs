@@ -4,7 +4,6 @@ using System.Collections.Concurrent;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
-    // TODO - automate registration.
     public static class MessageTypeMapper
     {
         private static readonly ConcurrentDictionary<Type, string> TypeNameMap = new();

@@ -5,9 +5,9 @@ using VShop.SharedKernel.Scheduler.DAL.Entities;
 
 namespace VShop.SharedKernel.Scheduler.DAL.EntityConfigurations
 {
-    internal class ScheduledCommandLogEntityConfiguration : IEntityTypeConfiguration<MessageLog>
+    internal class ScheduledCommandLogEntityConfiguration : IEntityTypeConfiguration<ScheduledMessageLog>
     {
-        public void Configure(EntityTypeBuilder<MessageLog> builder)
+        public void Configure(EntityTypeBuilder<ScheduledMessageLog> builder)
         {
             builder.ToTable("message_log", SchedulerDbContext.SchedulerSchema);
             

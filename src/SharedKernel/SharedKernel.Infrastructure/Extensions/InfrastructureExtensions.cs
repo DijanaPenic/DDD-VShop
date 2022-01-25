@@ -26,9 +26,10 @@ public static class InfrastructureExtensions
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddMemoryCache();
         
-        //services.AddModuleRequests(assemblies); // TODO - can be done later.
-        //services.AddContext();  // TODO - complex; can be done later.
-        //services.AddMessaging();  // TODO - need to finish.
+        // TODO - need to finish.
+        //services.AddModuleRequests(assemblies); 
+        //services.AddContext();  
+        //services.AddMessaging();  
 
         //app.UseCorrelationId();
         //app.UseContext();

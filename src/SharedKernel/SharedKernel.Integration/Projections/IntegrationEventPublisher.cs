@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using System.Text;
+using Newtonsoft.Json;
 using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
@@ -68,16 +69,19 @@ namespace VShop.SharedKernel.Integration.Projections
                 }
                 catch (Exception ex)
                 {
+                    object data = ProtobufSerializer.FromByteArray
+                    (
+                        resolvedEvent.Event.Data.Span.ToArray(),
+                        _messageRegistry.GetType(resolvedEvent.Event.EventType)
+                    );
+                    
                     subscriptionDbContext.MessageDeadLetterLogs.Add(new MessageDeadLetterLog
                     {
                         Id = SequentialGuid.Create(),
                         StreamId = resolvedEvent.OriginalStreamId,
                         MessageType = resolvedEvent.Event.EventType,
                         MessageId = resolvedEvent.Event.EventId.ToGuid(),
-                        
-                        // TODO - need to accommodate proto type.
-                        MessageData = Encoding.UTF8.GetString(resolvedEvent.Event.Data.Span),
-                        
+                        MessageData = JsonConvert.SerializeObject(data, DefaultJsonSerializer.Settings),
                         Status = MessageProcessingStatus.Failed,
                         Error = $"{ex.Message}{ex.StackTrace}"
                     });
