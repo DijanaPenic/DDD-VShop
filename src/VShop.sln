@@ -60,6 +60,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bootstrapper", "Bootstrappe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bootstrapper", "Bootstrapper\Bootstrapper\Bootstrapper.csproj", "{091D9BAC-2CF9-4903-81D4-6B61E4FFE344}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{F290BBE9-F8D7-44DB-B1CE-23B179BD6EA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.DatabaseMigrator", "Database\Database.DatabaseMigrator\Database.DatabaseMigrator.csproj", "{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +97,7 @@ Global
 		{D874663D-34B1-4D34-9DD8-072BA15A9404} = {6480BDA7-E3C4-4458-8CF6-9EEBB37D2C99}
 		{CC89BC61-BD9A-483C-BEE4-D3E78F6661EB} = {3DA93557-2604-4C17-8A86-25460DBC8EB9}
 		{091D9BAC-2CF9-4903-81D4-6B61E4FFE344} = {2FD1DEA5-9922-474A-973F-553A27A9E9FC}
+		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A} = {F290BBE9-F8D7-44DB-B1CE-23B179BD6EA5}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -191,5 +196,9 @@ Global
 		{091D9BAC-2CF9-4903-81D4-6B61E4FFE344}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{091D9BAC-2CF9-4903-81D4-6B61E4FFE344}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{091D9BAC-2CF9-4903-81D4-6B61E4FFE344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

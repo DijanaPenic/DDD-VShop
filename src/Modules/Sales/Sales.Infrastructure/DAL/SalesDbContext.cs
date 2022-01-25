@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 
+[assembly: InternalsVisibleTo("Database.DatabaseMigrator")]
 namespace VShop.Modules.Sales.Infrastructure.DAL
 {
     internal class SalesDbContext : DbContextBase

@@ -1,6 +1,5 @@
-using System;
-using System.Reflection;
 using Serilog;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
 namespace VShop.SharedKernel.Infrastructure.Modules.Contracts;

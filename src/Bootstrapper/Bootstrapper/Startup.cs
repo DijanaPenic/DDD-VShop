@@ -1,9 +1,9 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
+using VShop.SharedKernel.Application.Extensions;
 
 using ILogger = Serilog.ILogger;
 
