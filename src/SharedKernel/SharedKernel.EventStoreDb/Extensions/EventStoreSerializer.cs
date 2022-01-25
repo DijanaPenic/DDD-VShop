@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using EventStore.Client;
 using Google.Protobuf;
+using EventStore.Client;
 
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -25,13 +25,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                 messageRegistry.GetType(resolvedEvent.Event.EventType)
             );
 
-            object UpcastMessage()
-                => MessageTransformations.TryTransform
-                (
-                    resolvedEvent.Event.EventType,
-                    data,
-                    out object transformed
-                ) ? transformed : data;
+            object UpcastMessage() => messageRegistry.TryTransform
+            (
+                resolvedEvent.Event.EventType,
+                data,
+                out object transformed
+            ) ? transformed : data;
 
             if (UpcastMessage() is not TMessage message) return default;
 

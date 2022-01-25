@@ -2,7 +2,6 @@
 using VShop.Modules.Catalog.Integration.Events;
 
 using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
-using static VShop.SharedKernel.Infrastructure.Messaging.MessageTransformations;
 
 namespace VShop.Modules.Catalog.API.Application
 {

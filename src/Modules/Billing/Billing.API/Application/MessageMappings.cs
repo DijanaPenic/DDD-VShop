@@ -2,7 +2,6 @@
 using VShop.Modules.Billing.Integration.Events;
 
 using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
-using static VShop.SharedKernel.Infrastructure.Messaging.MessageTransformations;
 
 namespace VShop.Modules.Billing.API.Application
 {

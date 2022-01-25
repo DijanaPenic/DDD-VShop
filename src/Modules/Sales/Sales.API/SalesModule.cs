@@ -57,7 +57,7 @@ internal class SalesModule : IModule
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(logger.ForContext("Module", "Sales"));
-        services.AddSingleton<IMessageRegistry>(SalesMessageRegistry.Register());
+        services.AddSingleton<IMessageRegistry>(SalesMessageRegistry.Initialize());
         
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));

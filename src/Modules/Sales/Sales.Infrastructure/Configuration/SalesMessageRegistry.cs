@@ -5,15 +5,24 @@ using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Configuration
 {
     internal static class SalesMessageRegistry
     {
-        public static MessageRegistry Register()
+        public static IMessageRegistry Initialize()
         {
             MessageRegistry registry = new();
-            
+
+            registry.RegisterMessages();
+            registry.RegisterTransformations();
+
+            return registry;
+        }
+        
+        public static IMessageRegistry RegisterMessages(this MessageRegistry registry)
+        {
             // Configure domain events
             registry.Add<ShoppingCartProductPriceChangedDomainEvent>(nameof(ShoppingCartProductPriceChangedDomainEvent));
             registry.Add<ShoppingCartCreatedDomainEvent>(nameof(ShoppingCartCreatedDomainEvent));
@@ -58,11 +67,13 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration
 
             return registry;
         }
+        
+        private static IMessageRegistry RegisterTransformations(this MessageRegistry registry)
+        {
+            // CAUTION: this is just a showcase example.
+            //registry.Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
+
+            return registry;
+        }
     }
-    
-//     private static void MapMessageTransformations()
-//     {
-//         // CAUTION: this is just a showcase example.
-//         //Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
-//     }
 }
