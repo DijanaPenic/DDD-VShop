@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 
@@ -38,9 +37,4 @@ public class SalesDispatcher : ISalesDispatcher
 
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
-}
-
-public interface ISalesDispatcher : IDispatcher
-{
-
 }

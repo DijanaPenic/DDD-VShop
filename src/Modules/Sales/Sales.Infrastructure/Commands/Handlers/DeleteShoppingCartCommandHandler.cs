@@ -3,22 +3,22 @@ using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
-    internal class AddShoppingCartProductCommandHandler : ICommandHandler<AddShoppingCartProductCommand>
+    internal class DeleteShoppingCartCommandHandler : ICommandHandler<DeleteShoppingCartCommand>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         
-        public AddShoppingCartProductCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
+        public DeleteShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
             => _shoppingCartStore = shoppingCartStore;
 
         public async Task<Result> Handle
         (
-            AddShoppingCartProductCommand command,
+            DeleteShoppingCartCommand command,
             CancellationToken cancellationToken
         )
         {
@@ -31,15 +31,10 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
             
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             if (shoppingCart.IsRestored) return Result.Success;
-            
-            Result addProductResult = shoppingCart.AddProductQuantity
-            (
-                EntityId.Create(command.ShoppingCartItem.ProductId).Data,
-                ProductQuantity.Create(command.ShoppingCartItem.Quantity).Data,
-                Price.Create(command.ShoppingCartItem.UnitPrice.DecimalValue).Data
-            );
-            if (addProductResult.IsError) return addProductResult.Error;
-        
+
+            Result deleteResult = shoppingCart.Delete();
+            if (deleteResult.IsError) return deleteResult.Error;
+
             await _shoppingCartStore.SaveAndPublishAsync
             (
                 shoppingCart,

@@ -8,7 +8,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
     internal class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderCommand, Order>
     {

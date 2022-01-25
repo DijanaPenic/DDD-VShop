@@ -10,7 +10,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
     internal class FinalizeOrderCommandHandler : ICommandHandler<FinalizeOrderCommand>
     {

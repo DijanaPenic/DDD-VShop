@@ -7,18 +7,18 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
-    internal class SetContactInformationCommandHandler : ICommandHandler<SetContactInformationCommand>
+    internal class SetDeliveryAddressCommandHandler : ICommandHandler<SetDeliveryAddressCommand>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
-
-        public SetContactInformationCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
-            => _shoppingCartStore = shoppingCartStore;
-
+        
+        public SetDeliveryAddressCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
+        => _shoppingCartStore = shoppingCartStore;
+        
         public async Task<Result> Handle
         (
-            SetContactInformationCommand command,
+            SetDeliveryAddressCommand command,
             CancellationToken cancellationToken
         )
         {
@@ -28,20 +28,22 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
                 command.Metadata.MessageId,
                 cancellationToken
             );
-            if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
-
-            Result<FullName> fullNameResult = FullName.Create(command.FirstName, command.MiddleName,
-                command.LastName);
-            if (fullNameResult.IsError) return fullNameResult.Error;
             
-            Result setContactInformationResult = shoppingCart.Customer.SetContactInformation
+            if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
+            if (shoppingCart.IsRestored) return Result.Success;
+
+            Result<Address> addressResult = Address.Create
             (
-                fullNameResult.Data,
-                EmailAddress.Create(command.EmailAddress).Data,
-                PhoneNumber.Create(command.PhoneNumber).Data,
-                command.Gender
+                command.City,
+                command.CountryCode,
+                command.PostalCode,
+                command.StateProvince,
+                command.StreetAddress
             );
-            if (setContactInformationResult.IsError) return setContactInformationResult.Error;
+            if (addressResult.IsError) return addressResult.Error;
+            
+            Result setDeliveryAddressResult = shoppingCart.Customer.SetDeliveryAddress(addressResult.Data);
+            if (setDeliveryAddressResult.IsError) return setDeliveryAddressResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync
             (
@@ -50,7 +52,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
                 command.Metadata.CorrelationId,
                 cancellationToken
             );
-
+            
             return Result.Success;
         }
     }

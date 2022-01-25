@@ -9,7 +9,7 @@ using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
     internal class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
     {

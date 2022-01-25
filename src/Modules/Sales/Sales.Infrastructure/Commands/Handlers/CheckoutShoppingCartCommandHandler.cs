@@ -12,7 +12,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
     internal class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, CheckoutResponse>
     {
@@ -70,13 +70,5 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
         }
     }
 
-    public record CheckoutResponse
-    {
-        public Guid OrderId { get; }
-        
-        public CheckoutResponse(Guid orderId)
-        {
-            OrderId = orderId;
-        }
-    }
+    public record CheckoutResponse(Guid OrderId);
 }

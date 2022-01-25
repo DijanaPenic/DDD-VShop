@@ -12,6 +12,7 @@ using VShop.Modules.Sales.API.Models;
 using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
+using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 

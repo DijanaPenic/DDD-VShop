@@ -7,18 +7,18 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
-namespace VShop.Modules.Sales.Infrastructure.Commands
+namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
-    internal class DeleteShoppingCartCommandHandler : ICommandHandler<DeleteShoppingCartCommand>
+    internal class RemoveShoppingCartProductCommandHandler : ICommandHandler<RemoveShoppingCartProductCommand>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         
-        public DeleteShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
+        public RemoveShoppingCartProductCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
             => _shoppingCartStore = shoppingCartStore;
 
         public async Task<Result> Handle
         (
-            DeleteShoppingCartCommand command,
+            RemoveShoppingCartProductCommand command,
             CancellationToken cancellationToken
         )
         {
@@ -31,9 +31,13 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
             
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
             if (shoppingCart.IsRestored) return Result.Success;
-
-            Result deleteResult = shoppingCart.Delete();
-            if (deleteResult.IsError) return deleteResult.Error;
+            
+            Result removeProductResult = shoppingCart.RemoveProductQuantity
+            (
+                EntityId.Create(command.ProductId).Data,
+                ProductQuantity.Create(command.Quantity).Data
+            );
+            if (removeProductResult.IsError) return removeProductResult.Error;
 
             await _shoppingCartStore.SaveAndPublishAsync
             (
