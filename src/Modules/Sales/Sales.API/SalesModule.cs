@@ -13,7 +13,6 @@ using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure;
@@ -57,7 +56,7 @@ internal class SalesModule : IModule
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(logger.ForContext("Module", "Sales"));
-        services.AddSingleton<IMessageRegistry>(SalesMessageRegistry.Initialize());
+        services.AddSingleton(SalesMessageRegistry.Initialize());
         
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));

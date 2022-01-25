@@ -21,7 +21,7 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration
             return registry;
         }
         
-        public static IMessageRegistry RegisterMessages(this MessageRegistry registry)
+        private static void RegisterMessages(this MessageRegistry registry)
         {
             // Configure domain events
             registry.Add<ShoppingCartProductPriceChangedDomainEvent>(nameof(ShoppingCartProductPriceChangedDomainEvent));
@@ -64,16 +64,12 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration
 
             // Configure scheduled message
             registry.Add<ScheduledMessage>(nameof(ScheduledMessage));
-
-            return registry;
         }
         
-        private static IMessageRegistry RegisterTransformations(this MessageRegistry registry)
+        private static void RegisterTransformations(this MessageRegistry registry)
         {
             // CAUTION: this is just a showcase example.
             //registry.Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
-
-            return registry;
         }
     }
 }
