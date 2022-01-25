@@ -1,8 +1,8 @@
 ﻿using EventStore.Client;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions
+namespace VShop.SharedKernel.Subscriptions
 {
     public interface ISubscriptionHandler
     {

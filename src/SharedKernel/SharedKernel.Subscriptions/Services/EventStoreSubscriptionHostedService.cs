@@ -2,7 +2,7 @@
 
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
+namespace VShop.SharedKernel.Subscriptions.Services
 {
     public class EventStoreSubscriptionHostedService : IHostedService
     {

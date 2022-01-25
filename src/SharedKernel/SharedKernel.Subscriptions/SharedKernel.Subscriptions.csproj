@@ -4,8 +4,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <AssemblyName>VShop.SharedKernel.EventStoreDb.Subscriptions</AssemblyName>
-        <RootNamespace>VShop.SharedKernel.EventStoreDb.Subscriptions</RootNamespace>
+        <AssemblyName>VShop.SharedKernel.Subscriptions</AssemblyName>
+        <RootNamespace>VShop.SharedKernel.Subscriptions</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

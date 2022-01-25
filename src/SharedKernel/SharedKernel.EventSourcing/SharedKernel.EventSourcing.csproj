@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
-      <ProjectReference Include="..\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj" />
+      <ProjectReference Include="..\SharedKernel.Subscriptions\SharedKernel.Subscriptions.csproj" />
       <ProjectReference Include="..\SharedKernel.EventStoreDb\SharedKernel.EventStoreDb.csproj" />
       <ProjectReference Include="..\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
       <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />

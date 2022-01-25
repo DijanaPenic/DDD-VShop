@@ -2,11 +2,10 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Configurations;
+using VShop.SharedKernel.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Subscriptions.DAL.Configurations;
 
-// TODO - rename project.
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.DAL
+namespace VShop.SharedKernel.Subscriptions.DAL
 {
     public class SubscriptionDbContext : DbContextBase
     {

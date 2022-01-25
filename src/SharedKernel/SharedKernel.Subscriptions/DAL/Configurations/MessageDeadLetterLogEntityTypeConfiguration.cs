@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Subscriptions.DAL.Entities;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Configurations
+namespace VShop.SharedKernel.Subscriptions.DAL.Configurations
 {
     internal class MessageDeadLetterLogEntityTypeConfiguration : IEntityTypeConfiguration<MessageDeadLetterLog>
     {

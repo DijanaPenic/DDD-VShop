@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL;
 
 #nullable disable
 
@@ -24,7 +24,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Migrations.Subscription
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities.Checkpoint", b =>
+            modelBuilder.Entity("VShop.SharedKernel.Subscriptions.DAL.Entities.Checkpoint", b =>
                 {
                     b.Property<string>("SubscriptionId")
                         .HasColumnType("text")
@@ -54,7 +54,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Migrations.Subscription
                     b.ToTable("checkpoint", "subscription");
                 });
 
-            modelBuilder.Entity("VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities.MessageDeadLetterLog", b =>
+            modelBuilder.Entity("VShop.SharedKernel.Subscriptions.DAL.Entities.MessageDeadLetterLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

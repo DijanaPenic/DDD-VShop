@@ -11,9 +11,9 @@ using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL.Entities;
 
 namespace VShop.SharedKernel.Integration.Projections
 {

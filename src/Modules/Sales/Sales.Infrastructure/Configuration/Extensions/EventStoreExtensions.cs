@@ -5,8 +5,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Projections;

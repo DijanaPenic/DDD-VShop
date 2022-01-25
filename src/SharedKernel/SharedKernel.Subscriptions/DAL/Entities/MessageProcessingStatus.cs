@@ -1,4 +1,4 @@
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities
+namespace VShop.SharedKernel.Subscriptions.DAL.Entities
 {
     public enum MessageProcessingStatus
     {

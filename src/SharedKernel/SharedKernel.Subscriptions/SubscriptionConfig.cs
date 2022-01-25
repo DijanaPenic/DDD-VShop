@@ -1,6 +1,6 @@
 using EventStore.Client;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions
+namespace VShop.SharedKernel.Subscriptions
 {
     public class SubscriptionConfig
     {

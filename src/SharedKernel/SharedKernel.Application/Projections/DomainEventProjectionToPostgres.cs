@@ -7,8 +7,8 @@ using NodaTime.Serialization.Protobuf;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 

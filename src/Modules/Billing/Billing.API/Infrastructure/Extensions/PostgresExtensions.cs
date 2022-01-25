@@ -3,7 +3,7 @@
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Billing.Infrastructure;
 
 namespace VShop.Modules.Billing.API.Infrastructure.Extensions

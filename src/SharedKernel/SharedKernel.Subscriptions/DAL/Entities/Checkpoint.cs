@@ -1,6 +1,6 @@
 ﻿using VShop.SharedKernel.PostgresDb;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities
+namespace VShop.SharedKernel.Subscriptions.DAL.Entities
 {
     public class Checkpoint : DbEntityBase
     {

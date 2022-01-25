@@ -6,10 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Infrastructure.Threading;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL;
-using VShop.SharedKernel.EventStoreDb.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL.Entities;
 
-namespace VShop.SharedKernel.EventStoreDb.Subscriptions.Services
+namespace VShop.SharedKernel.Subscriptions.Services
 {
     public class EventStoreSubscriptionBackgroundService : ISubscriptionBackgroundService
     {

@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.Integration", "Modu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", "SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj", "{39455F91-CFA1-4D8D-83D4-B4F1EA649767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventStoreDb.Subscriptions", "SharedKernel\SharedKernel.EventStoreDb.Subscriptions\SharedKernel.EventStoreDb.Subscriptions.csproj", "{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Subscriptions", "SharedKernel\SharedKernel.Subscriptions\SharedKernel.Subscriptions.csproj", "{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Domain.Tests", "Modules\Sales\Sales.Domain.Tests\Sales.Domain.Tests.csproj", "{F740D164-0C29-4542-B2E6-4D2DB9D3ED10}"
 EndProject
