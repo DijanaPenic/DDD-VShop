@@ -41,9 +41,9 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Scheduler\SharedKernel.Scheduler.csproj" />
       <ProjectReference Include="..\..\Billing\Billing.Integration\Billing.Integration.csproj" />
       <ProjectReference Include="..\..\Catalog\Catalog.Integration\Catalog.Integration.csproj" />
-      <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
-      <ProjectReference Include="..\Sales.Infrastructure\Sales.Infrastructure.csproj" />
-      <ProjectReference Include="..\Sales.Integration\Sales.Integration.csproj" />
+      <ProjectReference Include="..\Modules.Sales.Domain\Modules.Sales.Domain.csproj" />
+      <ProjectReference Include="..\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
+      <ProjectReference Include="..\Modules.Sales.Integration\Modules.Sales.Integration.csproj" />
     </ItemGroup>
 
 </Project>

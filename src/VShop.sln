@@ -4,11 +4,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{3E41
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sales", "Sales", "{AA7FFBF5-45B5-4EAB-A33C-ECEA202C56E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.API", "Modules\Sales\Sales.API\Sales.API.csproj", "{BE64D095-A173-4605-924B-5B90261A86B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.API", "Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj", "{BE64D095-A173-4605-924B-5B90261A86B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Domain", "Modules\Sales\Sales.Domain\Sales.Domain.csproj", "{D7149FAA-9DD5-4BA8-A5DE-0A5C2FA26336}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.Domain", "Modules\Sales\Modules.Sales.Domain\Modules.Sales.Domain.csproj", "{D7149FAA-9DD5-4BA8-A5DE-0A5C2FA26336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Infrastructure", "Modules\Sales\Sales.Infrastructure\Sales.Infrastructure.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.Infrastructure", "Modules\Sales\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj", "{BF4459E2-8FA6-441B-9195-55E9FCC3F167}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedKernel", "SharedKernel", "{3DA93557-2604-4C17-8A86-25460DBC8EB9}"
 EndProject
@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.PostgresDb", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Domain", "SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj", "{959AB583-3EF6-4348-85D1-CCA0B3175FD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Integration", "Modules\Sales\Sales.Integration\Sales.Integration.csproj", "{9EAFD370-7391-48A4-8810-842B618A7A21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.Integration", "Modules\Sales\Modules.Sales.Integration\Modules.Sales.Integration.csproj", "{9EAFD370-7391-48A4-8810-842B618A7A21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Scheduler", "SharedKernel\SharedKernel.Scheduler\SharedKernel.Scheduler.csproj", "{1A5E7DA6-06F9-4B56-B1CA-257B699CE2CD}"
 EndProject

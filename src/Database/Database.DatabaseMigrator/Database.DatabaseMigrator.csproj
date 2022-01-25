@@ -14,8 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Modules\Sales\Sales.API\Sales.API.csproj" />
-      <ProjectReference Include="..\..\Modules\Sales\Sales.Infrastructure\Sales.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
       <ProjectReference Include="..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
