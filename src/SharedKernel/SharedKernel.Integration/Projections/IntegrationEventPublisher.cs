@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.EventStoreDb.Extensions;
 
 namespace VShop.SharedKernel.Integration.Projections
 {

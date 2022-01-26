@@ -1,10 +1,10 @@
 ﻿using Serilog;
 using EventStore.Client;
-
 using Microsoft.Extensions.DependencyInjection;
-using VShop.SharedKernel.EventStoreDb.Extensions;
+
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
+using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
