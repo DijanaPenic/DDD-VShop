@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("Bootstrapper")]
-[assembly: InternalsVisibleTo("VShop.Modules.Sales.API")]
 namespace VShop.Modules.Sales.Infrastructure.Configuration;
 
 internal static class SalesCompositionRoot

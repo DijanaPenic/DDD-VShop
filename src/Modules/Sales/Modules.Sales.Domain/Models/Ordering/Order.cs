@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
-    public class Order : AggregateRoot
+    internal class Order : AggregateRoot
     {
         private readonly List<OrderLine> _orderLines = new();
 

@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
-    public class OrderCustomer : Entity<EntityId>
+    internal class OrderCustomer : Entity<EntityId>
     {
         public EntityId CustomerId { get; private set; }
         public FullName FullName { get; private set; }

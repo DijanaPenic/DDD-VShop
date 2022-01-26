@@ -14,7 +14,6 @@ using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
@@ -54,20 +53,24 @@ namespace VShop.Modules.Sales.API.Controllers
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateShoppingCartAsync
         (
             [FromBody] CreateShoppingCartRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
+            [FromHeader(Name = "x-request-id")] Guid requestId, // TODO - move to message context middleware.
             [FromHeader(Name = "x-correlation-id")] Guid correlationId
         )
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
-            Result<ShoppingCart> result = await _commandDispatcher.SendAsync(command);
+            Result result = await _commandDispatcher.SendAsync(command);
 
-            return HandleResult(result, Created);
+            return HandleResult(result, () => CreatedAtAction
+            (
+                "GetShoppingCart",
+                new { id = request.ShoppingCartId })
+            );
         }
 
         [HttpDelete]

@@ -1,6 +1,6 @@
 ﻿namespace VShop.Modules.Sales.Domain.Enums
 {
-    public enum ShoppingCartStatus
+    internal enum ShoppingCartStatus
     {
         New = 1,
         AwaitingConfirmation = 2,     // Customer has provided needed contact information and is allowed to proceed with checkout.

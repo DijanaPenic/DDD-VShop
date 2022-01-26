@@ -13,4 +13,8 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Modules.Sales.Infrastructure" />
+    </ItemGroup>
+    
 </Project>

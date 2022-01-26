@@ -1,6 +1,6 @@
 ﻿namespace VShop.Modules.Sales.Domain.Enums
 {
-    public enum OrderStatus
+    internal enum OrderStatus
     {
         Processing = 1,
         Paid = 2,

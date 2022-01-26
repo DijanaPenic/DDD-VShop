@@ -36,7 +36,7 @@ namespace VShop.SharedKernel.Application
             successResult => handleSuccess(),
             HandleError
         );
-
+        
         protected IActionResult HandleError(ApplicationError error)
             => error.Match
             (

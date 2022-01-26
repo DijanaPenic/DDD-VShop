@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.Ordering
 {
-    public class OrderLine : Entity<EntityId>
+    internal class OrderLine : Entity<EntityId>
     {
         public EntityId OrderId { get; private set; }
         public ProductQuantity Quantity { get; private set; }

@@ -9,7 +9,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
-    public class ShoppingCartCustomer : Entity<EntityId>
+    internal class ShoppingCartCustomer : Entity<EntityId>
     {
         private bool _isClosedForUpdates;
         

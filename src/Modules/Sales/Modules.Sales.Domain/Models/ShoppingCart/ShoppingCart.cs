@@ -12,7 +12,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
-    public class ShoppingCart : AggregateRoot
+    internal class ShoppingCart : AggregateRoot
     {
         private bool _isClosedForUpdates;
         private readonly List<ShoppingCartItem> _shoppingCartItems = new();

@@ -11,7 +11,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
-    internal class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand, ShoppingCart>
+    internal class CreateShoppingCartCommandHandler : ICommandHandler<CreateShoppingCartCommand>
     {
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         private readonly IShoppingCartReadService _readService;
@@ -26,7 +26,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             _readService = readService;
         }
 
-        public async Task<Result<ShoppingCart>> Handle
+        public async Task<Result> Handle
         (
             CreateShoppingCartCommand command,
             CancellationToken cancellationToken
@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
                 cancellationToken
             );
             
-            if (shoppingCart is not null) return shoppingCart;
+            if (shoppingCart is not null) return Result.Success;
             
             bool hasShoppingCart = (await _readService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
             if (hasShoppingCart)
@@ -73,7 +73,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
                 cancellationToken
             );
 
-            return shoppingCart;
+            return Result.Success;
         }
     }
 }

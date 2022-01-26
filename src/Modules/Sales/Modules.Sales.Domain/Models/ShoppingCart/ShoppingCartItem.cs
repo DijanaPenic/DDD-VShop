@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Models.ShoppingCart
 {
-    public class ShoppingCartItem : Entity<EntityId>
+    internal class ShoppingCartItem : Entity<EntityId>
     {
         public EntityId ShoppingCartId { get; private set; }
 

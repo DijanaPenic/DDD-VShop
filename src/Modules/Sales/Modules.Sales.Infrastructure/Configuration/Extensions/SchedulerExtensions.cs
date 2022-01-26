@@ -1,13 +1,11 @@
 using Quartz;
 using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 
-[assembly: InternalsVisibleTo("VShop.Modules.Sales.API")]
 namespace VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 
 internal static class SchedulerExtensions
