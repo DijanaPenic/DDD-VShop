@@ -13,13 +13,10 @@ internal static class PostgresExtensions
 {
     public static void AddPostgres(this IServiceCollection services, string connectionString)
     {
-        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
-        (
-            connectionString,
-            typeof(SalesDbContext).Assembly
-        ));
+        services.AddDbContextBuilder<SalesDbContext>(connectionString);
         services.AddDbContext<SalesDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
+        services.AddUnitOfWork<SalesUnitOfWork>();
     }
 }

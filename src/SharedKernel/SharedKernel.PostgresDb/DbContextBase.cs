@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
+
+using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb
@@ -14,12 +15,9 @@ namespace VShop.SharedKernel.PostgresDb
     public abstract class DbContextBase : DbContext
     {
         private readonly IClockService _clockService;
-        
         protected readonly IDbContextBuilder ContextBuilder;
-        
         public IDbContextTransaction CurrentTransaction { get; private set; }
-        public bool HasActiveTransaction => CurrentTransaction is not null;
-        
+
         protected DbContextBase() { }
 
         public DbContextBase(IClockService clockService, IDbContextBuilder contextBuilder)
@@ -36,11 +34,11 @@ namespace VShop.SharedKernel.PostgresDb
         public Task<int> SaveChangesAsync(Instant now, CancellationToken cancellationToken = default)
         {
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is DbEntityBase && e.State is (EntityState.Added or EntityState.Modified));
+                .Where(e => e.Entity is DbEntity && e.State is (EntityState.Added or EntityState.Modified));
 
             foreach (EntityEntry entry in entries)
             {
-                DbEntityBase baseEntity = (DbEntityBase)entry.Entity;
+                DbEntity baseEntity = (DbEntity)entry.Entity;
 
                 baseEntity.DateUpdated = now;
                 if (entry.State == EntityState.Added) baseEntity.DateCreated = now;
@@ -58,7 +56,8 @@ namespace VShop.SharedKernel.PostgresDb
             return CurrentTransaction;
         }
 
-        public async Task CommitCurrentTransactionAsync(CancellationToken cancellationToken = default)
+
+        public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (CurrentTransaction is null) return;
             
@@ -67,16 +66,16 @@ namespace VShop.SharedKernel.PostgresDb
                 await SaveChangesAsync(cancellationToken);
                 await CurrentTransaction.CommitAsync(cancellationToken);
                 
-                await DisposeCurrentTransactionAsync();
+                await DisposeTransactionAsync();
             }
             catch
             {
-                await RollbackCurrentTransactionAsync(cancellationToken);
+                await RollbackTransactionAsync(cancellationToken);
                 throw;
             }
         }
         
-        public async Task DisposeCurrentTransactionAsync()
+        public async Task DisposeTransactionAsync()
         {
             if (CurrentTransaction is null) return;
             
@@ -84,7 +83,7 @@ namespace VShop.SharedKernel.PostgresDb
             CurrentTransaction = null;
         }
         
-        private async Task RollbackCurrentTransactionAsync(CancellationToken cancellationToken = default)
+        public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (CurrentTransaction is null) return;
             
@@ -94,8 +93,9 @@ namespace VShop.SharedKernel.PostgresDb
             }
             finally
             {
-                await DisposeCurrentTransactionAsync();
+                await DisposeTransactionAsync();
             }
         }
+
     }
 }

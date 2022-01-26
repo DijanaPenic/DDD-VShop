@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
+using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
@@ -12,11 +13,18 @@ namespace VShop.SharedKernel.Integration.Stores
     public class IntegrationEventOutbox : IIntegrationEventOutbox
     {
         private readonly IntegrationDbContext _integrationDbContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly MessageRegistry _messageRegistry;
 
-        public IntegrationEventOutbox(IntegrationDbContext integrationDbContext, MessageRegistry messageRegistry)
+        public IntegrationEventOutbox
+        (
+            IntegrationDbContext integrationDbContext,
+            IUnitOfWork unitOfWork,
+            MessageRegistry messageRegistry
+        )
         {
             _integrationDbContext = integrationDbContext;
+            _unitOfWork = unitOfWork;
             _messageRegistry = messageRegistry;
         }
 
@@ -24,21 +32,15 @@ namespace VShop.SharedKernel.Integration.Stores
         (
             Guid transactionId,
             CancellationToken cancellationToken = default
-        )
+        ) 
             => await _integrationDbContext.IntegrationEventLogs
                 .Where(el => el.TransactionId == transactionId && el.State == EventState.NotPublished)
                 .OrderBy(el => el.DateCreated)
                 .ToListAsync(cancellationToken);
 
-        public async Task SaveEventAsync
-        (
-            IIntegrationEvent @event,
-            IDbContextTransaction transaction,
-            CancellationToken cancellationToken = default
-        )
+        public async Task SaveEventAsync(IIntegrationEvent @event, CancellationToken cancellationToken = default)
         {
-            if (transaction is null) throw new ArgumentNullException(nameof(transaction));
-
+            IDbContextTransaction transaction = _unitOfWork.CurrentTransaction;
             IntegrationEventLog eventLogEntry = new(@event, transaction.TransactionId, _messageRegistry);
 
             await _integrationDbContext.Database.UseTransactionAsync(transaction.GetDbTransaction(), cancellationToken);

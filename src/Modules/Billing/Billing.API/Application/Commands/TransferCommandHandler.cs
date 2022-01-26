@@ -76,8 +76,7 @@ namespace VShop.Modules.Billing.API.Application.Commands
             IIntegrationEvent paymentIntegrationEvent = transferResult.IsError
                 ? new PaymentFailedIntegrationEvent(command.OrderId, metadata)
                 : new PaymentSucceededIntegrationEvent(command.OrderId, metadata);
-
-
+            
             await _billingIntegrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
             
             return transferResult.IsError ? transferResult.Error : Result.Success;

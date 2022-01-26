@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Subscriptions.DAL.Entities
 {
-    public class Checkpoint : DbEntityBase
+    public class Checkpoint : DbEntity
     {
         public string SubscriptionId { get; set; }
         public ulong? Position { get; set; }

@@ -5,6 +5,7 @@ using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Catalog.Infrastructure;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {
@@ -22,7 +23,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
             services.AddDbContext<SubscriptionDbContext>();
             
             // Register the main dbContext provider.
-            services.AddScoped<MainDbContextProvider>(provider => provider.GetService<CatalogDbContext>);
+            //services.AddScoped<MainDbContextProvider>(provider => provider.GetService<CatalogDbContext>);
             
             services.AddHostedService<DatabaseInitializerHostedService>();
         }

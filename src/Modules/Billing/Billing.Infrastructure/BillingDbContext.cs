@@ -3,6 +3,7 @@
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Entities;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.Modules.Billing.Infrastructure
 {

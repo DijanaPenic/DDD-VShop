@@ -2,6 +2,7 @@
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.Subscriptions.DAL.Configurations;
 

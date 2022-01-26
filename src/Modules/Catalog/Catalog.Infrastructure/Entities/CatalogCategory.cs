@@ -5,7 +5,7 @@ using VShop.SharedKernel.PostgresDb;
 
 namespace VShop.Modules.Catalog.Infrastructure.Entities
 {
-    public class CatalogCategory : DbEntityBase
+    public class CatalogCategory : DbEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

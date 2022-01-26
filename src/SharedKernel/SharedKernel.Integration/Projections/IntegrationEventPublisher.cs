@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.DAL;
+using VShop.SharedKernel.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.Subscriptions;
-using VShop.SharedKernel.Subscriptions.DAL;
-using VShop.SharedKernel.Subscriptions.DAL.Entities;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -90,7 +90,7 @@ namespace VShop.SharedKernel.Integration.Projections
                 
                 await checkpointUpdate(subscriptionDbContext);
                 
-                await subscriptionDbContext.CommitCurrentTransactionAsync(cancellationToken);
+                await subscriptionDbContext.CommitTransactionAsync(cancellationToken);
             });
         }
     }

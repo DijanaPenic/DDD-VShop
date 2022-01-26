@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Data.Common;
 
 using Microsoft.EntityFrameworkCore;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb
 {
@@ -31,10 +32,5 @@ namespace VShop.SharedKernel.PostgresDb
                     .UseNodaTime()
             ).UseSnakeCaseNamingConvention();
         }
-    }
-    
-    public interface IDbContextBuilder
-    {
-        void ConfigureContext(DbContextOptionsBuilder optionsBuilder);
     }
 }

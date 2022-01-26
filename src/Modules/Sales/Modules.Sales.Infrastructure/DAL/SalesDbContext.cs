@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 [assembly: InternalsVisibleTo("Database.DatabaseMigrator")]
 namespace VShop.Modules.Sales.Infrastructure.DAL

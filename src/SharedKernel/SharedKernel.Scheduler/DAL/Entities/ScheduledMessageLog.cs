@@ -11,7 +11,7 @@ using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {
-    public class ScheduledMessageLog : DbEntityBase
+    public class ScheduledMessageLog : DbEntity
     {
         public Guid Id { get; }
         public byte[] Body { get; }

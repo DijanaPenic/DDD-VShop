@@ -1,6 +1,5 @@
 ﻿using Serilog;
 
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
@@ -13,7 +12,6 @@ namespace VShop.SharedKernel.Integration.Services
     {
         private readonly ILogger _logger;
         private readonly IMessageRegistry _messageRegistry;
-        private readonly MainDbContextProvider _dbContextProvider;
         private readonly IIntegrationEventStore _integrationEventStore;
         private readonly IIntegrationEventOutbox _integrationEventOutbox;
 
@@ -21,14 +19,12 @@ namespace VShop.SharedKernel.Integration.Services
         (
             ILogger logger,
             IMessageRegistry messageRegistry,
-            MainDbContextProvider dbContextProvider,
             IIntegrationEventStore integrationEventStore,
             IIntegrationEventOutbox integrationEventOutbox
         )
         {
             _logger = logger;
             _messageRegistry = messageRegistry;
-            _dbContextProvider = dbContextProvider;
             _integrationEventStore = integrationEventStore;
             _integrationEventOutbox = integrationEventOutbox;
         }
@@ -88,7 +84,7 @@ namespace VShop.SharedKernel.Integration.Services
                 @event.Metadata.MessageId, @event
             );
             
-            await _integrationEventOutbox.SaveEventAsync(@event, _dbContextProvider().CurrentTransaction, cancellationToken);
+            await _integrationEventOutbox.SaveEventAsync(@event, cancellationToken);
         }
     }
 }

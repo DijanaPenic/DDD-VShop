@@ -4,7 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 
 namespace VShop.Modules.Billing.Infrastructure.Entities
 {
-    public class Payment : DbEntityBase
+    public class Payment : DbEntity
     {
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }

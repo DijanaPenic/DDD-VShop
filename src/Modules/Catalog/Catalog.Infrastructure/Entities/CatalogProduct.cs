@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.Modules.Catalog.Infrastructure.Entities
 {
-    public class CatalogProduct : DbEntityBase
+    public class CatalogProduct : DbEntity
     {
         public Guid Id { get; set; }
         public Guid CategoryId { get; set; }

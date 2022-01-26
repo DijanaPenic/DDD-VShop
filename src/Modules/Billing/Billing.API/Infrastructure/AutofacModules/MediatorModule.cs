@@ -42,7 +42,7 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             // Register behaviors
             builder.RegisterGeneric(typeof(RetryPolicyCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterGeneric(typeof(LoggingCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
-            builder.RegisterGeneric(typeof(TransactionCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterGeneric(typeof(TransactionalCommandDecorator<,>)).As(typeof(IPipelineBehavior<,>));
         }
     }
 }

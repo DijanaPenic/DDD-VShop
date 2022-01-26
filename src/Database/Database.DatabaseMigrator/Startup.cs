@@ -6,6 +6,7 @@ using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace Database.DatabaseMigrator;
 

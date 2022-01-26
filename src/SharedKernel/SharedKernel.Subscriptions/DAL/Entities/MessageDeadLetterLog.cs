@@ -2,7 +2,7 @@ using VShop.SharedKernel.PostgresDb;
 
 namespace VShop.SharedKernel.Subscriptions.DAL.Entities
 {
-    public class MessageDeadLetterLog : DbEntityBase
+    public class MessageDeadLetterLog : DbEntity
     {
         public Guid Id { get; set; }
         public string StreamId { get; set; }

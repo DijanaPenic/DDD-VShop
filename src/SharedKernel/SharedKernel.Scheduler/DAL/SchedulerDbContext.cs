@@ -4,6 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.DAL.EntityConfigurations;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.DAL
 {

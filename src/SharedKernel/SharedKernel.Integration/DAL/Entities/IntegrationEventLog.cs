@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Integration.DAL.Entities
 {
-    public class IntegrationEventLog : DbEntityBase
+    public class IntegrationEventLog : DbEntity
     {
         public Guid Id { get; }
         public string TypeName { get; }

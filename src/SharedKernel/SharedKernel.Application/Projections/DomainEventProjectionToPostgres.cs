@@ -77,7 +77,7 @@ namespace VShop.SharedKernel.Application.Projections
                 await checkpointUpdate(subscriptionDbContext);
                 
                 // Read model and checkpoint update will be committed in the same transaction.
-                await readDataContext.CommitCurrentTransactionAsync(cancellationToken);
+                await readDataContext.CommitTransactionAsync(cancellationToken);
             });
         }
         
