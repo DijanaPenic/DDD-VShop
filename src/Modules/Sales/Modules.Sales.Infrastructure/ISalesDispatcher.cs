@@ -1,4 +1,4 @@
-using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Dispatchers.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure;
 

@@ -46,8 +46,4 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Dispatchers\Contracts" />
-    </ItemGroup>
-
 </Project>

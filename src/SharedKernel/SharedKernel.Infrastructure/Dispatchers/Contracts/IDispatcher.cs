@@ -1,9 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
-
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
-namespace VShop.SharedKernel.Infrastructure.Dispatchers;
+namespace VShop.SharedKernel.Infrastructure.Dispatchers.Contracts;
 
 public interface IDispatcher
 {
