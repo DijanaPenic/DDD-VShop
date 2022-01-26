@@ -38,8 +38,8 @@ namespace VShop.SharedKernel.Integration.Services
             {
                 _logger.Information
                 (
-                    "Publishing integration event: {IntegrationEventId} - ({IntegrationEvent})",
-                    pendingEventLog.Id, pendingEventLog.Body
+                    "Publishing integration event: {IntegrationEventId}",
+                    pendingEventLog.Id
                 );
 
                 try

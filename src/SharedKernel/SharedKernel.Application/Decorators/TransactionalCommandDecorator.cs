@@ -35,7 +35,7 @@ namespace VShop.SharedKernel.Application.Decorators
             RequestHandlerDelegate<TResponse> next
         )
         {
-            string commandTypeName = command.GetType().FullName;
+            string commandTypeName = command.GetType().Name;
 
             try
             {

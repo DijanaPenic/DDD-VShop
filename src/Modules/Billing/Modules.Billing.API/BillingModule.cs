@@ -15,12 +15,12 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Billing.API.Automapper;
 using VShop.Modules.Billing.Infrastructure;
+using VShop.Modules.Billing.Infrastructure.Services;
+using VShop.Modules.Billing.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Billing.Infrastructure.Configuration.Extensions;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
-using VShop.Modules.Billing.Infrastructure.Services;
-using VShop.Modules.Billing.Infrastructure.Services.Contracts;
 
 using ILogger = Serilog.ILogger;
 

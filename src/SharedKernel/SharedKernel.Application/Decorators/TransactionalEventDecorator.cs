@@ -31,7 +31,7 @@ namespace VShop.SharedKernel.Application.Decorators
 
         public async Task Handle(TEvent @event, CancellationToken cancellationToken)
         {
-            string eventTypeName = @event.GetType().FullName;
+            string eventTypeName = @event.GetType().Name;
 
             try
             {

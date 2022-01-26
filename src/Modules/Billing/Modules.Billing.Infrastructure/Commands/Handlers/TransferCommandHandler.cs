@@ -42,7 +42,6 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
             );
             if (isTransferSuccess) return Result.Success;
 
-
             Result transferResult = await _paymentService.TransferAsync
             (
                 command.OrderId,
