@@ -32,11 +32,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             CancellationToken cancellationToken
         )
         {
-            // TODO - fix validation.
-            bool hasShoppingCart = (await _readService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
-            if (hasShoppingCart)
-                return Result.ValidationError("Only one active shopping cart is supported per customer.");
-            
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
@@ -46,6 +41,10 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             
             if (shoppingCart is not null) return shoppingCart;
             
+            bool hasShoppingCart = (await _readService.GetActiveShoppingCartByCustomerIdAsync(command.CustomerId)) is not null;
+            if (hasShoppingCart)
+                return Result.ValidationError("Only one active shopping cart is supported per customer.");
+
             Result<ShoppingCart> createShoppingCartResult = ShoppingCart.Create
             (
                 EntityId.Create(command.ShoppingCartId).Data,
