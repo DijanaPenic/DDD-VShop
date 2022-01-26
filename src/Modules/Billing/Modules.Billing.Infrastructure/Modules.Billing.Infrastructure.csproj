@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.Modules.Billing.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Modules.Billing.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\..\Sales\Modules.Sales.Integration\Modules.Sales.Integration.csproj" />
+      <ProjectReference Include="..\Modules.Billing.Integration\Modules.Billing.Integration.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Events" />
+    </ItemGroup>
+
+</Project>

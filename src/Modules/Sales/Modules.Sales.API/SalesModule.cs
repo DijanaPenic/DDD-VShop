@@ -20,6 +20,7 @@ using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
+using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 
 using ILogger = Serilog.ILogger;
 

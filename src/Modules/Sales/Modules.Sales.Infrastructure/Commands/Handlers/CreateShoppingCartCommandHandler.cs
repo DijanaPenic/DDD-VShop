@@ -8,6 +8,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {

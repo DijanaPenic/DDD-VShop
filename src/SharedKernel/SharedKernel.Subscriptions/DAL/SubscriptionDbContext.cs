@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.Subscriptions.DAL.Configurations;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Subscriptions.DAL
 {
@@ -22,9 +21,6 @@ namespace VShop.SharedKernel.Subscriptions.DAL
             => ContextBuilder.ConfigureContext(optionsBuilder);
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.ApplyConfiguration(new CheckpointEntityTypeConfiguration());
-            builder.ApplyConfiguration(new MessageDeadLetterLogEntityTypeConfiguration());
-        }
+            => builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

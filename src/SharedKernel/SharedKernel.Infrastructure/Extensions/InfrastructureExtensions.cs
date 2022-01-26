@@ -1,6 +1,8 @@
 using System;
-using MediatR;
 using System.Reflection;
+using MediatR;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,7 @@ public static class InfrastructureExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddMemoryCache();
+        services.AddFluentValidation(assemblies);
         
         // TODO - need to finish.
         //services.AddModuleRequests(assemblies); 
@@ -50,5 +53,14 @@ public static class InfrastructureExtensions
         return type.Namespace.Contains(namespacePart)
             ? type.Namespace.Split(".")[splitIndex].ToLowerInvariant()
             : string.Empty;
+    }
+    
+    public static void AddFluentValidation(this IServiceCollection services, Assembly[] assemblies)
+    {
+        services.AddFluentValidation(config =>
+        {
+            config.RegisterValidatorsFromAssemblies(assemblies);
+            config.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+        });
     }
 }

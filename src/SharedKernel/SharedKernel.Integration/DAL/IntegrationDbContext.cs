@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Integration.DAL.Entities;
-using VShop.SharedKernel.Integration.DAL.EntityConfigurations;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
+using VShop.SharedKernel.Integration.DAL.Entities;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Integration.DAL
 {
@@ -21,6 +20,6 @@ namespace VShop.SharedKernel.Integration.DAL
             => ContextBuilder.ConfigureContext(optionsBuilder);
 
         protected override void OnModelCreating(ModelBuilder builder)
-            => builder.ApplyConfiguration(new IntegrationEventLogEntityConfiguration());
+            => builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

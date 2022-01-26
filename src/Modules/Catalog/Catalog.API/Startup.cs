@@ -25,7 +25,7 @@ namespace VShop.Modules.Catalog.API
         {
             services.AddControllersServices();
             services.AddAutoMapper(typeof(CatalogAutomapperProfile));
-            services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
+            services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Modules.Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
             
@@ -45,7 +45,7 @@ namespace VShop.Modules.Catalog.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Billing.API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Modules.Billing.API v1"));
             }
 
             app.UseHttpsRedirection();

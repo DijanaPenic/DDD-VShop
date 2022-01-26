@@ -28,11 +28,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Scheduler", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Billing", "Billing", "{DF6196C8-B76A-43C5-89AF-DA7CAADE6CC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.API", "Modules\Billing\Billing.API\Billing.API.csproj", "{07C382AC-81A0-4B40-B3DE-F84113F26914}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Billing.API", "Modules\Billing\Modules.Billing.API\Modules.Billing.API.csproj", "{07C382AC-81A0-4B40-B3DE-F84113F26914}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.Infrastructure", "Modules\Billing\Billing.Infrastructure\Billing.Infrastructure.csproj", "{B493CCCE-A0C3-428B-838B-471F5FD1DDFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Billing.Infrastructure", "Modules\Billing\Modules.Billing.Infrastructure\Modules.Billing.Infrastructure.csproj", "{B493CCCE-A0C3-428B-838B-471F5FD1DDFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billing.Integration", "Modules\Billing\Billing.Integration\Billing.Integration.csproj", "{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Billing.Integration", "Modules\Billing\Modules.Billing.Integration\Modules.Billing.Integration.csproj", "{C33E159F-EAF6-4F6B-9E00-87DCD24BD253}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", "SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj", "{39455F91-CFA1-4D8D-83D4-B4F1EA649767}"
 EndProject

@@ -4,8 +4,9 @@ using System.Reflection;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
-using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.Modules.Sales.Infrastructure.DAL;
+using VShop.Modules.Billing.Infrastructure.DAL;
 
 namespace Database.DatabaseMigrator;
 
@@ -22,6 +23,7 @@ public class Startup
         Assembly migrationAssembly = Module switch
         {
             "Sales" => typeof(SalesDbContext).Assembly,
+            "Billing" => typeof(BillingDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
         

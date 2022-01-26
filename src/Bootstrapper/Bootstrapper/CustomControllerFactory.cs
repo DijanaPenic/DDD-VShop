@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
 using VShop.Modules.Sales.Infrastructure.Configuration;
+using VShop.Modules.Billing.Infrastructure.Configuration;
 
 namespace Bootstrapper;
 
@@ -13,10 +14,11 @@ internal class CustomControllerFactory : IControllerFactory
 
         string assembly = context.ActionDescriptor.ControllerTypeInfo.AssemblyQualifiedName 
                           ?? throw new Exception("AssemblyQualifiedName is missing.");
-        
+
         IServiceProvider serviceProvider;
 
         if (assembly.StartsWith(SalesCompositionRoot.NamePrefix)) serviceProvider = SalesCompositionRoot.ServiceProvider;
+        else if (assembly.StartsWith(BillingCompositionRoot.NamePrefix)) serviceProvider = BillingCompositionRoot.ServiceProvider;
         else throw new Exception("ServiceProvider is missing.");
 
         Type controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();

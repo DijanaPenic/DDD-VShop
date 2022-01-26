@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure.Entities;
-using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.Modules.Catalog.Infrastructure
 {

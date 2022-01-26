@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Scheduler.DAL.Entities;
-using VShop.SharedKernel.Scheduler.DAL.EntityConfigurations;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
+using VShop.SharedKernel.Scheduler.DAL.Entities;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.DAL
 {
@@ -21,6 +20,6 @@ namespace VShop.SharedKernel.Scheduler.DAL
             => ContextBuilder.ConfigureContext(optionsBuilder);
     
         protected override void OnModelCreating(ModelBuilder builder)
-            => builder.ApplyConfiguration(new ScheduledCommandLogEntityConfiguration());
+            => builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

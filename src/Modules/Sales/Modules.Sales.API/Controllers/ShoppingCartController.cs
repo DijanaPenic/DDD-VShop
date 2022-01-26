@@ -14,6 +14,7 @@ using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
+using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 
 namespace VShop.Modules.Sales.API.Controllers
 {
