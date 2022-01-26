@@ -3,7 +3,7 @@ using VShop.SharedKernel.Infrastructure.Parameters.Sorting.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Sorting
 {
-    public class SortingPair : ISortingPair
+    internal class SortingPair : ISortingPair
     {
         public bool Ascending { get; }
         public string OrderBy { get; }

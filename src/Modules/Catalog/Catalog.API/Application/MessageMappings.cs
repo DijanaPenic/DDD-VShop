@@ -1,7 +1,7 @@
 ﻿using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 
-using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
+//using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Catalog.API.Application
 {
@@ -16,10 +16,10 @@ namespace VShop.Modules.Catalog.API.Application
         private static void MapMessageTypes()
         {
             // Configure integration events - local
-            AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
+         //   AddCustomMap<OrderStockProcessedIntegrationEvent>(nameof(OrderStockProcessedIntegrationEvent));
             
             // Configure integration events - remote
-            AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
+         //   AddCustomMap<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
         }
         
         private static void MapMessageTransformations()

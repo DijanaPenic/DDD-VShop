@@ -1,12 +1,11 @@
+using Moq;
 using System.Reflection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Sales.Infrastructure.DAL;
-using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace Database.DatabaseMigrator;
 
@@ -25,16 +24,12 @@ public class Startup
             "Sales" => typeof(SalesDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
-
-        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
-        (
-            _configuration[$"{Module}:Postgres:ConnectionString"],
-            migrationAssembly
-        ));
+        
+        services.AddDbContextBuilder(_configuration[$"{Module}:Postgres:ConnectionString"], migrationAssembly);
         services.AddDbContext<SalesDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
-        services.AddScoped<IClockService, ClockService>();
+        services.AddScoped(_ => new Mock<IClockService>().Object);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)

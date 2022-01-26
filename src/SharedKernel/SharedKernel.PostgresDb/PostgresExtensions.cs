@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb.Contracts;
@@ -13,16 +14,20 @@ public static class PostgresExtensions
 
         return services;
     }
-    
-    public static IServiceCollection AddDbContextBuilder<T>(this IServiceCollection services, string connectionString)
-        where T : DbContextBase
+
+    public static IServiceCollection AddDbContextBuilder
+    (
+        this IServiceCollection services,
+        string connectionString,
+        Assembly assemblyType
+    )
     {
-        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder
-        (
-            connectionString,
-            typeof(T).Assembly
-        ));
+        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder(connectionString, assemblyType));
 
         return services;
     }
+
+    public static IServiceCollection AddDbContextBuilder<T>(this IServiceCollection services, string connectionString)
+        where T : DbContextBase
+        => services.AddDbContextBuilder(connectionString, typeof(T).Assembly);
 }

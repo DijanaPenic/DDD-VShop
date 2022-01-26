@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging;
 
-public static class MessagingExtensions
+internal static class MessagingExtensions
 {
     private const string SectionName = "messaging";
         

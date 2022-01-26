@@ -26,10 +26,10 @@ namespace VShop.Modules.Billing.API.Infrastructure.AutofacModules
             });
             
             // Register event bus
-            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
+            //builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
 
             // Register command bus
-            builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
+            //builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
 
             // Register command handlers
             builder.RegisterAssemblyTypes(typeof(TransferCommand).Assembly)

@@ -22,7 +22,7 @@ namespace VShop.Modules.Catalog.API.Infrastructure.AutofacModules
             });
             
             // Register event bus
-            builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
+            //builder.RegisterType<EventDispatcher>().As<IEventDispatcher>().SingleInstance();
 
             // Register event handlers
             builder.RegisterAssemblyTypes(typeof(OrderPaidIntegrationEventHandler).Assembly)

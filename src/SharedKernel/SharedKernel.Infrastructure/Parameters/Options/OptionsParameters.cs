@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Parameters.Options.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Options
 {
-    public class OptionsParameters : IOptionsParameters
+    internal class OptionsParameters : IOptionsParameters
     {
         public IReadOnlyList<string> Include { get; }
 

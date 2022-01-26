@@ -5,8 +5,8 @@ using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Stores
 {
@@ -14,13 +14,13 @@ namespace VShop.SharedKernel.Integration.Stores
     {
         private readonly IntegrationDbContext _integrationDbContext;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly MessageRegistry _messageRegistry;
+        private readonly IMessageRegistry _messageRegistry;
 
         public IntegrationEventOutbox
         (
             IntegrationDbContext integrationDbContext,
             IUnitOfWork unitOfWork,
-            MessageRegistry messageRegistry
+            IMessageRegistry messageRegistry
         )
         {
             _integrationDbContext = integrationDbContext;

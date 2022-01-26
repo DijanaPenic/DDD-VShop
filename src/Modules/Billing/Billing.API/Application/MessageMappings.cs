@@ -1,7 +1,7 @@
 ﻿using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Billing.Integration.Events;
 
-using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
+//using static VShop.SharedKernel.Infrastructure.Messaging.MessageTypeMapper;
 
 namespace VShop.Modules.Billing.API.Application
 {
@@ -16,11 +16,11 @@ namespace VShop.Modules.Billing.API.Application
         private static void MapMessageTypes()
         {
             // Configure integration events - local
-            AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
-            AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
+         //   AddCustomMap<PaymentFailedIntegrationEvent>(nameof(PaymentFailedIntegrationEvent));
+          //  AddCustomMap<PaymentSucceededIntegrationEvent>(nameof(PaymentSucceededIntegrationEvent));
             
             // Configure integration events - remote
-            AddCustomMap<OrderFinalizedIntegrationEvent>(nameof(OrderFinalizedIntegrationEvent));
+          //  AddCustomMap<OrderFinalizedIntegrationEvent>(nameof(OrderFinalizedIntegrationEvent));
         }
         
         private static void MapMessageTransformations()

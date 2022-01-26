@@ -32,7 +32,7 @@ namespace VShop.Modules.Catalog.API
             //services.Decorate(typeof(INotificationHandler<>), typeof(TransactionalEventDecorator<>));
 
             // Configure clock service
-            services.AddTransient<IClockService, ClockService>();
+            //services.AddTransient<IClockService, ClockService>();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

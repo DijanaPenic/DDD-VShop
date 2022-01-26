@@ -6,7 +6,7 @@ using MediatR;
 
 namespace VShop.SharedKernel.Infrastructure.Dispatchers
 {
-    public class NotificationMediator : Mediator
+    internal class NotificationMediator : Mediator
     {
         private readonly Func<IEnumerable<Func<INotification, CancellationToken, Task>>, INotification, CancellationToken, Task> _publish;
 

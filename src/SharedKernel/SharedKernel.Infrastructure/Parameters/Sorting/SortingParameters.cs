@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Parameters.Sorting.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Sorting
 {
-    public class SortingParameters : ISortingParameters
+    internal class SortingParameters : ISortingParameters
     {
         private readonly List<ISortingPair> _sorters = new();
 

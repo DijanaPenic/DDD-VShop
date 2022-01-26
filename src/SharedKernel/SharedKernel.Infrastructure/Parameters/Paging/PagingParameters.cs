@@ -2,7 +2,7 @@ using VShop.SharedKernel.Infrastructure.Parameters.Paging.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Parameters.Paging
 {
-    public class PagingParameters : IPagingParameters
+    internal class PagingParameters : IPagingParameters
     {
         public int PageIndex { get; }
         public int PageSize { get; }

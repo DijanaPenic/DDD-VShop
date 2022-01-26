@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
-using VShop.SharedKernel.Application.Decorators;
+
 using VShop.SharedKernel.Application.Providers;
 
 namespace VShop.SharedKernel.Application.Extensions;

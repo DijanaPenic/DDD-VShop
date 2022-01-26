@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Events
 {
-    public class EventDispatcher : IEventDispatcher
+    internal class EventDispatcher : IEventDispatcher
     {
         public EventDispatcher(ServiceFactory serviceFactory)
         {

@@ -38,7 +38,7 @@ namespace VShop.Modules.Billing.API
             services.AddTransient<IPaymentRepository, PaymentRepository>();
             
             // Configure clock service
-            services.AddTransient<IClockService, ClockService>();
+           // services.AddTransient<IClockService, ClockService>();
         }
         
         public static void ConfigureContainer(ContainerBuilder builder) 

@@ -7,7 +7,7 @@ using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb
 {
-    public class DbContextBuilder : IDbContextBuilder
+    internal class DbContextBuilder : IDbContextBuilder
     {
         private DbConnection _connection;
         private readonly Assembly _migrationAssembly;

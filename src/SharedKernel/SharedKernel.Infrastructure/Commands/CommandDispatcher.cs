@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Commands
 {
-    public class CommandDispatcher: ICommandDispatcher
+    internal class CommandDispatcher: ICommandDispatcher
     {
         private readonly IMediator _mediator;
 

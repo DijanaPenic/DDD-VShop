@@ -7,7 +7,7 @@ using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Queries;
 
-public class QueryDispatcher : IQueryDispatcher
+internal class QueryDispatcher : IQueryDispatcher
 {
     private readonly IMediator _mediator;
 
