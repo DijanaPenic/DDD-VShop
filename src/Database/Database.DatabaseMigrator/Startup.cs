@@ -12,7 +12,7 @@ namespace Database.DatabaseMigrator;
 
 public class Startup
 {
-    private const string Module = "Sales";
+    private const string Module = "Sales"; // TODO - use command line argument.
     
     private readonly IConfiguration _configuration;
 
@@ -20,10 +20,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        Assembly migrationAssembly = Module switch
+        Assembly migrationAssembly = Module.ToLowerInvariant() switch
         {
-            "Sales" => typeof(SalesDbContext).Assembly,
-            "Billing" => typeof(BillingDbContext).Assembly,
+            "sales" => typeof(SalesDbContext).Assembly,
+            "billing" => typeof(BillingDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
         
