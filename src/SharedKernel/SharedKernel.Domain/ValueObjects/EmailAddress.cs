@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
 
 using VShop.SharedKernel.Infrastructure;
 
-[assembly: InternalsVisibleTo("VShop.Modules.Sales.Domain")]
 namespace VShop.SharedKernel.Domain.ValueObjects
 {
     public class EmailAddress : ValueObject
