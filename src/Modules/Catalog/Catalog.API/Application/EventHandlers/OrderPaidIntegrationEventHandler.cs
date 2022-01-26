@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Entities;
@@ -20,18 +18,15 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
     public class OrderPaidIntegrationEventHandler : IEventHandler<OrderStatusSetToPaidIntegrationEvent>
     {
         private readonly CatalogDbContext _catalogDbContext;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IIntegrationEventService _catalogIntegrationEventService;
 
         public OrderPaidIntegrationEventHandler
         (
             CatalogDbContext catalogDbContext,
-            IUnitOfWork unitOfWork,
             IIntegrationEventService catalogIntegrationEventService
         )
         {
             _catalogDbContext = catalogDbContext;
-            _unitOfWork = unitOfWork;
             _catalogIntegrationEventService = catalogIntegrationEventService;
         }
 
@@ -69,19 +64,12 @@ namespace VShop.Modules.Catalog.API.Application.EventHandlers
                     @event.Metadata.MessageId
                 )
             );
-
-            // TODO - this can be done via decorator.
-            Guid transactionId = await _unitOfWork.ExecuteAsync(async() =>
-            {
-                await _catalogDbContext.SaveChangesAsync(cancellationToken);
-                await _catalogIntegrationEventService.SaveEventAsync
-                (
-                    orderStockConfirmedIntegrationEvent,
-                    cancellationToken
-                );
-            }, cancellationToken);
-
-            await _catalogIntegrationEventService.PublishEventsAsync(transactionId, cancellationToken);
+            
+            await _catalogIntegrationEventService.SaveEventAsync
+            (
+                orderStockConfirmedIntegrationEvent,
+                cancellationToken
+            );
         }
     }
 }

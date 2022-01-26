@@ -60,6 +60,8 @@ internal class SalesModule : IModule
         
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));
+        
+        services.Decorate(typeof(INotificationHandler<>), typeof(LoggingEventDecorator<>));
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);

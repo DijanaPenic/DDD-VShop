@@ -28,6 +28,8 @@ namespace VShop.Modules.Catalog.API
             services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new OpenApiInfo { Title = "Billing.API", Version = "v1" }); });
             services.AddPostgresServices(Configuration.GetConnectionString("PostgresDb"));
             services.AddIntegrationServices(Configuration.GetConnectionString("EventStoreDb"));
+            
+            //services.Decorate(typeof(INotificationHandler<>), typeof(TransactionalEventDecorator<>));
 
             // Configure clock service
             services.AddTransient<IClockService, ClockService>();
