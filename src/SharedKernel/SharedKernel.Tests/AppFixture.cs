@@ -1,6 +1,5 @@
-using System;
-using System.Net.Mail;
 using AutoFixture;
+using System.Net.Mail;
 
 using VShop.SharedKernel.Tests.Extensions;
 using VShop.SharedKernel.Domain.ValueObjects;

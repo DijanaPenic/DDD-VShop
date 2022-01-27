@@ -8,30 +8,29 @@ namespace VShop.Modules.Sales.Tests.Customizations
 {
     internal class CustomizedAutoDataAttribute : AutoDataAttribute
     {
-        private static readonly IList<ICustomization> Customizations;
+        private static readonly IFixture ExtendedFixture;
 
         static CustomizedAutoDataAttribute()
-            => Customizations = Assembly.GetExecutingAssembly()
+        {
+            IList<ICustomization> customizations = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => typeof(ICustomization).IsAssignableFrom(t))
                 .Select(t => (ICustomization)Activator.CreateInstance(t))
                 .ToList();
+            
+            ExtendedFixture = AppFixture.CommonFixture;
 
-        public CustomizedAutoDataAttribute() : base (() =>
-        {
-            Fixture fixture = AppFixture.CommonFixture;
+            ExtendedFixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => ExtendedFixture.Behaviors.Remove(b));
 
-            fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                .ForEach(b => fixture.Behaviors.Remove(b));
+            ExtendedFixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-
-            foreach (ICustomization customization in Customizations)
+            foreach (ICustomization customization in customizations)
             {
-                fixture.Customize(customization);
+                ExtendedFixture.Customize(customization);
             }
+        }
 
-            return fixture;
-        }) { }
+        public CustomizedAutoDataAttribute() : base (() => ExtendedFixture) { }
     }
 }
