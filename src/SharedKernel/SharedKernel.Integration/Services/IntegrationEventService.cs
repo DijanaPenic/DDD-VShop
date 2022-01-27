@@ -38,8 +38,8 @@ namespace VShop.SharedKernel.Integration.Services
             {
                 _logger.Information
                 (
-                    "Publishing integration event: {IntegrationEventId}",
-                    pendingEventLog.Id
+                    "Publishing integration event {IntegrationEventType}: {IntegrationEventId}",
+                    pendingEventLog.TypeName, pendingEventLog.Id
                 );
 
                 try
@@ -80,8 +80,8 @@ namespace VShop.SharedKernel.Integration.Services
         {
             _logger.Information
             (
-                "Enqueuing integration event {IntegrationEventId} - ({IntegrationEvent})",
-                @event.Metadata.MessageId, @event
+                "Enqueuing integration event {IntegrationEventType} {IntegrationEventId} - ({IntegrationEvent})",
+                @event.GetType().Name, @event.Metadata.MessageId, @event
             );
             
             await _integrationEventOutbox.SaveEventAsync(@event, cancellationToken);

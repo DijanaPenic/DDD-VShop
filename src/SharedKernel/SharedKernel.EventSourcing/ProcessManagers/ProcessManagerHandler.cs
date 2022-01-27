@@ -34,6 +34,8 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             CancellationToken cancellationToken
         )
         {
+            // TODO - missing validation for invalid processId.
+            
             _logger.Information
             (
                 "{Process}: handling {Event} event",
