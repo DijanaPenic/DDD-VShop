@@ -7,6 +7,7 @@ using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;
+using VShop.Modules.Catalog.Infrastructure.DAL;
 
 namespace Database.DatabaseMigrator;
 
@@ -24,11 +25,14 @@ public class Startup
         {
             "sales" => typeof(SalesDbContext).Assembly,
             "billing" => typeof(BillingDbContext).Assembly,
+            "catalog" => typeof(CatalogDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
         
         services.AddDbContextBuilder(_configuration[$"{Module}:Postgres:ConnectionString"], migrationAssembly);
         services.AddDbContext<SalesDbContext>();
+        services.AddDbContext<BillingDbContext>();
+        services.AddDbContext<CatalogDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddScoped(_ => new Mock<IClockService>().Object);

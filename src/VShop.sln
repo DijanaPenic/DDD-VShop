@@ -44,11 +44,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.Tests", "Modu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Catalog", "Catalog", "{6480BDA7-E3C4-4458-8CF6-9EEBB37D2C99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "Modules\Catalog\Catalog.API\Catalog.API.csproj", "{A77B310A-82DB-4006-87F3-6D427060C935}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Catalog.API", "Modules\Catalog\Modules.Catalog.API\Modules.Catalog.API.csproj", "{A77B310A-82DB-4006-87F3-6D427060C935}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Infrastructure", "Modules\Catalog\Catalog.Infrastructure\Catalog.Infrastructure.csproj", "{1AABB89C-CF70-40A4-BC6B-235F9D36CB7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Catalog.Infrastructure", "Modules\Catalog\Modules.Catalog.Infrastructure\Modules.Catalog.Infrastructure.csproj", "{1AABB89C-CF70-40A4-BC6B-235F9D36CB7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Integration", "Modules\Catalog\Catalog.Integration\Catalog.Integration.csproj", "{D874663D-34B1-4D34-9DD8-072BA15A9404}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Catalog.Integration", "Modules\Catalog\Modules.Catalog.Integration\Modules.Catalog.Integration.csproj", "{D874663D-34B1-4D34-9DD8-072BA15A9404}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Application", "SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj", "{CC89BC61-BD9A-483C-BEE4-D3E78F6661EB}"
 EndProject

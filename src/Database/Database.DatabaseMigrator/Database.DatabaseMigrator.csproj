@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Modules\Billing\Modules.Billing.Infrastructure\Modules.Billing.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.Infrastructure\Modules.Catalog.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj" />
       <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
       <ProjectReference Include="..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />

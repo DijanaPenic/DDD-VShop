@@ -11,7 +11,7 @@
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
       <ProjectReference Include="..\..\Billing\Modules.Billing.Integration\Modules.Billing.Integration.csproj" />
-      <ProjectReference Include="..\..\Catalog\Catalog.Integration\Catalog.Integration.csproj" />
+      <ProjectReference Include="..\..\Catalog\Modules.Catalog.Integration\Modules.Catalog.Integration.csproj" />
       <ProjectReference Include="..\Modules.Sales.Domain\Modules.Sales.Domain.csproj" />
       <ProjectReference Include="..\Modules.Sales.Integration\Modules.Sales.Integration.csproj" />
     </ItemGroup>
