@@ -64,17 +64,17 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
                 
                 await dockerClient.Containers.RestartContainerAsync(testContainer?.ID, new ContainerRestartParameters());
 
-                // NOTE: 30% slower than Thread.Sleep.
-                // bool isContainerReady = false;
-                // while (!isContainerReady)
-                // {
-                //     ContainerInspectResponse containerStatus = await dockerClient.Containers
-                //         .InspectContainerAsync(testContainer?.ID, CancellationToken.None);
-                //
-                //     isContainerReady = containerStatus.State.Health.Status == "healthy";
-                // }
+                // NOTE: slower than Thread.Sleep.
+                bool isContainerReady = false;
+                while (!isContainerReady)
+                {
+                    ContainerInspectResponse containerStatus = await dockerClient.Containers
+                        .InspectContainerAsync(testContainer?.ID, CancellationToken.None);
+                
+                    isContainerReady = containerStatus.State.Health.Status == "healthy";
+                }
 
-                Thread.Sleep(1500);
+                //Thread.Sleep(3000);
             }
             catch (Exception ex)
             {
