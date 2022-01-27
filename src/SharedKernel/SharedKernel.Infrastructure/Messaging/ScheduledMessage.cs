@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
         {
             Body = message.ToByteString();
             Metadata = message.Metadata;
-            TypeName = message.GetType().FullName;
+            TypeName = message.GetType().AssemblyQualifiedName;
             ScheduledTime = scheduledTime.ToTimestamp();
         }
     }
