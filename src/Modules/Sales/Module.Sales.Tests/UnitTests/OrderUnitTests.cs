@@ -7,7 +7,7 @@ using VShop.Modules.Sales.Tests.Customizations;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.Modules.Sales.Domain.Tests.UnitTests
+namespace VShop.Modules.Sales.Tests.UnitTests
 {
     public class OrderUnitTests
     {

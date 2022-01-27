@@ -1,29 +1,24 @@
 using Xunit;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using FluentAssertions;
-using EventStore.Client;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
+using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Infrastructure.ProcessManagers;
+using VShop.Modules.Sales.Tests.Customizations;
+using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores;
-using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Integration.Stores.Contracts;
-using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.Modules.Billing.Integration.Events;
-using VShop.Modules.Sales.Tests.Customizations;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.API.Application.ProcessManagers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
     public class IntegrationEventProjectionIntegrationTests : ResetDatabaseLifetime, IClassFixture<SubscriptionFixture>
@@ -32,7 +27,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
 
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
+        internal async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
         (
             EntityId orderId,
             ShoppingCart shoppingCart,
@@ -56,7 +51,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             );
         
             // Act
-            await IntegrationTestsFixture.ExecuteServiceAsync<EventStoreClient>
+            await IntegrationTestsFixture.ExecuteServiceAsync<CustomEventStoreClient>
             (
                 eventStoreClient => eventStoreClient.AppendToStreamAsync
                 (
@@ -84,7 +79,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Publishing_integration_event_from_the_integration_stream
+        internal async Task Publishing_integration_event_from_the_integration_stream
         (
             EntityId orderId,
             ShoppingCart shoppingCart,

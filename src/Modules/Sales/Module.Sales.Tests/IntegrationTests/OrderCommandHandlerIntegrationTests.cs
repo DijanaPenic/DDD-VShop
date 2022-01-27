@@ -1,29 +1,25 @@
 using Xunit;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using EventStore.Client;
 using FluentAssertions;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Messaging.Events;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.EventSourcing.Stores;
-using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.Modules.Sales.Tests.Customizations;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.EventSourcing.Stores;
+using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Types;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
     public class OrderCommandHandlerIntegrationTests
@@ -32,7 +28,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Cancels_the_order
+        internal async Task Cancels_the_order
         (
             ShoppingCart shoppingCart,
             EntityId orderId,
@@ -58,7 +54,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Cancelling_the_order_command_is_idempotent
+        internal async Task Cancelling_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             EntityId orderId,
@@ -82,7 +78,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Sets_the_order_status_to_paid
+        internal async Task Sets_the_order_status_to_paid
         (
             ShoppingCart shoppingCart,
             EntityId orderId,
@@ -106,7 +102,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             orderFromDb.Status.Should().Be(OrderStatus.Paid);
             
             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
+                .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
                 (
                     eventStoreClient => eventStoreClient
                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
@@ -119,7 +115,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Setting_the_order_status_to_paid_command_is_idempotent
+        internal async Task Setting_the_order_status_to_paid_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             EntityId orderId,
@@ -142,7 +138,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Finalizes_the_order_when_all_items_are_in_stock
+        internal async Task Finalizes_the_order_when_all_items_are_in_stock
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -209,7 +205,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
              IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
@@ -224,7 +220,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Finalizes_the_order_when_all_items_are_out_of_stock
+        internal async Task Finalizes_the_order_when_all_items_are_out_of_stock
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -290,7 +286,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
 
              IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
@@ -305,7 +301,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Finalizes_the_order_when_items_are_partially_out_of_stock
+        internal async Task Finalizes_the_order_when_items_are_partially_out_of_stock
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -377,7 +373,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
              IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<EventStoreClient, IReadOnlyList<IBaseEvent>>
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
@@ -392,7 +388,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Finalizing_the_order_command_is_idempotent
+        internal async Task Finalizing_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             EntityId orderId,

@@ -8,5 +8,5 @@ public interface IModule
 {
     string Name { get; }
     Assembly[] Assemblies { get; set; }
-    void Add(IConfiguration configuration, ILogger logger);
+    void Initialize(IConfiguration configuration, ILogger logger);
 }

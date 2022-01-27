@@ -1,10 +1,8 @@
 using Xunit;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
-    public class SchedulerFixture : IAsyncLifetime
+    internal class SchedulerFixture : IAsyncLifetime
     {
         private const string HostedServiceName = "QuartzHostedService";
 

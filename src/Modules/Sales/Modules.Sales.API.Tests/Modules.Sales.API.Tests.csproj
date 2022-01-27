@@ -37,14 +37,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj" />
+        <ProjectReference Include="..\Module.Sales.Tests\Module.Sales.Tests.csproj" />
+        <ProjectReference Include="..\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
         <ProjectReference Include="..\Sales.API\Sales.API.csproj" />
         <ProjectReference Include="..\Sales.Tests\Sales.Tests.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="appsettings.Test.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
 </Project>

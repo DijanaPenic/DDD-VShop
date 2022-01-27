@@ -1,28 +1,27 @@
 using Xunit;
-using System.Linq;
-using System.Collections.Generic;
 using FluentAssertions;
 
-using VShop.SharedKernel.Messaging;
+using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Domain.Events.Reminders;
+using VShop.Modules.Sales.Infrastructure.Commands;
+using VShop.Modules.Sales.Infrastructure.ProcessManagers;
+using VShop.Modules.Sales.Tests.Customizations;
+using VShop.Modules.Billing.Integration.Events;
+using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.Modules.Sales.Domain.Events;
-using VShop.Modules.Sales.Domain.Events.Reminders;
-using VShop.Modules.Sales.Tests.Customizations;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.ProcessManagers;
-using VShop.Modules.Billing.Integration.Events;
-using VShop.Modules.Catalog.Integration.Events;
 
-namespace VShop.Modules.Sales.API.Tests.UnitTests
+namespace VShop.Modules.Sales.Tests.UnitTests
 {
     public class OrderingProcessManagerUnitTests
     {
         [Theory]
         [CustomizedAutoData]
-        public void Shopping_cart_checkout_places_a_new_order
+        internal void Shopping_cart_checkout_places_a_new_order
         (
             EntityId shoppingCartId,
             EntityId orderId
@@ -53,7 +52,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Creating_a_new_order_deletes_the_shopping_cart_and_schedules_a_payment_reminder
+        internal void Creating_a_new_order_deletes_the_shopping_cart_and_schedules_a_payment_reminder
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -117,7 +116,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Failed_order_payment_changes_the_process_manager_status
+        internal void Failed_order_payment_changes_the_process_manager_status
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -180,7 +179,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Payment_reminder_check_sends_an_alert_when_payment_response_is_not_received
+        internal void Payment_reminder_check_sends_an_alert_when_payment_response_is_not_received
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -242,7 +241,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Payment_reminder_check_doesnt_react_when_order_is_paid
+        internal void Payment_reminder_check_doesnt_react_when_order_is_paid
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -310,7 +309,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Payment_reminder_check_cancels_the_order_when_order_is_not_paid
+        internal void Payment_reminder_check_cancels_the_order_when_order_is_not_paid
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -381,7 +380,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Cancelled_order_changes_the_process_manager_status
+        internal void Cancelled_order_changes_the_process_manager_status
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -454,7 +453,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Succeeded_order_payment_changes_the_order_status_to_paid
+        internal void Succeeded_order_payment_changes_the_order_status_to_paid
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -520,7 +519,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_the_order_status_to_Paid_schedules_a_stock_reminder
+        internal void Changing_the_order_status_to_Paid_schedules_a_stock_reminder
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -590,7 +589,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Stock_reminder_check_sends_an_alert_when_stock_review_response_is_not_received
+        internal void Stock_reminder_check_sends_an_alert_when_stock_review_response_is_not_received
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -663,7 +662,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Stock_reminder_check_doesnt_react_when_order_stock_is_confirmed
+        internal void Stock_reminder_check_doesnt_react_when_order_stock_is_confirmed
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -743,7 +742,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Processed_stock_order_report_finalizes_the_order
+        internal void Processed_stock_order_report_finalizes_the_order
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -821,7 +820,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_the_order_status_to_PendingShipping_schedules_a_shipping_reminder
+        internal void Changing_the_order_status_to_PendingShipping_schedules_a_shipping_reminder
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -909,7 +908,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Shipping_reminder_check_sends_an_alert_when_shipping_response_is_not_received
+        internal void Shipping_reminder_check_sends_an_alert_when_shipping_response_is_not_received
         (
             EntityId shoppingCartId,
             EntityId orderId,
@@ -1000,7 +999,7 @@ namespace VShop.Modules.Sales.API.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Shipping_reminder_check_doesnt_react_when_order_is_shipped
+        internal void Shipping_reminder_check_doesnt_react_when_order_is_shipped
         (
             EntityId shoppingCartId,
             EntityId orderId,

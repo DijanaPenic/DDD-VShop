@@ -10,12 +10,25 @@
 
     <ItemGroup>
       <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
+      <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="Docker.DotNet" Version="3.125.5" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+      <PackageReference Include="Moq" Version="4.16.1" />
+      <PackageReference Include="xunit" Version="2.4.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj" />
+      <ProjectReference Include="..\Modules.Sales.API\Modules.Sales.API.csproj" />
       <ProjectReference Include="..\Modules.Sales.Domain\Modules.Sales.Domain.csproj" />
+      <ProjectReference Include="..\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="module.sales.tests.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

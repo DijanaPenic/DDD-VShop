@@ -28,4 +28,8 @@
       <ProjectReference Include="..\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Modules.Sales.Tests" />
+    </ItemGroup>
+
 </Project>

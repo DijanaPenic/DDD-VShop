@@ -5,7 +5,7 @@ using VShop.Modules.Sales.Domain.Models.Ordering;
 
 namespace VShop.Modules.Sales.Tests.Customizations
 {
-    public class OrderCustomization : ICustomization
+    internal class OrderCustomization : ICustomization
     {
         public void Customize(IFixture fixture)
         {

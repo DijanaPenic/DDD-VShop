@@ -1,17 +1,12 @@
 using Xunit;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Threading;
-using Dapper;
 using Npgsql;
+using Dapper;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
-    public class ResetDatabaseLifetime : IAsyncLifetime
+    public abstract class ResetDatabaseLifetime : IAsyncLifetime
     {
         public Task InitializeAsync() => StartDatabaseResetAsync();
 

@@ -23,4 +23,8 @@
       <PackageReference Include="Quartz.Serialization.Json" Version="3.3.3" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Modules.Sales.Tests" />
+    </ItemGroup>
+
 </Project>

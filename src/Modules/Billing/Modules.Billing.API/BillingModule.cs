@@ -33,7 +33,7 @@ internal class BillingModule : IModule
     public string Name => "Billing";
     public Assembly[] Assemblies { get; set; }
 
-    public void Add(IConfiguration configuration, ILogger logger)
+    public void Initialize(IConfiguration configuration, ILogger logger)
     {
         ConfigureCompositionRoot(configuration, logger);
         RunHostedServices();

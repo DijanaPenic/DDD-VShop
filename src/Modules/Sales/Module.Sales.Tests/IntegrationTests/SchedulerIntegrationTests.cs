@@ -1,31 +1,30 @@
 using Xunit;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Scheduler.Infrastructure;
-using VShop.SharedKernel.Scheduler.Infrastructure.Entities;
-using VShop.SharedKernel.Scheduler.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Services;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Tests.IntegrationTests.Probing;
-using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Infrastructure.Commands;
+using VShop.Modules.Sales.Tests.Customizations;
+using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
+using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Scheduler.DAL;
+using VShop.SharedKernel.Scheduler.DAL.Entities;
+using VShop.SharedKernel.Scheduler.Services.Contracts;
+using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
     public class SchedulerIntegrationTests : ResetDatabaseLifetime, IClassFixture<SchedulerFixture>
     {
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_command_is_published_in_defined_time
+        internal async Task Scheduled_command_is_published_in_defined_time
         (
             ShoppingCart shoppingCart,
             MessageMetadata metadata
@@ -57,7 +56,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Scheduled_domain_event_is_published_in_defined_time
+        internal async Task Scheduled_domain_event_is_published_in_defined_time
         (
             EntityId orderId, 
             ShoppingCart shoppingCart,
@@ -90,12 +89,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         private class GetScheduledMessageStatusProbe : IProbe
         {
-            private MessageLog _messageLog;
+            private ScheduledMessageLog _messageLog;
 
             public bool IsSatisfied() => _messageLog is { Status: MessageStatus.Finished };
 
             public async Task SampleAsync()
-                => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext, MessageLog>
+                => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext, ScheduledMessageLog>
                     (
                         dbContext => dbContext.MessageLogs
                         .OrderByDescending(ml => ml.DateCreated)

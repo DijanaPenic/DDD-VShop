@@ -17,5 +17,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             TypeName = message.GetType().AssemblyQualifiedName;
             ScheduledTime = scheduledTime.ToTimestamp();
         }
+
+        public static string ToName<T>() => typeof(T).AssemblyQualifiedName;
     }
 }

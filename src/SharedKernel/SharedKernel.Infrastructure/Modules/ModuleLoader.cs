@@ -12,7 +12,30 @@ namespace VShop.SharedKernel.Infrastructure.Modules;
 
 public static class ModuleLoader
 {
-    public static IList<Assembly> LoadAssemblies(IConfiguration configuration, string modulePrefix)
+    public static IList<IModule> LoadModules(IConfiguration configuration, string modulePrefix)
+    {
+        IList<Assembly> assemblyList = LoadAssemblies(configuration, modulePrefix);
+        
+        IList<IModule> modules = assemblyList
+            .SelectMany(a => a.GetTypes())
+            .Where(t => typeof(IModule).IsAssignableFrom(t) && !t.IsInterface)
+            .OrderBy(t => t.Name)
+            .Select(Activator.CreateInstance)
+            .Cast<IModule>()
+            .ToList();
+
+        // TODO - use constructor.
+        foreach (IModule module in modules)
+        {
+            module.Assemblies = assemblyList
+                .Where(a => a.FullName is not null && a.FullName.StartsWith($"{modulePrefix}{module.Name}"))
+                .ToArray();
+        }
+
+        return modules;
+    }
+    
+    private static IList<Assembly> LoadAssemblies(IConfiguration configuration, string modulePrefix)
     {
         IList<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
         string[] locations = assemblies.Where(a => !a.IsDynamic).Select(a => a.Location).ToArray();
@@ -37,27 +60,5 @@ public static class ModuleLoader
         files.ForEach(f => assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(f))));
 
         return assemblies;
-    }
-
-    public static IList<IModule> LoadModules(IEnumerable<Assembly> assemblies, string modulePrefix)
-    {
-        IList<Assembly> assemblyList = assemblies.ToList();
-        
-        IList<IModule> modules = assemblyList
-            .SelectMany(a => a.GetTypes())
-            .Where(t => typeof(IModule).IsAssignableFrom(t) && !t.IsInterface)
-            .OrderBy(t => t.Name)
-            .Select(Activator.CreateInstance)
-            .Cast<IModule>()
-            .ToList();
-
-        foreach (IModule module in modules)
-        {
-            module.Assemblies = assemblyList
-                .Where(a => a.FullName is not null && a.FullName.StartsWith($"{modulePrefix}{module.Name}"))
-                .ToArray();
-        }
-
-        return modules;
     }
 }

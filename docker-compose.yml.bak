@@ -56,7 +56,7 @@ services:
     - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
     environment: 
       POSTGRES_USER: postgres
-      POSTGRES_DB: VShop_SalesTests
+      POSTGRES_DB: VShop_SalesIntegration
       POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
       
   postgres.db.billing:
@@ -76,7 +76,7 @@ services:
     restart: always
     environment: 
       POSTGRES_USER: postgres
-      POSTGRES_DB: VShop_BillingTests
+      POSTGRES_DB: VShop_BillingIntegration
       POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
       
   postgres.db.catalog:

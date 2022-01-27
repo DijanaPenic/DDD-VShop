@@ -1,12 +1,8 @@
-using System;
-using System.Threading.Tasks;
-
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
-    public class DatabaseProbe<TDatabase, TSample> : IProbe
+    internal class DatabaseProbe<TDatabase, TSample> : IProbe
     {
         private readonly Func<TDatabase, Task<TSample>> _sampling;
         private readonly Action<TSample> _validation;

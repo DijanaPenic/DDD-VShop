@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.Modules.Sales.Domain.Tests.UnitTests
+namespace VShop.Modules.Sales.Tests.UnitTests
 {
     public class ShoppingCartUnitTests
     {

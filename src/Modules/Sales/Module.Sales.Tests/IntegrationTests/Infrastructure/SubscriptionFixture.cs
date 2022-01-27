@@ -1,12 +1,10 @@
 using Xunit;
-using System.Threading;
-using System.Threading.Tasks;
 
-using VShop.SharedKernel.EventStoreDb.Subscriptions.Services;
+using VShop.SharedKernel.Subscriptions.Services;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
-    public class SubscriptionFixture : IAsyncLifetime
+    internal class SubscriptionFixture : IAsyncLifetime
     {
         public async Task InitializeAsync()
         {
@@ -14,12 +12,12 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure
             // Checkpoints might not be in sync with the EventStore database - another reason for cleanup.
             await ResetDatabaseLifetime.StartDatabaseResetAsync();
             
-            await IntegrationTestsFixture.ExecuteHostedServiceAsync<SubscriptionHostedService>
+            await IntegrationTestsFixture.ExecuteHostedServiceAsync<EventStoreHostedService>
                 (hostedService => hostedService.StartAsync(CancellationToken.None));
         }
         
         public Task DisposeAsync()
-            => IntegrationTestsFixture.ExecuteHostedServiceAsync<SubscriptionHostedService>
+            => IntegrationTestsFixture.ExecuteHostedServiceAsync<EventStoreHostedService>
                 (hostedService => hostedService.StopAsync(CancellationToken.None));
     }
 }

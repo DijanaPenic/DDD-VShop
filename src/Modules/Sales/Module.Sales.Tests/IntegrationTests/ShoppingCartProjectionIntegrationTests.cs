@@ -1,20 +1,19 @@
 using Xunit;
 using FluentAssertions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.Infrastructure;
-using VShop.Modules.Sales.Infrastructure.Entities;
+using VShop.Modules.Sales.Infrastructure.DAL;
+using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 using VShop.Modules.Sales.Tests.Customizations;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
     public class ShoppingCartProjectionIntegrationTests : IClassFixture<SubscriptionFixture>
@@ -23,7 +22,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartCreatedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartCreatedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -59,7 +58,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartProductAddedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartProductAddedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -102,7 +101,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartProductRemovedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartProductRemovedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -141,7 +140,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartDeliveryAddressSetDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartDeliveryAddressSetDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -180,7 +179,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartCheckoutRequestedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartCheckoutRequestedDomainEvent_to_read_model
         (
             ShoppingCart shoppingCart,
             EntityId orderId
@@ -215,7 +214,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartDeletionRequestedDomainEvent_to_read_model(ShoppingCart shoppingCart)
+        internal async Task Projecting_ShoppingCartDeletionRequestedDomainEvent_to_read_model(ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -246,7 +245,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartItemQuantityIncreasedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartItemQuantityIncreasedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -287,7 +286,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Projecting_ShoppingCartItemQuantityDecreasedDomainEvent_to_read_model
+        internal async Task Projecting_ShoppingCartItemQuantityDecreasedDomainEvent_to_read_model
         (
             EntityId shoppingCartId,
             EntityId customerId,

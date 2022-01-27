@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using NodaTime;
 
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -7,12 +5,12 @@ using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.API.Application.ProcessManagers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Infrastructure.ProcessManagers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Helpers
 {
-    public static class OrderHelper
+    internal static class OrderHelper
     {
         public static async Task<Order> PlaceOrderAsync
         (

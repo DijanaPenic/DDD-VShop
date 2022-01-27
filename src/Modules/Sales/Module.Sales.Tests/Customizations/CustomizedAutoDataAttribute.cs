@@ -6,7 +6,7 @@ using VShop.SharedKernel.Tests;
 
 namespace VShop.Modules.Sales.Tests.Customizations
 {
-    public class CustomizedAutoDataAttribute : AutoDataAttribute
+    internal class CustomizedAutoDataAttribute : AutoDataAttribute
     {
         private static readonly IList<ICustomization> Customizations;
 

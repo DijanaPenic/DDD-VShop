@@ -1,14 +1,12 @@
-using System.Threading.Tasks;
-
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers
+namespace VShop.Modules.Sales.Tests.IntegrationTests.Helpers
 {
-    public static class ShoppingCartHelper
+    internal static class ShoppingCartHelper
     {
         public static Task<ShoppingCart> GetShoppingCartAsync(EntityId shoppingCartId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>, ShoppingCart>

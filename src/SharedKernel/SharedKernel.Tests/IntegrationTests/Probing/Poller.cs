@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Tests.IntegrationTests.Probing

@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Tests.Customizations
 {
-    public class ShoppingCartCustomization : ICustomization
+    internal class ShoppingCartCustomization : ICustomization
     {
         public void Customize(IFixture fixture)
         {

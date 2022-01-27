@@ -1,5 +1,4 @@
 using Serilog;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
 using VShop.SharedKernel.Subscriptions;
@@ -17,15 +16,12 @@ public class Startup
     private const string ModulePrefix = "VShop.Modules.";
     
     private readonly IConfiguration _configuration;
-    private readonly IList<Assembly> _assemblies;
     private readonly IList<IModule> _modules;
 
     public Startup(IConfiguration configuration)
     {
         _configuration = configuration;
-        
-        _assemblies = ModuleLoader.LoadAssemblies(configuration, ModulePrefix);
-        _modules = ModuleLoader.LoadModules(_assemblies, ModulePrefix);
+        _modules = ModuleLoader.LoadModules(configuration, ModulePrefix);
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -34,7 +30,7 @@ public class Startup
         services.AddSingleton<IControllerFactory, CustomControllerFactory>();
 
         ILogger logger = ConfigureLogger();
-        foreach (IModule module in _modules) module.Add(_configuration, logger);
+        foreach (IModule module in _modules) module.Initialize(_configuration, logger);
         
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();
@@ -45,8 +41,7 @@ public class Startup
         logger.Information($"Enabled modules: {string.Join(", ", _modules.Select(m => m.Name))}");
         
         app.UseApplication();
-
-        _assemblies.Clear();
+        
         _modules.Clear();
     }
     

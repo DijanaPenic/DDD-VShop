@@ -1,31 +1,30 @@
 using Xunit;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 
-using VShop.SharedKernel.Messaging;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Modules.Sales.Infrastructure.Commands;
+using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
+using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Tests.Customizations;
-using VShop.Modules.Sales.API.Application.Commands;
-using VShop.Modules.Sales.API.Application.Commands.Shared;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Helpers;
-using VShop.Modules.Sales.API.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
+using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Domain.ValueObjects;
 
 using Address = VShop.SharedKernel.Domain.ValueObjects.Address;
 
-namespace VShop.Modules.Sales.API.Tests.IntegrationTests
+namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
     public class ShoppingCartCommandHandlerIntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        public async Task Creates_a_new_shopping_cart
+        internal async Task Creates_a_new_shopping_cart
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -45,7 +44,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             );
 
             // Act
-            Result<ShoppingCart> result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -56,7 +55,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Shopping_cart_creation_command_is_idempotent
+        internal async Task Shopping_cart_creation_command_is_idempotent
         (
             EntityId shoppingCartId,
             EntityId customerId,
@@ -77,7 +76,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
             await IntegrationTestsFixture.SendAsync(command);
 
             // Act
-            Result<ShoppingCart> result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -85,7 +84,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Changes_product_price_in_the_shopping_cart
+        internal async Task Changes_product_price_in_the_shopping_cart
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -120,7 +119,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Changing_product_price_in_the_shopping_cart_is_idempotent
+        internal async Task Changing_product_price_in_the_shopping_cart_is_idempotent
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -149,7 +148,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Adds_a_new_product_to_the_shopping_cart
+        internal async Task Adds_a_new_product_to_the_shopping_cart
         (
             ShoppingCart shoppingCart, 
             ShoppingCartProductCommandDto shoppingCartItem,
@@ -182,7 +181,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
+        internal async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
             ShoppingCartProductCommandDto shoppingCartItem,
@@ -210,7 +209,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removes_a_product_from_the_shopping_cart
+        internal async Task Removes_a_product_from_the_shopping_cart
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -244,7 +243,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
+        internal async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -272,7 +271,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Sets_a_customer_contact_information
+        internal async Task Sets_a_customer_contact_information
         (
             ShoppingCart shoppingCart,
             FullName fullName,
@@ -313,7 +312,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Setting_a_customer_contact_information_command_is_idempotent
+        internal async Task Setting_a_customer_contact_information_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             FullName fullName,
@@ -348,7 +347,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Sets_a_customer_delivery_address
+        internal async Task Sets_a_customer_delivery_address
         (
             ShoppingCart shoppingCart,
             Address deliveryAddress,
@@ -382,7 +381,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Setting_a_customer_delivery_address_command_is_idempotent
+        internal async Task Setting_a_customer_delivery_address_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             Address deliveryAddress,
@@ -412,7 +411,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deletes_the_shopping_cart
+        internal async Task Deletes_the_shopping_cart
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -435,7 +434,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        public async Task Deleting_the_shopping_cart_command_is_idempotent
+        internal async Task Deleting_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart,
             MessageMetadata commandMetadata
@@ -457,7 +456,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
         
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_places_an_order
+         internal async Task Shopping_cart_checkout_places_an_order
          (
              ShoppingCart shoppingCart,
              MessageMetadata commandMetadata
@@ -488,7 +487,7 @@ namespace VShop.Modules.Sales.API.Tests.IntegrationTests
          
          [Theory]
          [CustomizedAutoData]
-         public async Task Shopping_cart_checkout_command_is_idempotent
+         internal async Task Shopping_cart_checkout_command_is_idempotent
          (
              ShoppingCart shoppingCart,
              MessageMetadata commandMetadata
