@@ -40,5 +40,7 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
 
             return message;
         }
+
+        public static string ToName<T>(IMessageRegistry messageRegistry) => messageRegistry.GetName<T>();
     }
 }

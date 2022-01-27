@@ -5,6 +5,10 @@
     "Sales": {
         "Postgres": {
             "ConnectionString": "server=localhost;userid=postgres;password=0k6aamsucNq57XV7aOHC;port=5440;database=VShop_SalesTests;application name=VShop_SalesTests;"
+        },
+        "Module": {
+            "Name": "Sales",
+            "Enabled": true
         }
     }
 }

@@ -8,7 +8,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 
         public async Task InitializeAsync()
         {
-            // Scheduler might pick up data from other tests, so we need to clear databases.
+            // Scheduler might pick up data from other tests, so we need to clear the databases.
             await ResetDatabaseLifetime.StartDatabaseResetAsync();
             
             await IntegrationTestsFixture.ExecuteHostedServiceAsync

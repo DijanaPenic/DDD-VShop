@@ -17,7 +17,6 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
-using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
@@ -37,25 +36,20 @@ internal class SalesModule : IModule
     {
         ConfigureCompositionRoot(configuration, logger);
         RunHostedServices();
-        
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = SalesCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
-    private void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
+    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
     {
-        ServiceCollection services = new();
-        
         PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
-
+        
+        ServiceCollection services = new();
+        
         services.AddLogging(logger, Name);
         services.AddInfrastructure(Assemblies);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
-        services.AddScoped<ISalesDispatcher, SalesDispatcher>();
         services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
@@ -68,13 +62,17 @@ internal class SalesModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
-    private static void RunHostedServices() // Quartz and database migration.
+    private void RunHostedServices() // Quartz and database migration.
     {
         using IServiceScope scope = SalesCompositionRoot.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-
+        
         Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
             .GetAwaiter().GetResult();
     }

@@ -12,9 +12,11 @@ namespace VShop.SharedKernel.Infrastructure.Modules;
 
 public static class ModuleLoader
 {
-    public static IList<IModule> LoadModules(IConfiguration configuration, string modulePrefix)
+    private const string ModulePrefix = "VShop.Modules.";
+
+    public static IList<IModule> LoadModules(IConfiguration configuration)
     {
-        IList<Assembly> assemblyList = LoadAssemblies(configuration, modulePrefix);
+        IList<Assembly> assemblyList = LoadAssemblies(configuration);
         
         IList<IModule> modules = assemblyList
             .SelectMany(a => a.GetTypes())
@@ -28,14 +30,14 @@ public static class ModuleLoader
         foreach (IModule module in modules)
         {
             module.Assemblies = assemblyList
-                .Where(a => a.FullName is not null && a.FullName.StartsWith($"{modulePrefix}{module.Name}"))
+                .Where(a => a.FullName is not null && a.FullName.StartsWith($"{ModulePrefix}{module.Name}"))
                 .ToArray();
         }
 
         return modules;
     }
     
-    private static IList<Assembly> LoadAssemblies(IConfiguration configuration, string modulePrefix)
+    private static IList<Assembly> LoadAssemblies(IConfiguration configuration)
     {
         IList<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
         string[] locations = assemblies.Where(a => !a.IsDynamic).Select(a => a.Location).ToArray();
@@ -48,9 +50,9 @@ public static class ModuleLoader
         
         foreach (string file in files)
         {
-            if (!file.Contains(modulePrefix)) continue;
+            if (!file.Contains(ModulePrefix)) continue;
             
-            string moduleName = file.Split(modulePrefix)[1].Split(".")[0].ToPascalCase();
+            string moduleName = file.Split(ModulePrefix)[1].Split(".")[0].ToPascalCase();
             bool enabled = configuration.GetValue<bool>($"{moduleName}:Module:Enabled");
             if (!enabled) disabledModules.Add(file);
         }

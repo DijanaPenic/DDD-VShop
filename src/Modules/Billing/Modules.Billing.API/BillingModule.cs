@@ -16,7 +16,6 @@ using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Billing.API.Automapper;
-using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Configuration;
@@ -37,24 +36,19 @@ internal class BillingModule : IModule
     {
         ConfigureCompositionRoot(configuration, logger);
         RunHostedServices();
-        
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = BillingCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
-    private void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
+    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
     {
-        ServiceCollection services = new();
-        
         PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
-
+        
+        ServiceCollection services = new();
+        
         services.AddLogging(logger, Name);
         services.AddInfrastructure(Assemblies);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
-        services.AddScoped<IBillingDispatcher, BillingDispatcher>();
         services.AddTransient<IPaymentService, FakePaymentService>();
         services.AddTransient<IPaymentRepository, PaymentRepository>();
         services.AddAutoMapper(typeof(PaymentAutomapperProfile));
@@ -68,9 +62,13 @@ internal class BillingModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
     
-    private static void RunHostedServices() // Database migration.
+    private void RunHostedServices() // Database migration.
     {
         using IServiceScope scope = BillingCompositionRoot.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();

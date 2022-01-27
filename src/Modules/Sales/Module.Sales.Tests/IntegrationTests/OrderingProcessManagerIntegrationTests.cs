@@ -7,7 +7,6 @@ using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
-using VShop.Modules.Sales.Infrastructure.ProcessManagers;
 using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
@@ -40,8 +39,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, paymentMetadata);
         
             // Act
-            await IntegrationTestsFixture.ExecuteServiceAsync<OrderingProcessManagerHandler>(sut =>
-                 sut.Handle(paymentSucceededIntegrationEvent, CancellationToken.None));
+            await IntegrationTestsFixture.PublishAsync(paymentSucceededIntegrationEvent);
             
             // Assert
             
@@ -53,7 +51,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             // A reminder message should have been scheduled.
             await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext>(async dbContext =>
             {
-                 string typeName = ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>();
+                 string typeName = ScheduledMessageLog.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>
+                     (IntegrationTestsFixture.MessageRegistry);
                  
                  ScheduledMessageLog messageLog = await dbContext.MessageLogs
                      .OrderByDescending(ml => ml.DateCreated)

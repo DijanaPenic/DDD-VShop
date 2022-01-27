@@ -9,4 +9,5 @@ public interface IModule
     string Name { get; }
     Assembly[] Assemblies { get; set; }
     void Initialize(IConfiguration configuration, ILogger logger);
+    void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger);
 }

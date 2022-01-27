@@ -32,7 +32,6 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             EntityId orderId,
             ShoppingCart shoppingCart,
             Guid causationId,
-            Guid correlationId,
             MessageMetadata metadata
         )
         {
@@ -46,8 +45,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             OrderingProcessManager processManager = await OrderHelper.LoadProcessManagerAsync
             (
                 orderId,
-                causationId,
-                correlationId
+                causationId
             );
         
             // Act

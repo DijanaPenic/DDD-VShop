@@ -1,4 +1,3 @@
-using Moq;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +20,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
         private static readonly IConfiguration Configuration;
 
         public static IMessageRegistry MessageRegistry => SalesMessageRegistry.Initialize();
-        public static string EventStoreDbConnectionString => Configuration.GetConnectionString("EventStoreDb");
-        public static string RelationalDbConnectionString => Configuration.GetConnectionString("PostgresDb");
+        public static string EventStoreDbConnectionString => Configuration["EventStore:ConnectionString"];
+        public static string RelationalDbConnectionString => Configuration["Sales:Postgres:ConnectionString"];
 
         static IntegrationTestsFixture()
         {
@@ -30,10 +29,12 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
                 .AddJsonFile("module.sales.tests.json")
                 .Build();
 
-            IModule module = ModuleLoader.LoadModules(Configuration, "VShop.Modules.Sales").Single();
-            ILogger logger = new Mock<ILogger>().Object;
+            IModule module = ModuleLoader.LoadModules(Configuration).Single();
+            ILogger logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .CreateLogger();
             
-            module.Initialize(Configuration, logger);
+            module.ConfigureCompositionRoot(Configuration, logger);
         }
 
         public static Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 

@@ -30,8 +30,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Helpers
         public static Task<OrderingProcessManager> LoadProcessManagerAsync
             (
                 Guid processManagerId, 
-                Guid causationId,
-                Guid correlationId
+                Guid causationId
             )
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
                (
