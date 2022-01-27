@@ -7,9 +7,9 @@ using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.EventSourcing.ProcessManagers;
 
 // TODO - email alert support.
 namespace VShop.Modules.Sales.Infrastructure.ProcessManagers

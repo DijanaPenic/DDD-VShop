@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace VShop.SharedKernel.Infrastructure.Services.Contracts
 {
-    public interface ISubscriptionBackgroundService
+    public interface IBackgroundService
     {
         Task StartAsync(CancellationToken cancellationToken);
         Task StopAsync(CancellationToken cancellationToken);

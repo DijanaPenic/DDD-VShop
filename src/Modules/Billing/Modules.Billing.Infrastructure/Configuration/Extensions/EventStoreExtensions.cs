@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
+using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.Integration.Services.Contracts;
@@ -14,7 +15,6 @@ using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Billing.API")]
 namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
@@ -38,18 +38,14 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
             (typeof(IIntegrationEventStore),
                 typeof(IntegrationEventStore)
             );
-            
-            // NOTE: Cannot use AddHostedService to register individual workers of the same type.
-            // Source: https://github.com/dotnet/runtime/issues/38751
-            services.AddHostedService<EventStoreSubscriptionHostedService>();
 
-            // Subscribe to integration streams
-            services.AddSingleton<ISubscriptionBackgroundService, EventStoreSubscriptionBackgroundService>(provider =>
+            // Subscribe to integration streams.
+            services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
             {
                 ILogger logger = provider.GetService<ILogger>();
                 IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
                 
-                return new EventStoreSubscriptionBackgroundService
+                return new EventStoreBackgroundService
                 (
                     logger, eventStoreClient, provider, messageRegistry,
                     new SubscriptionConfig

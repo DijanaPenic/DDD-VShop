@@ -14,6 +14,7 @@ using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Subscriptions.Services.Contracts;
 
 namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
 {
@@ -35,17 +36,13 @@ namespace VShop.Modules.Catalog.API.Infrastructure.Extensions
                 typeof(IntegrationEventStore)
             );
 
-            // NOTE: Cannot use AddHostedService to register individual workers of the same type.
-            // Source: https://github.com/dotnet/runtime/issues/38751
-            services.AddHostedService<EventStoreSubscriptionHostedService>();
-
             // Subscribe to integration streams
-            services.AddSingleton<ISubscriptionBackgroundService, EventStoreSubscriptionBackgroundService>(provider =>
+            services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
             {
                 ILogger logger = provider.GetService<ILogger>();
                 IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
                 
-                return new EventStoreSubscriptionBackgroundService
+                return new EventStoreBackgroundService
                 (
                     logger, eventStoreClient, provider, messageRegistry,
                     new SubscriptionConfig

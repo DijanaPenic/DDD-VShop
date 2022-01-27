@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
+using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Projections;
@@ -52,18 +53,13 @@ internal static class EventStoreExtensions
         string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
         string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
 
-        // NOTE: Cannot use AddHostedService to register individual workers of the same type.
-        // Source: https://github.com/dotnet/runtime/issues/38751
-        services.AddHostedService<EventStoreSubscriptionHostedService>();
-
         // Read model projections
-        services.AddSingleton<IntegrationEventProjectionToEventStore>();
-        services.AddSingleton<ISubscriptionBackgroundService, EventStoreSubscriptionBackgroundService>(provider =>
+        services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
         {
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             
-            return new EventStoreSubscriptionBackgroundService
+            return new EventStoreBackgroundService
             (
                 logger, eventStoreClient, provider, messageRegistry,
                 new SubscriptionConfig
@@ -80,13 +76,14 @@ internal static class EventStoreExtensions
         });
 
         // Publish integration events from the current bounded context
-        services.AddSingleton<ISubscriptionBackgroundService, EventStoreSubscriptionBackgroundService>(provider =>
+        services.AddSingleton<IntegrationEventProjectionToEventStore>();
+        services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
         {
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventProjectionToEventStore>();
             
-            return new EventStoreSubscriptionBackgroundService
+            return new EventStoreBackgroundService
             (
                 logger, eventStoreClient, provider, messageRegistry,
                 new SubscriptionConfig
@@ -104,13 +101,13 @@ internal static class EventStoreExtensions
 
         // Subscribe to integration streams
         services.AddSingleton<IntegrationEventPublisher>();
-        services.AddSingleton<ISubscriptionBackgroundService, EventStoreSubscriptionBackgroundService>(provider =>
+        services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
         {
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventPublisher>();
             
-            return new EventStoreSubscriptionBackgroundService
+            return new EventStoreBackgroundService
             (
                 logger, eventStoreClient, provider, messageRegistry,
                 new SubscriptionConfig

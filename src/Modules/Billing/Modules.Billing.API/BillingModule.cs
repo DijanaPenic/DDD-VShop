@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -31,14 +33,14 @@ internal class BillingModule : IModule
     public string Name => "Billing";
     public Assembly[] Assemblies { get; set; }
 
-    public void Use(IConfiguration configuration, ILogger logger)
+    public void Add(IConfiguration configuration, ILogger logger)
     {
         ConfigureCompositionRoot(configuration, logger);
+        RunHostedServices();
         
-        using IServiceScope scope = BillingCompositionRoot.CreateScope();
-        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)));
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = BillingCompositionRoot.ServiceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
     private void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
@@ -48,6 +50,7 @@ internal class BillingModule : IModule
         PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
 
+        services.AddLogging(logger, Name);
         services.AddInfrastructure(Assemblies);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
@@ -55,7 +58,6 @@ internal class BillingModule : IModule
         services.AddTransient<IPaymentService, FakePaymentService>();
         services.AddTransient<IPaymentRepository, PaymentRepository>();
         services.AddAutoMapper(typeof(PaymentAutomapperProfile));
-        services.AddSingleton(logger.ForContext("Module", "Billing"));
         services.AddSingleton(BillingMessageRegistry.Initialize());
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
@@ -66,5 +68,14 @@ internal class BillingModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider);
+    }
+    
+    private static void RunHostedServices() // Database migration.
+    {
+        using IServiceScope scope = BillingCompositionRoot.CreateScope();
+        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
+
+        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
+            .GetAwaiter().GetResult();
     }
 }

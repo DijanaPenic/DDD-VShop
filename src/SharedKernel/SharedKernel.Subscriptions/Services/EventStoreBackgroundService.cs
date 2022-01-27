@@ -3,15 +3,15 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Infrastructure.Threading;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
+using VShop.SharedKernel.Subscriptions.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Threading;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Subscriptions.Services
 {
-    public class EventStoreSubscriptionBackgroundService : ISubscriptionBackgroundService
+    public class EventStoreBackgroundService : IEventStoreBackgroundService
     {
         private CancellationTokenSource _cancellationTokenSource;
         private Task _executingTask;
@@ -24,7 +24,7 @@ namespace VShop.SharedKernel.Subscriptions.Services
         private readonly SubscriptionConfig _subscriptionConfig;
         private readonly string _subscriptionName;
 
-        public EventStoreSubscriptionBackgroundService
+        public EventStoreBackgroundService
         (
             ILogger logger,
             EventStoreClient eventStoreClient,
