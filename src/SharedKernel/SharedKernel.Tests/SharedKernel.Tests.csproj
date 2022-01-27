@@ -19,8 +19,4 @@
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Customizations" />
-    </ItemGroup>
-
 </Project>

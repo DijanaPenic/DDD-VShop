@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Services
 {
-    internal class ClockService : IClockService
+    public class ClockService : IClockService
     {
         private readonly IClock _clock;
 

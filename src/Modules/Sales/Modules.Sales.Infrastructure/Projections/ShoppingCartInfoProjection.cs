@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Events;
+using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Sales.Infrastructure.DAL.Entities;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
-namespace VShop.Modules.Sales.Infrastructure.DAL.Projections
+namespace VShop.Modules.Sales.Infrastructure.Projections
 {
     internal static class ShoppingCartInfoProjection
     {

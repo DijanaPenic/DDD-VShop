@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Integration", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Subscriptions", "SharedKernel\SharedKernel.Subscriptions\SharedKernel.Subscriptions.csproj", "{ED0904E2-ED89-458C-B9D1-9C2AEB9B55B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Domain.Tests", "Modules\Sales\Sales.Domain.Tests\Sales.Domain.Tests.csproj", "{F740D164-0C29-4542-B2E6-4D2DB9D3ED10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Sales.Domain.Tests", "Modules\Sales\Modules.Sales.Domain.Tests\Modules.Sales.Domain.Tests.csproj", "{F740D164-0C29-4542-B2E6-4D2DB9D3ED10}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.API.Tests", "Modules\Sales\Sales.API.Tests\Sales.API.Tests.csproj", "{E588336A-C1A3-4109-92B8-3295128FDE0E}"
 EndProject

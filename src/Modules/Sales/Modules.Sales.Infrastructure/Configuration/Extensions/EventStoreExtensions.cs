@@ -18,7 +18,7 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
-using VShop.Modules.Sales.Infrastructure.DAL.Projections;
+using VShop.Modules.Sales.Infrastructure.Projections;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Sales.API")]
 namespace VShop.Modules.Sales.Infrastructure.Configuration.Extensions;

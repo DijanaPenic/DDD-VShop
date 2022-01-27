@@ -5,6 +5,7 @@ using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb;
 
+// TODO - move to Extensions directory.
 public static class PostgresExtensions
 {    
     public static IServiceCollection AddUnitOfWork<T>(this IServiceCollection services) where T : class, IUnitOfWork

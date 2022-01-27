@@ -1,12 +1,11 @@
 using Xunit;
-using System.Linq;
 using FluentAssertions;
 
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.Modules.Sales.Domain.Enums;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Tests.Customizations;
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Domain.ValueObjects;
 
 namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 {
@@ -14,7 +13,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
     {
         [Theory]
         [CustomizedAutoData]
-        public void Creates_an_order
+        internal void Creates_an_order
         (
             EntityId orderId,
             Price deliveryCost,
@@ -49,7 +48,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Adds_a_new_order_line_to_order
+        internal void Adds_a_new_order_line_to_order
         (
             Order sut,
             EntityId productId,
@@ -70,7 +69,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Removes_out_of_stock_items_from_order
+        internal void Removes_out_of_stock_items_from_order
         (
             Order sut,
             EntityId productId,
@@ -95,7 +94,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Removing_out_of_stock_items_from_order_fails_when_too_high_removal_quantity
+        internal void Removing_out_of_stock_items_from_order_fails_when_too_high_removal_quantity
         (
             Order sut,
             EntityId productId,
@@ -115,7 +114,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changes_status_from_processing_to_paid(Order sut)
+        internal void Changes_status_from_processing_to_paid(Order sut)
         {
             // Act
             Result result = sut.SetPaidStatus();
@@ -127,7 +126,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_pending_shipping_to_paid_fails(Order sut)
+        internal void Changing_status_from_pending_shipping_to_paid_fails(Order sut)
         {
             // Arrange
             sut.SetPaidStatus();
@@ -142,7 +141,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_paid_to_pending_shipping_succeeds(Order sut)
+        internal void Changing_status_from_paid_to_pending_shipping_succeeds(Order sut)
         {
             // Arrange
             sut.SetPaidStatus();
@@ -157,7 +156,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_processing_to_pending_shipping_fails(Order sut)
+        internal void Changing_status_from_processing_to_pending_shipping_fails(Order sut)
         {
             // Act
             Result result = sut.SetPendingShippingStatus();
@@ -168,7 +167,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_pending_shipping_to_shipped_succeeds(Order sut)
+        internal void Changing_status_from_pending_shipping_to_shipped_succeeds(Order sut)
         {
             // Arrange
             sut.SetPaidStatus();
@@ -184,7 +183,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_processing_to_shipped_fails(Order sut)
+        internal void Changing_status_from_processing_to_shipped_fails(Order sut)
         {
             // Act
             Result result = sut.SetShippedStatus();
@@ -195,7 +194,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_processing_to_cancelled_succeeds(Order sut)
+        internal void Changing_status_from_processing_to_cancelled_succeeds(Order sut)
         {
             // Act
             Result result = sut.SetCancelledStatus();
@@ -207,7 +206,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
         
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_paid_to_cancelled_succeeds(Order sut)
+        internal void Changing_status_from_paid_to_cancelled_succeeds(Order sut)
         {
             // Arrange
             sut.SetPaidStatus();
@@ -222,7 +221,7 @@ namespace VShop.Modules.Sales.Domain.Tests.UnitTests
 
         [Theory]
         [CustomizedAutoData]
-        public void Changing_status_from_pending_shipping_to_cancelled_fails(Order sut)
+        internal void Changing_status_from_pending_shipping_to_cancelled_fails(Order sut)
         {
             // Arrange 
             sut.SetPaidStatus();

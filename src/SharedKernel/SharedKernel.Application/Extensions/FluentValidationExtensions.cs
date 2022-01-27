@@ -2,7 +2,7 @@
 
 namespace VShop.SharedKernel.Application.Extensions
 {
-    public static class RuleBuilderExtensions
+    public static class FluentValidationExtensions
     {
         public static void Password<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
