@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.API.Tests", "Modules\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Tests", "SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj", "{4BE640F3-AC4F-482B-A97F-92C4F135CBC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Tests", "Modules\Sales\Sales.Tests\Sales.Tests.csproj", "{1D799B4A-51EC-41A4-98B6-DFB2364394F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Module.Sales.Tests", "Modules\Sales\Module.Sales.Tests\Module.Sales.Tests.csproj", "{1D799B4A-51EC-41A4-98B6-DFB2364394F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Catalog", "Catalog", "{6480BDA7-E3C4-4458-8CF6-9EEBB37D2C99}"
 EndProject

@@ -1,9 +1,6 @@
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
 using AutoFixture;
 using AutoFixture.Xunit2;
+using System.Reflection;
 
 using VShop.SharedKernel.Tests;
 
