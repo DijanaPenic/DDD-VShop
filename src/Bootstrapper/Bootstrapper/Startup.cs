@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
+using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
@@ -40,6 +41,7 @@ public class Startup
         logger.Information($"Enabled modules: {string.Join(", ", _modules.Select(m => m.Name))}");
         
         app.UseApplication();
+        app.UseInfrastructure();
 
         _modules.Clear();
     }

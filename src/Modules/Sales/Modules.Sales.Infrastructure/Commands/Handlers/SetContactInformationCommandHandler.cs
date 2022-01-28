@@ -25,7 +25,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
@@ -42,14 +41,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
                 command.Gender
             );
             if (setContactInformationResult.IsError) return setContactInformationResult.Error;
-
-            await _shoppingCartStore.SaveAndPublishAsync
-            (
-                shoppingCart,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
-                cancellationToken
-            );
+            
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return Result.Success;
         }

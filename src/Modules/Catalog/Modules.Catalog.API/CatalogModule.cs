@@ -41,8 +41,7 @@ internal class CatalogModule : IModule
         
         ServiceCollection services = new();
         
-        services.AddLogging(logger, Name);
-        services.AddInfrastructure(Assemblies);
+        services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));

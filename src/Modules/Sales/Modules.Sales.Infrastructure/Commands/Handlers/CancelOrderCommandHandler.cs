@@ -25,7 +25,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             Order order = await _orderStore.LoadAsync
             (
                 EntityId.Create(command.OrderId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
             if (order is null) return Result.NotFoundError("Order not found.");
@@ -35,13 +34,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             Result cancelOrderResult = order.SetCancelledStatus();
             if (cancelOrderResult.IsError) return cancelOrderResult.Error;
 
-            await _orderStore.SaveAndPublishAsync
-            (
-                order,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
-                cancellationToken
-            );
+            await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
             return Result.Success;
         }

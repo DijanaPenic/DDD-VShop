@@ -57,14 +57,10 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateShoppingCartAsync
         (
-            [FromBody] CreateShoppingCartRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId, // TODO - move to message context middleware.
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] CreateShoppingCartRequest request
         )
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
-
             Result result = await _commandDispatcher.SendAsync(command);
 
             return HandleResult(result, () => CreatedAtAction

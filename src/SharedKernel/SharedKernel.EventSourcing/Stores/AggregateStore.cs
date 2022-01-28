@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -21,30 +21,31 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private readonly IClockService _clockService;
         private readonly CustomEventStoreClient _eventStoreClient;
         private readonly IEventDispatcher _eventDispatcher;
+        private readonly IRequestContext _requestContext;
 
         public AggregateStore
         (
             IClockService clockService,
             CustomEventStoreClient eventStoreClient,
-            IEventDispatcher eventDispatcher
+            IEventDispatcher eventDispatcher, 
+            IRequestContext requestContext
         )
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _eventDispatcher = eventDispatcher;
+            _requestContext = requestContext;
         }
 
         public async Task SaveAndPublishAsync
         (
             TAggregate aggregate,
-            Guid messageId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
             if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IBaseEvent> events = await SaveAsync(aggregate, messageId, correlationId, cancellationToken);
+            IList<IBaseEvent> events = await SaveAsync(aggregate, cancellationToken);
 
             try
             {
@@ -59,8 +60,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         public async Task<IList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,
-            Guid messageId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -70,9 +69,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             {
                 @event.Metadata = new MessageMetadata
                 (
-                    SequentialGuid.Create(),
-                    messageId,
-                    correlationId,
+                    _requestContext.RequestId,
+                    _requestContext.CorrelationId,
                     _clockService.Now
                 );
                 return @event;
@@ -92,7 +90,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         public async Task<TAggregate> LoadAsync
         (
             EntityId aggregateId,
-            Guid messageId,
             CancellationToken cancellationToken = default
         )
         {
@@ -105,7 +102,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             aggregate.Load(events);
             
             IList<IBaseEvent> processedEvents = events
-                .Where(e => e.Metadata.CausationId == messageId).ToList();
+                .Where(e => e.Metadata.CausationId == _requestContext.RequestId).ToList();
 
             if (!processedEvents.Any()) return aggregate;
             

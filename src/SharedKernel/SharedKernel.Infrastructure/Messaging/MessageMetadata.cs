@@ -1,6 +1,7 @@
 using System;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
@@ -13,7 +14,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             CausationId = causationId;
         }
         
-        public MessageMetadata(Guid messageId, Guid causationId, Guid correlationId, Instant effectiveTime)
-        : this(messageId, causationId, correlationId) => EffectiveTime = effectiveTime.ToTimestamp();
+        public MessageMetadata(Guid causationId, Guid correlationId, Instant effectiveTime)
+        : this(SequentialGuid.Create(), causationId, correlationId) => EffectiveTime = effectiveTime.ToTimestamp();
     }
 }

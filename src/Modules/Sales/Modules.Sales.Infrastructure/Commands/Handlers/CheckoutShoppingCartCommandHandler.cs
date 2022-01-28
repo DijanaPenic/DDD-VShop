@@ -44,7 +44,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
             
@@ -58,13 +57,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             );
             if (checkoutResult.IsError) return checkoutResult.Error;
 
-            await _shoppingCartStore.SaveAndPublishAsync
-            (
-                shoppingCart,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
-                cancellationToken
-            );
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return new CheckoutResponse(shoppingCart.OrderId);
         }

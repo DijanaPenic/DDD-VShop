@@ -5,7 +5,6 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
@@ -36,7 +35,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data, // TODO - improve validation in commands.
-                command.Metadata.MessageId,
                 cancellationToken
             );
             
@@ -66,13 +64,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
                 if (addProductResult.IsError) return addProductResult.Error;
             }
 
-            await _shoppingCartStore.SaveAndPublishAsync
-            (
-                shoppingCart,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
-                cancellationToken
-            );
+            await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
             return Result.Success;
         }

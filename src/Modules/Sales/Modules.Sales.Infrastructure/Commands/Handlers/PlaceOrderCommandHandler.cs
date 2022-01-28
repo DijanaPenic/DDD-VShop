@@ -33,7 +33,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             Order order = await _orderStore.LoadAsync
             (
                 EntityId.Create(command.OrderId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
 
@@ -49,13 +48,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 
             order = createOrderResult.Data;
 
-            await _orderStore.SaveAndPublishAsync
-            (
-                order,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
-                cancellationToken
-            );
+            await _orderStore.SaveAndPublishAsync(order, cancellationToken);
 
             return order;
         }

@@ -25,7 +25,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
             
@@ -42,8 +41,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             await _shoppingCartStore.SaveAndPublishAsync
             (
                 shoppingCart,
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId,
                 cancellationToken
             );
 
