@@ -41,7 +41,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             Result<Order> createOrderResult = await _shoppingCartOrderingService.CreateOrderAsync
             (
                 EntityId.Create(command.ShoppingCartId).Data,
-                command.Metadata.MessageId,
                 cancellationToken
             );
             if (createOrderResult.IsError) return createOrderResult.Error;

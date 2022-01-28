@@ -34,11 +34,11 @@ namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
         }
 
         private void Handle(ShoppingCartCheckoutRequestedDomainEvent @event, Instant _) 
-            => RaiseCommand(new PlaceOrderCommand(OrderId, ShoppingCartId, new MessageMetadata()));
+            => RaiseCommand(new PlaceOrderCommand(OrderId, ShoppingCartId));
 
         private void Handle(OrderPlacedDomainEvent @event, Instant now)
         {
-            RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId, new MessageMetadata()));
+            RaiseCommand(new DeleteShoppingCartCommand(ShoppingCartId));
             
             // Schedule a reminder for payment.
             ScheduleReminder
@@ -52,14 +52,14 @@ namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
         {
             // User didn't manage to pay so we need to cancel the order.
             if (Status is OrderingProcessManagerStatus.OrderPaymentFailed)
-                RaiseCommand(new CancelOrderCommand(OrderId, new MessageMetadata()));
+                RaiseCommand(new CancelOrderCommand(OrderId));
             
             // Send an alert for the OrderPlaced status. The payment department
             // never replied with PaymentSucceededIntegrationEvent or PaymentFailedIntegrationEvent.
         }
 
         private void Handle(PaymentSucceededIntegrationEvent @event, Instant now)
-            => RaiseCommand(new SetPaidOrderStatusCommand(OrderId, new MessageMetadata()));
+            => RaiseCommand(new SetPaidOrderStatusCommand(OrderId));
 
         private void Handle(OrderStatusSetToPaidDomainEvent @event, Instant now)
         {
@@ -88,8 +88,7 @@ namespace VShop.Modules.Sales.Infrastructure.ProcessManagers
                 (
                     ol.ProductId,
                     ol.OutOfStockQuantity
-                )),
-                new MessageMetadata()
+                ))
             ));
         }
         

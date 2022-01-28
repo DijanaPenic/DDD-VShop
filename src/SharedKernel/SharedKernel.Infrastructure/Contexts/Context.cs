@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
-public class RequestContext : IRequestContext
+public class Context : IContext
 {
     public Guid RequestId { get; }
     public Guid CorrelationId { get; }
@@ -15,7 +15,7 @@ public class RequestContext : IRequestContext
     public string UserAgent { get; }
     public IIdentityContext Identity { get; }
 
-    public RequestContext(HttpContext context) : this
+    public Context(HttpContext context) : this
     (
         context.TryGetRequestId(),
         context.TryGetCorrelationId(),
@@ -28,7 +28,7 @@ public class RequestContext : IRequestContext
         
     }
 
-    private RequestContext
+    private Context
     (
         Guid? requestId,
         Guid? correlationId,

@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
             CancellationToken cancellationToken = default
         );
         
-        Task<IList<IBaseEvent>> SaveAsync
+        Task<IReadOnlyList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,
             CancellationToken cancellationToken = default

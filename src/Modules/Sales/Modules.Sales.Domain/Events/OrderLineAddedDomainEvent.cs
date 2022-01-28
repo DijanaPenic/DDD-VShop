@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class OrderLineAddedDomainEvent : MessageContext, IDomainEvent
+    public partial class OrderLineAddedDomainEvent : IDomainEvent
     {
         public OrderLineAddedDomainEvent
         (

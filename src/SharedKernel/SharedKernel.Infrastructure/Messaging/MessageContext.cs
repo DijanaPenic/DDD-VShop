@@ -1,12 +1,24 @@
+using System;
+
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
-    public abstract class MessageContext
+    public class MessageContext : IMessageContext
     {
-        public MessageMetadata Metadata { get; set; }
+        public Guid MessageId { get; }
+        public IContext Context { get; }
+
+        public MessageContext(Guid messageId, IContext context)
+        {
+            MessageId = messageId;
+            Context = context;
+        }
     }
     
     public interface IMessageContext
     {
-        public MessageMetadata Metadata { get; set; }
+        public Guid MessageId { get; }
+        public IContext Context { get; }
     }
 }

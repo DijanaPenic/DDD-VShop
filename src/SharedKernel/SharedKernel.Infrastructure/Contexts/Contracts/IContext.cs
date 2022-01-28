@@ -2,7 +2,7 @@ using System;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
-public interface IRequestContext
+public interface IContext
 {
     Guid RequestId { get; }
     Guid CorrelationId { get; }

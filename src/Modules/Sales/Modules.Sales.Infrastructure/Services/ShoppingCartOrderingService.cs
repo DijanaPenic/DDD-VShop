@@ -22,16 +22,10 @@ namespace VShop.Modules.Sales.Infrastructure.Services
         public async Task<Result<Order>> CreateOrderAsync
         (
             EntityId shoppingCartId,
-            Guid causationId,
             CancellationToken cancellationToken = default
         )
         {
-            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync
-            (
-                shoppingCartId,
-                causationId,
-                cancellationToken
-            );
+            ShoppingCart shoppingCart = await _shoppingCartStore.LoadAsync(shoppingCartId, cancellationToken);
 
             if (shoppingCart.Status is not ShoppingCartStatus.PendingCheckout)
                 return Result.ValidationError($"Shopping cart must be in '{ShoppingCartStatus.PendingCheckout}' status.");

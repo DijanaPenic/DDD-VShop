@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
@@ -15,7 +14,6 @@ namespace VShop.Modules.Sales.Domain.Services
         Task<Result<Order>> CreateOrderAsync
         (
             EntityId shoppingCartId,
-            Guid causationId,
             CancellationToken cancellationToken = default
         );
     }

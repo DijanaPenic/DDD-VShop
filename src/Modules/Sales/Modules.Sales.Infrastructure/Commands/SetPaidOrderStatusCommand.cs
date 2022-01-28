@@ -1,16 +1,14 @@
 using System;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class SetPaidOrderStatusCommand : MessageContext, ICommand
+    public partial class SetPaidOrderStatusCommand : ICommand
     {
-        public SetPaidOrderStatusCommand(Guid orderId, MessageMetadata metadata)
+        public SetPaidOrderStatusCommand(Guid orderId)
         {
             OrderId = orderId;
-            Metadata = metadata;
         }
     }
 }

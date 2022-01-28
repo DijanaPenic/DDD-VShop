@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.Modules.Billing.API.Models;
 using VShop.Modules.Billing.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.Modules.Billing.API.Controllers
 {
@@ -33,16 +31,9 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> TransferAsync
-        (
-            [FromBody] TransferRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
-        )
+        public async Task<IActionResult> TransferAsync([FromBody] TransferRequest request)
         {
             TransferCommand command = _mapper.Map<TransferCommand>(request);
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
-            
             Result result = await _commandDispatcher.SendAsync(command);
 
             return HandleResult(result, Ok);

@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 namespace VShop.Modules.Sales.Integration.Events
 {
     // Notification for Catalog - need to perform the "out of stock" check.
-    public partial class OrderStatusSetToPaidIntegrationEvent : MessageContext, IIntegrationEvent
+    public partial class OrderStatusSetToPaidIntegrationEvent : IIntegrationEvent
     {
         public OrderStatusSetToPaidIntegrationEvent(Guid orderId, IEnumerable<Types.OrderLine> orderLines)
         {

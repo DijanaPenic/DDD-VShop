@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 namespace VShop.Modules.Catalog.Integration.Events
 {
     // Notification for Sales - need to finalize the order and start the shipping process.
-    public partial class OrderStockProcessedIntegrationEvent : MessageContext, IIntegrationEvent 
+    public partial class OrderStockProcessedIntegrationEvent : IIntegrationEvent 
     {
         public OrderStockProcessedIntegrationEvent
         (

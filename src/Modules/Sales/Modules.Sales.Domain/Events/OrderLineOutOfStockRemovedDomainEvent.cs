@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class OrderLineOutOfStockRemovedDomainEvent : MessageContext, IDomainEvent
+    public partial class OrderLineOutOfStockRemovedDomainEvent : IDomainEvent
     {
         public OrderLineOutOfStockRemovedDomainEvent
         (

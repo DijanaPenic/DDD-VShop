@@ -55,10 +55,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateShoppingCartAsync
-        (
-            [FromBody] CreateShoppingCartRequest request
-        )
+        public async Task<IActionResult> CreateShoppingCartAsync([FromBody] CreateShoppingCartRequest request)
         {
             CreateShoppingCartCommand command = _mapper.Map<CreateShoppingCartCommand>(request);
             Result result = await _commandDispatcher.SendAsync(command);
@@ -76,19 +73,9 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> DeleteShoppingCartAsync
-        (
-            [FromRoute] Guid shoppingCartId,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
-        )
+        public async Task<IActionResult> DeleteShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            DeleteShoppingCartCommand command = new
-            (
-                shoppingCartId,
-                new MessageMetadata(requestId, Guid.Empty, correlationId)
-            );
-
+            DeleteShoppingCartCommand command = new(shoppingCartId);
             Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, NoContent);
@@ -100,19 +87,9 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(CheckoutResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> CheckoutShoppingCartAsync
-        (
-            [FromRoute] Guid shoppingCartId,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
-        )
+        public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
-            CheckoutShoppingCartCommand command = new
-            (
-                shoppingCartId,
-                new MessageMetadata(requestId, Guid.Empty, correlationId)
-            );
-
+            CheckoutShoppingCartCommand command = new(shoppingCartId);
             Result<CheckoutResponse> result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
@@ -129,16 +106,13 @@ namespace VShop.Modules.Sales.API.Controllers
         (
             [FromRoute] Guid shoppingCartId,
             [FromRoute] Guid productId,
-            [FromBody] AddShoppingCartProductRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] AddShoppingCartProductRequest request
         )
         {
             AddShoppingCartProductCommand command = new
             (
                 shoppingCartId,
-                _mapper.Map<ShoppingCartProductCommandDto>(request),
-                new MessageMetadata(requestId, Guid.Empty, correlationId)
+                _mapper.Map<ShoppingCartProductCommandDto>(request)
             )
             {
                 ShoppingCartItem = { ProductId = productId }
@@ -160,16 +134,13 @@ namespace VShop.Modules.Sales.API.Controllers
         (
             [FromRoute] Guid shoppingCartId,
             [FromRoute] Guid productId,
-            [FromBody] SetShoppingCartProductPriceRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] SetShoppingCartProductPriceRequest request
         )
         {
             SetShoppingCartProductPriceCommand command = _mapper.Map<SetShoppingCartProductPriceCommand>(request);
             command.ShoppingCartId = shoppingCartId;
             command.ProductId = productId;
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
-                
+
             Result commandResult = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(commandResult, Ok);
@@ -186,15 +157,12 @@ namespace VShop.Modules.Sales.API.Controllers
         (
             [FromRoute] Guid shoppingCartId,
             [FromRoute] Guid productId,
-            [FromBody] RemoveShoppingCartProductRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] RemoveShoppingCartProductRequest request
         )
         {
             RemoveShoppingCartProductCommand command = _mapper.Map<RemoveShoppingCartProductCommand>(request);
             command.ShoppingCartId = shoppingCartId;
             command.ProductId = productId;
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
             Result commandResult = await _commandDispatcher.SendAsync(command);
         
@@ -211,15 +179,12 @@ namespace VShop.Modules.Sales.API.Controllers
         public async Task<IActionResult> SetContactInformationAsync
         (
             [FromRoute] Guid shoppingCartId,
-            [FromBody] SetContactInformationRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] SetContactInformationRequest request
         )
         {
             SetContactInformationCommand command = _mapper.Map<SetContactInformationCommand>(request);
             command.ShoppingCartId = shoppingCartId;
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
-            
+
             Result result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
@@ -235,14 +200,11 @@ namespace VShop.Modules.Sales.API.Controllers
         public async Task<IActionResult> SetDeliveryAddressAsync
         (
             [FromRoute] Guid shoppingCartId,
-            [FromBody] SetDeliveryAddressRequest request,
-            [FromHeader(Name = "x-request-id")] Guid requestId,
-            [FromHeader(Name = "x-correlation-id")] Guid correlationId
+            [FromBody] SetDeliveryAddressRequest request
         )
         {
             SetDeliveryAddressCommand command = _mapper.Map<SetDeliveryAddressCommand>(request);
             command.ShoppingCartId = shoppingCartId;
-            command.Metadata = new MessageMetadata(requestId, Guid.Empty, correlationId);
 
             Result result = await _commandDispatcher.SendAsync(command);
         

@@ -1,16 +1,14 @@
 using System;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class CancelOrderCommand : MessageContext, ICommand
+    public partial class CancelOrderCommand : ICommand
     {
-        public CancelOrderCommand(Guid orderId, MessageMetadata metadata)
+        public CancelOrderCommand(Guid orderId)
         {
             OrderId = orderId;
-            Metadata = metadata;
         }
     }
 }

@@ -1,11 +1,10 @@
 using System;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class SetDeliveryAddressCommand : MessageContext, ICommand
+    public partial class SetDeliveryAddressCommand : ICommand
     {
         public SetDeliveryAddressCommand
         (
@@ -14,8 +13,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
             string countryCode,
             string postalCode,
             string stateProvince,
-            string streetAddress,
-            MessageMetadata metadata
+            string streetAddress
         )
         {
             ShoppingCartId = shoppingCartId;
@@ -24,7 +22,6 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
             PostalCode = postalCode;
             StateProvince = stateProvince;
             StreetAddress = streetAddress;
-            Metadata = metadata;
         }
     }
 }

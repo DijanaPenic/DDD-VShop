@@ -15,11 +15,18 @@ public class CustomEventStoreClient
 {
     private readonly EventStoreClient _eventStoreClient;
     private readonly IMessageRegistry _messageRegistry;
+    private readonly IMessageContextProvider _messageContextProvider;
 
-    public CustomEventStoreClient(EventStoreClient eventStoreClient, IMessageRegistry messageRegistry)
+    public CustomEventStoreClient
+    (
+        EventStoreClient eventStoreClient,
+        IMessageRegistry messageRegistry,
+        IMessageContextProvider messageContextProvider
+    )
     {
         _eventStoreClient = eventStoreClient;
         _messageRegistry = messageRegistry;
+        _messageContextProvider = messageContextProvider;
     }
 
     public Task AppendToStreamAsync
@@ -32,7 +39,7 @@ public class CustomEventStoreClient
     (
         GetStreamName(streamSuffix),
         StreamRevision.FromInt64(expectedVersion),
-        messages.ToEventData(_messageRegistry),
+        messages.ToEventData(_messageRegistry, _messageContextProvider),
         cancellationToken: ct
     ), cancellationToken);
 
@@ -46,7 +53,7 @@ public class CustomEventStoreClient
     (
         GetStreamName(streamSuffix),
         expectedState,
-        messages.ToEventData(_messageRegistry),
+        messages.ToEventData(_messageRegistry, _messageContextProvider),
         cancellationToken: ct
     ), cancellationToken);
 

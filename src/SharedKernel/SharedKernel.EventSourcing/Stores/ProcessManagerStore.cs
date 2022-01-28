@@ -13,6 +13,7 @@ using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -25,26 +26,27 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private readonly CustomEventStoreClient _eventStoreClient;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly ISchedulerService _messageSchedulerService;
+        private readonly IContext _context;
 
         public ProcessManagerStore
         (
             IClockService clockService,
             CustomEventStoreClient eventStoreClient,
             ICommandDispatcher commandDispatcher,
-            ISchedulerService messageSchedulerService
+            ISchedulerService messageSchedulerService,
+            IContext context
         )
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _commandDispatcher = commandDispatcher;
             _messageSchedulerService = messageSchedulerService;
+            _context = context;
         }
         
         public async Task SaveAndPublishAsync
         (
             TProcess processManager,
-            Guid messageId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         )
         {
@@ -63,9 +65,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             {
                 message.Metadata = new MessageMetadata
                 (
-                    SequentialGuid.Create(),
-                    messageId,
-                    correlationId,
+                    _context.RequestId,
+                    _context.CorrelationId,
                     _clockService.Now
                 );
                 return message;
@@ -117,7 +118,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         public async Task<TProcess> LoadAsync
         (
             Guid processManagerId,
-            Guid messageId,
             CancellationToken cancellationToken = default
         )
         {
@@ -131,7 +131,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             processManager.Load(inboxMessages, outboxMessages);
             
             IList<IMessage> processedMessages = outboxMessages
-                .Where(e => e.Metadata.CausationId == messageId).ToList();
+                .Where(e => e.Metadata.CausationId == _context.RequestId).ToList();
 
             if (!processedMessages.Any()) return processManager;
             

@@ -1,23 +1,20 @@
 using System;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class FinalizeOrderCommand : MessageContext, ICommand
+    public partial class FinalizeOrderCommand : ICommand
     {
         public FinalizeOrderCommand
         (
             Guid orderId,
-            IEnumerable<Types.OrderLine> orderLines,
-            MessageMetadata metadata
+            IEnumerable<Types.OrderLine> orderLines
         )
         {
             OrderId = orderId;
             OrderLines.Add(orderLines);
-            Metadata = metadata;
         }
         
         public partial class Types

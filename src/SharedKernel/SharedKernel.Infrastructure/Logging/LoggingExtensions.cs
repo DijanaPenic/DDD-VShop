@@ -24,13 +24,13 @@ internal static class LoggingExtensions
         app.Use(async (ctx, next) =>
         {
             ILogger logger = ctx.RequestServices.GetRequiredService<ILogger>();
-            IRequestContext requestContext = ctx.RequestServices.GetRequiredService<IRequestContext>();
+            IContext context = ctx.RequestServices.GetRequiredService<IContext>();
 
             logger.Information
             (
                 "Started processing a request [Request ID: '{RequestId}', Correlation ID: '{CorrelationId}', Trace ID: '{TraceId}', User ID: '{UserId}']...",
-                requestContext.RequestId, requestContext.CorrelationId, requestContext.TraceId,
-                requestContext.Identity.IsAuthenticated ? requestContext.Identity.Id : string.Empty
+                context.RequestId, context.CorrelationId, context.TraceId,
+                context.Identity.IsAuthenticated ? context.Identity.Id : string.Empty
             );
 
             await next();
@@ -38,8 +38,8 @@ internal static class LoggingExtensions
             logger.Information
             (
                 "Finished processing a request with status code: {StatusCode} [Request ID: '{RequestId}', Correlation ID: '{CorrelationId}', Trace ID: '{TraceId}', User ID: '{UserId}']",
-                ctx.Response.StatusCode, requestContext.RequestId, requestContext.CorrelationId, requestContext.TraceId,
-                requestContext.Identity.IsAuthenticated ? requestContext.Identity.Id : string.Empty
+                ctx.Response.StatusCode, context.RequestId, context.CorrelationId, context.TraceId,
+                context.Identity.IsAuthenticated ? context.Identity.Id : string.Empty
             );
         });
 

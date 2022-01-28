@@ -45,7 +45,7 @@ internal static class ContextExtensions
     public static IServiceCollection AddContext(this IServiceCollection services)
     {
         services.AddSingleton<ContextAccessor>();
-        services.AddTransient(_ => ContextAccessor.RequestContext);
+        services.AddTransient(_ => ContextAccessor.Context);
             
         return services;
     }
@@ -54,7 +54,7 @@ internal static class ContextExtensions
     {
         app.Use((ctx, next) =>
         {
-            ContextAccessor.RequestContext = new RequestContext(ctx);
+            ContextAccessor.Context = new Context(ctx);
                 
             return next();
         });

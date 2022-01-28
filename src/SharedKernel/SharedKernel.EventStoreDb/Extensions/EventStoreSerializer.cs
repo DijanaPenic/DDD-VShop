@@ -43,7 +43,8 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         public static IReadOnlyList<EventData> ToEventData<TMessage>
         (
             this IEnumerable<TMessage> messages,
-            IMessageRegistry messageRegistry
+            IMessageRegistry messageRegistry,
+            IMessageContextProvider messageContextProvider
         ) 
             where TMessage : IMessage
             => messages.Select((message, index) =>
@@ -55,7 +56,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
                     GetDeterministicMessageId(message, messageName, index),
                     messageName,
                     message.ToByteArray(), // Message.Metadata won't be deserialized here.
-                    message.Metadata.ToByteArray(),
+                    message.Metadata.ToByteArray(), // TODO - create Metadata from MessageContext
                     "application/octet-stream"
                 );
             }).ToList();

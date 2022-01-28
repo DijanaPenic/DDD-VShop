@@ -8,7 +8,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 namespace VShop.Modules.Sales.Integration.Events
 {
     // Notification for Billing - need to perform partial or full refund.
-    public partial class OrderFinalizedIntegrationEvent : MessageContext, IIntegrationEvent
+    public partial class OrderFinalizedIntegrationEvent : IIntegrationEvent
     {
         public OrderFinalizedIntegrationEvent(Guid orderId, decimal refundAmount, IEnumerable<Types.OrderLine> orderLines)
         {

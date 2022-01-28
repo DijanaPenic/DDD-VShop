@@ -1,16 +1,14 @@
 using System;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class DeleteShoppingCartCommand : MessageContext, ICommand
+    public partial class DeleteShoppingCartCommand : ICommand
     {
-        public DeleteShoppingCartCommand(Guid shoppingCartId, MessageMetadata metadata)
+        public DeleteShoppingCartCommand(Guid shoppingCartId)
          {
              ShoppingCartId = shoppingCartId;
-             Metadata = metadata;
          }
     }
 }

@@ -13,6 +13,8 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -21,20 +23,23 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private readonly IClockService _clockService;
         private readonly CustomEventStoreClient _eventStoreClient;
         private readonly IEventDispatcher _eventDispatcher;
-        private readonly IRequestContext _requestContext;
+        private readonly IContext _context;
+        private readonly IMessageContextRegistry _messageContextRegistry;
 
         public AggregateStore
         (
             IClockService clockService,
             CustomEventStoreClient eventStoreClient,
             IEventDispatcher eventDispatcher, 
-            IRequestContext requestContext
+            IContext context,
+            IMessageContextRegistry messageContextRegistry
         )
         {
             _clockService = clockService;
             _eventStoreClient = eventStoreClient;
             _eventDispatcher = eventDispatcher;
-            _requestContext = requestContext;
+            _context = context;
+            _messageContextRegistry = messageContextRegistry;
         }
 
         public async Task SaveAndPublishAsync
@@ -45,7 +50,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IBaseEvent> events = await SaveAsync(aggregate, cancellationToken);
+            IReadOnlyList<IBaseEvent> events = await SaveAsync(aggregate, cancellationToken);
 
             try
             {
@@ -57,34 +62,32 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
 
-        public async Task<IList<IBaseEvent>> SaveAsync
+        public async Task<IReadOnlyList<IBaseEvent>> SaveAsync
         (
             TAggregate aggregate,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken = default // TODO  - MessageId, CorrelationId
         )
         {
             if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IList<IBaseEvent> events = aggregate.Events.Select(@event =>
+            foreach (IBaseEvent @event in aggregate.Events)
             {
-                @event.Metadata = new MessageMetadata
+                _messageContextRegistry.Set
                 (
-                    _requestContext.RequestId,
-                    _requestContext.CorrelationId,
-                    _clockService.Now
+                    @event,
+                    new MessageContext(SequentialGuid.Create(), _context)
                 );
-                return @event;
-            }).ToList();
+            }
             
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetStreamName(aggregate.Id),
                 aggregate.Version,
-                events,
+                aggregate.Events,
                 cancellationToken
             );
 
-            return events;
+            return aggregate.Events;
         }
 
         public async Task<TAggregate> LoadAsync
@@ -101,8 +104,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             TAggregate aggregate = new();
             aggregate.Load(events);
             
-            IList<IBaseEvent> processedEvents = events
-                .Where(e => e.Metadata.CausationId == _requestContext.RequestId).ToList();
+            IReadOnlyList<IBaseEvent> processedEvents = events
+                .Where(e => e.Metadata.CausationId == _context.RequestId).ToList();
 
             if (!processedEvents.Any()) return aggregate;
             

@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events.Reminders
 {
-    public partial class ShippingGracePeriodExpiredDomainEvent : MessageContext, IDomainEvent
+    public partial class ShippingGracePeriodExpiredDomainEvent : IDomainEvent
     {
         public ShippingGracePeriodExpiredDomainEvent(Guid orderId)
         {

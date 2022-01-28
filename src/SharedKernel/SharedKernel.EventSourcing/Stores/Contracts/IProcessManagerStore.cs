@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
@@ -14,8 +13,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         Task SaveAndPublishAsync
         (
             TProcess processManager,
-            Guid messageId,
-            Guid correlationId,
             CancellationToken cancellationToken = default
         );
 
@@ -28,7 +25,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores.Contracts
         Task<TProcess> LoadAsync
         (
             Guid processManagerId,
-            Guid messageId,
             CancellationToken cancellationToken = default
         );
     }

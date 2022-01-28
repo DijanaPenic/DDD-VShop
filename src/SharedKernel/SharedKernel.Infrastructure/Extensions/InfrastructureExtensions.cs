@@ -13,6 +13,7 @@ using VShop.SharedKernel.Infrastructure.Queries;
 using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Logging;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 
@@ -39,11 +40,11 @@ public static class InfrastructureExtensions
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddFluentValidation(assemblies);
         services.AddLogging(logger, module);
+        services.AddMessaging(); 
 
         // TODO - need to finish.
         //services.AddModuleRequests(assemblies); 
-        //services.AddMessaging();  
-        
+
         return services;
     }
     

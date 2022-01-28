@@ -27,12 +27,7 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _processManagerStore = processManagerStore;
         }
 
-        protected async Task TransitionAsync
-        (
-            Guid processId,
-            IBaseEvent @event,
-            CancellationToken cancellationToken
-        )
+        protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
         {
             // TODO - missing validation for invalid processId.
             
@@ -42,24 +37,12 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, @event.GetType().Name
             );
 
-            TProcess processManager = await _processManagerStore.LoadAsync
-            (
-                processId,
-                @event.Metadata.MessageId,
-                cancellationToken
-            );
-
+            TProcess processManager = await _processManagerStore.LoadAsync(processId, cancellationToken); // TODO - event.MessageId
             if (processManager.IsRestored) return;
             
             processManager.Transition(@event, _clockService.Now);
 
-            await _processManagerStore.SaveAndPublishAsync
-            (
-                processManager,
-                @event.Metadata.MessageId,
-                @event.Metadata.CorrelationId,
-                cancellationToken
-            );
+            await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken); // TODO - event.MessageId, event.CorrelationId
         }
     }
 }
