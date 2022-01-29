@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf;
-using Newtonsoft.Json;
 
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
@@ -16,7 +16,9 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         public EventState State { get; set; }
         public int TimesSent { get; set; }
         public byte[] Body { get; }
-        public string Context { get; }
+        public Guid UserId { get; }
+        public Guid CausationId { get; }
+        public Guid CorrelationId { get; }
         public Guid TransactionId { get; }
         
         // For database migrations.
@@ -31,9 +33,11 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         )
         {
             Id = messageContext.MessageId;
+            UserId = messageContext.Context.Identity.Id;
+            CausationId = messageContext.Context.RequestId;
+            CorrelationId = messageContext.Context.CorrelationId;
             TypeName = messageRegistry.GetName(@event.GetType());
             Body = @event.ToByteArray();
-            Context = JsonConvert.SerializeObject(messageContext);
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;
@@ -43,7 +47,7 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
             => new
             (
                 (IIntegrationEvent)ProtobufSerializer.FromByteArray(Body, messageRegistry.GetType(TypeName)),
-                JsonConvert.DeserializeObject<MessageContext>(Context)
+                new MessageContext(Id, new Context(CausationId, CorrelationId, new IdentityContext(UserId)))
             );
     }
 }

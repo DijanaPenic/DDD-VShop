@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,10 @@ using VShop.SharedKernel.Scheduler.DAL;
 namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
 {
     [DbContext(typeof(SchedulerDbContext))]
-    partial class SchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20220129112034_ExpandedContextInformation")]
+    partial class ExpandedContextInformation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

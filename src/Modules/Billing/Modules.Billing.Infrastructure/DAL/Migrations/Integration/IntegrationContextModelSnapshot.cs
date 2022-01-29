@@ -35,10 +35,13 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
                         .HasColumnType("bytea")
                         .HasColumnName("body");
 
-                    b.Property<string>("Context")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("context");
+                    b.Property<Guid>("CausationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("causation_id");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id");
 
                     b.Property<Instant>("DateCreated")
                         .HasColumnType("timestamp with time zone")
@@ -64,6 +67,10 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("type_name");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()

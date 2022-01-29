@@ -22,8 +22,8 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
         public static IMessage FromByteString(ByteString data, Type type)
         {
             IMessage message = (IMessage)Activator.CreateInstance(type);
-            
             message.MergeFrom(data);
+            
             return message;
         }
     }

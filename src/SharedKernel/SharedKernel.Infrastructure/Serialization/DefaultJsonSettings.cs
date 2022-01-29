@@ -12,7 +12,8 @@ namespace VShop.SharedKernel.Infrastructure.Serialization
             Converters = new List<JsonConverter>
             {
                 NodaConverters.InstantConverter
-            }
+            },
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
     }
 }

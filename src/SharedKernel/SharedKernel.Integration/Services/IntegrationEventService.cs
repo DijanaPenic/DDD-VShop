@@ -47,26 +47,15 @@ namespace VShop.SharedKernel.Integration.Services
 
                 try
                 {
-                    await _integrationEventOutbox.MarkEventAsInProgressAsync
-                    (
-                        pendingEventLog.Id,
-                        cancellationToken
-                    );
+                    await _integrationEventOutbox.MarkEventAsInProgressAsync(pendingEventLog.Id, cancellationToken);
                     
-                    (IIntegrationEvent integrationEvent, IMessageContext messageContext) = pendingEventLog.GetEvent(_messageRegistry);
+                    (IIntegrationEvent integrationEvent, IMessageContext messageContext) = pendingEventLog
+                        .GetEvent(_messageRegistry);
+                    
                     _messageContextRegistry.Set(integrationEvent, messageContext);
                     
-                    await _integrationEventStore.SaveAsync
-                    (
-                        integrationEvent,
-                        cancellationToken
-                    );
-
-                    await _integrationEventOutbox.MarkEventAsPublishedAsync
-                    (
-                        pendingEventLog.Id,
-                        cancellationToken
-                    );
+                    await _integrationEventStore.SaveAsync(integrationEvent, cancellationToken);
+                    await _integrationEventOutbox.MarkEventAsPublishedAsync(pendingEventLog.Id, cancellationToken);
                 }
                 catch (Exception ex)
                 {
