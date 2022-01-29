@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         public EventState State { get; set; }
         public int TimesSent { get; set; }
         public byte[] Body { get; }
-        public Guid UserId { get; }
+        public Guid? UserId { get; }
         public Guid CausationId { get; }
         public Guid CorrelationId { get; }
         public Guid TransactionId { get; }

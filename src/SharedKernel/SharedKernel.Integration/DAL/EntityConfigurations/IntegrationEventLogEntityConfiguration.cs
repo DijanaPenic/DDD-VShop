@@ -16,7 +16,7 @@ namespace VShop.SharedKernel.Integration.DAL.EntityConfigurations
             builder.Property(el => el.State).IsRequired();
             builder.Property(el => el.TimesSent).IsRequired();
             builder.Property(el => el.Body).IsRequired();
-            builder.Property(el => el.UserId).IsRequired();
+            builder.Property(el => el.UserId);
             builder.Property(el => el.CausationId).IsRequired();
             builder.Property(el => el.CorrelationId).IsRequired();
             builder.Property(el => el.TransactionId).IsRequired();

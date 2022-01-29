@@ -68,7 +68,7 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
                         .HasColumnType("text")
                         .HasColumnName("type_name");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 

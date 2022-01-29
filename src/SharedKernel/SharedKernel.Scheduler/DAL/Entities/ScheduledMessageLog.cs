@@ -14,7 +14,7 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
     public class ScheduledMessageLog : DbEntity
     {
         public Guid Id { get; }
-        public Guid UserId { get; }
+        public Guid? UserId { get; }
         public Guid CausationId { get; }
         public Guid CorrelationId { get; }
         public byte[] Body { get; }

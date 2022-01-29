@@ -2,19 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VShop.SharedKernel.Scheduler.DAL;
+using VShop.SharedKernel.Integration.DAL;
 
 #nullable disable
 
-namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
+namespace VShop.Modules.Catalog.Infrastructure.DAL.Migrations.Integration
 {
-    [DbContext(typeof(SchedulerDbContext))]
-    partial class SchedulerContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(IntegrationDbContext))]
+    [Migration("20220129155241_UserIdChangedToOptional")]
+    partial class UserIdChangedToOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +25,7 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VShop.SharedKernel.Scheduler.DAL.Entities.ScheduledMessageLog", b =>
+            modelBuilder.Entity("VShop.SharedKernel.Integration.DAL.Entities.IntegrationEventLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,13 +53,17 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_updated");
 
-                    b.Property<Instant>("ScheduledTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("scheduled_time");
-
-                    b.Property<int>("Status")
+                    b.Property<int>("State")
                         .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnName("state");
+
+                    b.Property<int>("TimesSent")
+                        .HasColumnType("integer")
+                        .HasColumnName("times_sent");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("transaction_id");
 
                     b.Property<string>("TypeName")
                         .IsRequired()
@@ -75,9 +81,9 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
                         .HasColumnName("xmin");
 
                     b.HasKey("Id")
-                        .HasName("pk_message_log");
+                        .HasName("pk_integration_event_queue");
 
-                    b.ToTable("message_log", "scheduler");
+                    b.ToTable("integration_event_queue", "integration");
                 });
 #pragma warning restore 612, 618
         }
