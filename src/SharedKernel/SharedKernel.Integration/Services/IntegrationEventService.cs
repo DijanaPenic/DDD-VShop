@@ -12,6 +12,7 @@ namespace VShop.SharedKernel.Integration.Services
     {
         private readonly ILogger _logger;
         private readonly IMessageRegistry _messageRegistry;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IIntegrationEventStore _integrationEventStore;
         private readonly IIntegrationEventOutbox _integrationEventOutbox;
 
@@ -19,12 +20,14 @@ namespace VShop.SharedKernel.Integration.Services
         (
             ILogger logger,
             IMessageRegistry messageRegistry,
+            IMessageContextRegistry messageContextRegistry,
             IIntegrationEventStore integrationEventStore,
             IIntegrationEventOutbox integrationEventOutbox
         )
         {
             _logger = logger;
             _messageRegistry = messageRegistry;
+            _messageContextRegistry = messageContextRegistry;
             _integrationEventStore = integrationEventStore;
             _integrationEventOutbox = integrationEventOutbox;
         }
@@ -49,10 +52,13 @@ namespace VShop.SharedKernel.Integration.Services
                         pendingEventLog.Id,
                         cancellationToken
                     );
-
+                    
+                    (IIntegrationEvent integrationEvent, IMessageContext messageContext) = pendingEventLog.GetEvent(_messageRegistry);
+                    _messageContextRegistry.Set(integrationEvent, messageContext);
+                    
                     await _integrationEventStore.SaveAsync
                     (
-                        pendingEventLog.GetEvent(_messageRegistry),
+                        integrationEvent,
                         cancellationToken
                     );
 
@@ -80,8 +86,8 @@ namespace VShop.SharedKernel.Integration.Services
         {
             _logger.Information
             (
-                "Enqueuing integration event {IntegrationEventType} {IntegrationEventId} - ({IntegrationEvent})",
-                @event.GetType().Name, @event.Metadata.MessageId, @event
+                "Enqueuing integration event {IntegrationEventType} - ({IntegrationEvent})",
+                @event.GetType().Name, @event
             );
             
             await _integrationEventOutbox.SaveEventAsync(@event, cancellationToken);

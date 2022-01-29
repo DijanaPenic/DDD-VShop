@@ -1,6 +1,8 @@
 using System;
 
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
 {
@@ -14,11 +16,11 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
             MessageId = messageId;
             Context = context;
         }
-    }
-    
-    public interface IMessageContext
-    {
-        public Guid MessageId { get; }
-        public IContext Context { get; }
+        
+        public MessageContext(IContext context)
+        {
+            MessageId = SequentialGuid.Create();
+            Context = context;
+        }
     }
 }

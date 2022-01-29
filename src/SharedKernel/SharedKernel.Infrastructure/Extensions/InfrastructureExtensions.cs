@@ -51,7 +51,6 @@ public static class InfrastructureExtensions
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app)
     {
         app.UseContext();
-        app.UseLogging(); 
 
         return app;
     }

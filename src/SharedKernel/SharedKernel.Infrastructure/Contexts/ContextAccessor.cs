@@ -8,7 +8,7 @@ public sealed class ContextAccessor
 {
     private static readonly AsyncLocal<ContextHolder> Holder = new();
 
-    public static IContext Context
+    public IContext Context
     {
         get => Holder.Value?.Context;
         set

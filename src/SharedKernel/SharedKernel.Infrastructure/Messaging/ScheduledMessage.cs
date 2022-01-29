@@ -13,7 +13,6 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
             Body = message.ToByteString();
-            Metadata = message.Metadata;
             TypeName = message.GetType().AssemblyQualifiedName;
             ScheduledTime = scheduledTime.ToTimestamp();
         }

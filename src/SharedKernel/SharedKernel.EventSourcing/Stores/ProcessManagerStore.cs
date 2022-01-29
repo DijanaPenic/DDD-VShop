@@ -6,9 +6,7 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Errors;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -22,23 +20,23 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 {
     public class ProcessManagerStore<TProcess> : IProcessManagerStore<TProcess> where TProcess : ProcessManager, new()
     {
-        private readonly IClockService _clockService;
         private readonly CustomEventStoreClient _eventStoreClient;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly ISchedulerService _messageSchedulerService;
         private readonly IContext _context;
 
         public ProcessManagerStore
         (
-            IClockService clockService,
             CustomEventStoreClient eventStoreClient,
+            IMessageContextRegistry messageContextRegistry,
             ICommandDispatcher commandDispatcher,
             ISchedulerService messageSchedulerService,
             IContext context
         )
         {
-            _clockService = clockService;
             _eventStoreClient = eventStoreClient;
+            _messageContextRegistry = messageContextRegistry;
             _commandDispatcher = commandDispatcher;
             _messageSchedulerService = messageSchedulerService;
             _context = context;
@@ -52,6 +50,9 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
+            
+            foreach (IMessage message in processManager.Inbox.Events.Concat(processManager.Outbox.Messages))
+                _messageContextRegistry.Set(message, new MessageContext(_context));
 
             await _eventStoreClient.AppendToStreamAsync
             (
@@ -60,29 +61,18 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 processManager.Inbox.Events,
                 cancellationToken
             );
-            
-            IList<IMessage> outboxMessages = processManager.Outbox.Messages.Select(message =>
-            {
-                message.Metadata = new MessageMetadata
-                (
-                    _context.RequestId,
-                    _context.CorrelationId,
-                    _clockService.Now
-                );
-                return message;
-            }).ToList();
-            
+
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetOutboxStreamName(processManager.Id),
                 processManager.Outbox.Version,
-                outboxMessages,
+                processManager.Outbox.Messages,
                 cancellationToken
             );
 
             try
             {
-                await PublishAsync(outboxMessages, cancellationToken);
+                await PublishAsync(processManager.Outbox.Messages, cancellationToken);
             }
             finally
             {
@@ -121,21 +111,24 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IBaseEvent> inboxMessages = await _eventStoreClient
+            IReadOnlyList<MessageEnvelope<IBaseEvent>> inboxEnvelopes = await _eventStoreClient
                 .ReadStreamForwardAsync<IBaseEvent>(GetInboxStreamName(processManagerId), cancellationToken);
             
-            IReadOnlyList<IMessage> outboxMessages = await _eventStoreClient
+            IReadOnlyList<MessageEnvelope<IMessage>> outboxEnvelopes = await _eventStoreClient
                 .ReadStreamForwardAsync<IMessage>(GetOutboxStreamName(processManagerId), cancellationToken);
 
             TProcess processManager = new();
-            processManager.Load(inboxMessages, outboxMessages);
-            
-            IList<IMessage> processedMessages = outboxMessages
-                .Where(e => e.Metadata.CausationId == _context.RequestId).ToList();
+            processManager.Load(inboxEnvelopes.ToMessages(), outboxEnvelopes.ToMessages());
 
-            if (!processedMessages.Any()) return processManager;
+            IList<MessageEnvelope<IMessage>> processed = outboxEnvelopes
+                .Where(e => e.MessageContext.Context.RequestId == _context.RequestId).ToList();
+
+            if (!processed.Any()) return processManager;
             
-            await PublishAsync(processedMessages, cancellationToken); 
+            foreach ((IMessage message, IMessageContext messageContext) in processed)
+                _messageContextRegistry.Set(message, messageContext);
+            
+            await PublishAsync(processed.ToMessages(), cancellationToken); 
             processManager.Restore();
 
             return processManager;

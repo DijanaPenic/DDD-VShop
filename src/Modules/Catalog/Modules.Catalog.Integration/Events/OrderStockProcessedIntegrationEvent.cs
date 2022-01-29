@@ -1,4 +1,3 @@
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Catalog.Integration.Events
@@ -9,13 +8,11 @@ namespace VShop.Modules.Catalog.Integration.Events
         public OrderStockProcessedIntegrationEvent
         (
             Guid orderId,
-            IEnumerable<Types.OrderLine> orderLines,
-            MessageMetadata metadata
+            IEnumerable<Types.OrderLine> orderLines
         )
         {
             OrderId = orderId;
             OrderLines.AddRange(orderLines);
-            Metadata = metadata;
         }
 
         public partial class Types

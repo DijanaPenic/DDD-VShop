@@ -10,7 +10,7 @@ using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -45,11 +45,11 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry);
+            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry)?.Message;
             if (integrationEvent is null) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
-            
+
             using IServiceScope scope = _serviceProvider.CreateScope();
             SubscriptionDbContext subscriptionDbContext = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
 
@@ -63,7 +63,7 @@ namespace VShop.SharedKernel.Integration.Projections
                     await _eventDispatcher.PublishAsync
                     (
                         integrationEvent,
-                        NotificationDispatchStrategy.SyncStopOnException,
+                        EventDispatchStrategy.SyncStopOnException,
                         cancellationToken
                     );
                 }

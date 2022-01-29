@@ -3,6 +3,7 @@
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Integration.Stores
 {
@@ -16,7 +17,7 @@ namespace VShop.SharedKernel.Integration.Stores
         {
             if (@event is null)
                 throw new ArgumentNullException(nameof(@event));
-
+            
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetStreamName(),
@@ -27,11 +28,11 @@ namespace VShop.SharedKernel.Integration.Stores
         }
         
         public async Task<IReadOnlyList<IIntegrationEvent>> LoadAsync(CancellationToken cancellationToken = default)
-            => await _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
+            => (await _eventStoreClient.ReadStreamForwardAsync<IIntegrationEvent>
             (
                 GetStreamName(),
                 cancellationToken
-            );
+            )).ToMessages();
 
         public static string GetStreamName() => "integration";
     }

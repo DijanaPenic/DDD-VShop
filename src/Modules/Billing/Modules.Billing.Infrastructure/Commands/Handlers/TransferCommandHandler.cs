@@ -2,7 +2,6 @@
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
@@ -62,17 +61,10 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
                 Type = PaymentType.Transfer
             };
             await _paymentRepository.SaveAsync(transfer, cancellationToken);
-
-            MessageMetadata metadata = new
-            (
-                SequentialGuid.Create(),
-                command.Metadata.MessageId,
-                command.Metadata.CorrelationId
-            );
-
+            
             IIntegrationEvent paymentIntegrationEvent = transferResult.IsError
-                ? new PaymentFailedIntegrationEvent(command.OrderId, metadata)
-                : new PaymentSucceededIntegrationEvent(command.OrderId, metadata);
+                ? new PaymentFailedIntegrationEvent(command.OrderId)
+                : new PaymentSucceededIntegrationEvent(command.OrderId);
             
             await _billingIntegrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
             

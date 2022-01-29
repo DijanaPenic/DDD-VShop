@@ -39,7 +39,7 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry);
+            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry)?.Message;
             if (integrationEvent is null) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);

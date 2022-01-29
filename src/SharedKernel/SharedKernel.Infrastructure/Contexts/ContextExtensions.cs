@@ -7,14 +7,14 @@ using Microsoft.Extensions.Primitives;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
-internal static class ContextExtensions
+public static class ContextExtensions
 {
     private const string CorrelationIdKey = "x-correlation-id";
     private const string ForwardedForKey = "x-forwarded-for";
-    private const string RequestIdKey = "x-request-for";
+    private const string RequestIdKey = "x-request-id";
     private const string UserAgentKey = "user-agent";
 
-    public static string GetUserIpAddress(this HttpContext context)
+    internal static string GetUserIpAddress(this HttpContext context)
     {
         if (context is null) return string.Empty;
 
@@ -29,23 +29,22 @@ internal static class ContextExtensions
         return ipAddress ?? string.Empty;
     }
 
-    public static Guid? TryGetCorrelationId(this HttpContext context)
+    internal static Guid? TryGetCorrelationId(this HttpContext context)
         => context.Request.Headers.TryGetValue(CorrelationIdKey, out StringValues id) 
             ? Guid.TryParse(id.ToString(), out Guid guid) ? guid : null
             : null;
     
-    public static Guid? TryGetRequestId(this HttpContext context)
+    internal static Guid? TryGetRequestId(this HttpContext context)
         => context.Request.Headers.TryGetValue(RequestIdKey, out StringValues id) 
             ? Guid.TryParse(id.ToString(), out Guid guid) ? guid : null
             : null;
 
-    public static string GetUserAgent(this HttpContext context)
+    internal static string GetUserAgent(this HttpContext context)
         => context.Request.Headers[UserAgentKey];
     
     public static IServiceCollection AddContext(this IServiceCollection services)
     {
-        services.AddSingleton<ContextAccessor>();
-        services.AddTransient(_ => ContextAccessor.Context);
+        services.AddTransient(sp => sp.GetRequiredService<ContextAccessor>().Context);
             
         return services;
     }
@@ -54,7 +53,7 @@ internal static class ContextExtensions
     {
         app.Use((ctx, next) =>
         {
-            ContextAccessor.Context = new Context(ctx);
+            ctx.RequestServices.GetRequiredService<ContextAccessor>().Context = new Context(ctx);;
                 
             return next();
         });

@@ -6,40 +6,35 @@ using System.Collections.Generic;
 
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
     public class AggregateStore<TAggregate> : IAggregateStore<TAggregate> where TAggregate : AggregateRoot, new()
     {
-        private readonly IClockService _clockService;
         private readonly CustomEventStoreClient _eventStoreClient;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IContext _context;
-        private readonly IMessageContextRegistry _messageContextRegistry;
 
         public AggregateStore
         (
-            IClockService clockService,
             CustomEventStoreClient eventStoreClient,
+            IMessageContextRegistry messageContextRegistry,
             IEventDispatcher eventDispatcher, 
-            IContext context,
-            IMessageContextRegistry messageContextRegistry
+            IContext context
         )
         {
-            _clockService = clockService;
             _eventStoreClient = eventStoreClient;
+            _messageContextRegistry = messageContextRegistry;
             _eventDispatcher = eventDispatcher;
             _context = context;
-            _messageContextRegistry = messageContextRegistry;
         }
 
         public async Task SaveAndPublishAsync
@@ -50,11 +45,11 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
-            IReadOnlyList<IBaseEvent> events = await SaveAsync(aggregate, cancellationToken);
+            await SaveAsync(aggregate, cancellationToken);
 
             try
             {
-                await PublishAsync(events, cancellationToken);
+                await PublishAsync(aggregate.Events, cancellationToken);
             }
             finally
             {
@@ -62,23 +57,17 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
 
-        public async Task<IReadOnlyList<IBaseEvent>> SaveAsync
+        public async Task SaveAsync
         (
             TAggregate aggregate,
-            CancellationToken cancellationToken = default // TODO  - MessageId, CorrelationId
+            CancellationToken cancellationToken = default
         )
         {
             if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
             foreach (IBaseEvent @event in aggregate.Events)
-            {
-                _messageContextRegistry.Set
-                (
-                    @event,
-                    new MessageContext(SequentialGuid.Create(), _context)
-                );
-            }
-            
+                _messageContextRegistry.Set(@event, new MessageContext(_context));
+
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetStreamName(aggregate.Id),
@@ -86,8 +75,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 aggregate.Events,
                 cancellationToken
             );
-
-            return aggregate.Events;
         }
 
         public async Task<TAggregate> LoadAsync
@@ -96,20 +83,23 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<IBaseEvent> events = await _eventStoreClient
+            IReadOnlyList<MessageEnvelope<IBaseEvent>> envelopes = await _eventStoreClient
                 .ReadStreamForwardAsync<IBaseEvent>(GetStreamName(aggregateId), cancellationToken);
 
-            if (events.Count is 0) return default;
+            if (envelopes.Count is 0) return default;
 
             TAggregate aggregate = new();
-            aggregate.Load(events);
+            aggregate.Load(envelopes.ToMessages());
             
-            IReadOnlyList<IBaseEvent> processedEvents = events
-                .Where(e => e.Metadata.CausationId == _context.RequestId).ToList();
+            IList<MessageEnvelope<IBaseEvent>> processed = envelopes
+                .Where(e => e.MessageContext.Context.RequestId == _context.RequestId).ToList();
 
-            if (!processedEvents.Any()) return aggregate;
+            if (!processed.Any()) return aggregate;
             
-            await PublishAsync(processedEvents, cancellationToken); 
+            foreach ((IBaseEvent @event, IMessageContext messageContext) in processed)
+                _messageContextRegistry.Set(@event, messageContext);
+            
+            await PublishAsync(processed.ToMessages(), cancellationToken); 
             aggregate.Restore();
 
             return aggregate;
@@ -121,11 +111,18 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            // https://stackoverflow.com/questions/59320296/how-to-add-mediatr-publishstrategy-to-existing-project
             foreach (IBaseEvent @event in events)
-                await _eventDispatcher.PublishAsync(@event, NotificationDispatchStrategy.SyncStopOnException, cancellationToken);
+            {
+                await _eventDispatcher.PublishAsync
+                (
+                    @event,
+                    EventDispatchStrategy.SyncStopOnException,
+                    cancellationToken
+                );
+            }
         }
 
-        public static string GetStreamName(EntityId aggregateId) => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}";
+        public static string GetStreamName(EntityId aggregateId) 
+            => $"aggregate/{typeof(TAggregate).Name}/{aggregateId}";
     }
 }

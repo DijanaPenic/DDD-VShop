@@ -10,7 +10,9 @@ using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.Application.Projections
 {
@@ -42,7 +44,7 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>(_messageRegistry);
+            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>(_messageRegistry)?.Message;
             if(domainEvent is null) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();
@@ -66,7 +68,10 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await handler();
                 
-                await readDataContext.SaveChangesAsync(domainEvent.Metadata.EffectiveTime.ToInstant(), cancellationToken);
+                MessageMetadata messageMetadata = ProtobufSerializer.FromByteArray
+                    <MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
+                
+                await readDataContext.SaveChangesAsync(messageMetadata.EffectiveTime.ToInstant(), cancellationToken);
 
                 await subscriptionDbContext.Database.UseTransactionAsync
                 (

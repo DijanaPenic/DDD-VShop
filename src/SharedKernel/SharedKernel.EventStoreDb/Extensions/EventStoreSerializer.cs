@@ -1,22 +1,21 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using Google.Protobuf;
-using EventStore.Client;
+﻿using EventStore.Client;
 
-using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
-using Uuid = EventStore.Client.Uuid;
 using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb.Extensions
 {
     public static class EventStoreSerializer
     {
-        public static TMessage Deserialize<TMessage>(this ResolvedEvent resolvedEvent, IMessageRegistry messageRegistry)
+        public static MessageEnvelope<TMessage> Deserialize<TMessage>
+        (
+            this ResolvedEvent resolvedEvent,
+            IMessageRegistry messageRegistry
+        )
             where TMessage : IMessage
         {
             object data = ProtobufSerializer.FromByteArray
@@ -34,43 +33,17 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
 
             if (UpcastMessage() is not TMessage message) return default;
 
-            message.Metadata = ProtobufSerializer.FromByteArray
+            MessageMetadata messageMetadata = ProtobufSerializer.FromByteArray
                 <MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
 
-            return message;
+            return new MessageEnvelope<TMessage>(message, messageMetadata.ToMessageContext());
         }
 
-        public static IReadOnlyList<EventData> ToEventData<TMessage>
-        (
-            this IEnumerable<TMessage> messages,
-            IMessageRegistry messageRegistry,
-            IMessageContextProvider messageContextProvider
-        ) 
-            where TMessage : IMessage
-            => messages.Select((message, index) =>
-            {
-                string messageName = messageRegistry.GetName(message.GetType());
-
-                return new EventData
-                (
-                    GetDeterministicMessageId(message, messageName, index),
-                    messageName,
-                    message.ToByteArray(), // Message.Metadata won't be deserialized here.
-                    message.Metadata.ToByteArray(), // TODO - create Metadata from MessageContext
-                    "application/octet-stream"
-                );
-            }).ToList();
-        
-        private static Uuid GetDeterministicMessageId<TMessage>(TMessage message, string messageName, int index) 
-            where TMessage : IMessage
-        {
-            Guid deterministicId = DeterministicGuid.Create
+        private static IMessageContext ToMessageContext(this MessageMetadata messageMetadata)
+            => new MessageContext
             (
-                message.Metadata.CausationId,
-                $"{messageName}-{index}"
+                messageMetadata.MessageId,
+                new Context(messageMetadata.CausationId, messageMetadata.CorrelationId, IdentityContext.Empty) // TODO - identity.
             );
-
-            return Uuid.FromGuid(deterministicId);
-        }
     }
 }

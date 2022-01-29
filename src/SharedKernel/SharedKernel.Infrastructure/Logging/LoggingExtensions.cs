@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Builder;
 using Serilog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 using ILogger = Serilog.ILogger;
 
@@ -17,32 +14,5 @@ internal static class LoggingExtensions
         services.AddSingleton<ILoggerFactory>(new SerilogLoggerFactory());
 
         return services;
-    }
-        
-    public static IApplicationBuilder UseLogging(this IApplicationBuilder app)
-    {
-        app.Use(async (ctx, next) =>
-        {
-            ILogger logger = ctx.RequestServices.GetRequiredService<ILogger>();
-            IContext context = ctx.RequestServices.GetRequiredService<IContext>();
-
-            logger.Information
-            (
-                "Started processing a request [Request ID: '{RequestId}', Correlation ID: '{CorrelationId}', Trace ID: '{TraceId}', User ID: '{UserId}']...",
-                context.RequestId, context.CorrelationId, context.TraceId,
-                context.Identity.IsAuthenticated ? context.Identity.Id : string.Empty
-            );
-
-            await next();
-
-            logger.Information
-            (
-                "Finished processing a request with status code: {StatusCode} [Request ID: '{RequestId}', Correlation ID: '{CorrelationId}', Trace ID: '{TraceId}', User ID: '{UserId}']",
-                ctx.Response.StatusCode, context.RequestId, context.CorrelationId, context.TraceId,
-                context.Identity.IsAuthenticated ? context.Identity.Id : string.Empty
-            );
-        });
-
-        return app;
     }
 }

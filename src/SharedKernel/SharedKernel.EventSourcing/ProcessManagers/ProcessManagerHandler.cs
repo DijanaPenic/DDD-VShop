@@ -37,12 +37,12 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
                 typeof(TProcess).Name, @event.GetType().Name
             );
 
-            TProcess processManager = await _processManagerStore.LoadAsync(processId, cancellationToken); // TODO - event.MessageId
+            TProcess processManager = await _processManagerStore.LoadAsync(processId, cancellationToken);
             if (processManager.IsRestored) return;
             
             processManager.Transition(@event, _clockService.Now);
 
-            await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken); // TODO - event.MessageId, event.CorrelationId
+            await _processManagerStore.SaveAndPublishAsync(processManager, cancellationToken);
         }
     }
 }

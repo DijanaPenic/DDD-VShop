@@ -16,6 +16,7 @@ using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
@@ -28,19 +29,20 @@ internal class CatalogModule : IModule
     public string Name => "Catalog";
     public Assembly[] Assemblies { get; set; }
 
-    public void Initialize(IConfiguration configuration, ILogger logger)
+    public void Initialize(IConfiguration configuration, ILogger logger, ContextAccessor contextAccessor)
     {
-        ConfigureCompositionRoot(configuration, logger);
+        ConfigureCompositionRoot(configuration, logger, contextAccessor);
         RunHostedServices();
     }
 
-    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger)
+    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, ContextAccessor contextAccessor)
     {
         PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
         
         ServiceCollection services = new();
         
+        services.AddSingleton(contextAccessor);
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);

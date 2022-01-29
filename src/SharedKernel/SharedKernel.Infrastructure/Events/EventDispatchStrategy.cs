@@ -1,9 +1,9 @@
-﻿namespace VShop.SharedKernel.Infrastructure.Dispatchers
+﻿namespace VShop.SharedKernel.Infrastructure.Events
 {
     /// <summary>
     /// Strategy to use when publishing notifications
     /// </summary>
-    public enum NotificationDispatchStrategy
+    public enum EventDispatchStrategy
     {
         /// <summary>
         /// Run each notification handler after one another. Returns when all handlers are finished. In case of any

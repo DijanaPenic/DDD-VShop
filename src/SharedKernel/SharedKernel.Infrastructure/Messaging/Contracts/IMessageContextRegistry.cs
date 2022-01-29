@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 public interface IMessageContextRegistry

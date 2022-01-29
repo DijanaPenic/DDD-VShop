@@ -7,8 +7,8 @@ using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
@@ -17,6 +17,7 @@ namespace VShop.SharedKernel.Scheduler.Services
     {
         private readonly ILogger _logger;
         private readonly IMessageRegistry _messageRegistry;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IEventDispatcher _eventDispatcher;
         private readonly SchedulerDbContext _schedulerDbContext;
@@ -25,6 +26,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         (
             ILogger logger,
             IMessageRegistry messageRegistry,
+            IMessageContextRegistry messageContextRegistry,
             ICommandDispatcher commandDispatcher,
             IEventDispatcher eventDispatcher,
             SchedulerDbContext schedulerDbContext
@@ -32,6 +34,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             _logger = logger;
             _messageRegistry = messageRegistry;
+            _messageContextRegistry = messageContextRegistry;
             _commandDispatcher = commandDispatcher;
             _eventDispatcher = eventDispatcher;
             _schedulerDbContext = schedulerDbContext;
@@ -47,7 +50,10 @@ namespace VShop.SharedKernel.Scheduler.Services
         {
             try
             {
-                switch (scheduledMessageLog.GetMessage(_messageRegistry))
+                (IMessage message, IMessageContext messageContext) = scheduledMessageLog.GetMessage(_messageRegistry);
+                _messageContextRegistry.Set(message, messageContext);
+                
+                switch (message)
                 {
                     case IBaseCommand command:
                         object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
@@ -58,7 +64,7 @@ namespace VShop.SharedKernel.Scheduler.Services
                         await _eventDispatcher.PublishAsync
                         (
                             @event,
-                            NotificationDispatchStrategy.SyncStopOnException,
+                            EventDispatchStrategy.SyncStopOnException,
                             cancellationToken
                         );
                         break;

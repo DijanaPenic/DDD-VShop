@@ -35,7 +35,8 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
             services.AddSingleton<CustomEventStoreClient>();
             
             services.AddSingleton
-            (typeof(IIntegrationEventStore),
+            (
+                typeof(IIntegrationEventStore),
                 typeof(IntegrationEventStore)
             );
 
@@ -44,10 +45,11 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
             {
                 ILogger logger = provider.GetService<ILogger>();
                 IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
+                IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
                 
                 return new EventStoreBackgroundService
                 (
-                    logger, eventStoreClient, provider, messageRegistry,
+                    logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
                     new SubscriptionConfig
                     (
                         "IntegrationEventsSub",

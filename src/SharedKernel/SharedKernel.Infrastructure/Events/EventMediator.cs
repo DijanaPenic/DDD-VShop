@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using MediatR;
 
-namespace VShop.SharedKernel.Infrastructure.Dispatchers
+namespace VShop.SharedKernel.Infrastructure.Events
 {
-    internal class NotificationMediator : Mediator
+    internal class EventMediator : Mediator
     {
         private readonly Func<IEnumerable<Func<INotification, CancellationToken, Task>>, INotification, CancellationToken, Task> _publish;
 
-        public NotificationMediator
+        public EventMediator
         (
             ServiceFactory serviceFactory,
             Func<IEnumerable<Func<INotification, CancellationToken, Task>>, INotification, CancellationToken, Task>

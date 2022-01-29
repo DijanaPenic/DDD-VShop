@@ -1,15 +1,13 @@
-﻿using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
+﻿using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Billing.Integration.Events
 {
     // Notification for Sales - need to cancel the order eventually.
     public partial class PaymentSucceededIntegrationEvent : IIntegrationEvent
     {
-        public PaymentSucceededIntegrationEvent(Guid orderId, MessageMetadata metadata)
+        public PaymentSucceededIntegrationEvent(Guid orderId)
         {
             OrderId = orderId;
-            Metadata = metadata;
         }
     }
 }

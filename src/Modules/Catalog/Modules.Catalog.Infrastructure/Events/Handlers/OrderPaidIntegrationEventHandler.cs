@@ -6,8 +6,6 @@ using VShop.Modules.Catalog.Integration.Events;
 using VShop.Modules.Sales.Integration.Events;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.Modules.Catalog.Infrastructure.Events.Handlers
@@ -53,13 +51,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Events.Handlers
             OrderStockProcessedIntegrationEvent orderStockConfirmedIntegrationEvent = new
             (
                 @event.OrderId,
-                confirmedOrderLines,
-                new MessageMetadata
-                (
-                    SequentialGuid.Create(),
-                    @event.Metadata.CorrelationId,
-                    @event.Metadata.MessageId
-                )
+                confirmedOrderLines
             );
             
             await _catalogIntegrationEventService.SaveEventAsync

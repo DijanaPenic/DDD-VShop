@@ -3,6 +3,7 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
@@ -21,6 +22,7 @@ namespace VShop.SharedKernel.Subscriptions.Services
         private readonly EventStoreClient _eventStoreClient;
         private readonly IServiceProvider _serviceProvider;
         private readonly IMessageRegistry _messageRegistry;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly SubscriptionConfig _subscriptionConfig;
         private readonly string _subscriptionName;
 
@@ -30,6 +32,7 @@ namespace VShop.SharedKernel.Subscriptions.Services
             EventStoreClient eventStoreClient,
             IServiceProvider serviceProvider,
             IMessageRegistry messageRegistry,
+            IMessageContextRegistry messageContextRegistry,
             SubscriptionConfig subscriptionConfig
         )
         {
@@ -37,6 +40,7 @@ namespace VShop.SharedKernel.Subscriptions.Services
             _eventStoreClient = eventStoreClient;
             _serviceProvider = serviceProvider;
             _messageRegistry = messageRegistry;
+            _messageContextRegistry = messageContextRegistry;
             _subscriptionConfig = subscriptionConfig;
             _subscriptionName = $"{eventStoreClient.ConnectionName}-{_subscriptionConfig.SubscriptionId}";
         }
@@ -105,6 +109,9 @@ namespace VShop.SharedKernel.Subscriptions.Services
 
             try
             {
+                (IMessage message, IMessageContext messageContext) = resolvedEvent.Deserialize<IMessage>(_messageRegistry);
+                _messageContextRegistry.Set(message, messageContext);
+                
                 async Task CheckpointUpdate(SubscriptionDbContext subscriptionContext)
                 {
                     Checkpoint checkpoint = await subscriptionContext.Checkpoints

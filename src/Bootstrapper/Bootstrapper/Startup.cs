@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -29,8 +30,11 @@ public class Startup
     {
         services.AddApplication(_configuration);
         services.AddSingleton<IControllerFactory, CustomControllerFactory>();
+
+        ContextAccessor contextAccessor = new();
+        services.AddSingleton(contextAccessor);
         
-        foreach (IModule module in _modules) module.Initialize(_configuration, _logger);
+        foreach (IModule module in _modules) module.Initialize(_configuration, _logger, contextAccessor);
         
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();
@@ -39,9 +43,9 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)
     {
         logger.Information($"Enabled modules: {string.Join(", ", _modules.Select(m => m.Name))}");
-        
-        app.UseApplication();
+
         app.UseInfrastructure();
+        app.UseApplication();
 
         _modules.Clear();
     }

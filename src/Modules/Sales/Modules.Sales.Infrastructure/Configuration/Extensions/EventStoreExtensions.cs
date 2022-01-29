@@ -35,17 +35,19 @@ internal static class EventStoreExtensions
         
         services.AddSingleton<CustomEventStoreClient>();
 
-        services.AddSingleton
+        services.AddTransient
         (
             typeof(IAggregateStore<>),
             typeof(AggregateStore<>)
         );
-        services.AddSingleton
-        (typeof(IIntegrationEventStore),
+        services.AddTransient
+        (
+            typeof(IIntegrationEventStore),
             typeof(IntegrationEventStore)
         );
-        services.AddScoped
-        (typeof(IProcessManagerStore<>),
+        services.AddSingleton
+        (
+            typeof(IProcessManagerStore<>),
             typeof(ProcessManagerStore<>)
         );
 
@@ -58,10 +60,11 @@ internal static class EventStoreExtensions
         {
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
-            
+            IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
+
             return new EventStoreBackgroundService
             (
-                logger, eventStoreClient, provider, messageRegistry,
+                logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
                 new SubscriptionConfig
                 (
                     "ReadModels",
@@ -82,10 +85,11 @@ internal static class EventStoreExtensions
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventProjectionToEventStore>();
-            
+            IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
+
             return new EventStoreBackgroundService
             (
-                logger, eventStoreClient, provider, messageRegistry,
+                logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
                 new SubscriptionConfig
                 (
                     "IntegrationEventsPub", 
@@ -106,10 +110,11 @@ internal static class EventStoreExtensions
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventPublisher>();
-            
+            IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
+
             return new EventStoreBackgroundService
             (
-                logger, eventStoreClient, provider, messageRegistry,
+                logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
                 new SubscriptionConfig
                 (
                     "IntegrationEventsSub", 

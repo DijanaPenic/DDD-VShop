@@ -1,10 +1,11 @@
 ﻿using Google.Protobuf;
+using Newtonsoft.Json;
 
 using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 
 namespace VShop.SharedKernel.Integration.DAL.Entities
 {
@@ -15,31 +16,34 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         public EventState State { get; set; }
         public int TimesSent { get; set; }
         public byte[] Body { get; }
-        public byte[] Metadata { get; }
+        public string Context { get; }
         public Guid TransactionId { get; }
         
         // For database migrations.
-        public IntegrationEventLog() { } 
-        
-        public IntegrationEventLog(IIntegrationEvent @event, Guid transactionId, IMessageRegistry messageRegistry)
+        public IntegrationEventLog() { }
+
+        public IntegrationEventLog
+        (
+            IIntegrationEvent @event,
+            IMessageContext messageContext,
+            Guid transactionId,
+            IMessageRegistry messageRegistry
+        )
         {
-            Id = @event.Metadata.MessageId;
+            Id = messageContext.MessageId;
             TypeName = messageRegistry.GetName(@event.GetType());
             Body = @event.ToByteArray();
-            Metadata = @event.Metadata.ToByteArray();
+            Context = JsonConvert.SerializeObject(messageContext);
             State = EventState.NotPublished;
             TimesSent = 0;
             TransactionId = transactionId;
         }
 
-        public IIntegrationEvent GetEvent(IMessageRegistry messageRegistry)
-        {
-            IIntegrationEvent integrationEvent = (IIntegrationEvent)ProtobufSerializer
-                .FromByteArray(Body, messageRegistry.GetType(TypeName));
-
-            integrationEvent.Metadata = ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata);
-
-            return integrationEvent;
-        }
+        public MessageEnvelope<IIntegrationEvent> GetEvent(IMessageRegistry messageRegistry)
+            => new
+            (
+                (IIntegrationEvent)ProtobufSerializer.FromByteArray(Body, messageRegistry.GetType(TypeName)),
+                JsonConvert.DeserializeObject<MessageContext>(Context)
+            );
     }
 }

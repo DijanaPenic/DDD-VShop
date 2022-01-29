@@ -1,9 +1,9 @@
-﻿using NodaTime;
+﻿using Newtonsoft.Json;
+using NodaTime;
 using NodaTime.Serialization.Protobuf;
-using Google.Protobuf;
 
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 
@@ -14,32 +14,36 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
     public class ScheduledMessageLog : DbEntity
     {
         public Guid Id { get; }
+        public string Context { get; }
         public byte[] Body { get; }
-        public byte[] Metadata { get; }
         public string TypeName { get; }
         public Instant ScheduledTime { get; }
         public MessageStatus Status { get; set; }
         
         // For database migrations.
-        public ScheduledMessageLog() { } 
-        
-        public ScheduledMessageLog(IScheduledMessage message, IMessageRegistry messageRegistry)
+        public ScheduledMessageLog() { }
+
+        public ScheduledMessageLog
+        (
+            IScheduledMessage message,
+            IMessageContext messageContext,
+            IMessageRegistry messageRegistry
+        )
         {
-            Id = message.Metadata.MessageId;
+            Id = messageContext.MessageId;
+            Context = JsonConvert.SerializeObject(messageContext);
             Body = message.Body.ToByteArray();
-            Metadata = message.Metadata.ToByteArray();
             Status = MessageStatus.Scheduled;
             TypeName = messageRegistry.GetName(Type.GetType(message.TypeName));
             ScheduledTime = message.ScheduledTime.ToInstant();
         }
         
-        public IMessage GetMessage(IMessageRegistry messageRegistry)
-        {
-            IMessage message = (IMessage)ProtobufSerializer.FromByteArray(Body, messageRegistry.GetType(TypeName));
-            message.Metadata = ProtobufSerializer.FromByteArray<MessageMetadata>(Metadata);
-
-            return message;
-        }
+        public MessageEnvelope<IMessage> GetMessage(IMessageRegistry messageRegistry)
+            => new
+            (
+                (IMessage)ProtobufSerializer.FromByteArray(Body, messageRegistry.GetType(TypeName)),
+                JsonConvert.DeserializeObject<MessageContext>(Context)
+            );
 
         public static string ToName<T>(IMessageRegistry messageRegistry) => messageRegistry.GetName<T>();
     }
