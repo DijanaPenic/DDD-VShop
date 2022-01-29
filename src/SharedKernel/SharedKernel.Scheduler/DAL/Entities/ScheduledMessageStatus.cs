@@ -1,7 +1,6 @@
 ﻿namespace VShop.SharedKernel.Scheduler.DAL.Entities
 {
-    // TODO - rename.
-    public enum MessageStatus
+    public enum ScheduledMessageStatus
     {
         Scheduled = 1,
         Finished = 2,

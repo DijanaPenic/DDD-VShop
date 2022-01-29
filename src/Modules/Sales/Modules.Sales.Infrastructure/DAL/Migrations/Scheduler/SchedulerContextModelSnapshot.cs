@@ -18,12 +18,12 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VShop.SharedKernel.Scheduler.Infrastructure.Entities.MessageLog", b =>
+            modelBuilder.Entity("VShop.SharedKernel.Scheduler.DAL.Entities.ScheduledMessageLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,6 +35,11 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
                         .HasColumnType("bytea")
                         .HasColumnName("body");
 
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("context");
+
                     b.Property<Instant>("DateCreated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_created");
@@ -42,11 +47,6 @@ namespace VShop.Modules.Sales.Infrastructure.DAL.Migrations.Scheduler
                     b.Property<Instant>("DateUpdated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_updated");
-
-                    b.Property<byte[]>("Metadata")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("metadata");
 
                     b.Property<Instant>("ScheduledTime")
                         .HasColumnType("timestamp with time zone")

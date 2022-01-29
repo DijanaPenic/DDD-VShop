@@ -8,6 +8,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;
 using VShop.Modules.Catalog.Infrastructure.DAL;
+using VShop.SharedKernel.Integration.DAL;
 
 namespace Database.DatabaseMigrator;
 
@@ -35,6 +36,7 @@ public class Startup
         services.AddDbContext<CatalogDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
+        services.AddDbContext<IntegrationDbContext>();
         services.AddScoped(_ => new Mock<IClockService>().Object);
     }
 

@@ -18,7 +18,7 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,6 +35,11 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
                         .HasColumnType("bytea")
                         .HasColumnName("body");
 
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("context");
+
                     b.Property<Instant>("DateCreated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_created");
@@ -42,11 +47,6 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
                     b.Property<Instant>("DateUpdated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_updated");
-
-                    b.Property<byte[]>("Metadata")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("metadata");
 
                     b.Property<int>("State")
                         .HasColumnType("integer")

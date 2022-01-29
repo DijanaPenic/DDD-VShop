@@ -72,13 +72,13 @@ namespace VShop.SharedKernel.Scheduler.Services
                         throw new Exception("Unknown target type.");
                 }
 
-                await SetMessageStatusAsync(scheduledMessageLog, MessageStatus.Finished, cancellationToken);
+                await SetMessageStatusAsync(scheduledMessageLog, ScheduledMessageStatus.Finished, cancellationToken);
             }                                                                                                                    
             catch (Exception ex)                                                                                                  
             {                                                                                                                    
                 _logger.Error(ex, "Unhandled error has occurred");
                                                                                                                                  
-                await SetMessageStatusAsync(scheduledMessageLog, MessageStatus.Failed, cancellationToken);                                
+                await SetMessageStatusAsync(scheduledMessageLog, ScheduledMessageStatus.Failed, cancellationToken);                                
             }
         }
 
@@ -86,14 +86,14 @@ namespace VShop.SharedKernel.Scheduler.Services
             => _schedulerDbContext.MessageLogs
                 .FirstOrDefaultAsync
                 (
-                    ml => ml.Status == MessageStatus.Scheduled && ml.Id == messageId,
+                    ml => ml.Status == ScheduledMessageStatus.Scheduled && ml.Id == messageId,
                     cancellationToken
                 );
 
         private async Task SetMessageStatusAsync
         (
             ScheduledMessageLog scheduledMessageLog,
-            MessageStatus status,
+            ScheduledMessageStatus status,
             CancellationToken cancellationToken
         )
         {

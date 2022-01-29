@@ -18,7 +18,7 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
         public byte[] Body { get; }
         public string TypeName { get; }
         public Instant ScheduledTime { get; }
-        public MessageStatus Status { get; set; }
+        public ScheduledMessageStatus Status { get; set; }
         
         // For database migrations.
         public ScheduledMessageLog() { }
@@ -33,7 +33,7 @@ namespace VShop.SharedKernel.Scheduler.DAL.Entities
             Id = messageContext.MessageId;
             Context = JsonConvert.SerializeObject(messageContext);
             Body = message.Body.ToByteArray();
-            Status = MessageStatus.Scheduled;
+            Status = ScheduledMessageStatus.Scheduled;
             TypeName = messageRegistry.GetName(Type.GetType(message.TypeName));
             ScheduledTime = message.ScheduledTime.ToInstant();
         }

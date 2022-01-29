@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,12 +10,13 @@ using VShop.SharedKernel.Integration.DAL;
 
 #nullable disable
 
-namespace VShop.Modules.Catalog.Infrastructure.DAL.Migrations.Integration
+namespace VShop.Modules.Billing.Infrastructure.DAL.Migrations.Integration
 {
     [DbContext(typeof(IntegrationDbContext))]
-    partial class IntegrationContextModelSnapshot : ModelSnapshot
+    [Migration("20220129101453_AddedContextField")]
+    partial class AddedContextField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
