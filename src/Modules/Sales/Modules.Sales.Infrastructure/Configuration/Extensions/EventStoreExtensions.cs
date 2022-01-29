@@ -45,7 +45,7 @@ internal static class EventStoreExtensions
             typeof(IIntegrationEventStore),
             typeof(IntegrationEventStore)
         );
-        services.AddSingleton
+        services.AddTransient
         (
             typeof(IProcessManagerStore<>),
             typeof(ProcessManagerStore<>)
