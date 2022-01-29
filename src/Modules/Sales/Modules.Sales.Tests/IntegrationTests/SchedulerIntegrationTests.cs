@@ -24,11 +24,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        internal async Task Scheduled_command_is_published_in_defined_time
-        (
-            ShoppingCart shoppingCart,
-            MessageMetadata metadata
-        )
+        internal async Task Scheduled_command_is_published_in_defined_time(ShoppingCart shoppingCart)
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -37,7 +33,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
-                new DeleteShoppingCartCommand(shoppingCart.Id, metadata),
+                new DeleteShoppingCartCommand(shoppingCart.Id),
                 clockService.Now
             );
         
@@ -59,8 +55,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Scheduled_domain_event_is_published_in_defined_time
         (
             EntityId orderId, 
-            ShoppingCart shoppingCart,
-            MessageMetadata metadata
+            ShoppingCart shoppingCart
         )
         {
             // Arrange
@@ -70,7 +65,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
-                new PaymentGracePeriodExpiredDomainEvent(orderId) { Metadata = metadata },
+                new PaymentGracePeriodExpiredDomainEvent(orderId),
                 clockService.Now
             );
 
@@ -91,7 +86,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         {
             private ScheduledMessageLog _messageLog;
 
-            public bool IsSatisfied() => _messageLog is { Status: MessageStatus.Finished };
+            public bool IsSatisfied() => _messageLog is { Status: ScheduledMessageStatus.Finished };
 
             public async Task SampleAsync()
                 => _messageLog = await IntegrationTestsFixture.ExecuteServiceAsync<SchedulerDbContext, ScheduledMessageLog>

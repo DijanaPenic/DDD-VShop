@@ -51,7 +51,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
         (
             TEvent @event,
             EventDispatchStrategy strategy,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken = default
         ) where TEvent : IBaseEvent
         {
             if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))

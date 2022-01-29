@@ -28,15 +28,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Process_manager_handles_commands_and_scheduled_messages
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata paymentMetadata
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, paymentMetadata);
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
         
             // Act
             await IntegrationTestsFixture.PublishAsync(paymentSucceededIntegrationEvent);

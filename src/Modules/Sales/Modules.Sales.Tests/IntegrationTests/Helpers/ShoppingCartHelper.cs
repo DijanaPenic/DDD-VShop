@@ -1,5 +1,4 @@
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
@@ -10,30 +9,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Helpers
     {
         public static Task<ShoppingCart> GetShoppingCartAsync(EntityId shoppingCartId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>, ShoppingCart>
-               (
-                    store => store.LoadAsync(shoppingCartId, SequentialGuid.Create())
-               );
+               (store => store.LoadAsync(shoppingCartId));
         
         public static Task SaveAndPublishAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>
-               (
-                   store => store.SaveAndPublishAsync
-                   (
-                       shoppingCart,
-                       SequentialGuid.Create(),
-                       SequentialGuid.Create()
-                   )
-               );
+               (store => store.SaveAndPublishAsync(shoppingCart));
         
         public static Task SaveAsync(ShoppingCart shoppingCart)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<ShoppingCart>>
-            (
-                store => store.SaveAsync
-                (
-                    shoppingCart,
-                    SequentialGuid.Create(),
-                    SequentialGuid.Create()
-                )
-            );
+            (store => store.SaveAsync(shoppingCart));
     }
 }

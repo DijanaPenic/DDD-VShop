@@ -126,8 +126,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -167,7 +166,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
 
             int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId, paymentMetadata);
+            PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId);
 
             // Act
             processManager.Transition(paymentFailedIntegrationEvent, clockService.Now);
@@ -251,8 +250,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -292,7 +290,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
 
@@ -319,8 +317,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -360,7 +357,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentFailedIntegrationEvent(orderId, paymentMetadata),
+                new PaymentFailedIntegrationEvent(orderId),
                 clockService.Now
             );
 
@@ -390,8 +387,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -431,7 +427,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentFailedIntegrationEvent(orderId, paymentMetadata),
+                new PaymentFailedIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -463,8 +459,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -503,7 +498,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                 clockService.Now
             );
 
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, paymentMetadata);
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
 
             // Act
             processManager.Transition(paymentSucceededIntegrationEvent, clockService.Now);
@@ -529,8 +524,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -570,7 +564,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
 
@@ -599,8 +593,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -640,7 +633,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -673,9 +666,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             Address deliveryAddress,
             PhoneNumber phoneNumber,
             EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines,
-            MessageMetadata paymentMetadata,
-            MessageMetadata stockMetadata
+            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
         )
         {
             // Arrange
@@ -715,7 +706,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -725,7 +716,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new OrderStockProcessedIntegrationEvent(orderId, orderLines, stockMetadata),
+                new OrderStockProcessedIntegrationEvent(orderId, orderLines),
                 clockService.Now
             );
             
@@ -753,9 +744,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             Address deliveryAddress,
             PhoneNumber phoneNumber,
             EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines,
-            MessageMetadata paymentMetadata,
-            MessageMetadata stockMetadata
+            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
         )
         {
             // Arrange
@@ -795,7 +784,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -804,7 +793,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                 clockService.Now
             );
 
-            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines, stockMetadata);
+            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines);
 
             // Act
             processManager.Transition(orderStockProcessedIntegrationEvent, clockService.Now);
@@ -830,9 +819,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata,
-            MessageMetadata stockMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -872,7 +859,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -888,7 +875,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                     new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }, stockMetadata
+                    }
                 ),
                 clockService.Now
             );
@@ -918,9 +905,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata,
-            MessageMetadata stockMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -960,7 +945,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -976,7 +961,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                     new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }, stockMetadata
+                    }
                 ),
                 clockService.Now
             );
@@ -1009,9 +994,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             FullName fullName,
             Address deliveryAddress,
             PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            MessageMetadata paymentMetadata,
-            MessageMetadata stockMetadata
+            EmailAddress emailAddress
         )
         {
             // Arrange
@@ -1051,7 +1034,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             );
             processManager.Transition
             (
-                new PaymentSucceededIntegrationEvent(orderId, paymentMetadata),
+                new PaymentSucceededIntegrationEvent(orderId),
                 clockService.Now
             );
             processManager.Transition
@@ -1067,7 +1050,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
                     new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
                     {
                         new(SequentialGuid.Create(), 10, 0)
-                    }, stockMetadata
+                    }
                 ),
                 clockService.Now
             );

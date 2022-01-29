@@ -1,7 +1,6 @@
 using NodaTime;
 
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Domain.Models.Ordering;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
@@ -27,20 +26,12 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Helpers
             return order;
         }
         
-        public static Task<OrderingProcessManager> LoadProcessManagerAsync
-            (
-                Guid processManagerId, 
-                Guid causationId
-            )
+        public static Task<OrderingProcessManager> LoadProcessManagerAsync(Guid processManagerId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IProcessManagerStore<OrderingProcessManager>, OrderingProcessManager>
-               (
-                    store => store.LoadAsync(processManagerId, causationId)
-               );
+               (store => store.LoadAsync(processManagerId));
 
         public static Task<Order> GetOrderAsync(EntityId orderId)
             => IntegrationTestsFixture.ExecuteServiceAsync<IAggregateStore<Order>, Order>
-               (
-                    store => store.LoadAsync(orderId, SequentialGuid.Create())
-               );
+               (store => store.LoadAsync(orderId));
     }
 }

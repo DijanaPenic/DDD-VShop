@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
 using VShop.SharedKernel.Application.Providers;
-using VShop.SharedKernel.Infrastructure.Contexts;
 
 namespace VShop.SharedKernel.Application.Extensions;
 

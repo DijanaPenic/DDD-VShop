@@ -12,7 +12,6 @@ using VShop.SharedKernel.EventSourcing.Stores;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -30,9 +29,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
         (
             EntityId orderId,
-            ShoppingCart shoppingCart,
-            Guid causationId,
-            MessageMetadata metadata
+            ShoppingCart shoppingCart
         )
         {
             // Arrange
@@ -40,13 +37,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, metadata);
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
 
-            OrderingProcessManager processManager = await OrderHelper.LoadProcessManagerAsync
-            (
-                orderId,
-                causationId
-            );
+            OrderingProcessManager processManager = await OrderHelper.LoadProcessManagerAsync(orderId);
         
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<CustomEventStoreClient>
@@ -80,9 +73,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Publishing_integration_event_from_the_integration_stream
         (
             EntityId orderId,
-            ShoppingCart shoppingCart,
-            Guid causationId,
-            MessageMetadata metadata
+            ShoppingCart shoppingCart
         )
         {
             // Arrange
@@ -90,7 +81,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId, metadata);
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
             
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<IIntegrationEventStore>(store =>
@@ -98,7 +89,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             // Assert
             Task<OrderingProcessManager> Sampling(IProcessManagerStore<OrderingProcessManager> store)
-                => store.LoadAsync(orderId, causationId);
+                => store.LoadAsync(orderId);
 
             void Validation(OrderingProcessManager processManager)
             {

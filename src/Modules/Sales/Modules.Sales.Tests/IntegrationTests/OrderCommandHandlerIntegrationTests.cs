@@ -31,15 +31,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Cancels_the_order
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata commandMetadata
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            CancelOrderCommand command = new(orderId, commandMetadata);
+            CancelOrderCommand command = new(orderId);
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -57,15 +56,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Cancelling_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata commandMetadata
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            CancelOrderCommand command = new(orderId, commandMetadata);
+            CancelOrderCommand command = new(orderId);
             
             await IntegrationTestsFixture.SendAsync(command);
             
@@ -81,15 +79,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Sets_the_order_status_to_paid
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata commandMetadata
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            SetPaidOrderStatusCommand command = new(orderId, commandMetadata);
+            SetPaidOrderStatusCommand command = new(orderId);
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -101,14 +98,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             orderFromDb.Should().NotBeNull();
             orderFromDb.Status.Should().Be(OrderStatus.Paid);
             
-            IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
+            IReadOnlyList<MessageEnvelope<IBaseEvent>> orderEvents = await IntegrationTestsFixture
+                .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<MessageEnvelope<IBaseEvent>>>
                 (
                     eventStoreClient => eventStoreClient
                         .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
                 );
 
-            OrderStatusSetToPaidIntegrationEvent orderStatusSetToPaidIntegrationEvent = orderEvents
+            OrderStatusSetToPaidIntegrationEvent orderStatusSetToPaidIntegrationEvent = orderEvents.ToMessages()
                 .OfType<OrderStatusSetToPaidIntegrationEvent>().SingleOrDefault();
             orderStatusSetToPaidIntegrationEvent.Should().NotBeNull();
         }
@@ -118,15 +115,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Setting_the_order_status_to_paid_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata commandMetadata
+            EntityId orderId
         )
         {
             // Arrange
             IClockService clockService = new ClockService();
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            SetPaidOrderStatusCommand command = new(orderId, commandMetadata);
+            SetPaidOrderStatusCommand command = new(orderId);
             await IntegrationTestsFixture.SendAsync(command);
 
             // Act
@@ -149,9 +145,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             Gender genderType,
-            EntityId orderId,
-            MessageMetadata paidStatusMetadata,
-            MessageMetadata finalizeOrderMetadata
+            EntityId orderId
         )
         {
             // Arrange
@@ -181,7 +175,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(order.Id, paidStatusMetadata));
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(order.Id));
 
             FinalizeOrderCommand command = new
             (
@@ -190,8 +184,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 {
                     ProductId = ol.Id.Value,
                     OutOfStockQuantity = 0  // All items are in stock.
-                }).ToList(),
-                finalizeOrderMetadata
+                }).ToList()
             );
 
             // Act
@@ -204,14 +197,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
+             IReadOnlyList<MessageEnvelope<IBaseEvent>> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<MessageEnvelope<IBaseEvent>>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
                  );
 
-             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents.ToMessages()
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
              orderFinalizedIntegrationEvent.Should().NotBeNull();
              orderFinalizedIntegrationEvent!.RefundAmount.DecimalValue.Should().Be(0);
@@ -231,9 +224,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             Gender genderType,
-            EntityId orderId,
-            MessageMetadata paidStatusMetadata,
-            MessageMetadata finalizeOrderMetadata
+            EntityId orderId
         )
         {
             // Arrange
@@ -263,7 +254,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
             
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(order.Id, paidStatusMetadata));
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(order.Id));
             FinalizeOrderCommand command = new
             (
                 order.Id,
@@ -271,8 +262,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 {
                     ProductId = ol.Id.Value,
                     OutOfStockQuantity = ol.Quantity
-                }).ToList(),
-                finalizeOrderMetadata
+                }).ToList()
             );
 
             // Act
@@ -285,14 +275,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.Cancelled);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
+             IReadOnlyList<MessageEnvelope<IBaseEvent>> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<MessageEnvelope<IBaseEvent>>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(order.Id))
                  );
 
-             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents.ToMessages()
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
              orderFinalizedIntegrationEvent.Should().NotBeNull();
              orderFinalizedIntegrationEvent!.RefundAmount.DecimalValue.Should().Be(shoppingCart.FinalAmount);
@@ -312,9 +302,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             EmailAddress emailAddress,
             PhoneNumber phoneNumber,
             Gender genderType,
-            EntityId orderId,
-            MessageMetadata paidStatusMetadata,
-            MessageMetadata finalizeOrderMetadata
+            EntityId orderId
         )
         {
             // Arrange
@@ -344,7 +332,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId, paidStatusMetadata));
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
 
             IList<FinalizeOrderCommand.Types.OrderLine> finalizedOrderLines = new List<FinalizeOrderCommand.Types.OrderLine>
             {
@@ -360,7 +348,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 }
             };
             
-            FinalizeOrderCommand command = new(orderId, finalizedOrderLines, finalizeOrderMetadata);
+            FinalizeOrderCommand command = new(orderId, finalizedOrderLines);
 
             // Act
             Result result = await IntegrationTestsFixture.SendAsync(command);
@@ -372,14 +360,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
              orderFromDb.Should().NotBeNull();
              orderFromDb.Status.Should().Be(OrderStatus.PendingShipping);
 
-             IReadOnlyList<IBaseEvent> orderEvents = await IntegrationTestsFixture
-                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<IBaseEvent>>
+             IReadOnlyList<MessageEnvelope<IBaseEvent>> orderEvents = await IntegrationTestsFixture
+                 .ExecuteServiceAsync<CustomEventStoreClient, IReadOnlyList<MessageEnvelope<IBaseEvent>>>
                  (
                      eventStoreClient => eventStoreClient
                          .ReadStreamForwardAsync<IBaseEvent>(AggregateStore<Order>.GetStreamName(orderId))
                  );
 
-             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents
+             OrderFinalizedIntegrationEvent orderFinalizedIntegrationEvent = orderEvents.ToMessages()
                  .OfType<OrderFinalizedIntegrationEvent>().SingleOrDefault();
              orderFinalizedIntegrationEvent.Should().NotBeNull();
              orderFinalizedIntegrationEvent!.RefundAmount.DecimalValue.Should().Be(135);
@@ -391,9 +379,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Finalizing_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId,
-            MessageMetadata paidStatusMetadata,
-            MessageMetadata finalizeOrderMetadata
+            EntityId orderId
         )
         {
             // Arrange
@@ -401,7 +387,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             Order order = await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
-            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId, paidStatusMetadata));
+            await IntegrationTestsFixture.SendAsync(new SetPaidOrderStatusCommand(orderId));
             
             FinalizeOrderCommand command = new
             (
@@ -410,8 +396,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 {
                     ProductId = ol.Id.Value,
                     OutOfStockQuantity = 0
-                }).ToList(),
-                finalizeOrderMetadata
+                }).ToList()
             );
             
             await IntegrationTestsFixture.SendAsync(command);

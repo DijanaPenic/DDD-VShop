@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Sales.API.Models;
-using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
