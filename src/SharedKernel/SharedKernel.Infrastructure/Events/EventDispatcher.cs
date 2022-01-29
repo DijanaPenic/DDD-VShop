@@ -59,9 +59,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
                 throw new ArgumentException($"Unknown strategy: {strategy}");
             }
             
-            IMessageContext messageContext = _messageContextProvider.Get(@event);
-            if (messageContext is not null) _contextAccessor.Context.RequestId = messageContext.MessageId;
-
+            _contextAccessor.ChangeContext(_messageContextProvider.Get(@event));
             return mediator.Publish(@event, cancellationToken);
         }
 

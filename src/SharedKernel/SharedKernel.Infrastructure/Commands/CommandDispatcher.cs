@@ -29,9 +29,7 @@ namespace VShop.SharedKernel.Infrastructure.Commands
 
         public Task<Result> SendAsync(ICommand command, CancellationToken cancellationToken = default)
         {
-            IMessageContext messageContext = _messageContextProvider.Get(command);
-            if (messageContext is not null) _contextAccessor.Context.RequestId = messageContext.MessageId;
-            
+            _contextAccessor.ChangeContext(_messageContextProvider.Get(command));
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
 
@@ -41,17 +39,13 @@ namespace VShop.SharedKernel.Infrastructure.Commands
             CancellationToken cancellationToken = default
         )
         {
-            IMessageContext messageContext = _messageContextProvider.Get(command);
-            if (messageContext is not null) _contextAccessor.Context.RequestId = messageContext.MessageId;
-            
+            _contextAccessor.ChangeContext(_messageContextProvider.Get(command));
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
 
         public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
         {
-            IMessageContext messageContext = _messageContextProvider.Get((IMessage)command);
-            if (messageContext is not null) _contextAccessor.Context.RequestId = messageContext.MessageId;
-            
+            _contextAccessor.ChangeContext(_messageContextProvider.Get((IMessage)command));
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
     }
