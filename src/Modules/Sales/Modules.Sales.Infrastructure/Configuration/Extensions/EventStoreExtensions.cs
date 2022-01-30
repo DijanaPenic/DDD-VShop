@@ -16,7 +16,6 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Sales.Infrastructure.Projections;
 

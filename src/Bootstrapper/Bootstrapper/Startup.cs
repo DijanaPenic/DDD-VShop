@@ -29,13 +29,13 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddApplication(_configuration);
-        services.AddSingleton<IControllerFactory, CustomControllerFactory>();
-
         IContextAccessor contextAccessor = new ContextAccessor();
-        services.AddSingleton(contextAccessor);
         
-        foreach (IModule module in _modules) module.Initialize(_configuration, _logger, contextAccessor);
+        services.AddApplication(_configuration, contextAccessor);
+        services.AddSingleton<IControllerFactory, CustomControllerFactory>();
+        
+        foreach (IModule module in _modules) 
+            module.Initialize(_configuration, _logger, contextAccessor);
         
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();

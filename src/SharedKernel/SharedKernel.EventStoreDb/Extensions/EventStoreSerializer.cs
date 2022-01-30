@@ -15,8 +15,7 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
         (
             this ResolvedEvent resolvedEvent,
             IMessageRegistry messageRegistry
-        )
-            where TMessage : IMessage
+        ) where TMessage : IMessage
         {
             object data = ProtobufSerializer.FromByteArray
             (
@@ -43,7 +42,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions
             => new MessageContext
             (
                 messageMetadata.MessageId,
-                new Context(messageMetadata.CausationId, messageMetadata.CorrelationId, IdentityContext.Empty) // TODO - identity.
+                new Context
+                (
+                    messageMetadata.CausationId,
+                    messageMetadata.CorrelationId,
+                    new IdentityContext(messageMetadata.UserId)
+                )
             );
     }
 }

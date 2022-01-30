@@ -44,9 +44,10 @@ public static class ContextExtensions
     internal static string GetUserAgent(this HttpContext context)
         => context.Request.Headers[UserAgentKey];
     
-    public static IServiceCollection AddContext(this IServiceCollection services)
+    public static IServiceCollection AddContext(this IServiceCollection services, IContextAccessor contextAccessor)
     {
-        services.AddTransient(sp => sp.GetRequiredService<IContextAccessor>().Context);
+        services.AddSingleton(contextAccessor);
+        services.AddTransient(_ => contextAccessor.Context);
             
         return services;
     }
@@ -55,7 +56,7 @@ public static class ContextExtensions
     {
         app.Use((ctx, next) =>
         {
-            ctx.RequestServices.GetRequiredService<IContextAccessor>().Context = new Context(ctx);;
+            ctx.RequestServices.GetRequiredService<IContextAccessor>().Context = new Context(ctx);
                 
             return next();
         });

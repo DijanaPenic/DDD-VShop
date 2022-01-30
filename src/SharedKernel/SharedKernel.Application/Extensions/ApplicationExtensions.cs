@@ -12,12 +12,18 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
 using VShop.SharedKernel.Application.Providers;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Application.Extensions;
 
 public static class ApplicationExtensions
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApplication
+    (
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IContextAccessor contextAccessor
+    )
     {
         List<string> disabledModules = new();
         foreach ((string key, string value) in configuration.AsEnumerable())
@@ -25,7 +31,8 @@ public static class ApplicationExtensions
             if (!key.Contains(":Module:Enabled")) continue;
             if (!bool.Parse(value)) disabledModules.Add(key.Split(":")[0]);
         }
-        
+
+        services.AddSingleton(contextAccessor);
         services.AddControllers(options =>
         {
             options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());

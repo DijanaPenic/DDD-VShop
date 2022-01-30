@@ -3,7 +3,6 @@ using MediatR;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -12,6 +11,7 @@ using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Queries;
 using VShop.SharedKernel.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Logging;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Services;
@@ -26,7 +26,8 @@ public static class InfrastructureExtensions
         this IServiceCollection services,
         Assembly[] assemblies,
         string module,
-        ILogger logger
+        ILogger logger,
+        IContextAccessor contextAccessor
     )
     {
         services.AddMediatR(assemblies);
@@ -34,12 +35,12 @@ public static class InfrastructureExtensions
         services.AddQueries();
         services.AddEvents();
         services.AddMemoryCache();
-        services.AddContext();
+        services.AddContext(contextAccessor);
         services.AddSingleton<IClockService, ClockService>();
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddFluentValidation(assemblies);
         services.AddLogging(logger, module);
-        services.AddMessaging(); 
+        services.AddMessaging();
 
         // TODO - need to finish.
         //services.AddModuleRequests(assemblies); 

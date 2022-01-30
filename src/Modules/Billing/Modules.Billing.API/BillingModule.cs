@@ -46,8 +46,7 @@ internal class BillingModule : IModule
         
         ServiceCollection services = new();
         
-        services.AddSingleton(contextAccessor);
-        services.AddInfrastructure(Assemblies, Name, logger);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddTransient<IPaymentService, FakePaymentService>();

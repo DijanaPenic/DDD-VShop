@@ -22,8 +22,8 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+
 using ILogger = Serilog.ILogger;
 
 namespace VShop.Modules.Sales.API;
@@ -46,8 +46,7 @@ internal class SalesModule : IModule
         
         ServiceCollection services = new();
         
-        services.AddSingleton(contextAccessor);
-        services.AddInfrastructure(Assemblies, Name, logger);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
