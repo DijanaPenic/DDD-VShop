@@ -37,7 +37,6 @@ public class IdentityContext : IIdentityContext
     }
         
     public bool IsUser() => Role is "user";
-        
     public bool IsAdmin() => Role is "admin";
     public static IIdentityContext Empty => new IdentityContext();
 }

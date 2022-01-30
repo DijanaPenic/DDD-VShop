@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;

@@ -16,7 +16,7 @@ using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
-using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 

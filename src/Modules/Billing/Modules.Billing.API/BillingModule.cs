@@ -22,7 +22,7 @@ using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Billing.Infrastructure.Configuration.Extensions;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
-using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 using ILogger = Serilog.ILogger;
 
