@@ -1,4 +1,5 @@
 using Serilog;
+using Force.DeepCloner;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -14,7 +16,6 @@ using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
@@ -33,40 +34,20 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
                 .AddJsonFile("module.sales.tests.json")
                 .Build();
 
-            ContextAccessor contextAccessor = new()
-            {
-                Context = new Context(SequentialGuid.Create(), SequentialGuid.Create())
-            };
-
+            IContextAccessor contextAccessor = new MockContextAccessor();
             IModule module = ModuleLoader.LoadModules(Configuration).Single();
             ILogger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .CreateLogger();
             
             module.ConfigureCompositionRoot(Configuration, logger, contextAccessor);
-
-
-            var conext = SalesCompositionRoot.CreateScope().ServiceProvider.GetRequiredService<ContextAccessor>();
-
+            
             InitializePostgresDatabaseAsync().GetAwaiter().GetResult();
         }
 
         private static Task InitializePostgresDatabaseAsync()
             => ExecuteHostedServiceAsync<DatabaseInitializerHostedService>
                 (hostedService => hostedService.StartAsync(CancellationToken.None));
-
-        public static Task SetContextAsync()
-            => ExecuteScopeAsync(sp =>
-            {
-                ContextAccessor contextAccessor = sp.GetRequiredService<ContextAccessor>();
-                contextAccessor.Context = new Context
-                (
-                    SequentialGuid.Create(),
-                    SequentialGuid.Create()
-                );
-                
-                return Task.CompletedTask;
-            });
 
         public static Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
             => new Poller(clockService, timeout).CheckAsync(probe);
@@ -103,38 +84,52 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
                 return action(service);
             });
 
-        public static Task<Result> SendAsync(ICommand command)
+        public static Task<Result> SendAsync(ICommand command, IContext context = default)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandDispatcher commandDispatcher = sp.GetRequiredService<ICommandDispatcher>();
                 return commandDispatcher.SendAsync(command);
-            });
+            }, context);
 
-        public static Task<Result<TResult>> SendAsync<TResult>(ICommand<TResult> command)
+        public static Task<Result<TResult>> SendAsync<TResult>(ICommand<TResult> command, IContext context = default)
             => ExecuteScopeAsync(sp =>
             {
                 ICommandDispatcher commandDispatcher = sp.GetRequiredService<ICommandDispatcher>();
                 return commandDispatcher.SendAsync(command);
-            });
+            }, context);
 
-        public static Task PublishAsync(IBaseEvent @event)
+        public static Task PublishAsync(IBaseEvent @event, IContext context = default)
             => ExecuteScopeAsync(sp =>
             {
                 IEventDispatcher eventDispatcher = sp.GetRequiredService<IEventDispatcher>();
                 return eventDispatcher.PublishAsync(@event, EventDispatchStrategy.SyncStopOnException);
-            });
+            }, context);
 
-        private static async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
+        private static async Task ExecuteScopeAsync
+        (
+            Func<IServiceProvider, Task> action,
+            IContext context = default
+        )
         {
             using IServiceScope scope = SalesCompositionRoot.CreateScope();
+            
+            IContextAccessor contextAccessor = scope.ServiceProvider.GetRequiredService<IContextAccessor>();
+            contextAccessor.Context = context.DeepClone();
+            
             await action(scope.ServiceProvider).ConfigureAwait(false);
         }
-        
-        private static async Task<TResult> ExecuteScopeAsync<TResult>(Func<IServiceProvider, Task<TResult>> action)
+
+        private static async Task<TResult> ExecuteScopeAsync<TResult>
+        (
+            Func<IServiceProvider, Task<TResult>> action,
+            IContext context = default
+        )
         {
             using IServiceScope scope = SalesCompositionRoot.CreateScope();
-            var test = scope.ServiceProvider.GetService<ContextAccessor>();
             
+            IContextAccessor contextAccessor = scope.ServiceProvider.GetRequiredService<IContextAccessor>();
+            contextAccessor.Context = context.DeepClone();
+                                      
             return await action(scope.ServiceProvider).ConfigureAwait(false);
         }
     }

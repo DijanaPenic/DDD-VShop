@@ -8,6 +8,7 @@ using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
@@ -24,7 +25,11 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
-        internal async Task Scheduled_command_is_published_in_defined_time(ShoppingCart shoppingCart)
+        internal async Task Scheduled_command_is_published_in_defined_time
+        (
+            ShoppingCart shoppingCart,
+            IContext context
+        )
         {
             // Arrange
             IClockService clockService = new ClockService();
@@ -39,7 +44,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<ISchedulerService>(sut =>
-                sut.ScheduleMessageAsync(scheduledMessage));
+                sut.ScheduleMessageAsync(new MessageEnvelope<IScheduledMessage>(scheduledMessage, new MessageContext(context))));
         
             // Assert
             await IntegrationTestsFixture.AssertEventuallyAsync
@@ -55,7 +60,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Scheduled_domain_event_is_published_in_defined_time
         (
             EntityId orderId, 
-            ShoppingCart shoppingCart
+            ShoppingCart shoppingCart,
+            IContext context
         )
         {
             // Arrange
@@ -71,7 +77,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
 
             // Act
             await IntegrationTestsFixture.ExecuteServiceAsync<ISchedulerService>(sut =>
-                sut.ScheduleMessageAsync(scheduledMessage));
+                sut.ScheduleMessageAsync(new MessageEnvelope<IScheduledMessage>(scheduledMessage, new MessageContext(context))));
 
             // Assert
             await IntegrationTestsFixture.AssertEventuallyAsync

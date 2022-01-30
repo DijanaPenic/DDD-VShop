@@ -13,6 +13,7 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Stores;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Services;
@@ -56,7 +57,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Cancelling_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId
+            EntityId orderId,
+            IContext context
         )
         {
             // Arrange
@@ -65,10 +67,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             
             CancelOrderCommand command = new(orderId);
             
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -115,7 +117,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Setting_the_order_status_to_paid_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId
+            EntityId orderId,
+            IContext context
         )
         {
             // Arrange
@@ -123,10 +126,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
 
             SetPaidOrderStatusCommand command = new(orderId);
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
 
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -379,7 +382,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Finalizing_the_order_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            EntityId orderId
+            EntityId orderId,
+            IContext context
         )
         {
             // Arrange
@@ -399,10 +403,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 }).ToList()
             );
             
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
 
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();

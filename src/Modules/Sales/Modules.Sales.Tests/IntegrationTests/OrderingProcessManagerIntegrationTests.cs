@@ -12,7 +12,6 @@ using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Scheduler.DAL;
@@ -58,9 +57,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                      .FirstOrDefaultAsync(ml => ml.TypeName == typeName);
                  
                  messageLog.Should().NotBeNull();
-                 messageLog!.GetMessage(IntegrationTestsFixture.MessageRegistry).Should()
-                     .NotBeNull().And
-                     .BeOfType<OrderStockProcessingGracePeriodExpiredDomainEvent>()
+                 messageLog!.GetMessage(IntegrationTestsFixture.MessageRegistry)
+                     .Message.Should().BeOfType<OrderStockProcessingGracePeriodExpiredDomainEvent>()
                      .Which.OrderId.Should().Be(orderId.Value.ToUuid());
             });
         }

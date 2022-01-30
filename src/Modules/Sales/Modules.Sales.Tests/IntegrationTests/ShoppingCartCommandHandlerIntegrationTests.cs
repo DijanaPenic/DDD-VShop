@@ -12,15 +12,15 @@ using VShop.Modules.Sales.Tests.IntegrationTests.Helpers;
 using VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Domain.ValueObjects;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 using Address = VShop.SharedKernel.Domain.ValueObjects.Address;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
-    public class ShoppingCartCommandHandlerIntegrationTests : ContextLifetime
+    public class ShoppingCartCommandHandlerIntegrationTests
     {
         [Theory]
         [CustomizedAutoData]
@@ -58,7 +58,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             EntityId shoppingCartId,
             EntityId customerId,
             Discount customerDiscount,
-            ShoppingCartProductCommandDto[] shoppingCartItems
+            ShoppingCartProductCommandDto[] shoppingCartItems,
+            IContext context
         )
         {
             // Arrange
@@ -69,10 +70,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 customerDiscount,
                 shoppingCartItems
             );
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
 
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -110,7 +111,11 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        internal async Task Changing_product_price_in_the_shopping_cart_is_idempotent(ShoppingCart shoppingCart)
+        internal async Task Changing_product_price_in_the_shopping_cart_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            IContext context
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -123,10 +128,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 shoppingCartItem.UnitPrice.Value + 1
             );
             
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -168,7 +173,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Adding_a_new_product_to_the_shopping_cart_command_is_idempotent
         (
             ShoppingCart shoppingCart, 
-            ShoppingCartProductCommandDto shoppingCartItem
+            ShoppingCartProductCommandDto shoppingCartItem,
+            IContext context
         )
         {
             // Arrange
@@ -180,10 +186,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 shoppingCartItem
             );
             
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -220,7 +226,11 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        internal async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
+        internal async Task Removing_a_product_from_the_shopping_cart_command_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            IContext context
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
@@ -232,10 +242,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 shoppingCartItem.Id,
                 shoppingCartItem.Quantity
             );
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -288,7 +298,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
             FullName fullName,
             Gender gender,
             EmailAddress emailAddress,
-            PhoneNumber phoneNumber
+            PhoneNumber phoneNumber,
+            IContext context
         )
         {
             // Arrange
@@ -304,10 +315,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 phoneNumber,
                 gender
             );
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -350,7 +361,8 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         internal async Task Setting_a_customer_delivery_address_command_is_idempotent
         (
             ShoppingCart shoppingCart,
-            Address deliveryAddress
+            Address deliveryAddress,
+            IContext context
         )
         {
             // Arrange
@@ -365,9 +377,10 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
                 deliveryAddress.StateProvince,
                 deliveryAddress.StreetAddress 
             );
-            
+            await IntegrationTestsFixture.SendAsync(command, context);
+
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -394,17 +407,21 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         
         [Theory]
         [CustomizedAutoData]
-        internal async Task Deleting_the_shopping_cart_command_is_idempotent(ShoppingCart shoppingCart)
+        internal async Task Deleting_the_shopping_cart_command_is_idempotent
+        (
+            ShoppingCart shoppingCart,
+            IContext context
+        )
         {
             // Arrange
             await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
             
             DeleteShoppingCartCommand command = new(shoppingCart.Id);
             
-            await IntegrationTestsFixture.SendAsync(command);
+            await IntegrationTestsFixture.SendAsync(command, context);
             
             // Act
-            Result result = await IntegrationTestsFixture.SendAsync(command);
+            Result result = await IntegrationTestsFixture.SendAsync(command, context);
             
             // Assert
             result.IsError.Should().BeFalse();
@@ -439,17 +456,21 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
          
          [Theory]
          [CustomizedAutoData]
-         internal async Task Shopping_cart_checkout_command_is_idempotent(ShoppingCart shoppingCart)
+         internal async Task Shopping_cart_checkout_command_is_idempotent
+         (
+             ShoppingCart shoppingCart,
+             IContext context
+         )
          {
              // Arrange
              await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
 
              CheckoutShoppingCartCommand command = new(shoppingCart.Id);
              
-             await IntegrationTestsFixture.SendAsync(command);
+             await IntegrationTestsFixture.SendAsync(command, context);
              
              // Act
-             Result<CheckoutResponse> result = await IntegrationTestsFixture.SendAsync(command);
+             Result<CheckoutResponse> result = await IntegrationTestsFixture.SendAsync(command, context);
              
              // Assert
              result.IsError.Should().BeFalse();
