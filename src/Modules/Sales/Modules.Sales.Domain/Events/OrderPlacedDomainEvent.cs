@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class OrderPlacedDomainEvent : IDomainEvent
+    internal partial class OrderPlacedDomainEvent : IDomainEvent
     {
         public OrderPlacedDomainEvent
         (

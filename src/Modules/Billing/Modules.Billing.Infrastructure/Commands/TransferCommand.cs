@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Billing.Infrastructure.Commands
 {
-    public partial class TransferCommand : ICommand
+    internal partial class TransferCommand : ICommand
     {
         public TransferCommand
         (

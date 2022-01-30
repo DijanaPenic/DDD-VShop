@@ -1,5 +1,5 @@
 ﻿syntax = "proto3";
-option csharp_namespace = "VShop.Modules.Sales.API.Application.Commands";
+option csharp_namespace = "VShop.Modules.Sales.Infrastructure.Commands";
 
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
 import "google/type/money.proto";

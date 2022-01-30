@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/set_contact_information_command.proto</summary>
-  public static partial class SetContactInformationCommandReflection {
+  internal static partial class SetContactInformationCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/set_contact_information_command.proto</summary>
@@ -32,8 +32,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "bW1hbmQSHwoQc2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQSEgoKZmly",
             "c3RfbmFtZRgCIAEoCRITCgttaWRkbGVfbmFtZRgDIAEoCRIRCglsYXN0X25h",
             "bWUYBCABKAkSFQoNZW1haWxfYWRkcmVzcxgFIAEoCRIUCgxwaG9uZV9udW1i",
-            "ZXIYBiABKAkSFwoGZ2VuZGVyGAcgASgOMgcuR2VuZGVyQi+qAixWU2hvcC5N",
-            "b2R1bGVzLlNhbGVzLkFQSS5BcHBsaWNhdGlvbi5Db21tYW5kc2IGcHJvdG8z"));
+            "ZXIYBiABKAkSFwoGZ2VuZGVyGAcgASgOMgcuR2VuZGVyQi6qAitWU2hvcC5N",
+            "b2R1bGVzLlNhbGVzLkluZnJhc3RydWN0dXJlLkNvbW1hbmRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.SharedKernel.Infrastructure.Types.GenderReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -44,7 +44,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class SetContactInformationCommand : pb::IMessage<SetContactInformationCommand>
+  internal sealed partial class SetContactInformationCommand : pb::IMessage<SetContactInformationCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class SetDeliveryAddressCommand : ICommand
+    internal partial class SetDeliveryAddressCommand : ICommand
     {
         public SetDeliveryAddressCommand
         (

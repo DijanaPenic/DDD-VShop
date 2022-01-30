@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/cancel_order_command.proto</summary>
-  public static partial class CancelOrderCommandReflection {
+  internal static partial class CancelOrderCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/cancel_order_command.proto</summary>
@@ -27,9 +27,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "CjpNb2R1bGVzL1NhbGVzL19zY2hlbWFzL0NvbW1hbmRzL2NhbmNlbF9vcmRl",
             "cl9jb21tYW5kLnByb3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVkS2VybmVsLklu",
             "ZnJhc3RydWN0dXJlL19zY2hlbWFzL3V1aWQucHJvdG8iLQoSQ2FuY2VsT3Jk",
-            "ZXJDb21tYW5kEhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZEIvqgIsVlNob3Au",
-            "TW9kdWxlcy5TYWxlcy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3Rv",
-            "Mw=="));
+            "ZXJDb21tYW5kEhcKCG9yZGVyX2lkGAEgASgLMgUuVXVpZEIuqgIrVlNob3Au",
+            "TW9kdWxlcy5TYWxlcy5JbmZyYXN0cnVjdHVyZS5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -40,7 +39,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class CancelOrderCommand : pb::IMessage<CancelOrderCommand>
+  internal sealed partial class CancelOrderCommand : pb::IMessage<CancelOrderCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

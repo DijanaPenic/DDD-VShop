@@ -8,7 +8,7 @@ protoc --proto_path=. --csharp_out=Modules/Billing/Modules.Billing.Integration -
 protoc --proto_path=. --csharp_out=Modules/Catalog/Modules.Catalog.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Catalog.Integration Modules/Catalog/_schemas/Events/IntegrationEvents/*.proto
 
 
-protoc --proto_path=. --csharp_out=internal_access:Modules/Sales/Modules.Sales.Domain --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Domain Modules/Sales/_schemas/Events/DomainEvents/*.proto
+protoc --proto_path=. --csharp_out=Modules/Sales/Modules.Sales.Domain --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Domain Modules/Sales/_schemas/Events/DomainEvents/*.proto
 
 
 protoc --proto_path=. --csharp_out=SharedKernel/SharedKernel.EventStoreDb --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.SharedKernel.EventStoreDb SharedKernel/SharedKernel.EventStoreDb/_schemas/*.proto

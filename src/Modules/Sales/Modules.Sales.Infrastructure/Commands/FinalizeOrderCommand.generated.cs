@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/finalize_order_command.proto</summary>
-  public static partial class FinalizeOrderCommandReflection {
+  internal static partial class FinalizeOrderCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/finalize_order_command.proto</summary>
@@ -30,8 +30,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "emVPcmRlckNvbW1hbmQSFwoIb3JkZXJfaWQYASABKAsyBS5VdWlkEjQKC29y",
             "ZGVyX2xpbmVzGAIgAygLMh8uRmluYWxpemVPcmRlckNvbW1hbmQuT3JkZXJM",
             "aW5lGkIKCU9yZGVyTGluZRIZCgpwcm9kdWN0X2lkGAEgASgLMgUuVXVpZBIa",
-            "ChJPdXRPZlN0b2NrUXVhbnRpdHkYAiABKAVCL6oCLFZTaG9wLk1vZHVsZXMu",
-            "U2FsZXMuQVBJLkFwcGxpY2F0aW9uLkNvbW1hbmRzYgZwcm90bzM="));
+            "ChJPdXRPZlN0b2NrUXVhbnRpdHkYAiABKAVCLqoCK1ZTaG9wLk1vZHVsZXMu",
+            "U2FsZXMuSW5mcmFzdHJ1Y3R1cmUuQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -42,7 +42,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class FinalizeOrderCommand : pb::IMessage<FinalizeOrderCommand>
+  internal sealed partial class FinalizeOrderCommand : pb::IMessage<FinalizeOrderCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
@@ -269,7 +269,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static partial class Types {
-      public sealed partial class OrderLine : pb::IMessage<OrderLine>
+      internal sealed partial class OrderLine : pb::IMessage<OrderLine>
       #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
           , pb::IBufferMessage
       #endif

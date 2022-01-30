@@ -6,12 +6,13 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
+using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-
+using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Billing.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Billing/_schemas/Commands/transfer_command.proto</summary>
-  public static partial class TransferCommandReflection {
+  internal static partial class TransferCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Billing/_schemas/Commands/transfer_command.proto</summary>
@@ -32,8 +33,8 @@ namespace VShop.Modules.Billing.Infrastructure.Commands {
             "cGVfaWQYAyABKAUSEwoLY2FyZF9udW1iZXIYBCABKAkSHAoUY2FyZF9zZWN1",
             "cml0eV9udW1iZXIYBSABKAkSFwoPY2FyZGhvbGRlcl9uYW1lGAYgASgJEjMK",
             "D2NhcmRfZXhwaXJhdGlvbhgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1l",
-            "c3RhbXBCMaoCLlZTaG9wLk1vZHVsZXMuQmlsbGluZy5BUEkuQXBwbGljYXRp",
-            "b24uQ29tbWFuZHNiBnByb3RvMw=="));
+            "c3RhbXBCMKoCLVZTaG9wLk1vZHVsZXMuQmlsbGluZy5JbmZyYXN0cnVjdHVy",
+            "ZS5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Type.MoneyReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -44,7 +45,7 @@ namespace VShop.Modules.Billing.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class TransferCommand : pb::IMessage<TransferCommand>
+  internal sealed partial class TransferCommand : pb::IMessage<TransferCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

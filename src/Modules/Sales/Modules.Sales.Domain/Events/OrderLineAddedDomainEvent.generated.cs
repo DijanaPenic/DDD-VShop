@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Domain.Events {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Events/DomainEvents/order_line_added_domain_event.proto</summary>
-  public static partial class OrderLineAddedDomainEventReflection {
+  internal static partial class OrderLineAddedDomainEventReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Events/DomainEvents/order_line_added_domain_event.proto</summary>
@@ -42,7 +42,7 @@ namespace VShop.Modules.Sales.Domain.Events {
 
   }
   #region Messages
-  public sealed partial class OrderLineAddedDomainEvent : pb::IMessage<OrderLineAddedDomainEvent>
+  internal sealed partial class OrderLineAddedDomainEvent : pb::IMessage<OrderLineAddedDomainEvent>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

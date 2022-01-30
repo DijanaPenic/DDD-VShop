@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/set_paid_order_status_command.proto</summary>
-  public static partial class SetPaidOrderStatusCommandReflection {
+  internal static partial class SetPaidOrderStatusCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/set_paid_order_status_command.proto</summary>
@@ -28,8 +28,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "ZGVyX3N0YXR1c19jb21tYW5kLnByb3RvGjxTaGFyZWRLZXJuZWwvU2hhcmVk",
             "S2VybmVsLkluZnJhc3RydWN0dXJlL19zY2hlbWFzL3V1aWQucHJvdG8iNAoZ",
             "U2V0UGFpZE9yZGVyU3RhdHVzQ29tbWFuZBIXCghvcmRlcl9pZBgBIAEoCzIF",
-            "LlV1aWRCL6oCLFZTaG9wLk1vZHVsZXMuU2FsZXMuQVBJLkFwcGxpY2F0aW9u",
-            "LkNvbW1hbmRzYgZwcm90bzM="));
+            "LlV1aWRCLqoCK1ZTaG9wLk1vZHVsZXMuU2FsZXMuSW5mcmFzdHJ1Y3R1cmUu",
+            "Q29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class SetPaidOrderStatusCommand : pb::IMessage<SetPaidOrderStatusCommand>
+  internal sealed partial class SetPaidOrderStatusCommand : pb::IMessage<SetPaidOrderStatusCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

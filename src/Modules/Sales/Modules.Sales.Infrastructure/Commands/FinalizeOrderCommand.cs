@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class FinalizeOrderCommand : ICommand
+    internal partial class FinalizeOrderCommand : ICommand
     {
         public FinalizeOrderCommand
         (
@@ -19,7 +19,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands
         
         public partial class Types
         {
-            public partial class OrderLine
+            internal partial class OrderLine
             {
                 public OrderLine(Guid productId, int outOfStockQuantity)
                 {

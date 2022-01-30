@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Domain.Events {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Events/DomainEvents/shopping_cart_created_domain_event_2.proto</summary>
-  public static partial class ShoppingCartCreatedDomainEvent2Reflection {
+  internal static partial class ShoppingCartCreatedDomainEvent2Reflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Events/DomainEvents/shopping_cart_created_domain_event_2.proto</summary>
@@ -39,7 +39,7 @@ namespace VShop.Modules.Sales.Domain.Events {
 
   }
   #region Messages
-  public sealed partial class ShoppingCartCreatedDomainEvent2 : pb::IMessage<ShoppingCartCreatedDomainEvent2>
+  internal sealed partial class ShoppingCartCreatedDomainEvent2 : pb::IMessage<ShoppingCartCreatedDomainEvent2>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

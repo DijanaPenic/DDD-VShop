@@ -4,7 +4,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class SetPaidOrderStatusCommand : ICommand
+    internal partial class SetPaidOrderStatusCommand : ICommand
     {
         public SetPaidOrderStatusCommand(Guid orderId)
         {

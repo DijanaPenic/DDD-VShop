@@ -6,7 +6,7 @@ using VShop.Modules.Sales.Infrastructure.Commands.Shared;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class CreateShoppingCartCommand : ICommand
+    internal partial class CreateShoppingCartCommand : ICommand
     {
         public CreateShoppingCartCommand
         (

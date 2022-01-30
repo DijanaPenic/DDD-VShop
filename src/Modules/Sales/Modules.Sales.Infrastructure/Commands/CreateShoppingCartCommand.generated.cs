@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/create_shopping_cart_command.proto</summary>
-  public static partial class CreateShoppingCartCommandReflection {
+  internal static partial class CreateShoppingCartCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/create_shopping_cart_command.proto</summary>
@@ -32,8 +32,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "dENvbW1hbmQSHwoQc2hvcHBpbmdfY2FydF9pZBgBIAEoCzIFLlV1aWQSGgoL",
             "Y3VzdG9tZXJfaWQYAiABKAsyBS5VdWlkEhkKEWN1c3RvbWVyX2Rpc2NvdW50",
             "GAMgASgFEjsKE3Nob3BwaW5nX2NhcnRfaXRlbXMYBCADKAsyHi5TaG9wcGlu",
-            "Z0NhcnRQcm9kdWN0Q29tbWFuZER0b0IvqgIsVlNob3AuTW9kdWxlcy5TYWxl",
-            "cy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
+            "Z0NhcnRQcm9kdWN0Q29tbWFuZER0b0IuqgIrVlNob3AuTW9kdWxlcy5TYWxl",
+            "cy5JbmZyYXN0cnVjdHVyZS5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::VShop.Modules.Sales.Infrastructure.Commands.Shared.ShoppingCartProductCommandDtoReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -44,7 +44,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class CreateShoppingCartCommand : pb::IMessage<CreateShoppingCartCommand>
+  internal sealed partial class CreateShoppingCartCommand : pb::IMessage<CreateShoppingCartCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

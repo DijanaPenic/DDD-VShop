@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Domain.Events {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Events/DomainEvents/order_status_set_to_cancelled_domain_event.proto</summary>
-  public static partial class OrderStatusSetToCancelledDomainEventReflection {
+  internal static partial class OrderStatusSetToCancelledDomainEventReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Events/DomainEvents/order_status_set_to_cancelled_domain_event.proto</summary>
@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.Domain.Events {
 
   }
   #region Messages
-  public sealed partial class OrderStatusSetToCancelledDomainEvent : pb::IMessage<OrderStatusSetToCancelledDomainEvent>
+  internal sealed partial class OrderStatusSetToCancelledDomainEvent : pb::IMessage<OrderStatusSetToCancelledDomainEvent>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

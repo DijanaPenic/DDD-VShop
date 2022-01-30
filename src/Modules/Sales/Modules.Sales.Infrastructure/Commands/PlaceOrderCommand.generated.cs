@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/place_order_command.proto</summary>
-  public static partial class PlaceOrderCommandReflection {
+  internal static partial class PlaceOrderCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/place_order_command.proto</summary>
@@ -28,8 +28,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "X2NvbW1hbmQucHJvdG8aPFNoYXJlZEtlcm5lbC9TaGFyZWRLZXJuZWwuSW5m",
             "cmFzdHJ1Y3R1cmUvX3NjaGVtYXMvdXVpZC5wcm90byJNChFQbGFjZU9yZGVy",
             "Q29tbWFuZBIXCghvcmRlcl9pZBgBIAEoCzIFLlV1aWQSHwoQc2hvcHBpbmdf",
-            "Y2FydF9pZBgCIAEoCzIFLlV1aWRCL6oCLFZTaG9wLk1vZHVsZXMuU2FsZXMu",
-            "QVBJLkFwcGxpY2F0aW9uLkNvbW1hbmRzYgZwcm90bzM="));
+            "Y2FydF9pZBgCIAEoCzIFLlV1aWRCLqoCK1ZTaG9wLk1vZHVsZXMuU2FsZXMu",
+            "SW5mcmFzdHJ1Y3R1cmUuQ29tbWFuZHNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class PlaceOrderCommand : pb::IMessage<PlaceOrderCommand>
+  internal sealed partial class PlaceOrderCommand : pb::IMessage<PlaceOrderCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

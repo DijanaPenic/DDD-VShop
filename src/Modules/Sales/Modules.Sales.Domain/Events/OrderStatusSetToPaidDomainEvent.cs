@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class OrderStatusSetToPaidDomainEvent : IDomainEvent
+    internal partial class OrderStatusSetToPaidDomainEvent : IDomainEvent
     {
         public OrderStatusSetToPaidDomainEvent(Guid orderId)
         {

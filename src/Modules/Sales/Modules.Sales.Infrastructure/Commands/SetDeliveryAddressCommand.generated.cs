@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/set_delivery_address_command.proto</summary>
-  public static partial class SetDeliveryAddressCommandReflection {
+  internal static partial class SetDeliveryAddressCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/set_delivery_address_command.proto</summary>
@@ -30,8 +30,8 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "U2V0RGVsaXZlcnlBZGRyZXNzQ29tbWFuZBIfChBzaG9wcGluZ19jYXJ0X2lk",
             "GAEgASgLMgUuVXVpZBIMCgRjaXR5GAIgASgJEhQKDGNvdW50cnlfY29kZRgD",
             "IAEoCRITCgtwb3N0YWxfY29kZRgEIAEoCRIWCg5zdGF0ZV9wcm92aW5jZRgF",
-            "IAEoCRIWCg5zdHJlZXRfYWRkcmVzcxgGIAEoCUIvqgIsVlNob3AuTW9kdWxl",
-            "cy5TYWxlcy5BUEkuQXBwbGljYXRpb24uQ29tbWFuZHNiBnByb3RvMw=="));
+            "IAEoCRIWCg5zdHJlZXRfYWRkcmVzcxgGIAEoCUIuqgIrVlNob3AuTW9kdWxl",
+            "cy5TYWxlcy5JbmZyYXN0cnVjdHVyZS5Db21tYW5kc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -42,7 +42,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class SetDeliveryAddressCommand : pb::IMessage<SetDeliveryAddressCommand>
+  internal sealed partial class SetDeliveryAddressCommand : pb::IMessage<SetDeliveryAddressCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

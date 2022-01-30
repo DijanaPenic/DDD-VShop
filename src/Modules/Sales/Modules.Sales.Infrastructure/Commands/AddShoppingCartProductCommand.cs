@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class AddShoppingCartProductCommand : ICommand
+    internal partial class AddShoppingCartProductCommand : ICommand
     {
         public AddShoppingCartProductCommand
         (

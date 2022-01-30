@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class PlaceOrderCommand : ICommand<Order>
+    internal partial class PlaceOrderCommand : ICommand<Order>
     {
         public PlaceOrderCommand
         (

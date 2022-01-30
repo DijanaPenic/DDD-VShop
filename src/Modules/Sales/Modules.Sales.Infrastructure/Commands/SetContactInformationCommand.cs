@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    public partial class SetContactInformationCommand : ICommand
+    internal partial class SetContactInformationCommand : ICommand
     {
         public SetContactInformationCommand
         (

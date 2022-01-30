@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Domain.Events {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Events/DomainEvents/order_status_set_to_pending_shipping_domain_event.proto</summary>
-  public static partial class OrderStatusSetToPendingShippingDomainEventReflection {
+  internal static partial class OrderStatusSetToPendingShippingDomainEventReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Events/DomainEvents/order_status_set_to_pending_shipping_domain_event.proto</summary>
@@ -41,7 +41,7 @@ namespace VShop.Modules.Sales.Domain.Events {
 
   }
   #region Messages
-  public sealed partial class OrderStatusSetToPendingShippingDomainEvent : pb::IMessage<OrderStatusSetToPendingShippingDomainEvent>
+  internal sealed partial class OrderStatusSetToPendingShippingDomainEvent : pb::IMessage<OrderStatusSetToPendingShippingDomainEvent>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

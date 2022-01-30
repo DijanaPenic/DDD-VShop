@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Domain.Events.Reminders {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Events/DomainEvents/payment_grace_period_expired_domain_event.proto</summary>
-  public static partial class PaymentGracePeriodExpiredDomainEventReflection {
+  internal static partial class PaymentGracePeriodExpiredDomainEventReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Events/DomainEvents/payment_grace_period_expired_domain_event.proto</summary>
@@ -41,7 +41,7 @@ namespace VShop.Modules.Sales.Domain.Events.Reminders {
 
   }
   #region Messages
-  public sealed partial class PaymentGracePeriodExpiredDomainEvent : pb::IMessage<PaymentGracePeriodExpiredDomainEvent>
+  internal sealed partial class PaymentGracePeriodExpiredDomainEvent : pb::IMessage<PaymentGracePeriodExpiredDomainEvent>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

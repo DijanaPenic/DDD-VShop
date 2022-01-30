@@ -12,7 +12,7 @@ using scg = global::System.Collections.Generic;
 namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   /// <summary>Holder for reflection information generated from Modules/Sales/_schemas/Commands/set_shopping_cart_product_price_command.proto</summary>
-  public static partial class SetShoppingCartProductPriceCommandReflection {
+  internal static partial class SetShoppingCartProductPriceCommandReflection {
 
     #region Descriptor
     /// <summary>File descriptor for Modules/Sales/_schemas/Commands/set_shopping_cart_product_price_command.proto</summary>
@@ -30,9 +30,9 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
             "LnByb3RvGhdnb29nbGUvdHlwZS9tb25leS5wcm90byKIAQoiU2V0U2hvcHBp",
             "bmdDYXJ0UHJvZHVjdFByaWNlQ29tbWFuZBIfChBzaG9wcGluZ19jYXJ0X2lk",
             "GAEgASgLMgUuVXVpZBIZCgpwcm9kdWN0X2lkGAIgASgLMgUuVXVpZBImCgp1",
-            "bml0X3ByaWNlGAMgASgLMhIuZ29vZ2xlLnR5cGUuTW9uZXlCL6oCLFZTaG9w",
-            "Lk1vZHVsZXMuU2FsZXMuQVBJLkFwcGxpY2F0aW9uLkNvbW1hbmRzYgZwcm90",
-            "bzM="));
+            "bml0X3ByaWNlGAMgASgLMhIuZ29vZ2xlLnR5cGUuTW9uZXlCLqoCK1ZTaG9w",
+            "Lk1vZHVsZXMuU2FsZXMuSW5mcmFzdHJ1Y3R1cmUuQ29tbWFuZHNiBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::VShop.SharedKernel.Infrastructure.Types.UuidReflection.Descriptor, global::Google.Type.MoneyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -43,7 +43,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands {
 
   }
   #region Messages
-  public sealed partial class SetShoppingCartProductPriceCommand : pb::IMessage<SetShoppingCartProductPriceCommand>
+  internal sealed partial class SetShoppingCartProductPriceCommand : pb::IMessage<SetShoppingCartProductPriceCommand>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif

@@ -1,5 +1,5 @@
 ﻿using EventStore.Client;
-
+using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;

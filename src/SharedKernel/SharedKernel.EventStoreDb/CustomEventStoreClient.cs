@@ -8,6 +8,7 @@ using Google.Protobuf;
 
 using VShop.SharedKernel.EventStoreDb.Policies;
 using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -105,6 +106,7 @@ public class CustomEventStoreClient
                 messageContext.MessageId,
                 messageContext.Context.RequestId,
                 messageContext.Context.CorrelationId,
+                messageContext.Context.Identity.Id,
                 _clockService.Now
             );
 

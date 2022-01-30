@@ -9,7 +9,8 @@ public class MessageRegistry : IMessageRegistry
 {
     private readonly IDictionary<Type, string> _typeMap = new Dictionary<Type, string>();
     private readonly IDictionary<string, Type> _nameMap = new Dictionary<string, Type>();
-    private readonly IDictionary<string, Func<object, object>> _transformationMap = new Dictionary<string, Func<object, object>>();
+    private readonly IDictionary<string, Func<object, object>> _transformationMap = 
+        new Dictionary<string, Func<object, object>>();
 
     public void Add<TMessage>(string typeName) => Add(typeof(TMessage), typeName);
     public string GetName<TMessage>() => GetName(typeof(TMessage));

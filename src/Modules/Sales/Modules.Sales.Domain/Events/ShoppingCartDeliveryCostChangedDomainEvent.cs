@@ -6,7 +6,7 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Sales.Domain.Events
 {
-    public partial class ShoppingCartDeliveryCostChangedDomainEvent : IDomainEvent
+    internal partial class ShoppingCartDeliveryCostChangedDomainEvent : IDomainEvent
     {
         public ShoppingCartDeliveryCostChangedDomainEvent
         (
