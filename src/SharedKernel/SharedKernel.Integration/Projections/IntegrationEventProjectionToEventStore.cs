@@ -7,6 +7,7 @@ using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
@@ -39,12 +40,12 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry)?.Message;
-            if (integrationEvent is null) return;
+            MessageEnvelope<IIntegrationEvent> eventEnvelope = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry);
+            if (eventEnvelope is null) return;
             
-            _logger.Debug("Projecting integration event: {Message}", integrationEvent);
+            _logger.Debug("Projecting integration event: {Message}", eventEnvelope.Message);
 
-            await _integrationEventStore.SaveAsync(integrationEvent, cancellationToken);
+            await _integrationEventStore.SaveAsync(eventEnvelope, cancellationToken);
             
             // Update the checkpoint after successful projection.
             using IServiceScope scope = _serviceProvider.CreateScope();

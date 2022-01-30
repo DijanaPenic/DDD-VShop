@@ -1,4 +1,5 @@
-﻿using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+﻿using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services.Contracts
 {
@@ -6,7 +7,7 @@ namespace VShop.SharedKernel.Scheduler.Services.Contracts
     {
         Task ScheduleMessageAsync
         (
-            IScheduledMessage message,
+            MessageEnvelope<IScheduledMessage> messageEnvelope,
             CancellationToken cancellationToken = default
         );
     }

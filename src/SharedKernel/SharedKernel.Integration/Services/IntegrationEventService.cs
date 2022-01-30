@@ -4,6 +4,7 @@ using VShop.SharedKernel.Integration.DAL.Entities;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Services
@@ -12,7 +13,6 @@ namespace VShop.SharedKernel.Integration.Services
     {
         private readonly ILogger _logger;
         private readonly IMessageRegistry _messageRegistry;
-        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IIntegrationEventStore _integrationEventStore;
         private readonly IIntegrationEventOutbox _integrationEventOutbox;
 
@@ -20,14 +20,12 @@ namespace VShop.SharedKernel.Integration.Services
         (
             ILogger logger,
             IMessageRegistry messageRegistry,
-            IMessageContextRegistry messageContextRegistry,
             IIntegrationEventStore integrationEventStore,
             IIntegrationEventOutbox integrationEventOutbox
         )
         {
             _logger = logger;
             _messageRegistry = messageRegistry;
-            _messageContextRegistry = messageContextRegistry;
             _integrationEventStore = integrationEventStore;
             _integrationEventOutbox = integrationEventOutbox;
         }
@@ -48,13 +46,10 @@ namespace VShop.SharedKernel.Integration.Services
                 try
                 {
                     await _integrationEventOutbox.MarkEventAsInProgressAsync(pendingEventLog.Id, cancellationToken);
+
+                    MessageEnvelope<IIntegrationEvent> eventEnvelope = pendingEventLog.GetEvent(_messageRegistry);
+                    await _integrationEventStore.SaveAsync(eventEnvelope, cancellationToken);
                     
-                    (IIntegrationEvent integrationEvent, IMessageContext messageContext) = pendingEventLog
-                        .GetEvent(_messageRegistry);
-                    
-                    _messageContextRegistry.Set(integrationEvent, messageContext);
-                    
-                    await _integrationEventStore.SaveAsync(integrationEvent, cancellationToken);
                     await _integrationEventOutbox.MarkEventAsPublishedAsync(pendingEventLog.Id, cancellationToken);
                 }
                 catch (Exception ex)

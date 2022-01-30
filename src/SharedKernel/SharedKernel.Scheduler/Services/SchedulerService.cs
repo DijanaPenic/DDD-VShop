@@ -1,5 +1,6 @@
 ﻿using Quartz;
 
+using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Jobs;
@@ -13,29 +14,26 @@ namespace VShop.SharedKernel.Scheduler.Services
         private readonly ISchedulerFactory _schedulerFactory;
         private readonly SchedulerDbContext _schedulerDbContext;
         private readonly IMessageRegistry _messageRegistry;
-        private readonly IMessageContextProvider _messageContextProvider;
 
         public SchedulerService
         (
             ISchedulerFactory schedulerFactory,
             SchedulerDbContext schedulerDbContext,
-            IMessageRegistry messageRegistry,
-            IMessageContextProvider messageContextProvider
+            IMessageRegistry messageRegistry
         )
         {
             _schedulerFactory = schedulerFactory;
             _schedulerDbContext = schedulerDbContext;
             _messageRegistry = messageRegistry;
-            _messageContextProvider = messageContextProvider;
         }
 
         public async Task ScheduleMessageAsync
         (
-            IScheduledMessage message,
+            MessageEnvelope<IScheduledMessage> messageEnvelope,
             CancellationToken cancellationToken = default
         )
         {
-            IMessageContext messageContext = _messageContextProvider.Get(message);
+            (IScheduledMessage message, IMessageContext messageContext) = messageEnvelope;
 
             string messageId = messageContext.MessageId.ToString();
             IScheduler scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
