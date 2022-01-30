@@ -83,15 +83,15 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             CancellationToken cancellationToken = default
         )
         {
-            IReadOnlyList<MessageEnvelope<IBaseEvent>> envelopes = await _eventStoreClient
+            IReadOnlyList<MessageEnvelope<IBaseEvent>> messageEnvelopes = await _eventStoreClient
                 .ReadStreamForwardAsync<IBaseEvent>(GetStreamName(aggregateId), cancellationToken);
 
-            if (envelopes.Count is 0) return default;
+            if (messageEnvelopes.Count is 0) return default;
 
             TAggregate aggregate = new();
-            aggregate.Load(envelopes.ToMessages());
+            aggregate.Load(messageEnvelopes.ToMessages());
             
-            IList<MessageEnvelope<IBaseEvent>> processed = envelopes
+            IList<MessageEnvelope<IBaseEvent>> processed = messageEnvelopes
                 .Where(e => e.MessageContext.Context.RequestId == _context.RequestId).ToList();
 
             if (!processed.Any()) return aggregate;
@@ -105,7 +105,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             return aggregate;
         }
         
-        public async Task PublishAsync
+        private async Task PublishAsync
         (
             IEnumerable<IBaseEvent> events,
             CancellationToken cancellationToken = default

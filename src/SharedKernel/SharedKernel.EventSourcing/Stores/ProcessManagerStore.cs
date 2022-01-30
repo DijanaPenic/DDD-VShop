@@ -50,9 +50,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
+
+            IList<MessageEnvelope<IMessage>> messages = processManager.Inbox.Events.Concat(processManager.Outbox.Messages)
+                .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
+                .ToList();
             
-            foreach (IMessage message in processManager.Inbox.Events.Concat(processManager.Outbox.Messages))
-                _messageContextRegistry.Set(message, new MessageContext(_context));
+            _messageContextRegistry.Set(messages);
 
             await _eventStoreClient.AppendToStreamAsync
             (
@@ -72,7 +75,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             try
             {
-                await PublishAsync(processManager.Outbox.Messages, cancellationToken);
+                await PublishAsync(messages, cancellationToken);
             }
             finally
             {
@@ -80,9 +83,13 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             }
         }
 
-        public async Task PublishAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default)
+        private async Task PublishAsync
+        (
+            IEnumerable<MessageEnvelope<IMessage>> messages,
+            CancellationToken cancellationToken = default
+        )
         {
-            foreach (IMessage message in messages)
+            foreach ((IMessage message, IMessageContext messageContext) in messages)
             {
                 switch (message)
                 {
@@ -97,7 +104,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                     case IScheduledMessage scheduledMessage:
                         await _messageSchedulerService.ScheduleMessageAsync
                         (
-                            scheduledMessage,
+                            new MessageEnvelope<IScheduledMessage>(scheduledMessage, messageContext),
                             cancellationToken
                         );
                         break;
@@ -128,7 +135,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             foreach ((IMessage message, IMessageContext messageContext) in processed)
                 _messageContextRegistry.Set(message, messageContext);
             
-            await PublishAsync(processed.ToMessages(), cancellationToken); 
+            await PublishAsync(processed, cancellationToken); 
             processManager.Restore();
 
             return processManager;
