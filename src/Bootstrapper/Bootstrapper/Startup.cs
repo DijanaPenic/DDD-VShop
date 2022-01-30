@@ -5,6 +5,7 @@ using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -31,7 +32,7 @@ public class Startup
         services.AddApplication(_configuration);
         services.AddSingleton<IControllerFactory, CustomControllerFactory>();
 
-        ContextAccessor contextAccessor = new();
+        IContextAccessor contextAccessor = new ContextAccessor();
         services.AddSingleton(contextAccessor);
         
         foreach (IModule module in _modules) module.Initialize(_configuration, _logger, contextAccessor);

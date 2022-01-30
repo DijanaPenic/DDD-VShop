@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using VShop.SharedKernel.Infrastructure.Policies;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Commands
@@ -13,13 +14,13 @@ namespace VShop.SharedKernel.Infrastructure.Commands
     {
         private readonly IMediator _mediator;
         private readonly IMessageContextProvider _messageContextProvider;
-        private readonly ContextAccessor _contextAccessor;
+        private readonly IContextAccessor _contextAccessor;
 
         public CommandDispatcher
         (
             IMediator mediator,
             IMessageContextProvider messageContextProvider,
-            ContextAccessor contextAccessor
+            IContextAccessor contextAccessor
         )
         {
             _mediator = mediator;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
@@ -44,7 +45,7 @@ public static class ContextExtensions
     
     public static IServiceCollection AddContext(this IServiceCollection services)
     {
-        services.AddTransient(sp => sp.GetRequiredService<ContextAccessor>().Context);
+        services.AddTransient(sp => sp.GetRequiredService<IContextAccessor>().Context);
             
         return services;
     }
@@ -53,7 +54,7 @@ public static class ContextExtensions
     {
         app.Use((ctx, next) =>
         {
-            ctx.RequestServices.GetRequiredService<ContextAccessor>().Context = new Context(ctx);;
+            ctx.RequestServices.GetRequiredService<IContextAccessor>().Context = new Context(ctx);;
                 
             return next();
         });

@@ -5,7 +5,7 @@ using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
-public sealed class ContextAccessor
+public sealed class ContextAccessor : IContextAccessor
 {
     private static readonly AsyncLocal<ContextHolder> Holder = new();
 

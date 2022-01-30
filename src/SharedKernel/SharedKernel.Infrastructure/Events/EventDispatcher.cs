@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
@@ -14,7 +15,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
     internal class EventDispatcher : IEventDispatcher
     {
         private readonly IMessageContextProvider _messageContextProvider;
-        private readonly ContextAccessor _contextAccessor;
+        private readonly IContextAccessor _contextAccessor;
         private readonly IDictionary<EventDispatchStrategy, IMediator> _publishStrategies = 
             new Dictionary<EventDispatchStrategy, IMediator>();
 
@@ -22,7 +23,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
         (
             ServiceFactory serviceFactory,
             IMessageContextProvider messageContextProvider,
-            ContextAccessor contextAccessor
+            IContextAccessor contextAccessor
         )
         {
             _messageContextProvider = messageContextProvider;

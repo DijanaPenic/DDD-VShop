@@ -29,13 +29,13 @@ internal class CatalogModule : IModule
     public string Name => "Catalog";
     public Assembly[] Assemblies { get; set; }
 
-    public void Initialize(IConfiguration configuration, ILogger logger, ContextAccessor contextAccessor)
+    public void Initialize(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
         RunHostedServices();
     }
 
-    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, ContextAccessor contextAccessor)
+    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
     {
         PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");

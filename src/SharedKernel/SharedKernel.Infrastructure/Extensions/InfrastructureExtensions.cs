@@ -36,7 +36,6 @@ public static class InfrastructureExtensions
         services.AddMemoryCache();
         services.AddContext();
         services.AddSingleton<IClockService, ClockService>();
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddFluentValidation(assemblies);
         services.AddLogging(logger, module);
