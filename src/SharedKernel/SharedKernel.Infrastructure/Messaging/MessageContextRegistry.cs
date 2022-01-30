@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -16,4 +17,10 @@ public class MessageContextRegistry : IMessageContextRegistry
         {
             SlidingExpiration = TimeSpan.FromMinutes(1)
         });
+
+    public void Set<TMessage>(IEnumerable<MessageEnvelope<TMessage>> messages) where TMessage : IMessage
+    {
+        foreach ((IMessage message, IMessageContext messageContext) in messages)
+            Set(message, messageContext);
+    }
 }
