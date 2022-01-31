@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.Modules.Catalog.API.Automapper;
+using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.PostgresDb;
@@ -17,6 +18,7 @@ using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -38,6 +40,13 @@ internal class CatalogModule : IModule
     )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
+        
+        ModuleRegistry.AddBroadcastActions(CatalogCompositionRoot.ServiceProvider, Assemblies);
+
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = CatalogCompositionRoot.ServiceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
+        
         RunHostedServices();
     }
 
@@ -60,6 +69,8 @@ internal class CatalogModule : IModule
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
         services.AddSingleton(CatalogMessageRegistry.Initialize());
+        services.AddSingleton<ICatalogDispatcher, CatalogDispatcher>();
+        services.AddSingleton<IDispatcher, CatalogDispatcher>();
 
         services.Decorate
         (
@@ -69,12 +80,6 @@ internal class CatalogModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         CatalogCompositionRoot.SetServiceProvider(serviceProvider);
-
-        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
-
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
     private void RunHostedServices() // Database migration.

@@ -1,9 +1,9 @@
 using System.IO;
 using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;

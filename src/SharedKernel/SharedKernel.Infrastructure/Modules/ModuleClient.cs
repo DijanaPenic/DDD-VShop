@@ -10,20 +10,15 @@ namespace VShop.SharedKernel.Infrastructure.Modules;
 
 public class ModuleClient : IModuleClient
 {
-    private readonly IModuleRegistry _moduleRegistry;
     private readonly IModuleSerializer _moduleSerializer;
 
-    public ModuleClient(IModuleRegistry moduleRegistry, IModuleSerializer moduleSerializer)
-    {
-        _moduleRegistry = moduleRegistry;
-        _moduleSerializer = moduleSerializer;
-    }
+    public ModuleClient(IModuleSerializer moduleSerializer) => _moduleSerializer = moduleSerializer;
 
     public async Task PublishAsync(object message, CancellationToken cancellationToken = default)
     {
         Type messageType = message.GetType();
 
-        IList<ModuleBroadcastRegistration> registrations = _moduleRegistry.GetBroadcastRegistrations(messageType.Name)
+        IList<ModuleBroadcastRegistration> registrations = ModuleRegistry.GetBroadcastRegistrations(messageType.Name)
             .Where(r => r.ReceiverType != messageType)
             .ToList();
 

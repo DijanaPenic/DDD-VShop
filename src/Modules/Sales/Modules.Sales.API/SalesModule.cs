@@ -24,7 +24,6 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
@@ -46,6 +45,13 @@ internal class SalesModule : IModule
     )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
+
+        ModuleRegistry.AddBroadcastActions(SalesCompositionRoot.ServiceProvider, Assemblies);
+        
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = SalesCompositionRoot.ServiceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
+        
         RunHostedServices();
     }
 
@@ -71,6 +77,7 @@ internal class SalesModule : IModule
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(SalesMessageRegistry.Initialize());
+        services.AddSingleton<ISalesDispatcher, SalesDispatcher>();
         services.AddSingleton<IDispatcher, SalesDispatcher>();
 
         services.AddTransient
@@ -91,12 +98,6 @@ internal class SalesModule : IModule
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);
-        
-        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
-        
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
     private void RunHostedServices() // Quartz and database migration.

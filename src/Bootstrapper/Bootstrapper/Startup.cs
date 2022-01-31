@@ -31,17 +31,15 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        IContextAccessor contextAccessor = new ContextAccessor();
-        
-        services.AddApplication(_configuration, contextAccessor);
+        services.AddApplication(_configuration);
         services.AddSingleton<IControllerFactory, CustomControllerFactory>();
+        
+        IContextAccessor contextAccessor = new ContextAccessor();
+        services.AddSingleton(contextAccessor);
         
         foreach (IModule module in _modules) 
             module.Initialize(_configuration, _logger, contextAccessor);
 
-        //services.AddSingleton<IDispatcher, SalesDispatcher>(); // TODO - check enabled flag.
-
-        services.AddSingleton<IModuleRegistry, ModuleRegistry>();
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();
     }

@@ -16,6 +16,7 @@ using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Billing.API.Automapper;
+using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Services;
 using VShop.Modules.Billing.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Configuration;
@@ -23,6 +24,7 @@ using VShop.Modules.Billing.Infrastructure.Configuration.Extensions;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
 
 using ILogger = Serilog.ILogger;
@@ -42,6 +44,13 @@ internal class BillingModule : IModule
     )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
+
+        ModuleRegistry.AddBroadcastActions(BillingCompositionRoot.ServiceProvider, Assemblies);
+
+        IEnumerable<IEventStoreBackgroundService> subscriptionServices = BillingCompositionRoot.ServiceProvider
+            .GetServices<IEventStoreBackgroundService>();
+        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
+        
         RunHostedServices();
     }
 
@@ -66,6 +75,8 @@ internal class BillingModule : IModule
         services.AddTransient<IPaymentRepository, PaymentRepository>();
         services.AddAutoMapper(typeof(PaymentAutomapperProfile));
         services.AddSingleton(BillingMessageRegistry.Initialize());
+        services.AddSingleton<IBillingDispatcher, BillingDispatcher>();
+        services.AddSingleton<IDispatcher, BillingDispatcher>();
 
         services.AddTransient
         (
@@ -90,12 +101,6 @@ internal class BillingModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider);
-
-        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
-
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
 
     private void RunHostedServices() // Database migration.

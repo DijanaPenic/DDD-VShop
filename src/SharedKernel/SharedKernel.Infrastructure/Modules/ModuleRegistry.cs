@@ -8,15 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
-public sealed class ModuleRegistry : IModuleRegistry
+public static class ModuleRegistry
 {
     private static readonly List<ModuleBroadcastRegistration> BroadcastRegistrations = new();
 
-    public IEnumerable<ModuleBroadcastRegistration> GetBroadcastRegistrations(string key)
+    public static IEnumerable<ModuleBroadcastRegistration> GetBroadcastRegistrations(string key)
         => BroadcastRegistrations.Where(r => r.Key == key);
 
     public static void AddBroadcastActions(IServiceProvider serviceProvider, IEnumerable<Assembly> assemblies)
