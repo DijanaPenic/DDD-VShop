@@ -1,0 +1,8 @@
+{
+    "ProcessManager": {
+        "Module": {
+            "Name": "ProcessManager",
+            "Enabled": true
+        }
+    }
+}
