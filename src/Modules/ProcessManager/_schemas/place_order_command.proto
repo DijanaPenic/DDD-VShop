@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.ProcessManager.Infrastructure.Messages.Commands";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+
+message PlaceOrderCommand 
+{
+	Uuid order_id = 1;
+	Uuid shopping_cart_id = 2;
+}

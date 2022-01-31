@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using MediatR;
 
-using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -51,19 +50,24 @@ namespace VShop.SharedKernel.Infrastructure.Events
         public Task PublishAsync<TEvent>
         (
             TEvent @event,
+            CancellationToken cancellationToken = default
+        ) where TEvent : IBaseEvent
+            => PublishAsync(@event, EventDispatchStrategy.SyncStopOnException, cancellationToken);
+
+        public Task PublishAsync<TEvent>
+        (
+            TEvent @event,
             EventDispatchStrategy strategy,
             CancellationToken cancellationToken = default
         ) where TEvent : IBaseEvent
         {
             if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))
-            {
                 throw new ArgumentException($"Unknown strategy: {strategy}");
-            }
             
             _contextAccessor.ChangeContext(_messageContextProvider.Get(@event));
             return mediator.Publish(@event, cancellationToken);
         }
-
+        
         private static Task ParallelWhenAllAsync<TEvent>
         (
             IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,

@@ -40,8 +40,6 @@ services:
     ports: 
       - 5438:5432
     restart: always
-    volumes:
-    - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Sales
@@ -52,8 +50,6 @@ services:
     ports: 
       - 5440:5432
     restart: always
-    volumes:
-    - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_SalesTests
@@ -88,3 +84,37 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Catalog
       POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      
+  postgres.db.catalog.tests:
+    image: postgres
+    ports: 
+      - 5443:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_CatalogTests
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      
+  postgres.db.process_manager:
+    image: postgres
+    ports: 
+      - 5444:5432
+    restart: always
+    volumes:
+      - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_ProcessManager
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      
+  postgres.db.process_manager.tests:
+    image: postgres
+    ports: 
+      - 5445:5432
+    restart: always
+    volumes:
+      - ./quartz_tables_postgres.sql:/docker-entrypoint-initdb.d/quartz_tables_postgres.sql
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_ProcessManagerTests
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g  

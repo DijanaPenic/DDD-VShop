@@ -44,15 +44,9 @@ internal static class EventStoreExtensions
             typeof(IIntegrationEventStore),
             typeof(IntegrationEventStore)
         );
-        services.AddTransient
-        (
-            typeof(IProcessManagerStore<>),
-            typeof(ProcessManagerStore<>)
-        );
 
         // Stream names
         string aggregateStreamPrefix = $"{eventStoreClient.ConnectionName}/aggregate".ToSnakeCase();
-        string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}/process_manager".ToSnakeCase();
 
         // Read model projections
         services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
@@ -93,11 +87,8 @@ internal static class EventStoreExtensions
                 (
                     "IntegrationEventsPub", 
                     subscriptionHandler,
-                    // Subscription will be made to these streams:
-                    // * process manager outbox and
-                    // * aggregate
                     new SubscriptionFilterOptions(StreamFilter.RegularExpression
-                        (new Regex($"^{processManagerStreamPrefix}.*outbox$|^{aggregateStreamPrefix}")))
+                        (new Regex($"^{aggregateStreamPrefix}")))
                 )
             );
         });

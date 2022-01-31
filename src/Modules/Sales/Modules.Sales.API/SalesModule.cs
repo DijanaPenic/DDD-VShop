@@ -1,4 +1,5 @@
 using System;
+using Serilog;
 using MediatR;
 using System.Linq;
 using System.Reflection;
@@ -27,8 +28,6 @@ using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
-
-using ILogger = Serilog.ILogger;
 
 namespace VShop.Modules.Sales.API;
 
@@ -71,7 +70,6 @@ internal class SalesModule : IModule
         
         services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
         services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
@@ -90,17 +88,17 @@ internal class SalesModule : IModule
             typeof(IPipelineBehavior<,>),
             typeof(RetryPolicyCommandDecorator<,>)
         );
-        services.Decorate
-        (
-            typeof(INotificationHandler<>),
-            typeof(LoggingEventDecorator<>)
-        );
+        // services.Decorate
+        // (
+        //     typeof(INotificationHandler<>),
+        //     typeof(LoggingEventDecorator<>)
+        // );
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);
     }
 
-    private void RunHostedServices() // Quartz and database migration.
+    private void RunHostedServices() // Database migration.
     {
         using IServiceScope scope = SalesCompositionRoot.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();

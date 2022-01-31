@@ -17,10 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.3.3" />
-      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.3.3" />
-      <PackageReference Include="Quartz.Plugins" Version="3.3.3" />
-      <PackageReference Include="Quartz.Serialization.Json" Version="3.3.3" />
+
     </ItemGroup>
 
     <ItemGroup>

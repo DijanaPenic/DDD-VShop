@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.ProcessManager.Infrastructure.Messages.Events";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+import "google/protobuf/timestamp.proto";
+
+message ShoppingCartCheckoutRequestedDomainEvent 
+{
+    Uuid order_id = 1;
+    Uuid shopping_cart_id = 2;
+    google.protobuf.Timestamp confirmed_at = 3;
+}

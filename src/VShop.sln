@@ -62,7 +62,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.DatabaseMigrator",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProcessManger", "ProcessManger", "{A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.ProcessManager.API", "Modules\Modules.ProcessManager.API\Modules.ProcessManager.API.csproj", "{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.ProcessManager.API", "Modules\ProcessManager\Modules.ProcessManager.API\Modules.ProcessManager.API.csproj", "{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.ProcessManager.Infrastructure", "Modules\ProcessManager\Modules.ProcessManager.Infrastructure\Modules.ProcessManager.Infrastructure.csproj", "{43AEECE4-3CFA-4E58-B014-AB087B19452D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,7 @@ Global
 		{9DE7EE5A-4B7C-43F7-A13A-151DB0E3DE1A} = {F290BBE9-F8D7-44DB-B1CE-23B179BD6EA5}
 		{A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6} = {3E419930-4E41-43FF-91B9-ABEAFB6A742F}
 		{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7} = {A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}
+		{43AEECE4-3CFA-4E58-B014-AB087B19452D} = {A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -196,5 +199,9 @@ Global
 		{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43AEECE4-3CFA-4E58-B014-AB087B19452D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43AEECE4-3CFA-4E58-B014-AB087B19452D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43AEECE4-3CFA-4E58-B014-AB087B19452D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43AEECE4-3CFA-4E58-B014-AB087B19452D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

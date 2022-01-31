@@ -1,4 +1,5 @@
 using MediatR;
+using Serilog;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -22,8 +23,6 @@ using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
-
-using ILogger = Serilog.ILogger;
 
 namespace VShop.Modules.Catalog.API;
 

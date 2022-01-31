@@ -10,6 +10,11 @@ public interface IEventDispatcher
         TEvent notification,
         EventDispatchStrategy strategy,
         CancellationToken cancellationToken = default
-    )
-        where TEvent : IBaseEvent;
+    ) where TEvent : IBaseEvent;
+    
+    Task PublishAsync<TEvent>
+    (
+        TEvent notification,
+        CancellationToken cancellationToken = default
+    ) where TEvent : IBaseEvent;
 }

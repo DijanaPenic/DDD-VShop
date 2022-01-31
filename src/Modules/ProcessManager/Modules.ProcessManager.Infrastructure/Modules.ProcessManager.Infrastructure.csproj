@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.Modules.ProcessManager.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Modules.ProcessManager.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj" />
+      <ProjectReference Include="..\..\Billing\Modules.Billing.Integration\Modules.Billing.Integration.csproj" />
+      <ProjectReference Include="..\..\Catalog\Modules.Catalog.Integration\Modules.Catalog.Integration.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.3.3" />
+      <PackageReference Include="Scrutor" Version="4.0.0" />
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.3.3" />
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.3.3" />
+      <PackageReference Include="Quartz.Plugins" Version="3.3.3" />
+      <PackageReference Include="Quartz.Serialization.Json" Version="3.3.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DAL\Migrations\Scheduler" />
+      <Folder Include="DAL\Migrations\Subscription" />
+    </ItemGroup>
+
+</Project>

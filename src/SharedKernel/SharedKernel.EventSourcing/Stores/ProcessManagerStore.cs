@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.EventSourcing.ProcessManagers;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
@@ -15,6 +13,7 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -22,7 +21,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
     {
         private readonly CustomEventStoreClient _eventStoreClient;
         private readonly IMessageContextRegistry _messageContextRegistry;
-        private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IModuleClient _moduleClient;
         private readonly ISchedulerService _messageSchedulerService;
         private readonly IContext _context;
 
@@ -30,14 +29,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         (
             CustomEventStoreClient eventStoreClient,
             IMessageContextRegistry messageContextRegistry,
-            ICommandDispatcher commandDispatcher,
+            IModuleClient moduleClient,
             ISchedulerService messageSchedulerService,
             IContext context
         )
         {
             _eventStoreClient = eventStoreClient;
             _messageContextRegistry = messageContextRegistry;
-            _commandDispatcher = commandDispatcher;
+            _moduleClient = moduleClient;
             _messageSchedulerService = messageSchedulerService;
             _context = context;
         }
@@ -51,11 +50,15 @@ namespace VShop.SharedKernel.EventSourcing.Stores
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
 
-            IList<MessageEnvelope<IMessage>> messages = processManager.Inbox.Events.Concat(processManager.Outbox.Messages)
+            IList<MessageEnvelope<IMessage>> inboxMessages = processManager.Inbox.Events
                 .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
                 .ToList();
             
-            _messageContextRegistry.Set(messages);
+            IList<MessageEnvelope<IMessage>> outboxMessages = processManager.Outbox.Messages
+                .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
+                .ToList();
+            
+            _messageContextRegistry.Set(inboxMessages.Concat(outboxMessages));
 
             await _eventStoreClient.AppendToStreamAsync
             (
@@ -75,7 +78,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             try
             {
-                await PublishAsync(messages, cancellationToken);
+                await PublishAsync(outboxMessages, cancellationToken);
             }
             finally
             {
@@ -95,10 +98,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 {
                     case IBaseCommand command:
                     {
-                        object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
-                    
-                        if (commandResult is IResult { Value: ApplicationError error })
-                            throw new Exception(error.ToString());
+                        await _moduleClient.PublishAsync(command, cancellationToken);
                         break;
                     }
                     case IScheduledMessage scheduledMessage:
@@ -151,7 +151,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
             
-            return $"process_manager/{processManagerName}/{processManagerId}";
+            return $"{processManagerName}/{processManagerId}";
         }
     }
 }

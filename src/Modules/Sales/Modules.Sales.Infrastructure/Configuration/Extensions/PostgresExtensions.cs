@@ -13,7 +13,6 @@ internal static class PostgresExtensions
     {
         services.AddDbContextBuilder<SalesDbContext>(connectionString);
         services.AddDbContext<SalesDbContext>();
-        services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddUnitOfWork<SalesUnitOfWork>();
     }

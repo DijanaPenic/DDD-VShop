@@ -8,6 +8,7 @@ using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;
 using VShop.Modules.Catalog.Infrastructure.DAL;
+using VShop.Modules.ProcessManager.Infrastructure.DAL;
 using VShop.SharedKernel.Integration.DAL;
 
 namespace Database.DatabaseMigrator;
@@ -27,6 +28,7 @@ public class Startup
             "sales" => typeof(SalesDbContext).Assembly,
             "billing" => typeof(BillingDbContext).Assembly,
             "catalog" => typeof(CatalogDbContext).Assembly,
+            "processmanager" => typeof(ProcessManagerDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
         
@@ -34,6 +36,7 @@ public class Startup
         services.AddDbContext<SalesDbContext>();
         services.AddDbContext<BillingDbContext>();
         services.AddDbContext<CatalogDbContext>();
+        services.AddDbContext<ProcessManagerDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddDbContext<IntegrationDbContext>();

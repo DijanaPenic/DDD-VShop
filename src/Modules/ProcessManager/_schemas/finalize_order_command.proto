@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.ProcessManager.Infrastructure.Messages.Commands";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+
+message FinalizeOrderCommand 
+{
+    Uuid order_id = 1;
+	repeated OrderLine order_lines = 2;
+	
+	message OrderLine 
+	{
+		Uuid product_id = 1;
+		int32 OutOfStockQuantity = 2;
+	}
+}

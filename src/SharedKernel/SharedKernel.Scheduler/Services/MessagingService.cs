@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Errors;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Scheduler.Services
 {
@@ -18,7 +16,7 @@ namespace VShop.SharedKernel.Scheduler.Services
         private readonly ILogger _logger;
         private readonly IMessageRegistry _messageRegistry;
         private readonly IMessageContextRegistry _messageContextRegistry;
-        private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IModuleClient _moduleClient;
         private readonly IEventDispatcher _eventDispatcher;
         private readonly SchedulerDbContext _schedulerDbContext;
 
@@ -27,7 +25,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             ILogger logger,
             IMessageRegistry messageRegistry,
             IMessageContextRegistry messageContextRegistry,
-            ICommandDispatcher commandDispatcher,
+            IModuleClient moduleClient,
             IEventDispatcher eventDispatcher,
             SchedulerDbContext schedulerDbContext
         )
@@ -35,7 +33,7 @@ namespace VShop.SharedKernel.Scheduler.Services
             _logger = logger;
             _messageRegistry = messageRegistry;
             _messageContextRegistry = messageContextRegistry;
-            _commandDispatcher = commandDispatcher;
+            _moduleClient = moduleClient;
             _eventDispatcher = eventDispatcher;
             _schedulerDbContext = schedulerDbContext;
         }
@@ -56,17 +54,10 @@ namespace VShop.SharedKernel.Scheduler.Services
                 switch (message)
                 {
                     case IBaseCommand command:
-                        object commandResult = await _commandDispatcher.SendAsync(command, cancellationToken);
-                        if (commandResult is IResult { Value: ApplicationError error })
-                            throw new Exception(error.ToString());
+                        await _moduleClient.PublishAsync(command, cancellationToken);
                         break;
                     case IBaseEvent @event:
-                        await _eventDispatcher.PublishAsync
-                        (
-                            @event,
-                            EventDispatchStrategy.SyncStopOnException,
-                            cancellationToken
-                        );
+                        await _eventDispatcher.PublishAsync(@event, cancellationToken);
                         break;
                     default:
                         throw new Exception("Unknown target type.");

@@ -60,12 +60,7 @@ namespace VShop.SharedKernel.Integration.Projections
 
                 try
                 {
-                    await _eventDispatcher.PublishAsync
-                    (
-                        integrationEvent,
-                        EventDispatchStrategy.SyncStopOnException,
-                        cancellationToken
-                    );
+                    await _eventDispatcher.PublishAsync(integrationEvent, cancellationToken);
                 }
                 catch (Exception ex)
                 {

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
@@ -11,8 +12,17 @@ namespace VShop.SharedKernel.Infrastructure.Modules;
 public class ModuleClient : IModuleClient
 {
     private readonly IModuleSerializer _moduleSerializer;
+    private readonly IMessageContextProvider _messageContextProvider;
 
-    public ModuleClient(IModuleSerializer moduleSerializer) => _moduleSerializer = moduleSerializer;
+    public ModuleClient
+    (
+        IModuleSerializer moduleSerializer,
+        IMessageContextProvider messageContextProvider
+    )
+    {
+        _moduleSerializer = moduleSerializer;
+        _messageContextProvider = messageContextProvider;
+    }
 
     public async Task PublishAsync(object message, CancellationToken cancellationToken = default)
     {
@@ -25,10 +35,10 @@ public class ModuleClient : IModuleClient
         List<Task> tasks = new();
         foreach (ModuleBroadcastRegistration registration in registrations)
         {
-            Func<object, CancellationToken, Task> action = registration.Action;
             object receiverMessage = TranslateType(message, registration.ReceiverType);
-
-            tasks.Add(action(receiverMessage, cancellationToken));
+            
+            IMessageContext messageContext = _messageContextProvider.Get((IMessage)message);
+            tasks.Add(registration.Action(receiverMessage, messageContext, cancellationToken));
         }
 
         await Task.WhenAll(tasks);

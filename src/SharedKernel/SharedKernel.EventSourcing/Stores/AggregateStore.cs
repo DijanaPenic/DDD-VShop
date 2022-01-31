@@ -9,10 +9,10 @@ using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.EventSourcing.Aggregates;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
-using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.EventSourcing.Stores
 {
@@ -21,19 +21,22 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private readonly CustomEventStoreClient _eventStoreClient;
         private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IEventDispatcher _eventDispatcher;
+        private readonly IModuleClient _moduleClient;
         private readonly IContext _context;
 
         public AggregateStore
         (
             CustomEventStoreClient eventStoreClient,
             IMessageContextRegistry messageContextRegistry,
-            IEventDispatcher eventDispatcher, 
+            IEventDispatcher eventDispatcher,
+            IModuleClient moduleClient,
             IContext context
         )
         {
             _eventStoreClient = eventStoreClient;
             _messageContextRegistry = messageContextRegistry;
             _eventDispatcher = eventDispatcher;
+            _moduleClient = moduleClient;
             _context = context;
         }
 
@@ -113,12 +116,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             foreach (IBaseEvent @event in events)
             {
-                await _eventDispatcher.PublishAsync
-                (
-                    @event,
-                    EventDispatchStrategy.SyncStopOnException,
-                    cancellationToken
-                );
+                await _eventDispatcher.PublishAsync(@event, cancellationToken);
+                await _moduleClient.PublishAsync(@event, cancellationToken);
             }
         }
 

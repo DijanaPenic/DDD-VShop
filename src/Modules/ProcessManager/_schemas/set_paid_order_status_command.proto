@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.ProcessManager.Infrastructure.Messages.Commands";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+
+message SetPaidOrderStatusCommand 
+{
+    Uuid order_id = 1;
+}

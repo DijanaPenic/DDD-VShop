@@ -1,6 +1,6 @@
 protoc --proto_path=. --csharp_out=internal_access:Modules/Sales/Modules.Sales.Infrastructure --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Infrastructure Modules/Sales/_schemas/Commands/*.proto
 protoc --proto_path=. --csharp_out=internal_access:Modules/Billing/Modules.Billing.Infrastructure --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Billing.Infrastructure Modules/Billing/_schemas/Commands/*.proto
-//protoc --proto_path=. --csharp_out=internal_access:Modules/Catalog/Modules.Catalog.Infrastructure --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Catalog.Infrastructure Modules/Catalog/_schemas/Commands/*.proto
+protoc --proto_path=. --csharp_out=internal_access:Modules/Catalog/Modules.Catalog.Infrastructure --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Catalog.Infrastructure Modules/Catalog/_schemas/Commands/*.proto
 
 
 protoc --proto_path=. --csharp_out=Modules/Sales/Modules.Sales.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Integration Modules/Sales/_schemas/Events/IntegrationEvents/*.proto
@@ -13,3 +13,6 @@ protoc --proto_path=. --csharp_out=internal_access:Modules/Sales/Modules.Sales.D
 
 protoc --proto_path=. --csharp_out=SharedKernel/SharedKernel.EventStoreDb --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.SharedKernel.EventStoreDb SharedKernel/SharedKernel.EventStoreDb/_schemas/*.proto
 protoc --proto_path=. --csharp_out=SharedKernel/SharedKernel.Infrastructure --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.SharedKernel.Infrastructure SharedKernel/SharedKernel.Infrastructure/_schemas/*.proto
+
+
+protoc --proto_path=. --csharp_out=internal_access:Modules/ProcessManager/Modules.ProcessManager.API --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.ProcessManager.API Modules/ProcessManager/_schemas/*.proto
