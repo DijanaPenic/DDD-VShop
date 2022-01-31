@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using VShop.SharedKernel.Infrastructure.Policies;
-using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;

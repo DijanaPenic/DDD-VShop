@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 using System.Linq;
 using System.Reflection;
@@ -17,12 +18,16 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
+using VShop.Modules.Sales.Infrastructure;
 using VShop.Modules.Sales.Infrastructure.Queries;
 using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Modules;
 
 using ILogger = Serilog.ILogger;
 
@@ -33,16 +38,28 @@ internal class SalesModule : IModule
     public string Name => "Sales";
     public Assembly[] Assemblies { get; set; }
 
-    public void Initialize(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void Initialize
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
         RunHostedServices();
     }
 
-    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void ConfigureCompositionRoot
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
-        PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
-        EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
+        PostgresOptions postgresOptions = configuration
+            .GetOptions<PostgresOptions>($"{Name}:Postgres");
+        EventStoreOptions eventStoreOptions = configuration
+            .GetOptions<EventStoreOptions>("EventStore");
         
         ServiceCollection services = new();
         
@@ -54,14 +71,28 @@ internal class SalesModule : IModule
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(SalesMessageRegistry.Initialize());
-        
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));
-        
-        services.Decorate(typeof(INotificationHandler<>), typeof(LoggingEventDecorator<>));
+        services.AddSingleton<IDispatcher, SalesDispatcher>();
 
-        ServiceProvider serviceProvider = services.BuildServiceProvider();
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
+            typeof(LoggingCommandDecorator<,>)
+        );
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
+            typeof(RetryPolicyCommandDecorator<,>)
+        );
+        services.Decorate
+        (
+            typeof(INotificationHandler<>),
+            typeof(LoggingEventDecorator<>)
+        );
+
+        IServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
         
         IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
             .GetServices<IEventStoreBackgroundService>();

@@ -23,6 +23,7 @@ using VShop.Modules.Billing.Infrastructure.Configuration.Extensions;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Modules;
 
 using ILogger = Serilog.ILogger;
 
@@ -33,19 +34,31 @@ internal class BillingModule : IModule
     public string Name => "Billing";
     public Assembly[] Assemblies { get; set; }
 
-    public void Initialize(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void Initialize
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
         RunHostedServices();
     }
 
-    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void ConfigureCompositionRoot
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
-        PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
-        EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
-        
+        PostgresOptions postgresOptions = configuration
+            .GetOptions<PostgresOptions>($"{Name}:Postgres");
+        EventStoreOptions eventStoreOptions = configuration
+            .GetOptions<EventStoreOptions>("EventStore");
+
         ServiceCollection services = new();
-        
+
         services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
@@ -54,20 +67,37 @@ internal class BillingModule : IModule
         services.AddAutoMapper(typeof(PaymentAutomapperProfile));
         services.AddSingleton(BillingMessageRegistry.Initialize());
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingCommandDecorator<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyCommandDecorator<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionalCommandDecorator<,>));
-
-        services.Decorate(typeof(INotificationHandler<>), typeof(LoggingEventDecorator<>));
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
+            typeof(LoggingCommandDecorator<,>)
+        );
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
+            typeof(RetryPolicyCommandDecorator<,>)
+        );
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
+            typeof(TransactionalCommandDecorator<,>)
+        );
+        services.Decorate
+        (
+            typeof(INotificationHandler<>),
+            typeof(LoggingEventDecorator<>)
+        );
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider);
-        
+
+        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
+
         IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
             .GetServices<IEventStoreBackgroundService>();
         ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
     }
-    
+
     private void RunHostedServices() // Database migration.
     {
         using IServiceScope scope = BillingCompositionRoot.CreateScope();

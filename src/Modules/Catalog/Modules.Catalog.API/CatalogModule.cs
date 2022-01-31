@@ -18,6 +18,7 @@ using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 using ILogger = Serilog.ILogger;
@@ -29,30 +30,48 @@ internal class CatalogModule : IModule
     public string Name => "Catalog";
     public Assembly[] Assemblies { get; set; }
 
-    public void Initialize(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void Initialize
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
         ConfigureCompositionRoot(configuration, logger, contextAccessor);
         RunHostedServices();
     }
 
-    public void ConfigureCompositionRoot(IConfiguration configuration, ILogger logger, IContextAccessor contextAccessor)
+    public void ConfigureCompositionRoot
+    (
+        IConfiguration configuration,
+        ILogger logger,
+        IContextAccessor contextAccessor
+    )
     {
-        PostgresOptions postgresOptions = configuration.GetOptions<PostgresOptions>($"{Name}:Postgres");
-        EventStoreOptions eventStoreOptions = configuration.GetOptions<EventStoreOptions>("EventStore");
-        
+        PostgresOptions postgresOptions = configuration
+            .GetOptions<PostgresOptions>($"{Name}:Postgres");
+        EventStoreOptions eventStoreOptions = configuration
+            .GetOptions<EventStoreOptions>("EventStore");
+
         ServiceCollection services = new();
-        
+
         services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
         services.AddSingleton(CatalogMessageRegistry.Initialize());
-        
-        services.Decorate(typeof(INotificationHandler<>), typeof(TransactionalEventDecorator<>));
+
+        services.Decorate
+        (
+            typeof(INotificationHandler<>),
+            typeof(TransactionalEventDecorator<>)
+        );
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         CatalogCompositionRoot.SetServiceProvider(serviceProvider);
-        
+
+        ModuleRegistry.AddBroadcastActions(serviceProvider, Assemblies);
+
         IEnumerable<IEventStoreBackgroundService> subscriptionServices = serviceProvider
             .GetServices<IEventStoreBackgroundService>();
         ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);

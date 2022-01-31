@@ -1,7 +1,10 @@
 using System.IO;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
@@ -28,4 +31,12 @@ public static class ModuleExtensions
                     SearchOption.AllDirectories
                 );
         });
+    
+    public static IServiceCollection AddModuleRequests(this IServiceCollection services)
+    {
+        services.AddSingleton<IModuleClient, ModuleClient>();
+        services.AddSingleton<IModuleSerializer, JsonModuleSerializer>();
+
+        return services;
+    }
 }

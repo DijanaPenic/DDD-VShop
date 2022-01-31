@@ -2,7 +2,6 @@ using Serilog;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
-using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules.Contracts;
