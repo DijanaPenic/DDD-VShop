@@ -9,14 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoFixture" Version="4.17.0" />
       <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
+      <PackageReference Include="DeepCloner" Version="0.10.3" />
+      <PackageReference Include="Docker.DotNet" Version="3.125.5" />
       <PackageReference Include="FluentAssertions" Version="6.2.0" />
       <PackageReference Include="NodaTime" Version="3.0.9" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+      <ProjectReference Include="..\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
     </ItemGroup>
 
 </Project>

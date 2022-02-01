@@ -1,7 +1,6 @@
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.Modules.Sales.Domain.Events.Reminders;
 using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Tests.Customizations;
@@ -17,6 +16,7 @@ using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Scheduler.DAL.Entities;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
+using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {

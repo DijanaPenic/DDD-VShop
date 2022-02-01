@@ -2,21 +2,21 @@ using AutoFixture;
 using AutoFixture.Xunit2;
 using System.Reflection;
 
-using VShop.SharedKernel.Tests;
-
-namespace VShop.Modules.Sales.Tests.Customizations
+namespace VShop.SharedKernel.Tests.Customizations
 {
-    internal class CustomizedAutoDataAttribute : AutoDataAttribute
+    public class CustomAutoDataAttribute : AutoDataAttribute
     {
         private static readonly IFixture ExtendedFixture;
 
-        static CustomizedAutoDataAttribute()
+        static CustomAutoDataAttribute()
         {
-            IList<ICustomization> customizations = Assembly.GetExecutingAssembly()
+            List<ICustomization> customizations = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => typeof(ICustomization).IsAssignableFrom(t))
                 .Select(t => (ICustomization)Activator.CreateInstance(t))
                 .ToList();
+            
+            customizations.Add(new ContextCustomization());
             
             ExtendedFixture = AppFixture.CommonFixture;
 
@@ -26,11 +26,9 @@ namespace VShop.Modules.Sales.Tests.Customizations
             ExtendedFixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             foreach (ICustomization customization in customizations)
-            {
                 ExtendedFixture.Customize(customization);
-            }
         }
 
-        public CustomizedAutoDataAttribute() : base (() => ExtendedFixture) { }
+        public CustomAutoDataAttribute() : base (() => ExtendedFixture) { }
     }
 }

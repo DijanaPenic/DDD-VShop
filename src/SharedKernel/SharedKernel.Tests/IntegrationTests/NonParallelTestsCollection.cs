@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
+namespace VShop.SharedKernel.Tests.IntegrationTests
 {
     [CollectionDefinition("Non-Parallel Tests Collection")]
     public class NonParallelTestsCollection

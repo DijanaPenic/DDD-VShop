@@ -1,4 +1,5 @@
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
 
 namespace VShop.SharedKernel.Tests.IntegrationTests.Probing
 {

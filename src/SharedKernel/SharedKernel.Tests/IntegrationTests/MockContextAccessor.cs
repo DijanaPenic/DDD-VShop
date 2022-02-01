@@ -3,7 +3,7 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
 
-namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
+namespace VShop.SharedKernel.Tests.IntegrationTests;
 
 public sealed class MockContextAccessor : IContextAccessor
 {
@@ -25,7 +25,7 @@ public sealed class MockContextAccessor : IContextAccessor
             if (value is not null) Holder.Value = new ContextHolder { Context = value };
         }
     }
-    public void ChangeContext(IMessageContext messageContext)
+    public void ChangeContext(IMessageContext messageContext, Type type)
     {
         if (messageContext is null) return;
         

@@ -30,4 +30,8 @@
       <Folder Include="DAL\Migrations\Subscription" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Modules.ProcessManager.Tests" />
+    </ItemGroup>
+
 </Project>

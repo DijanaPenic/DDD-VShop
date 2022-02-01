@@ -1,5 +1,3 @@
-using System;
-
 namespace VShop.SharedKernel.Tests.IntegrationTests.Probing
 {
     public class AssertErrorException : Exception

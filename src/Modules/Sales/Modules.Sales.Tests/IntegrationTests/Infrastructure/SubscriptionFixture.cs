@@ -8,9 +8,9 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
     {
         public async Task InitializeAsync()
         {
-            // Subscriptions might pick up data from other tests, so we need to clear databases.
+            // Subscriptions might pick up data from other tests, so we need to clear the databases.
             // Checkpoints might not be in sync with the EventStore database - another reason for cleanup.
-            await ResetDatabaseLifetime.StartDatabaseResetAsync();
+            await ResetDatabaseLifetime.ResetRelationalDatabaseAsync();
 
             await Task.WhenAll(ModuleEventStoreSubscriptionRegistry.Services
                 .Select(s => s.StartAsync(CancellationToken.None)));

@@ -13,11 +13,11 @@ using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
-using VShop.SharedKernel.Subscriptions.Services.Contracts;
 
 namespace VShop.Modules.ProcessManager.API;
 
@@ -30,17 +30,11 @@ internal class ProcessManagerModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor);
-
-        ModuleRegistry.AddBroadcastActions(ProcessManagerCompositionRoot.ServiceProvider, Assemblies);
-        
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = ProcessManagerCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
-        
+        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
         RunHostedServices();
     }
 
@@ -48,7 +42,8 @@ internal class ProcessManagerModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -58,7 +53,7 @@ internal class ProcessManagerModule : IModule
         
         ServiceCollection services = new();
         
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
@@ -74,6 +69,9 @@ internal class ProcessManagerModule : IModule
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         ProcessManagerCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        ModuleRegistry.AddBroadcastActions(ProcessManagerCompositionRoot.ServiceProvider, Assemblies);
+        ModuleEventStoreSubscriptionRegistry.Add(ProcessManagerCompositionRoot.ServiceProvider);
     }
 
     private void RunHostedServices() // Quartz and database migration.

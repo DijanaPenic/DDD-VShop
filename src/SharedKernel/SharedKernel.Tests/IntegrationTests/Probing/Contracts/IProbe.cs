@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace VShop.SharedKernel.Tests.IntegrationTests.Probing
+namespace VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts
 {
     public interface IProbe
     {

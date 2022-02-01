@@ -25,4 +25,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Modules.ProcessManager.Tests" />
+    </ItemGroup>
+
 </Project>

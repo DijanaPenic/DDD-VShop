@@ -1,21 +1,16 @@
-using Xunit;
-using FluentAssertions;
-
-using VShop.Modules.Sales.Domain.Events;
-using VShop.Modules.Sales.Domain.Events.Reminders;
-using VShop.Modules.Sales.Infrastructure.Commands;
-using VShop.Modules.Sales.Infrastructure.ProcessManagers;
-using VShop.Modules.Sales.Tests.Customizations;
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
+using VShop.Modules.ProcessManager.Infrastructure;
+using Xunit;
+
 using VShop.SharedKernel.Domain.ValueObjects;
-using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Types;
 
-namespace VShop.Modules.Sales.Tests.UnitTests
+namespace Modules.ProcessManager.Tests.UnitTests
 {
     public class OrderingProcessManagerUnitTests
     {
