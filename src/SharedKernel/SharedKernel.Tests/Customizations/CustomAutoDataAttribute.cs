@@ -1,6 +1,5 @@
 using AutoFixture;
 using AutoFixture.Xunit2;
-using System.Reflection;
 
 namespace VShop.SharedKernel.Tests.Customizations
 {
@@ -10,13 +9,11 @@ namespace VShop.SharedKernel.Tests.Customizations
 
         static CustomAutoDataAttribute()
         {
-            List<ICustomization> customizations = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => typeof(ICustomization).IsAssignableFrom(t))
+            List<ICustomization> customizations  = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => typeof(ICustomization).IsAssignableFrom(t) && t.Namespace != null && !t.Namespace.StartsWith("AutoFixture"))
                 .Select(t => (ICustomization)Activator.CreateInstance(t))
                 .ToList();
-            
-            customizations.Add(new ContextCustomization());
             
             ExtendedFixture = AppFixture.CommonFixture;
 

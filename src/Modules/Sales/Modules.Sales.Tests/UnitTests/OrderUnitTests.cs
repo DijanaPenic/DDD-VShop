@@ -45,8 +45,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             order.Status.Should().Be(OrderStatus.Processing);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Adds_a_new_order_line_to_order
         (
             Order sut,
@@ -66,8 +65,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             orderLine.Should().NotBeNull();
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Removes_out_of_stock_items_from_order
         (
             Order sut,
@@ -91,8 +89,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             orderLine!.Quantity.Value.Should().Be(5);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Removing_out_of_stock_items_from_order_fails_when_too_high_removal_quantity
         (
             Order sut,
@@ -111,8 +108,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             result.IsError.Should().BeTrue();
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changes_status_from_processing_to_paid(Order sut)
         {
             // Act
@@ -123,8 +119,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.Status.Should().Be(OrderStatus.Paid);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_pending_shipping_to_paid_fails(Order sut)
         {
             // Arrange
@@ -138,8 +133,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             result.IsError.Should().BeTrue();
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_paid_to_pending_shipping_succeeds(Order sut)
         {
             // Arrange
@@ -153,8 +147,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.Status.Should().Be(OrderStatus.PendingShipping);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_processing_to_pending_shipping_fails(Order sut)
         {
             // Act
@@ -164,8 +157,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             result.IsError.Should().BeTrue();
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_pending_shipping_to_shipped_succeeds(Order sut)
         {
             // Arrange
@@ -180,8 +172,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.Status.Should().Be(OrderStatus.Shipped);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_processing_to_shipped_fails(Order sut)
         {
             // Act
@@ -191,8 +182,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             result.IsError.Should().BeTrue();
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_processing_to_cancelled_succeeds(Order sut)
         {
             // Act
@@ -203,8 +193,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.Status.Should().Be(OrderStatus.Cancelled);
         }
         
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_paid_to_cancelled_succeeds(Order sut)
         {
             // Arrange
@@ -218,8 +207,7 @@ namespace VShop.Modules.Sales.Tests.UnitTests
             sut.Status.Should().Be(OrderStatus.Cancelled);
         }
 
-        [Theory]
-        [CustomAutoData]
+        [Theory, CustomAutoData]
         internal void Changing_status_from_pending_shipping_to_cancelled_fails(Order sut)
         {
             // Arrange 
