@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
@@ -21,12 +22,15 @@ public sealed class ContextAccessor : IContextAccessor
         }
     }
 
-    public void ChangeContext(IMessageContext messageContext)
+    // TODO - remove to other class.
+    public void ChangeContext(IMessageContext messageContext, Type type)
     {
         if (messageContext is null) return;
         
         if(Context is null) Context = messageContext.Context;
         else Context.RequestId = messageContext.MessageId;
+        
+        Console.WriteLine($"{type.Name}: {Context.RequestId}");
     }
 
     private class ContextHolder

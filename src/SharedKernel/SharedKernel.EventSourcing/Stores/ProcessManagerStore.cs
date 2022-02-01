@@ -49,17 +49,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         {
             if (processManager is null)
                 throw new ArgumentNullException(nameof(processManager));
-
-            IList<MessageEnvelope<IMessage>> inboxMessages = processManager.Inbox.Events
-                .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
-                .ToList();
             
-            IList<MessageEnvelope<IMessage>> outboxMessages = processManager.Outbox.Messages
-                .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
-                .ToList();
-            
-            _messageContextRegistry.Set(inboxMessages.Concat(outboxMessages));
-
             await _eventStoreClient.AppendToStreamAsync
             (
                 GetInboxStreamName(processManager.Id),
@@ -67,6 +57,12 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 processManager.Inbox.Events,
                 cancellationToken
             );
+
+            IList<MessageEnvelope<IMessage>> outboxMessages = processManager.Outbox.Messages
+                .Select(m => new MessageEnvelope<IMessage>(m, new MessageContext(_context)))
+                .ToList();
+            
+            _messageContextRegistry.Set(outboxMessages);
 
             await _eventStoreClient.AppendToStreamAsync
             (

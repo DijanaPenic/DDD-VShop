@@ -12,24 +12,24 @@ namespace VShop.SharedKernel.Infrastructure.Commands
     internal class CommandDispatcher: ICommandDispatcher
     {
         private readonly IMediator _mediator;
-        private readonly IMessageContextProvider _messageContextProvider;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IContextAccessor _contextAccessor;
 
         public CommandDispatcher
         (
             IMediator mediator,
-            IMessageContextProvider messageContextProvider,
+            IMessageContextRegistry messageContextRegistry,
             IContextAccessor contextAccessor
         )
         {
             _mediator = mediator;
-            _messageContextProvider = messageContextProvider;
+            _messageContextRegistry = messageContextRegistry;
             _contextAccessor = contextAccessor;
         }
 
         public Task<Result> SendAsync(ICommand command, CancellationToken cancellationToken = default)
         {
-            _contextAccessor.ChangeContext(_messageContextProvider.Get(command));
+            _contextAccessor.ChangeContext(_messageContextRegistry.Get(command), command.GetType());
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
 
@@ -39,13 +39,13 @@ namespace VShop.SharedKernel.Infrastructure.Commands
             CancellationToken cancellationToken = default
         )
         {
-            _contextAccessor.ChangeContext(_messageContextProvider.Get(command));
+            _contextAccessor.ChangeContext(_messageContextRegistry.Get(command), command.GetType());
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
 
         public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
         {
-            _contextAccessor.ChangeContext(_messageContextProvider.Get((IMessage)command));
+            _contextAccessor.ChangeContext(_messageContextRegistry.Get((IMessage)command), command.GetType());
             return TimeoutWrapper.ExecuteAsync((ct) => _mediator.Send(command, ct), cancellationToken);
         }
     }

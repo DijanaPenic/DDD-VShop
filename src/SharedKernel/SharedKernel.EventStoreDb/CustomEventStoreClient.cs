@@ -24,20 +24,20 @@ public class CustomEventStoreClient
 {
     private readonly EventStoreClient _eventStoreClient;
     private readonly IMessageRegistry _messageRegistry;
-    private readonly IMessageContextProvider _messageContextProvider;
+    private readonly IMessageContextRegistry _messageContextRegistry;
     private readonly IClockService _clockService;
 
     public CustomEventStoreClient
     (
         EventStoreClient eventStoreClient,
         IMessageRegistry messageRegistry,
-        IMessageContextProvider messageContextProvider,
+        IMessageContextRegistry messageContextRegistry,
         IClockService clockService
     )
     {
         _eventStoreClient = eventStoreClient;
         _messageRegistry = messageRegistry;
-        _messageContextProvider = messageContextProvider;
+        _messageContextRegistry = messageContextRegistry;
         _clockService = clockService;
     }
 
@@ -100,7 +100,7 @@ public class CustomEventStoreClient
         {
             string typeName = _messageRegistry.GetName(message.GetType());
             
-            IMessageContext messageContext = _messageContextProvider.Get(message);
+            IMessageContext messageContext = _messageContextRegistry.Get(message);
             MessageMetadata messageMetadata = new
             (
                 messageContext.MessageId,

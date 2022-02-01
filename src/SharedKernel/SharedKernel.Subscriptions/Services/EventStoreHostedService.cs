@@ -6,9 +6,9 @@ namespace VShop.SharedKernel.Subscriptions.Services
 {
     public class EventStoreHostedService : IHostedService
     {
-        private readonly IList<IEventStoreBackgroundService> _backgroundServices;
+        private readonly IEnumerable<IEventStoreBackgroundService> _backgroundServices;
 
-        public EventStoreHostedService(IList<IEventStoreBackgroundService> backgroundServices)
+        public EventStoreHostedService(IEnumerable<IEventStoreBackgroundService> backgroundServices)
             => _backgroundServices = backgroundServices;
 
         public async Task StartAsync(CancellationToken cancellationToken)

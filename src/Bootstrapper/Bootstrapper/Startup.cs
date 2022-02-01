@@ -1,16 +1,17 @@
 using Serilog;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Caching.Memory;
 
-using VShop.Modules.Sales.Infrastructure;
-using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
+using VShop.SharedKernel.Subscriptions;
 
 using ILogger = Serilog.ILogger;
 
@@ -20,25 +21,34 @@ public class Startup
 {
     private readonly IConfiguration _configuration;
     private readonly IList<IModule> _modules;
-    private readonly ILogger _logger;
 
     public Startup(IConfiguration configuration)
     {
         _configuration = configuration;
         _modules = ModuleLoader.LoadModules(configuration);
-        _logger = ConfigureLogger();
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddApplication(_configuration);
         services.AddSingleton<IControllerFactory, CustomControllerFactory>();
-        
+
         IContextAccessor contextAccessor = new ContextAccessor();
         services.AddSingleton(contextAccessor);
+
+        IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
+        IMessageContextRegistry messageContextRegistry = new MessageContextRegistry(memoryCache);
         
-        foreach (IModule module in _modules) 
-            module.Initialize(_configuration, _logger, contextAccessor);
+        ILogger logger = ConfigureLogger();
+
+        foreach (IModule module in _modules)
+            module.Initialize
+            (
+                _configuration,
+                logger,
+                contextAccessor,
+                messageContextRegistry
+            );
 
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();

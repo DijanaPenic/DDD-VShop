@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
@@ -18,7 +17,7 @@ public static class ModuleRegistry
     private static readonly List<ModuleBroadcastRegistration> BroadcastRegistrations = new();
 
     public static IEnumerable<ModuleBroadcastRegistration> GetBroadcastRegistrations(string key)
-        => BroadcastRegistrations.Where(r => r.Key == key);
+        => BroadcastRegistrations.Where(r => r.Key == key).ToList();
 
     public static void AddBroadcastActions(IServiceProvider serviceProvider, IEnumerable<Assembly> assemblies)
     {
@@ -34,22 +33,22 @@ public static class ModuleRegistry
         IDispatcher dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
         foreach (Type type in commandTypes)
         {
-            AddBroadcastAction(type, (command, context, cancellationToken) =>
+            AddBroadcastAction(type, (command, cancellationToken) =>
                 (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.ExecuteCommandAsync))
                     ?.MakeGenericMethod(type)
-                    .Invoke(dispatcher, new[] { command, context, cancellationToken }));
+                    .Invoke(dispatcher, new[] { command, cancellationToken }));
         }
         
         foreach (Type type in eventTypes)
         {
-            AddBroadcastAction(type, (@event, context, cancellationToken) =>
+            AddBroadcastAction(type, (@event, cancellationToken) =>
                 (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.PublishEventAsync))
                     ?.MakeGenericMethod(type)
-                    .Invoke(dispatcher, new[] { @event, context, cancellationToken }));
+                    .Invoke(dispatcher, new[] { @event, cancellationToken }));
         }
     }
     
-    private static void AddBroadcastAction(Type requestType, Func<object, IMessageContext, CancellationToken, Task> action)
+    private static void AddBroadcastAction(Type requestType, Func<object, CancellationToken, Task> action)
     {
         if (string.IsNullOrWhiteSpace(requestType.Namespace))
             throw new InvalidOperationException("Missing namespace.");

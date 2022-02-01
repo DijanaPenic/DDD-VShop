@@ -12,16 +12,16 @@ namespace VShop.SharedKernel.Infrastructure.Modules;
 public class ModuleClient : IModuleClient
 {
     private readonly IModuleSerializer _moduleSerializer;
-    private readonly IMessageContextProvider _messageContextProvider;
+    private readonly IMessageContextRegistry _messageContextRegistry;
 
     public ModuleClient
     (
         IModuleSerializer moduleSerializer,
-        IMessageContextProvider messageContextProvider
+        IMessageContextRegistry messageContextRegistry
     )
     {
         _moduleSerializer = moduleSerializer;
-        _messageContextProvider = messageContextProvider;
+        _messageContextRegistry = messageContextRegistry;
     }
 
     public async Task PublishAsync(object message, CancellationToken cancellationToken = default)
@@ -32,15 +32,17 @@ public class ModuleClient : IModuleClient
             .Where(r => r.ReceiverType != messageType)
             .ToList();
 
-        List<Task> tasks = new();
+        IMessageContext messageContext = _messageContextRegistry.Get((IMessage)message);
+        IList<Task> tasks = new List<Task>();
+        
         foreach (ModuleBroadcastRegistration registration in registrations)
         {
             object receiverMessage = TranslateType(message, registration.ReceiverType);
+            _messageContextRegistry.Set((IMessage)receiverMessage, messageContext);
             
-            IMessageContext messageContext = _messageContextProvider.Get((IMessage)message);
-            tasks.Add(registration.Action(receiverMessage, messageContext, cancellationToken));
+            tasks.Add(registration.Action(receiverMessage, cancellationToken));
         }
-
+        
         await Task.WhenAll(tasks);
     }
     

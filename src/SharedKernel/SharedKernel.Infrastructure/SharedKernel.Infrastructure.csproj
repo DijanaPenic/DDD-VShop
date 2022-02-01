@@ -44,6 +44,9 @@
       <Reference Include="Microsoft.Extensions.Hosting.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.0\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
       </Reference>
+      <Reference Include="VShop.SharedKernel.Subscriptions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Modules\Sales\Modules.Sales.Tests\bin\Debug\net6.0\VShop.SharedKernel.Subscriptions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

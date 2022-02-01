@@ -14,6 +14,7 @@ using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Logging;
 using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
@@ -28,20 +29,20 @@ public static class InfrastructureExtensions
         Assembly[] assemblies,
         string module,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         services.AddMediatR(assemblies);
         services.AddCommands();
         services.AddQueries();
         services.AddEvents();
-        services.AddMemoryCache();
         services.AddContext(contextAccessor);
         services.AddSingleton<IClockService, ClockService>();
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddFluentValidation(assemblies);
         services.AddLogging(logger, module);
-        services.AddMessaging();
+        services.AddMessaging(messageContextRegistry);
         services.AddModuleRequests();
 
         return services;

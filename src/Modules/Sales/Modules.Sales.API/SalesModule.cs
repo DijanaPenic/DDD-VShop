@@ -12,8 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Subscriptions;
-using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -27,7 +25,9 @@ using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Subscriptions;
 
 namespace VShop.Modules.Sales.API;
 
@@ -40,25 +40,20 @@ internal class SalesModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor);
-
-        ModuleRegistry.AddBroadcastActions(SalesCompositionRoot.ServiceProvider, Assemblies);
-        
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = SalesCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
-        
-        RunHostedServices();
+        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
+        RunHostedServices(); // TODO - integration tests review.
     }
 
     public void ConfigureCompositionRoot
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -68,7 +63,7 @@ internal class SalesModule : IModule
         
         ServiceCollection services = new();
         
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();
@@ -96,6 +91,9 @@ internal class SalesModule : IModule
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        ModuleRegistry.AddBroadcastActions(SalesCompositionRoot.ServiceProvider, Assemblies);
+        ModuleEventStoreSubscriptionRegistry.Add(SalesCompositionRoot.ServiceProvider);
     }
 
     private void RunHostedServices() // Database migration.

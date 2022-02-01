@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
 {
     internal class EventDispatcher : IEventDispatcher
     {
-        private readonly IMessageContextProvider _messageContextProvider;
+        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IContextAccessor _contextAccessor;
         private readonly IDictionary<EventDispatchStrategy, IMediator> _publishStrategies = 
             new Dictionary<EventDispatchStrategy, IMediator>();
@@ -21,11 +21,11 @@ namespace VShop.SharedKernel.Infrastructure.Events
         public EventDispatcher
         (
             ServiceFactory serviceFactory,
-            IMessageContextProvider messageContextProvider,
+            IMessageContextRegistry messageContextRegistry,
             IContextAccessor contextAccessor
         )
         {
-            _messageContextProvider = messageContextProvider;
+            _messageContextRegistry = messageContextRegistry;
             _contextAccessor = contextAccessor;
             
             _publishStrategies[EventDispatchStrategy.Async] = 
@@ -64,7 +64,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
             if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))
                 throw new ArgumentException($"Unknown strategy: {strategy}");
             
-            _contextAccessor.ChangeContext(_messageContextProvider.Get(@event));
+            _contextAccessor.ChangeContext(_messageContextRegistry.Get(@event), @event.GetType());
             return mediator.Publish(@event, cancellationToken);
         }
         
@@ -102,9 +102,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
         )
         {
             foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
-            {
                 Task.Run(() => handler(@event, cancellationToken), cancellationToken);
-            }
 
             return Task.CompletedTask;
         }
@@ -145,9 +143,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
             }
 
             if (exceptions.Any())
-            {
                 throw new AggregateException(exceptions);
-            }
         }
 
         private static async Task SyncStopOnExceptionAsync<TEvent>
@@ -158,9 +154,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
         )
         {
             foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
-            {
                 await handler(@event, cancellationToken).ConfigureAwait(false);
-            }
         }
 
         private static async Task SyncContinueOnExceptionAsync<TEvent>
@@ -189,9 +183,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
             }
 
             if (exceptions.Any())
-            {
                 throw new AggregateException(exceptions);
-            }
         }
     }
 }

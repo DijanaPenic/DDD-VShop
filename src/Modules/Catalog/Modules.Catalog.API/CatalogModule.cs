@@ -15,14 +15,14 @@ using VShop.Modules.Catalog.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Subscriptions;
-using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
+using VShop.SharedKernel.Subscriptions;
 
 namespace VShop.Modules.Catalog.API;
 
@@ -35,17 +35,11 @@ internal class CatalogModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor);
-        
-        ModuleRegistry.AddBroadcastActions(CatalogCompositionRoot.ServiceProvider, Assemblies);
-
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = CatalogCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
-        
+        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
         RunHostedServices();
     }
 
@@ -53,7 +47,8 @@ internal class CatalogModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -63,7 +58,7 @@ internal class CatalogModule : IModule
 
         ServiceCollection services = new();
 
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
@@ -79,6 +74,9 @@ internal class CatalogModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         CatalogCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        ModuleRegistry.AddBroadcastActions(CatalogCompositionRoot.ServiceProvider, Assemblies);
+        ModuleEventStoreSubscriptionRegistry.Add(CatalogCompositionRoot.ServiceProvider);
     }
 
     private void RunHostedServices() // Database migration.

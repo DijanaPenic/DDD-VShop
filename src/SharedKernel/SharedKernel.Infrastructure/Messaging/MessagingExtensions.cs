@@ -8,10 +8,13 @@ namespace VShop.SharedKernel.Infrastructure.Messaging;
 
 public static class MessagingExtensions
 {
-    internal static IServiceCollection AddMessaging(this IServiceCollection services)
+    internal static IServiceCollection AddMessaging
+    (
+        this IServiceCollection services,
+        IMessageContextRegistry messageContextRegistry
+    )
     {
-        services.AddSingleton<IMessageContextProvider, MessageContextProvider>();
-        services.AddSingleton<IMessageContextRegistry, MessageContextRegistry>();
+        services.AddSingleton(messageContextRegistry);
 
         return services;
     }

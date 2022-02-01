@@ -23,4 +23,6 @@ public class MessageContextRegistry : IMessageContextRegistry
         foreach ((IMessage message, IMessageContext messageContext) in messages)
             Set(message, messageContext);
     }
+    
+    public IMessageContext Get(IMessage message) => _cache.Get<IMessageContext>(message);
 }

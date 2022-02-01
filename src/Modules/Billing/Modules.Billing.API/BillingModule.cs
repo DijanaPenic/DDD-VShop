@@ -11,8 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Subscriptions;
-using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
@@ -26,7 +24,9 @@ using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Subscriptions;
 
 namespace VShop.Modules.Billing.API;
 
@@ -39,17 +39,11 @@ internal class BillingModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor);
-
-        ModuleRegistry.AddBroadcastActions(BillingCompositionRoot.ServiceProvider, Assemblies);
-
-        IEnumerable<IEventStoreBackgroundService> subscriptionServices = BillingCompositionRoot.ServiceProvider
-            .GetServices<IEventStoreBackgroundService>();
-        ModuleEventStoreSubscriptionRegistry.Add(subscriptionServices);
-        
+        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
         RunHostedServices();
     }
 
@@ -57,7 +51,8 @@ internal class BillingModule : IModule
     (
         IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor
+        IContextAccessor contextAccessor,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -67,7 +62,7 @@ internal class BillingModule : IModule
 
         ServiceCollection services = new();
 
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor);
+        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddTransient<IPaymentService, FakePaymentService>();
@@ -100,6 +95,9 @@ internal class BillingModule : IModule
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider);
+        
+        ModuleRegistry.AddBroadcastActions(BillingCompositionRoot.ServiceProvider, Assemblies);
+        ModuleEventStoreSubscriptionRegistry.Add(BillingCompositionRoot.ServiceProvider);
     }
 
     private void RunHostedServices() // Database migration.
