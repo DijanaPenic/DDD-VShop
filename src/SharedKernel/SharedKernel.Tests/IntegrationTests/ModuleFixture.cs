@@ -4,10 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
@@ -17,6 +21,7 @@ namespace VShop.SharedKernel.Tests.IntegrationTests;
 public class ModuleFixture : IModuleFixture
 {
     private readonly IServiceProvider _serviceProvider;
+    public IMessageRegistry MessageRegistry => _serviceProvider?.GetRequiredService<IMessageRegistry>();
 
     public ModuleFixture(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
@@ -72,12 +77,20 @@ public class ModuleFixture : IModuleFixture
             return commandDispatcher.SendAsync(command);
         }, context);
 
-    public Task PublishAsync(IBaseEvent @event, IContext context = default)
-        => ExecuteScopeAsync(sp =>
+    public Task PublishAsync(IIntegrationEvent @event, IContext context = default)
+    {
+        context ??= new Context(SequentialGuid.Create(), SequentialGuid.Create());
+        
+        return ExecuteScopeAsync(sp =>
         {
             IEventDispatcher eventDispatcher = sp.GetRequiredService<IEventDispatcher>();
+            IMessageContextRegistry messageContextRegistry = sp.GetRequiredService<IMessageContextRegistry>();
+
+            messageContextRegistry.Set(@event, new MessageContext(context));
+
             return eventDispatcher.PublishAsync(@event);
         }, context);
+    }
     
     private async Task ExecuteScopeAsync
     (

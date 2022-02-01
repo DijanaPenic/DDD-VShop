@@ -4,6 +4,7 @@ using VShop.SharedKernel.Subscriptions;
 
 namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
+    // TODO - move to the shared project.
     internal class SubscriptionFixture : IAsyncLifetime
     {
         public async Task InitializeAsync()

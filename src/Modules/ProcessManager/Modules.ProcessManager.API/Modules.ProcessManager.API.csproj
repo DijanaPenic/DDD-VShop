@@ -17,10 +17,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="module.processmanager.json">
+      <None Update="module.process_manager.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="module.processmanager.development.json">
+      <None Update="module.process_manager.development.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

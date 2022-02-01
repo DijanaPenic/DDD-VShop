@@ -1,81 +1,148 @@
+using Xunit;
+using FluentAssertions;
+
 using VShop.Modules.Billing.Integration.Events;
 using VShop.Modules.Catalog.Integration.Events;
-using VShop.Modules.ProcessManager.Infrastructure;
-using Xunit;
-
+using VShop.Modules.ProcessManager.Infrastructure.Messages.Commands;
+using VShop.Modules.ProcessManager.Infrastructure.Messages.Events;
+using VShop.Modules.ProcessManager.Infrastructure.Messages.Reminders;
+using VShop.Modules.ProcessManager.Infrastructure.ProcessManagers.Ordering;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Services;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
+using VShop.SharedKernel.Tests.Customizations;
 
-namespace Modules.ProcessManager.Tests.UnitTests
+namespace VShop.Modules.ProcessManager.Tests.UnitTests;
+
+public class OrderingProcessManagerUnitTests
 {
-    public class OrderingProcessManagerUnitTests
+    [Theory, CustomAutoData]
+    internal void Shopping_cart_checkout_places_a_new_order
+    (
+        EntityId shoppingCartId,
+        EntityId orderId
+    )
     {
-        [Theory]
-        [CustomizedAutoData]
-        internal void Shopping_cart_checkout_places_a_new_order
-        (
-            EntityId shoppingCartId,
-            EntityId orderId
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
+        // Arrange
+        IClockService clockService = new ClockService();
             
-            OrderingProcessManager processManager = new();
-            ShoppingCartCheckoutRequestedDomainEvent shoppingCartCheckoutRequestedDomainEvent = new
+        OrderingProcessManager processManager = new();
+        ShoppingCartCheckoutRequestedDomainEvent shoppingCartCheckoutRequestedDomainEvent = new
+        (
+            shoppingCartId,
+            orderId,
+            clockService.Now
+        );
+
+        // Act
+        processManager.Transition(shoppingCartCheckoutRequestedDomainEvent, clockService.Now);
+            
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<PlaceOrderCommand>()
+            .SingleOrDefault()
+            .Should().NotBeNull();
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.CheckoutRequested);
+    }
+        
+    [Theory, CustomAutoData]
+    internal void Creating_a_new_order_deletes_the_shopping_cart_and_schedules_a_payment_reminder
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
+        (
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
                 shoppingCartId,
                 orderId,
                 clockService.Now
-            );
+            ),
+            clockService.Now
+        );
 
-            // Act
-            processManager.Transition(shoppingCartCheckoutRequestedDomainEvent, clockService.Now);
-            
-            // Assert
-            PlaceOrderCommand placeOrderCommand = processManager.Outbox.Messages
-                .OfType<PlaceOrderCommand>()
-                .SingleOrDefault();
-            placeOrderCommand.Should().NotBeNull();
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.CheckoutRequested);
-        }
-        
-        [Theory]
-        [CustomizedAutoData]
-        internal void Creating_a_new_order_deletes_the_shopping_cart_and_schedules_a_payment_reminder
+        OrderPlacedDomainEvent orderPlacedDomainEvent = new
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
+            orderId,
+            deliveryCost,
+            customerDiscount,
+            customerId,
+            fullName.FirstName,
+            fullName.MiddleName,
+            fullName.LastName,
+            emailAddress,
+            phoneNumber,
+            deliveryAddress.City,
+            deliveryAddress.CountryCode,
+            deliveryAddress.PostalCode,
+            deliveryAddress.StateProvince,
+            deliveryAddress.StreetAddress
+        );
 
-            OrderPlacedDomainEvent orderPlacedDomainEvent = new
+        // Act
+        processManager.Transition(orderPlacedDomainEvent, clockService.Now);
+            
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<DeleteShoppingCartCommand>()
+            .SingleOrDefault()
+            .Should().NotBeNull();
+
+        processManager.Outbox.Messages.OfType<IScheduledMessage>()
+            .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<PaymentGracePeriodExpiredDomainEvent>())
+            .Should().NotBeNull();
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPlaced);
+    }
+        
+    [Theory, CustomAutoData]
+    internal void Failed_order_payment_changes_the_process_manager_status
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+
+        OrderingProcessManager processManager = new();
+        processManager.Transition
+        (
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
                 orderId,
                 deliveryCost,
@@ -91,984 +158,914 @@ namespace Modules.ProcessManager.Tests.UnitTests
                 deliveryAddress.PostalCode,
                 deliveryAddress.StateProvince,
                 deliveryAddress.StreetAddress
-            );
+            ),
+            clockService.Now
+        );
 
-            // Act
-            processManager.Transition(orderPlacedDomainEvent, clockService.Now);
+        int expectedMessagesCount = processManager.Outbox.Messages.Count;
+        PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId);
+
+        // Act
+        processManager.Transition(paymentFailedIntegrationEvent, clockService.Now);
             
-            // Assert
-            DeleteShoppingCartCommand deleteShoppingCartCommand = processManager.Outbox.Messages
-                .OfType<DeleteShoppingCartCommand>()
-                .SingleOrDefault();
-            deleteShoppingCartCommand.Should().NotBeNull();
-
-            IScheduledMessage paymentReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
-                .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<PaymentGracePeriodExpiredDomainEvent>());
-            paymentReminder.Should().NotBeNull();
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPlaced);
-        }
+        // Assert
+        processManager.Outbox.Messages.Count
+            .Should().Be(expectedMessagesCount);
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Failed_order_payment_changes_the_process_manager_status
-        (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-
-            int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            PaymentFailedIntegrationEvent paymentFailedIntegrationEvent = new(orderId);
-
-            // Act
-            processManager.Transition(paymentFailedIntegrationEvent, clockService.Now);
-            
-            // Assert
-            processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentFailed);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentFailed);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Payment_reminder_check_sends_an_alert_when_payment_response_is_not_received
+    [Theory, CustomAutoData]
+    internal void Payment_reminder_check_sends_an_alert_when_payment_response_is_not_received
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
 
-            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
+        PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
 
-            // Act
-            processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
+        // Act
+        processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
             
-            // Assert
-            // TODO - missing implementation
+        // Assert
+        // TODO - missing implementation
             
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPlaced);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPlaced);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Payment_reminder_check_doesnt_react_when_order_is_paid
+    [Theory, CustomAutoData]
+    internal void Payment_reminder_check_doesnt_react_when_order_is_paid
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
 
-            int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
+        int expectedMessagesCount = processManager.Outbox.Messages.Count;
+        PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
 
-            // Act
-            processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
+        // Act
+        processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
             
-            // Assert
-            processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
-        }
+        // Assert
+        processManager.Outbox.Messages.Count
+            .Should().Be(expectedMessagesCount);
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Payment_reminder_check_cancels_the_order_when_order_is_not_paid
-        (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentFailedIntegrationEvent(orderId),
-                clockService.Now
-            );
-
-            PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
-
-            // Act
-            processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
-            
-            // Assert
-            CancelOrderCommand cancelOrderCommand = processManager.Outbox.Messages
-                .OfType<CancelOrderCommand>()
-                .SingleOrDefault();
-            cancelOrderCommand.Should().NotBeNull();
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentFailed);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Cancelled_order_changes_the_process_manager_status
+    [Theory, CustomAutoData]
+    internal void Payment_reminder_check_cancels_the_order_when_order_is_not_paid
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentFailedIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentGracePeriodExpiredDomainEvent(orderId),
-                clockService.Now
-            );
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentFailedIntegrationEvent(orderId),
+            clockService.Now
+        );
 
-            int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            OrderStatusSetToCancelledDomainEvent orderStatusSetToCancelled = new(orderId);
+        PaymentGracePeriodExpiredDomainEvent paymentGracePeriodExpiredDomainEvent = new(orderId);
 
-            // Act
-            processManager.Transition(orderStatusSetToCancelled, clockService.Now);
+        // Act
+        processManager.Transition(paymentGracePeriodExpiredDomainEvent, clockService.Now);
             
-            // Assert
-            processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderCancelled);
-        }
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<CancelOrderCommand>()
+            .SingleOrDefault()
+            .Should().NotBeNull();
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentFailed);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Succeeded_order_payment_changes_the_order_status_to_paid
+    [Theory, CustomAutoData]
+    internal void Cancelled_order_changes_the_process_manager_status
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentFailedIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentGracePeriodExpiredDomainEvent(orderId),
+            clockService.Now
+        );
 
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
+        int expectedMessagesCount = processManager.Outbox.Messages.Count;
+        OrderStatusSetToCancelledDomainEvent orderStatusSetToCancelled = new(orderId);
 
-            // Act
-            processManager.Transition(paymentSucceededIntegrationEvent, clockService.Now);
+        // Act
+        processManager.Transition(orderStatusSetToCancelled, clockService.Now);
             
-            // Assert
-            SetPaidOrderStatusCommand setPaidOrderStatusCommand = processManager.Outbox.Messages
-                .OfType<SetPaidOrderStatusCommand>()
-                .SingleOrDefault();
-            setPaidOrderStatusCommand.Should().NotBeNull();
-            
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
-        }
+        // Assert
+        processManager.Outbox.Messages.Count
+            .Should().Be(expectedMessagesCount);
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Changing_the_order_status_to_Paid_schedules_a_stock_reminder
-        (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-
-            OrderStatusSetToPaidDomainEvent orderStatusSetToPaidDomainEvent = new(orderId);
-
-            // Act
-            processManager.Transition(orderStatusSetToPaidDomainEvent, clockService.Now);
-            
-            // Assert
-            IScheduledMessage stockReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
-                .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>());
-            stockReminder.Should().NotBeNull();
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderCancelled);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Stock_reminder_check_sends_an_alert_when_stock_review_response_is_not_received
+    [Theory, CustomAutoData]
+    internal void Succeeded_order_payment_changes_the_order_status_to_paid
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
-            
-            OrderStockProcessingGracePeriodExpiredDomainEvent orderStockProcessingGracePeriodExpiredDomainEvent = new(orderId);
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
 
-            // Act
-            processManager.Transition(orderStockProcessingGracePeriodExpiredDomainEvent, clockService.Now);
-            
-            // Assert
-            // TODO - missing implementation
+        PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
 
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
-        }
+        // Act
+        processManager.Transition(paymentSucceededIntegrationEvent, clockService.Now);
+            
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<SetPaidOrderStatusCommand>()
+            .SingleOrDefault()
+            .Should().NotBeNull();
+            
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Stock_reminder_check_doesnt_react_when_order_stock_is_confirmed
+    [Theory, CustomAutoData]
+    internal void Changing_the_order_status_to_Paid_schedules_a_stock_reminder
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStockProcessedIntegrationEvent(orderId, orderLines),
-                clockService.Now
-            );
-            
-            int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            OrderStockProcessingGracePeriodExpiredDomainEvent orderStockProcessingGracePeriodExpiredDomainEvent = new(orderId);
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
 
-            // Act
-            processManager.Transition(orderStockProcessingGracePeriodExpiredDomainEvent, clockService.Now);
+        OrderStatusSetToPaidDomainEvent orderStatusSetToPaidDomainEvent = new(orderId);
+
+        // Act
+        processManager.Transition(orderStatusSetToPaidDomainEvent, clockService.Now);
             
-            // Assert
-            processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderStockConfirmed);
-        }
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<IScheduledMessage>()
+            .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<OrderStockProcessingGracePeriodExpiredDomainEvent>())
+            .Should().NotBeNull();
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Processed_stock_order_report_finalizes_the_order
+    [Theory, CustomAutoData]
+    internal void Stock_reminder_check_sends_an_alert_when_stock_review_response_is_not_received
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress,
-            IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
             
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
+        OrderStockProcessingGracePeriodExpiredDomainEvent orderStockProcessingGracePeriodExpiredDomainEvent = new(orderId);
 
-            OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines);
-
-            // Act
-            processManager.Transition(orderStockProcessedIntegrationEvent, clockService.Now);
+        // Act
+        processManager.Transition(orderStockProcessingGracePeriodExpiredDomainEvent, clockService.Now);
             
-            // Assert
-            FinalizeOrderCommand finalizeOrderCommand = processManager.Outbox.Messages
-                .OfType<FinalizeOrderCommand>()
-                .SingleOrDefault();
-            finalizeOrderCommand.Should().NotBeNull();
+        // Assert
+        // TODO - missing implementation
 
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderStockConfirmed);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPaymentSucceeded);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Changing_the_order_status_to_PendingShipping_schedules_a_shipping_reminder
+    [Theory, CustomAutoData]
+    internal void Stock_reminder_check_doesnt_react_when_order_stock_is_confirmed
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress,
+        IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStockProcessedIntegrationEvent(orderId, orderLines),
+            clockService.Now
+        );
             
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStockProcessedIntegrationEvent
-                (
-                    orderId,
-                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
-                    {
-                        new(SequentialGuid.Create(), 10, 0)
-                    }
-                ),
-                clockService.Now
-            );
+        int expectedMessagesCount = processManager.Outbox.Messages.Count;
+        OrderStockProcessingGracePeriodExpiredDomainEvent orderStockProcessingGracePeriodExpiredDomainEvent = new(orderId);
 
-            OrderStatusSetToPendingShippingDomainEvent orderStatusSetToPendingShippingDomainEvent = new(orderId);
-
-            // Act
-            processManager.Transition(orderStatusSetToPendingShippingDomainEvent, clockService.Now);
+        // Act
+        processManager.Transition(orderStockProcessingGracePeriodExpiredDomainEvent, clockService.Now);
             
-            // Assert
-            IScheduledMessage shippingReminder = processManager.Outbox.Messages.OfType<IScheduledMessage>()
-                .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<ShippingGracePeriodExpiredDomainEvent>());
-            shippingReminder.Should().NotBeNull();
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPendingShipping);
-        }
+        // Assert
+        processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderStockConfirmed);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Shipping_reminder_check_sends_an_alert_when_shipping_response_is_not_received
+    [Theory, CustomAutoData]
+    internal void Processed_stock_order_report_finalizes_the_order
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress,
+        IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> orderLines
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
+
+        OrderStockProcessedIntegrationEvent orderStockProcessedIntegrationEvent = new(orderId, orderLines);
+
+        // Act
+        processManager.Transition(orderStockProcessedIntegrationEvent, clockService.Now);
             
-            OrderingProcessManager processManager = new();
-            processManager.Transition
-            (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStockProcessedIntegrationEvent
-                (
-                    orderId,
-                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
-                    {
-                        new(SequentialGuid.Create(), 10, 0)
-                    }
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPendingShippingDomainEvent(orderId),
-                clockService.Now
-            );
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<FinalizeOrderCommand>()
+            .SingleOrDefault()
+            .Should().NotBeNull();
 
-            ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new(orderId);
-
-            // Act
-            processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
-            
-            // Assert
-            // TODO - missing implementation
-
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPendingShipping);
-        }
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderStockConfirmed);
+    }
         
-        [Theory]
-        [CustomizedAutoData]
-        internal void Shipping_reminder_check_doesnt_react_when_order_is_shipped
+    [Theory, CustomAutoData]
+    internal void Changing_the_order_status_to_PendingShipping_schedules_a_shipping_reminder
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
         (
-            EntityId shoppingCartId,
-            EntityId orderId,
-            Price deliveryCost,
-            Discount customerDiscount,
-            EntityId customerId,
-            FullName fullName,
-            Address deliveryAddress,
-            PhoneNumber phoneNumber,
-            EmailAddress emailAddress
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-            
-            OrderingProcessManager processManager = new();
-            processManager.Transition
+            new ShoppingCartCheckoutRequestedDomainEvent
             (
-                new ShoppingCartCheckoutRequestedDomainEvent
-                (
-                    shoppingCartId,
-                    orderId,
-                    clockService.Now
-                ),
+                shoppingCartId,
+                orderId,
                 clockService.Now
-            );
-            processManager.Transition
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
             (
-                new OrderPlacedDomainEvent
-                (
-                    orderId,
-                    deliveryCost,
-                    customerDiscount,
-                    customerId,
-                    fullName.FirstName,
-                    fullName.MiddleName,
-                    fullName.LastName,
-                    emailAddress,
-                    phoneNumber,
-                    deliveryAddress.City,
-                    deliveryAddress.CountryCode,
-                    deliveryAddress.PostalCode,
-                    deliveryAddress.StateProvince,
-                    deliveryAddress.StreetAddress
-                ),
-                clockService.Now
-            );
-            processManager.Transition
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStockProcessedIntegrationEvent
             (
-                new PaymentSucceededIntegrationEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPaidDomainEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStockProcessedIntegrationEvent
-                (
-                    orderId,
-                    new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
-                    {
-                        new(SequentialGuid.Create(), 10, 0)
-                    }
-                ),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToPendingShippingDomainEvent(orderId),
-                clockService.Now
-            );
-            processManager.Transition
-            (
-                new OrderStatusSetToShippedDomainEvent(orderId),
-                clockService.Now
-            );
+                orderId,
+                new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
+                {
+                    new(SequentialGuid.Create(), 10, 0)
+                }
+            ),
+            clockService.Now
+        );
 
-            int expectedMessagesCount = processManager.Outbox.Messages.Count;
-            ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new(orderId);
+        OrderStatusSetToPendingShippingDomainEvent orderStatusSetToPendingShippingDomainEvent = new(orderId);
 
-            // Act
-            processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
+        // Act
+        processManager.Transition(orderStatusSetToPendingShippingDomainEvent, clockService.Now);
             
-            // Assert
-            processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
-            processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderShipped);
-        }
+        // Assert
+        processManager.Outbox.Messages
+            .OfType<IScheduledMessage>()
+            .SingleOrDefault(sm => sm.TypeName == ScheduledMessage.ToName<ShippingGracePeriodExpiredDomainEvent>())
+            .Should().NotBeNull();
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPendingShipping);
+    }
+        
+    [Theory, CustomAutoData]
+    internal void Shipping_reminder_check_sends_an_alert_when_shipping_response_is_not_received
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
+        (
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStockProcessedIntegrationEvent
+            (
+                orderId,
+                new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
+                {
+                    new(SequentialGuid.Create(), 10, 0)
+                }
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPendingShippingDomainEvent(orderId),
+            clockService.Now
+        );
+
+        ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new(orderId);
+
+        // Act
+        processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
+            
+        // Assert
+        // TODO - missing implementation
+
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderPendingShipping);
+    }
+        
+    [Theory, CustomAutoData]
+    internal void Shipping_reminder_check_doesnt_react_when_order_is_shipped
+    (
+        EntityId shoppingCartId,
+        EntityId orderId,
+        Price deliveryCost,
+        Discount customerDiscount,
+        EntityId customerId,
+        FullName fullName,
+        Address deliveryAddress,
+        PhoneNumber phoneNumber,
+        EmailAddress emailAddress
+    )
+    {
+        // Arrange
+        IClockService clockService = new ClockService();
+            
+        OrderingProcessManager processManager = new();
+        processManager.Transition
+        (
+            new ShoppingCartCheckoutRequestedDomainEvent
+            (
+                shoppingCartId,
+                orderId,
+                clockService.Now
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderPlacedDomainEvent
+            (
+                orderId,
+                deliveryCost,
+                customerDiscount,
+                customerId,
+                fullName.FirstName,
+                fullName.MiddleName,
+                fullName.LastName,
+                emailAddress,
+                phoneNumber,
+                deliveryAddress.City,
+                deliveryAddress.CountryCode,
+                deliveryAddress.PostalCode,
+                deliveryAddress.StateProvince,
+                deliveryAddress.StreetAddress
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new PaymentSucceededIntegrationEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPaidDomainEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStockProcessedIntegrationEvent
+            (
+                orderId,
+                new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>
+                {
+                    new(SequentialGuid.Create(), 10, 0)
+                }
+            ),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToPendingShippingDomainEvent(orderId),
+            clockService.Now
+        );
+        processManager.Transition
+        (
+            new OrderStatusSetToShippedDomainEvent(orderId),
+            clockService.Now
+        );
+
+        int expectedMessagesCount = processManager.Outbox.Messages.Count;
+        ShippingGracePeriodExpiredDomainEvent shippingGracePeriodExpiredDomainEvent = new(orderId);
+
+        // Act
+        processManager.Transition(shippingGracePeriodExpiredDomainEvent, clockService.Now);
+            
+        // Assert
+        processManager.Outbox.Messages.Count.Should().Be(expectedMessagesCount);
+        processManager.Status.Should().Be(OrderingProcessManagerStatus.OrderShipped);
     }
 }

@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
+namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
 {
     internal class SchedulerFixture : IAsyncLifetime
     {
@@ -9,14 +9,14 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
         public async Task InitializeAsync()
         {
             // Scheduler might pick up data from other tests, so we need to clear the databases first.
-            await ResetDatabaseLifetime.StartDatabaseResetAsync();
+            await ResetDatabaseLifetime.ResetRelationalDatabaseAsync();
             
-            await IntegrationTestsFixture.SalesModule.ExecuteHostedServiceAsync
+            await IntegrationTestsFixture.ProcessManagerModule.ExecuteHostedServiceAsync
                 (hostedService => hostedService.StartAsync(CancellationToken.None), HostedServiceName);
         }
 
         public Task DisposeAsync()
-            => IntegrationTestsFixture.SalesModule.ExecuteHostedServiceAsync
+            => IntegrationTestsFixture.ProcessManagerModule.ExecuteHostedServiceAsync
                 (hostedService => hostedService.StopAsync(CancellationToken.None), HostedServiceName);
     }
 }

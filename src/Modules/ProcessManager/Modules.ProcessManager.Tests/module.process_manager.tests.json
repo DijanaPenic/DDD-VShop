@@ -1,0 +1,14 @@
+{
+    "EventStore": {
+        "ConnectionString": "esdb://admin:changeit@localhost:2114?tls=false&tlsVerifyCert=false"
+    },
+    "ProcessManager": {
+        "Postgres": {
+            "ConnectionString": "server=localhost;userid=postgres;password=46ftZwvHwkStZzzQtz6g;port=5445;database=VShop_ProcessManagerTests;application name=VShop_ProcessManagerTests;"
+        },
+        "Module": {
+            "Name": "ProcessManager",
+            "Enabled": true
+        }
+    }
+}

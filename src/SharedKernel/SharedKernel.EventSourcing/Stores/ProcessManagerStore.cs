@@ -98,12 +98,14 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                         break;
                     }
                     case IScheduledMessage scheduledMessage:
+                    {
                         await _messageSchedulerService.ScheduleMessageAsync
                         (
                             new MessageEnvelope<IScheduledMessage>(scheduledMessage, messageContext),
                             cancellationToken
                         );
                         break;
+                    }
                 }
             }
         }
