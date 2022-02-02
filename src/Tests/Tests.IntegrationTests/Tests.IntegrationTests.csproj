@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.Tests.IntegrationTests</AssemblyName>
+        <RootNamespace>VShop.Tests.IntegrationTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="tests.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Modules\Billing\Modules.Billing.API\Modules.Billing.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Billing\Modules.Billing.Infrastructure\Modules.Billing.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.API\Modules.Catalog.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.Infrastructure\Modules.Catalog.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Modules\ProcessManager\Modules.ProcessManager.API\Modules.ProcessManager.API.csproj" />
+      <ProjectReference Include="..\..\Modules\ProcessManager\Modules.ProcessManager.Infrastructure\Modules.ProcessManager.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.Domain\Modules.Sales.Domain.csproj" />
+      <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\SharedKernel\SharedKernel.Subscriptions\SharedKernel.Subscriptions.csproj" />
+      <ProjectReference Include="..\..\SharedKernel\SharedKernel.Tests\SharedKernel.Tests.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.0.123" />
+    </ItemGroup>
+
+</Project>

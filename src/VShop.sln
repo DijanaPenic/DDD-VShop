@@ -68,6 +68,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.ProcessManager.Infr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.ProcessManager.Tests", "Modules\ProcessManager\Modules.ProcessManager.Tests\Modules.ProcessManager.Tests.csproj", "{D87AA2DC-4BAE-4CC1-B742-C7D1577C7016}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A9D0D8C8-E90F-4B65-ABAE-DE738A31630A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.IntegrationTests", "Tests\Tests.IntegrationTests\Tests.IntegrationTests.csproj", "{3A46FD04-98F5-4196-AC1B-77AB4992F3F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +108,7 @@ Global
 		{FF16F9B5-0D12-46CB-99DB-0C2D8FBDD0F7} = {A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}
 		{43AEECE4-3CFA-4E58-B014-AB087B19452D} = {A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}
 		{D87AA2DC-4BAE-4CC1-B742-C7D1577C7016} = {A9DF64B2-1CC6-4496-BD31-DBD291BCB6E6}
+		{3A46FD04-98F5-4196-AC1B-77AB4992F3F7} = {A9D0D8C8-E90F-4B65-ABAE-DE738A31630A}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BE64D095-A173-4605-924B-5B90261A86B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -210,5 +215,9 @@ Global
 		{D87AA2DC-4BAE-4CC1-B742-C7D1577C7016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D87AA2DC-4BAE-4CC1-B742-C7D1577C7016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D87AA2DC-4BAE-4CC1-B742-C7D1577C7016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A46FD04-98F5-4196-AC1B-77AB4992F3F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A46FD04-98F5-4196-AC1B-77AB4992F3F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A46FD04-98F5-4196-AC1B-77AB4992F3F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A46FD04-98F5-4196-AC1B-77AB4992F3F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

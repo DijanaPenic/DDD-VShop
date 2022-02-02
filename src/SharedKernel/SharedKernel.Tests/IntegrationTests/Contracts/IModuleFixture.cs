@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 public interface IModuleFixture
 {
     IMessageRegistry MessageRegistry { get; }
-    Task InitializePostgresDatabaseAsync();
+    string RelationalDbConnectionString { get; }
     Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout);
     Task ExecuteHostedServiceAsync(Func<IHostedService, Task> action, string hostedServiceName);
     Task ExecuteHostedServiceAsync<TService>(Func<TService, Task> action) where TService : IHostedService;

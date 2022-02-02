@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
+namespace VShop.Tests.IntegrationTests.Infrastructure
 {
     internal class SchedulerFixture : IAsyncLifetime
     {

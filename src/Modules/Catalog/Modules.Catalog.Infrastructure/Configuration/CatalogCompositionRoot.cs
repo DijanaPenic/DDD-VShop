@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("Bootstrapper")]
+[assembly: InternalsVisibleTo("VShop.Tests.IntegrationTests")]
 namespace VShop.Modules.Catalog.Infrastructure.Configuration;
 
 internal static class CatalogCompositionRoot

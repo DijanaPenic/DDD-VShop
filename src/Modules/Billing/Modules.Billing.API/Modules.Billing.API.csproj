@@ -31,4 +31,8 @@
       <ProjectReference Include="..\Modules.Billing.Infrastructure\Modules.Billing.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+    </ItemGroup>
+
 </Project>

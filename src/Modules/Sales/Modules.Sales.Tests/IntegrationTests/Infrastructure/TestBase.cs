@@ -4,5 +4,5 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure;
 
 public abstract class TestBase
 {
-    public static IModuleFixture SalesModule => IntegrationTestsFixture.SalesModule;
+    protected static IModuleFixture SalesModule => IntegrationTestsFixture.SalesModule;
 }

@@ -32,6 +32,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="VShop.Modules.ProcessManager.Tests" />
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
     </ItemGroup>
 
 </Project>

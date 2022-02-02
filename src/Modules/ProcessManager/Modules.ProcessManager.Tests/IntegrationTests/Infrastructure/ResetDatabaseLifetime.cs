@@ -5,13 +5,13 @@ using VShop.SharedKernel.Tests.IntegrationTests;
 
 namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
 {
-    public abstract class ResetDatabaseLifetime : DatabaseLifetime
+    internal abstract class ResetDatabaseLifetime : DatabaseLifetime
     {
         protected override Task ClearRelationalDatabaseAsync() => ResetRelationalDatabaseAsync();
 
         public static async Task ResetRelationalDatabaseAsync()
         {
-            await using NpgsqlConnection connection = new(IntegrationTestsFixture.RelationalDbConnectionString);
+            await using NpgsqlConnection connection = new(IntegrationTestsFixture.ProcessManagerModule.RelationalDbConnectionString);
             await connection.OpenAsync();
 
             const string sql = @"DELETE FROM ""subscription"".""checkpoint""; " +

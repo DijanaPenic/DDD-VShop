@@ -20,4 +20,8 @@
       <Folder Include="Events" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+    </ItemGroup>
+    
 </Project>

@@ -29,6 +29,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="VShop.Modules.Sales.Tests" />
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
     </ItemGroup>
 
 </Project>

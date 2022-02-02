@@ -21,4 +21,8 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+    </ItemGroup>
+
 </Project>

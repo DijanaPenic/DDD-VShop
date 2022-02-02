@@ -39,4 +39,8 @@
       <ProjectReference Include="..\Modules.Catalog.Integration\Modules.Catalog.Integration.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+    </ItemGroup>
+
 </Project>

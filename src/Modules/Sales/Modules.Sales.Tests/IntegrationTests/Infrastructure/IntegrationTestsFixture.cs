@@ -15,13 +15,11 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
 {
     internal static class IntegrationTestsFixture
     {
-        private static readonly IConfiguration Configuration;
-        public static string RelationalDbConnectionString => Configuration["Sales:Postgres:ConnectionString"];
         public static IModuleFixture SalesModule { get; }
-        
+
         static IntegrationTestsFixture()
         {
-            Configuration = new ConfigurationBuilder()
+            IConfiguration configuration = new ConfigurationBuilder()
                 .AddJsonFile("module.sales.tests.json")
                 .Build();
 
@@ -34,11 +32,15 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
             IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
             IMessageContextRegistry messageContextRegistry = new MessageContextRegistry(memoryCache);
             
-            IModule module = ModuleLoader.LoadModules(Configuration).Single();
-            module.ConfigureCompositionRoot(Configuration, logger, contextAccessor, messageContextRegistry);
+            IModule module = ModuleLoader.LoadModules(configuration).Single();
+            module.ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
 
-            SalesModule = new ModuleFixture(SalesCompositionRoot.ServiceProvider);
-            SalesModule.InitializePostgresDatabaseAsync().GetAwaiter().GetResult();
+            SalesModule = new ModuleFixture
+            (
+                SalesCompositionRoot.ServiceProvider,
+                configuration,
+                module.Name
+            );
         }
     }
 }

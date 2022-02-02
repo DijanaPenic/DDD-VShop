@@ -1,4 +1,5 @@
 using Force.DeepCloner;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,13 +22,19 @@ namespace VShop.SharedKernel.Tests.IntegrationTests;
 public class ModuleFixture : IModuleFixture
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IConfiguration _configuration;
+    private readonly string _module;
     public IMessageRegistry MessageRegistry => _serviceProvider?.GetRequiredService<IMessageRegistry>();
+    public string RelationalDbConnectionString => _configuration[$"{_module}:Postgres:ConnectionString"];
 
-    public ModuleFixture(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
-
-    public Task InitializePostgresDatabaseAsync()
-        => ExecuteHostedServiceAsync<DatabaseInitializerHostedService>
-            (hostedService => hostedService.StartAsync(CancellationToken.None));
+    public ModuleFixture(IServiceProvider serviceProvider, IConfiguration configuration, string module)
+    {
+        _serviceProvider = serviceProvider;
+        _configuration = configuration;
+        _module = module;
+        
+        InitializePostgresDatabaseAsync().GetAwaiter().GetResult();
+    }
 
     public Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
         => new Poller(clockService, timeout).CheckAsync(probe);
@@ -119,4 +126,8 @@ public class ModuleFixture : IModuleFixture
                                       
         return await action(scope.ServiceProvider).ConfigureAwait(false);
     }
+    
+    private Task InitializePostgresDatabaseAsync()
+        => ExecuteHostedServiceAsync<DatabaseInitializerHostedService>
+            (hostedService => hostedService.StartAsync(CancellationToken.None));
 }

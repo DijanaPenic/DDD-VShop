@@ -9,7 +9,7 @@ namespace VShop.SharedKernel.Tests.Customizations
 
         static CustomAutoDataAttribute()
         {
-            List<ICustomization> customizations  = AppDomain.CurrentDomain.GetAssemblies()
+            IList<ICustomization> customizations  = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
                 .Where(t => typeof(ICustomization).IsAssignableFrom(t) && t.Namespace != null && !t.Namespace.StartsWith("AutoFixture"))
                 .Select(t => (ICustomization)Activator.CreateInstance(t))
