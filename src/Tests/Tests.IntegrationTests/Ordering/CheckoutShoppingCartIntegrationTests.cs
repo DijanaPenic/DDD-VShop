@@ -13,7 +13,7 @@ using VShop.SharedKernel.Tests.Customizations;
 using VShop.Tests.IntegrationTests.Helpers;
 using VShop.Tests.IntegrationTests.Infrastructure;
 
-namespace VShop.Tests.IntegrationTests.CheckoutShoppingCart;
+namespace VShop.Tests.IntegrationTests.Ordering;
 
 public class CheckoutShoppingCartIntegrationTests : TestBase
 {
