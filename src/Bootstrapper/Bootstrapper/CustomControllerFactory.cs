@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
+using VShop.Modules.Sales.Infrastructure.Configuration;
 
-namespace Bootstrapper;
+namespace VShop.Bootstrapper;
 
 internal class CustomControllerFactory : IControllerFactory
 {

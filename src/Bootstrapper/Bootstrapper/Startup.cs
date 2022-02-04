@@ -2,7 +2,6 @@ using Serilog;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Caching.Memory;
 
-using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
@@ -12,10 +11,11 @@ using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.Services;
 
 using ILogger = Serilog.ILogger;
 
-namespace Bootstrapper;
+namespace VShop.Bootstrapper;
 
 public class Startup
 {

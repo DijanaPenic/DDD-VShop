@@ -2,8 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
-// TODO - VShop prefix for Bootstrapper.
-[assembly: InternalsVisibleTo("Bootstrapper")]
+[assembly: InternalsVisibleTo("VShop.Bootstrapper")]
 [assembly: InternalsVisibleTo("VShop.Tests.IntegrationTests")]
 namespace VShop.Modules.Sales.Infrastructure.Configuration;
 

@@ -2,7 +2,7 @@ using Serilog;
 
 using VShop.SharedKernel.Infrastructure.Modules;
 
-namespace Bootstrapper;
+namespace VShop.Bootstrapper;
 
 public class Program
 {
