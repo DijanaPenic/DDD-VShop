@@ -4,11 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
-using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -16,20 +15,20 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMessageRegistry _messageRegistry;
+        private readonly IEventStoreMessageConverter _eventStoreMessageConverter;
         private readonly IIntegrationEventStore _integrationEventStore;
 
         public IntegrationEventProjectionToEventStore
         (
             ILogger logger,
             IServiceProvider serviceProvider,
-            IMessageRegistry messageRegistry,
+            IEventStoreMessageConverter eventStoreMessageConverter,
             IIntegrationEventStore integrationEventStore
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _messageRegistry = messageRegistry;
+            _eventStoreMessageConverter = eventStoreMessageConverter;
             _integrationEventStore = integrationEventStore;
         }
         
@@ -40,7 +39,9 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            MessageEnvelope<IIntegrationEvent> eventEnvelope = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry);
+            MessageEnvelope<IIntegrationEvent> eventEnvelope = _eventStoreMessageConverter
+                .ToMessage<IIntegrationEvent>(resolvedEvent);
+            
             if (eventEnvelope is null) return;
             
             _logger.Debug("Projecting integration event: {Message}", eventEnvelope.Message);

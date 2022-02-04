@@ -9,7 +9,6 @@ using VShop.Modules.Sales.Infrastructure.Commands;
 using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Tests.Customizations;
 using VShop.Tests.IntegrationTests.Helpers;
 using VShop.Tests.IntegrationTests.Infrastructure;
@@ -19,7 +18,7 @@ namespace VShop.Tests.IntegrationTests.Ordering;
 public class OrderFulfilmentIntegrationTests : TestBase
 {
     [Theory, CustomAutoData]
-    internal async Task Test(ShoppingCart shoppingCart, IContext paymentContext)
+    internal async Task Test(ShoppingCart shoppingCart)
     {
         // TODO
         // * need to add products to catalog

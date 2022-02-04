@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
@@ -13,7 +14,6 @@ using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.Integration.Stores.Contracts;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 [assembly: InternalsVisibleTo("VShop.Modules.Billing.API")]
@@ -25,15 +25,8 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
         {
             services.AddTransient<IIntegrationEventOutbox, IntegrationEventOutbox>();
             services.AddTransient<IIntegrationEventService, IntegrationEventService>();
+            services.AddEventStoreInfrastructure(connectionString, "Billing");
 
-            EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
-            eventStoreSettings.ConnectionName = "Billing";
-            
-            EventStoreClient eventStoreClient = new(eventStoreSettings);
-            services.AddSingleton(eventStoreClient);
-            
-            services.AddSingleton<CustomEventStoreClient>();
-            
             services.AddSingleton
             (
                 typeof(IIntegrationEventStore),
@@ -41,23 +34,24 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
             );
 
             // Subscribe to integration streams.
+            services.AddSingleton<IntegrationEventPublisher>();
             services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
             {
+                EventStoreClient eventStoreClient = provider.GetService<EventStoreClient>();
                 ILogger logger = provider.GetService<ILogger>();
+                IEventStoreMessageConverter eventStoreMessageConverter = provider.GetService<IEventStoreMessageConverter>();
                 IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
                 IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
-                
+                ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventPublisher>();
+
                 return new EventStoreBackgroundService
                 (
-                    logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
+                    logger, eventStoreClient, provider, messageRegistry, 
+                    eventStoreMessageConverter, messageContextRegistry,
                     new SubscriptionConfig
                     (
                         "IntegrationEventsSub",
-                        new IntegrationEventPublisher
-                        (
-                            logger, provider, messageRegistry,
-                            provider.GetRequiredService<IEventDispatcher>()
-                        ),
+                        subscriptionHandler,
                         new SubscriptionFilterOptions(StreamFilter.RegularExpression
                             (new Regex(@".*\/integration$")))
                     )

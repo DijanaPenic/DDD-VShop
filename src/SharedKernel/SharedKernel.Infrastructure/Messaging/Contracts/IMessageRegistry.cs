@@ -7,5 +7,5 @@ public interface IMessageRegistry
     string GetName<TMessage>();
     string GetName(Type type);
     Type GetType(string name);
-    bool TryTransform(string eventTypeName, object input, out object result);
+    bool TryTransform(string typeName, object input, out object result);
 }

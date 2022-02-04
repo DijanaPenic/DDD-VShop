@@ -28,9 +28,9 @@ public class MessageRegistry : IMessageRegistry
         );
     }
     
-    public bool TryTransform(string eventTypeName, object input, out object result)
+    public bool TryTransform(string typeName, object input, out object result)
     {
-        if (!_transformationMap.TryGetValue(eventTypeName, out Func<object, object> transformObject))
+        if (!_transformationMap.TryGetValue(typeName, out Func<object, object> transformObject))
         {
             result = null;
             return false;

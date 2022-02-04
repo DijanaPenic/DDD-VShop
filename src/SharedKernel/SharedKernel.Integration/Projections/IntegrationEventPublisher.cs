@@ -8,12 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
-using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Serialization;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Integration.Projections
 {
@@ -21,20 +19,20 @@ namespace VShop.SharedKernel.Integration.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMessageRegistry _messageRegistry;
+        private readonly IEventStoreMessageConverter _eventStoreMessageConverter;
         private readonly IEventDispatcher _eventDispatcher;
 
         public IntegrationEventPublisher
         (
             ILogger logger,
             IServiceProvider serviceProvider,
-            IMessageRegistry messageRegistry,
+            IEventStoreMessageConverter eventStoreMessageConverter,
             IEventDispatcher eventDispatcher
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _messageRegistry = messageRegistry;
+            _eventStoreMessageConverter = eventStoreMessageConverter;
             _eventDispatcher = eventDispatcher;
         }
 
@@ -45,7 +43,9 @@ namespace VShop.SharedKernel.Integration.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IIntegrationEvent integrationEvent = resolvedEvent.Deserialize<IIntegrationEvent>(_messageRegistry)?.Message;
+            IIntegrationEvent integrationEvent = _eventStoreMessageConverter
+                .ToMessage<IIntegrationEvent>(resolvedEvent)?.Message;
+                
             if (integrationEvent is null) return;
             
             _logger.Debug("Projecting integration event: {Message}", integrationEvent);
@@ -64,19 +64,13 @@ namespace VShop.SharedKernel.Integration.Projections
                 }
                 catch (Exception ex)
                 {
-                    object data = ProtobufSerializer.FromByteArray
-                    (
-                        resolvedEvent.Event.Data.Span.ToArray(),
-                        _messageRegistry.GetType(resolvedEvent.Event.EventType)
-                    );
-                    
                     subscriptionDbContext.MessageDeadLetterLogs.Add(new MessageDeadLetterLog
                     {
                         Id = SequentialGuid.Create(),
                         StreamId = resolvedEvent.OriginalStreamId,
                         MessageType = resolvedEvent.Event.EventType,
                         MessageId = resolvedEvent.Event.EventId.ToGuid(),
-                        MessageData = JsonConvert.SerializeObject(data, DefaultJsonSerializer.Settings),
+                        MessageData = JsonConvert.SerializeObject(integrationEvent, DefaultJsonSerializer.Settings),
                         Status = MessageProcessingStatus.Failed,
                         Error = $"{ex.Message}{ex.StackTrace}"
                     });

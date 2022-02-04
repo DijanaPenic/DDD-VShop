@@ -1,9 +1,9 @@
 ﻿using NodaTime;
 using NodaTime.Serialization.Protobuf;
     
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Serialization;
 

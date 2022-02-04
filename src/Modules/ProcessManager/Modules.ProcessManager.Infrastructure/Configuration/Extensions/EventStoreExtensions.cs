@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventSourcing.Stores;
 using VShop.SharedKernel.EventSourcing.Stores.Contracts;
-using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.Integration.Stores;
@@ -23,14 +23,8 @@ internal static class EventStoreExtensions
 {
     public static void AddEventStore(this IServiceCollection services, string connectionString)
     {
-        EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
-        eventStoreSettings.ConnectionName = "ProcessManager";
+        services.AddEventStoreInfrastructure(connectionString, "ProcessManager");
 
-        EventStoreClient eventStoreClient = new(eventStoreSettings);
-        services.AddSingleton(eventStoreClient);
-        
-        services.AddSingleton<CustomEventStoreClient>();
-        
         services.AddTransient
         (
             typeof(IIntegrationEventStore),
@@ -42,27 +36,27 @@ internal static class EventStoreExtensions
             typeof(ProcessManagerStore<>)
         );
 
-        // Stream names
-        string processManagerStreamPrefix = $"{eventStoreClient.ConnectionName}".ToSnakeCase();
-        
         // Publish integration events from the current bounded context
         services.AddSingleton<IntegrationEventProjectionToEventStore>();
         services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
         {
+            EventStoreClient eventStoreClient = provider.GetService<EventStoreClient>();
             ILogger logger = provider.GetService<ILogger>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
+            IEventStoreMessageConverter eventStoreMessageConverter = provider.GetService<IEventStoreMessageConverter>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventProjectionToEventStore>();
             IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
 
             return new EventStoreBackgroundService
             (
-                logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
+                logger, eventStoreClient, provider, messageRegistry, 
+                eventStoreMessageConverter, messageContextRegistry,
                 new SubscriptionConfig
                 (
                     "IntegrationEventsPub", 
                     subscriptionHandler,
                     new SubscriptionFilterOptions(StreamFilter.RegularExpression
-                        (new Regex($"^{processManagerStreamPrefix}.*outbox")))
+                        (new Regex("^process_manager.*outbox")))
                 )
             );
         });
@@ -71,14 +65,17 @@ internal static class EventStoreExtensions
         services.AddSingleton<IntegrationEventPublisher>();
         services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
         {
+            EventStoreClient eventStoreClient = provider.GetService<EventStoreClient>();
             ILogger logger = provider.GetService<ILogger>();
+            IEventStoreMessageConverter eventStoreMessageConverter = provider.GetService<IEventStoreMessageConverter>();
             IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
             ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventPublisher>();
             IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
 
             return new EventStoreBackgroundService
             (
-                logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
+                logger, eventStoreClient, provider, messageRegistry,
+                eventStoreMessageConverter, messageContextRegistry,
                 new SubscriptionConfig
                 (
                     "IntegrationEventsSub", 

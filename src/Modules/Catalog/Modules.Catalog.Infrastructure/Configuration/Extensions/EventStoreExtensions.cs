@@ -1,11 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using Serilog;
+﻿using Serilog;
 using EventStore.Client;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.EventStoreDb.Extensions;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Integration.Projections;
 using VShop.SharedKernel.Integration.Services;
@@ -25,15 +25,8 @@ namespace VShop.Modules.Catalog.Infrastructure.Configuration.Extensions
         {
             services.AddTransient<IIntegrationEventOutbox, IntegrationEventOutbox>();
             services.AddTransient<IIntegrationEventService, IntegrationEventService>();
-            
-            EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
-            eventStoreSettings.ConnectionName = "Catalog";
-            
-            EventStoreClient eventStoreClient = new(eventStoreSettings);
-            services.AddSingleton(eventStoreClient);
-            
-            services.AddSingleton<CustomEventStoreClient>();
-            
+            services.AddEventStoreInfrastructure(connectionString, "Catalog");
+
             services.AddSingleton
             (
                 typeof(IIntegrationEventStore),
@@ -41,23 +34,24 @@ namespace VShop.Modules.Catalog.Infrastructure.Configuration.Extensions
             );
 
             // Subscribe to integration streams
+            services.AddSingleton<IntegrationEventPublisher>();
             services.AddSingleton<IEventStoreBackgroundService, EventStoreBackgroundService>(provider =>
             {
+                EventStoreClient eventStoreClient = provider.GetService<EventStoreClient>();
                 ILogger logger = provider.GetService<ILogger>();
                 IMessageRegistry messageRegistry = provider.GetService<IMessageRegistry>();
+                IEventStoreMessageConverter eventStoreMessageConverter = provider.GetService<IEventStoreMessageConverter>();
                 IMessageContextRegistry messageContextRegistry = provider.GetService<IMessageContextRegistry>();
+                ISubscriptionHandler subscriptionHandler = provider.GetService<IntegrationEventPublisher>();
 
                 return new EventStoreBackgroundService
                 (
-                    logger, eventStoreClient, provider, messageRegistry, messageContextRegistry,
+                    logger, eventStoreClient, provider, messageRegistry, 
+                    eventStoreMessageConverter, messageContextRegistry,
                     new SubscriptionConfig
                     (
                         "IntegrationEventsSub",
-                        new IntegrationEventPublisher
-                        (
-                            logger, provider, messageRegistry,
-                            provider.GetRequiredService<IEventDispatcher>()
-                        ),
+                        subscriptionHandler,
                         new SubscriptionFilterOptions(StreamFilter.RegularExpression
                             (new Regex(@".*\/integration$")))
                     )

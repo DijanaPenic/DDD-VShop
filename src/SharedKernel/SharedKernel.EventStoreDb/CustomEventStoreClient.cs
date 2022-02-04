@@ -1,21 +1,15 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using EventStore.Client;
-using Google.Protobuf;
 
 using VShop.SharedKernel.EventStoreDb.Policies;
-using VShop.SharedKernel.EventStoreDb.Extensions;
-using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 
-using Uuid = EventStore.Client.Uuid;
 using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.EventStoreDb;
@@ -23,22 +17,19 @@ namespace VShop.SharedKernel.EventStoreDb;
 public class CustomEventStoreClient
 {
     private readonly EventStoreClient _eventStoreClient;
-    private readonly IMessageRegistry _messageRegistry;
+    private readonly IEventStoreMessageConverter _eventStoreMessageConverter;
     private readonly IMessageContextRegistry _messageContextRegistry;
-    private readonly IClockService _clockService;
 
     public CustomEventStoreClient
     (
         EventStoreClient eventStoreClient,
-        IMessageRegistry messageRegistry,
-        IMessageContextRegistry messageContextRegistry,
-        IClockService clockService
+        IEventStoreMessageConverter eventStoreMessageConverter,
+        IMessageContextRegistry messageContextRegistry
     )
     {
         _eventStoreClient = eventStoreClient;
-        _messageRegistry = messageRegistry;
+        _eventStoreMessageConverter = eventStoreMessageConverter;
         _messageContextRegistry = messageContextRegistry;
-        _clockService = clockService;
     }
 
     public Task AppendToStreamAsync
@@ -88,7 +79,7 @@ public class CustomEventStoreClient
 
         IList<ResolvedEvent> messages = await result.ToListAsync(cancellationToken);
 
-        return messages.Select(message => message.Deserialize<TMessage>(_messageRegistry)).ToList();
+        return messages.Select(m => _eventStoreMessageConverter.ToMessage<TMessage>(m)).ToList();
     }
 
     private string GetStreamName(string value)
@@ -96,33 +87,9 @@ public class CustomEventStoreClient
     
     private IReadOnlyList<EventData> GetEventData<TMessage>(IEnumerable<TMessage> messages) 
         where TMessage : IMessage
-        => messages.Select((message, index) =>
+        => messages.Select(message =>
         {
-            string typeName = _messageRegistry.GetName(message.GetType());
-            
             IMessageContext messageContext = _messageContextRegistry.Get(message);
-            MessageMetadata messageMetadata = new
-            (
-                messageContext.MessageId,
-                messageContext.Context.RequestId,
-                messageContext.Context.CorrelationId,
-                messageContext.Context.Identity.Id,
-                _clockService.Now
-            );
-
-            Guid deterministicId = DeterministicGuid.Create
-            (
-                messageContext.Context.RequestId,
-                $"{typeName}-{index}"
-            );
-            
-            return new EventData
-            (
-                Uuid.FromGuid(deterministicId),
-                typeName,
-                message.ToByteArray(),
-                messageMetadata.ToByteArray(),
-                "application/octet-stream"
-            );
+            return _eventStoreMessageConverter.FromMessage(new MessageEnvelope<IMessage>(message, messageContext));
         }).ToList();
 }

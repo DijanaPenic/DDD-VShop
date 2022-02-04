@@ -8,12 +8,10 @@ using NodaTime.Serialization.Protobuf;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.DAL;
-using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.EventStoreDb.Messaging;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
+using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Serialization;
 
 namespace VShop.SharedKernel.Application.Projections
 {
@@ -21,20 +19,23 @@ namespace VShop.SharedKernel.Application.Projections
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMessageRegistry _messageRegistry;
+        private readonly IEventStoreMessageConverter _eventStoreMessageConverter;
+        private readonly IEventStoreSerializer _eventStoreSerializer;
         private readonly Projector _projector;
 
         public DomainEventProjectionToPostgres
         (
             ILogger logger,
             IServiceProvider serviceProvider,
-            IMessageRegistry messageRegistry,
+            IEventStoreMessageConverter eventStoreMessageConverter,
+            IEventStoreSerializer eventStoreSerializer,
             Projector projector
         )
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _messageRegistry = messageRegistry;
+            _eventStoreMessageConverter = eventStoreMessageConverter;
+            _eventStoreSerializer = eventStoreSerializer;
             _projector = projector;
         }
 
@@ -45,7 +46,7 @@ namespace VShop.SharedKernel.Application.Projections
             CancellationToken cancellationToken = default
         )
         {
-            IDomainEvent domainEvent = resolvedEvent.Deserialize<IDomainEvent>(_messageRegistry)?.Message;
+            IDomainEvent domainEvent = _eventStoreMessageConverter.ToMessage<IDomainEvent>(resolvedEvent)?.Message;
             if(domainEvent is null) return;
 
             using IServiceScope scope = _serviceProvider.CreateScope();
@@ -69,7 +70,7 @@ namespace VShop.SharedKernel.Application.Projections
 
                 await handler();
                 
-                MessageMetadata messageMetadata = ProtobufSerializer.FromByteArray
+                MessageMetadata messageMetadata = _eventStoreSerializer.Deserialize
                     <MessageMetadata>(resolvedEvent.Event.Metadata.Span.ToArray());
                 
                 await readDataContext.SaveChangesAsync(messageMetadata.EffectiveTime.ToInstant(), cancellationToken);
