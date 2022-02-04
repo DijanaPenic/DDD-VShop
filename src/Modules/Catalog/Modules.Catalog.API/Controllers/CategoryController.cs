@@ -47,8 +47,7 @@ namespace VShop.Modules.Catalog.API.Controllers
             await _catalogDbContext.AddAsync(category);
             await _catalogDbContext.SaveChangesAsync();
 
-            // TODO - use CreatedAtAction.
-            return Created(category);
+            return CreatedAtAction("GetCategory", new { id = category.Id });
         }
         
         [HttpPatch]
