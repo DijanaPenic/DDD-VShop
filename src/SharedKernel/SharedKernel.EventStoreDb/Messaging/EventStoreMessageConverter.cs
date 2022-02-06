@@ -76,7 +76,7 @@ public class EventStoreMessageConverter : IEventStoreMessageConverter
         Guid deterministicId = DeterministicGuid.Create
         (
             messageContext.Context.RequestId,
-            $"{typeName}" // TODO - enhance?
+            $"{typeName}-{messageContext.MessageId}"
         );
             
         return new EventData

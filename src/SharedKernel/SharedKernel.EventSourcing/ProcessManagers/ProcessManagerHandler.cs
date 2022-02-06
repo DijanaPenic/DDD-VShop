@@ -27,10 +27,13 @@ namespace VShop.SharedKernel.EventSourcing.ProcessManagers
             _processManagerStore = processManagerStore;
         }
 
-        protected async Task TransitionAsync(Guid processId, IBaseEvent @event, CancellationToken cancellationToken)
+        protected async Task TransitionAsync
+        (
+            Guid processId,
+            IBaseEvent @event,
+            CancellationToken cancellationToken
+        )
         {
-            // TODO - missing validation for invalid processId.
-            
             _logger.Information
             (
                 "{Process}: handling {Event} event",

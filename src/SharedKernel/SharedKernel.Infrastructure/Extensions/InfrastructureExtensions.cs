@@ -1,11 +1,11 @@
-using System.Reflection;
 using MediatR;
+using Serilog;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 
 using VShop.SharedKernel.Infrastructure.Events;
 using VShop.SharedKernel.Infrastructure.Queries;

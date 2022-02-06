@@ -15,7 +15,7 @@ namespace Database.DatabaseMigrator;
 
 public class Startup
 {
-    private const string Module = "Sales"; // TODO - use command line argument.
+    private const string Module = "Sales";
     
     private readonly IConfiguration _configuration;
 

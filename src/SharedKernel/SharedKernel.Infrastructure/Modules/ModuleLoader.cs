@@ -26,7 +26,6 @@ public static class ModuleLoader
             .Cast<IModule>()
             .ToList();
 
-        // TODO - use constructor.
         foreach (IModule module in modules)
         {
             module.Assemblies = assemblyList
