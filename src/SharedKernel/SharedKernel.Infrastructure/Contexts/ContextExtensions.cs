@@ -47,6 +47,7 @@ public static class ContextExtensions
     public static IServiceCollection AddContext(this IServiceCollection services, IContextAccessor contextAccessor)
     {
         services.AddSingleton(contextAccessor);
+        services.AddSingleton<IContextAdapter, ContextAdapter>();
         services.AddTransient(_ => contextAccessor.Context);
             
         return services;
