@@ -4,6 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Sales.Infrastructure.DAL;
+using VShop.SharedKernel.PostgresDb.Extensions;
 
 namespace VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 

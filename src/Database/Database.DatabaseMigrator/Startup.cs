@@ -10,6 +10,7 @@ using VShop.Modules.Billing.Infrastructure.DAL;
 using VShop.Modules.Catalog.Infrastructure.DAL;
 using VShop.Modules.ProcessManager.Infrastructure.DAL;
 using VShop.SharedKernel.Integration.DAL;
+using VShop.SharedKernel.PostgresDb.Extensions;
 
 namespace Database.DatabaseMigrator;
 

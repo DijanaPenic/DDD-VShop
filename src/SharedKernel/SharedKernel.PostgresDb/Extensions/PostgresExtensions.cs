@@ -3,9 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.PostgresDb.Contracts;
 
-namespace VShop.SharedKernel.PostgresDb;
+namespace VShop.SharedKernel.PostgresDb.Extensions;
 
-// TODO - move to Extensions directory.
 public static class PostgresExtensions
 {    
     public static IServiceCollection AddUnitOfWork<T>(this IServiceCollection services) where T : class, IUnitOfWork

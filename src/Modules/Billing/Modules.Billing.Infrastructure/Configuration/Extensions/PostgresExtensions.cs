@@ -4,6 +4,7 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;
+using VShop.SharedKernel.PostgresDb.Extensions;
 
 namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
 {
