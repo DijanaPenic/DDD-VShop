@@ -193,9 +193,9 @@ You can run whole application using docker compose from root folder:
 docker-compose up
 ```
 
-It will create following services:
-- two EventStore databases (EventStoreDB): one for testing and one for application.
-- two relational databases per module (Postgres): one for testing and one for application.
+It will create the following services (separate for testing and development):
+- Two EventStore databases (EventStoreDB)
+- Two relational databases per module (Postgres)
 
 ## Technology
 
