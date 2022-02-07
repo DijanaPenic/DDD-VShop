@@ -3,3 +3,5 @@ obj/
 bin/
 src/VShop.sln.DotSettings.user
 *.user
+*.bak
+*.orig
