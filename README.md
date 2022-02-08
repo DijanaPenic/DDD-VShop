@@ -200,8 +200,8 @@ docker-compose up
 ```
 
 It will create the following services (separate for testing and development):
-- Two EventStore databases (EventStoreDB)
-- Two relational databases per module (Postgres)
+- EventStore databases (EventStoreDB)
+- Relational databases per module (Postgres)
 
 ## Technology
 
