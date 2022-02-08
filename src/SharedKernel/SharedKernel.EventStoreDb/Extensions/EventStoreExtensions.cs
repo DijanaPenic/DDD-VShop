@@ -10,12 +10,12 @@ namespace VShop.SharedKernel.EventStoreDb.Extensions;
 
 public static class EventStoreExtensions
 {
-     public static IServiceCollection AddEventStoreInfrastructure
-     (
-         this IServiceCollection services,
-         string connectionString,
-         string connectionName
-     )
+    public static IServiceCollection AddEventStoreInfrastructure
+    (
+        this IServiceCollection services,
+        string connectionString,
+        string connectionName
+    )
     {
         EventStoreClientSettings eventStoreSettings = EventStoreClientSettings.Create(connectionString);
         eventStoreSettings.ConnectionName = connectionName;
@@ -24,7 +24,7 @@ public static class EventStoreExtensions
         services.AddSingleton<CustomEventStoreClient>();
         services.AddSingleton<IEventStoreSerializer, EventStoreProtobufSerializer>();
         services.AddSingleton<IEventStoreMessageConverter, EventStoreMessageConverter>();
-        
+
         return services;
     }
 }

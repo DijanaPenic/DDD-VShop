@@ -2,6 +2,7 @@ using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using EventStore.Client;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Subscriptions.Extensions;
+using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Application.Providers;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
+using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
 
 namespace VShop.SharedKernel.Application.Extensions;
 
@@ -77,6 +84,35 @@ public static class ApplicationExtensions
             });
         });
 
+        return services;
+    }
+
+    public static IServiceCollection AddReadModelBackgroundService<TDbContext>
+    (
+        this IServiceCollection services,
+        string subscriptionId,
+        DomainEventProjectionToPostgres<TDbContext>.Projector projector,
+        string aggregateStreamPrefix
+    ) where TDbContext : DbContextBase
+    {
+        services.AddEventStoreBackgroundService(provider =>
+        {
+            ILogger logger = provider.GetService<ILogger>();
+            IEventStoreMessageConverter eventStoreMessageConverter = provider.GetService<IEventStoreMessageConverter>();
+            IEventStoreSerializer eventStoreSerializer = provider.GetService<IEventStoreSerializer>();
+
+            return new SubscriptionConfig
+            (
+                subscriptionId,
+                new DomainEventProjectionToPostgres<TDbContext>
+                (
+                    logger, provider, eventStoreMessageConverter, 
+                    eventStoreSerializer, projector
+                ),
+                new SubscriptionFilterOptions(StreamFilter.Prefix(aggregateStreamPrefix))
+            );
+        });
+        
         return services;
     }
     

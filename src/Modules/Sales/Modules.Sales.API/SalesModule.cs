@@ -83,7 +83,7 @@ internal class SalesModule : IModule
             typeof(IPipelineBehavior<,>),
             typeof(RetryPolicyCommandDecorator<,>)
         );
-        // services.Decorate
+        // services.Decorate // Note: right now, there are no event handlers in the Sales module.
         // (
         //     typeof(INotificationHandler<>),
         //     typeof(LoggingEventDecorator<>)
