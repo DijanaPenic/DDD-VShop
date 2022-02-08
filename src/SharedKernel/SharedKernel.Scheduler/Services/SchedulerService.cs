@@ -49,9 +49,9 @@ namespace VShop.SharedKernel.Scheduler.Services
                 .WithIdentity(messageId)
                 .StartAt(message.ScheduledTime.ToDateTimeOffset())
                 .Build();
-            
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+
             await LogScheduledMessageAsync(message, messageContext, cancellationToken);
+            await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
 
         private Task LogScheduledMessageAsync
