@@ -1,12 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Serilog;
 using MediatR;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +10,6 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure;
@@ -23,20 +18,22 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
+using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Subscriptions;
 
+using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
+
 namespace VShop.Modules.Sales.API;
 
-internal class SalesModule : IModule
+internal class SalesModule : Module
 {
-    public string Name => "Sales";
-    public Assembly[] Assemblies { get; set; }
+    public SalesModule(IEnumerable<Assembly> assemblies) : base("Sales", assemblies) { }
 
-    public void Initialize
+    public override void Initialize
     (
         IConfiguration configuration,
         ILogger logger,
@@ -44,11 +41,11 @@ internal class SalesModule : IModule
         IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
-        RunHostedServices(); // TODO - integration tests review.
+        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        StartHostedServices(SalesCompositionRoot.ServiceProvider); // TODO - integration tests review.
     }
 
-    public void ConfigureCompositionRoot
+    public override void ConfigureContainer
     (
         IConfiguration configuration,
         ILogger logger,
@@ -90,18 +87,9 @@ internal class SalesModule : IModule
         // );
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
-        SalesCompositionRoot.SetServiceProvider(serviceProvider);
+        SalesCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         
         ModuleRegistry.AddBroadcastActions(SalesCompositionRoot.ServiceProvider, Assemblies);
         ModuleEventStoreSubscriptionRegistry.Add(SalesCompositionRoot.ServiceProvider);
-    }
-
-    private void RunHostedServices() // Database migration.
-    {
-        using IServiceScope scope = SalesCompositionRoot.CreateScope();
-        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-        
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
-            .GetAwaiter().GetResult();
     }
 }

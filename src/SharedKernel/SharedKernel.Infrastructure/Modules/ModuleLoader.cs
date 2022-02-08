@@ -6,34 +6,23 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
 public static class ModuleLoader
 {
-    private const string ModulePrefix = "VShop.Modules.";
-
-    public static IList<IModule> LoadModules(IConfiguration configuration)
+    public static IEnumerable<Module> LoadModules(IConfiguration configuration)
     {
-        IList<Assembly> assemblyList = LoadAssemblies(configuration);
+        IList<Assembly> assemblies = LoadAssemblies(configuration);
         
-        IList<IModule> modules = assemblyList
+        IList<Type> moduleTypes = assemblies
             .SelectMany(a => a.GetTypes())
-            .Where(t => typeof(IModule).IsAssignableFrom(t) && !t.IsInterface)
+            .Where(t => typeof(Module).IsAssignableFrom(t) && t != typeof(Module))
             .OrderBy(t => t.Name)
-            .Select(Activator.CreateInstance)
-            .Cast<IModule>()
             .ToList();
 
-        foreach (IModule module in modules)
-        {
-            module.Assemblies = assemblyList
-                .Where(a => a.FullName is not null && a.FullName.StartsWith($"{ModulePrefix}{module.Name}"))
-                .ToArray();
-        }
-
-        return modules;
+        foreach (Type moduleType in moduleTypes)
+            yield return (Module)Activator.CreateInstance(moduleType, assemblies);
     }
     
     private static IList<Assembly> LoadAssemblies(IConfiguration configuration)
@@ -49,9 +38,9 @@ public static class ModuleLoader
         
         foreach (string file in files)
         {
-            if (!file.Contains(ModulePrefix)) continue;
+            if (!file.Contains(Module.Prefix)) continue;
             
-            string moduleName = file.Split(ModulePrefix)[1].Split(".")[0].ToPascalCase();
+            string moduleName = file.Split(Module.Prefix)[1].Split(".")[0].ToPascalCase();
             bool enabled = configuration.GetValue<bool>($"{moduleName}:Module:Enabled");
             if (!enabled) disabledModules.Add(file);
         }

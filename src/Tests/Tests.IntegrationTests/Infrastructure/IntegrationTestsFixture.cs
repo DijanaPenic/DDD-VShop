@@ -38,9 +38,9 @@ namespace VShop.Tests.IntegrationTests.Infrastructure
             IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
             IMessageContextRegistry messageContextRegistry = new MessageContextRegistry(memoryCache);
             
-            IList<IModule> modules = ModuleLoader.LoadModules(configuration);
-            foreach (IModule module in modules)
-                module.ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
+            IList<Module> modules = ModuleLoader.LoadModules(configuration).ToList();
+            foreach (Module module in modules)
+                module.ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
 
             SalesModule = new ModuleFixture
             (

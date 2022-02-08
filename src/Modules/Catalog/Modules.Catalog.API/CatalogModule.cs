@@ -1,11 +1,7 @@
 using MediatR;
 using Serilog;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,17 +17,17 @@ using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Subscriptions;
+
+using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
 
 namespace VShop.Modules.Catalog.API;
 
-internal class CatalogModule : IModule
+internal class CatalogModule : Module
 {
-    public string Name => "Catalog";
-    public Assembly[] Assemblies { get; set; }
+    public CatalogModule(IEnumerable<Assembly> assemblies) : base("Catalog", assemblies) { }
 
-    public void Initialize
+    public override void Initialize
     (
         IConfiguration configuration,
         ILogger logger,
@@ -39,11 +35,11 @@ internal class CatalogModule : IModule
         IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
-        RunHostedServices();
+        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        StartHostedServices(CatalogCompositionRoot.ServiceProvider);
     }
 
-    public void ConfigureCompositionRoot
+    public override void ConfigureContainer
     (
         IConfiguration configuration,
         ILogger logger,
@@ -73,18 +69,9 @@ internal class CatalogModule : IModule
         );
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
-        CatalogCompositionRoot.SetServiceProvider(serviceProvider);
+        CatalogCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         
         ModuleRegistry.AddBroadcastActions(CatalogCompositionRoot.ServiceProvider, Assemblies);
         ModuleEventStoreSubscriptionRegistry.Add(CatalogCompositionRoot.ServiceProvider);
-    }
-
-    private void RunHostedServices() // Database migration.
-    {
-        using IServiceScope scope = CatalogCompositionRoot.CreateScope();
-        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-        
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
-            .GetAwaiter().GetResult();
     }
 }

@@ -9,7 +9,6 @@ using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 
@@ -20,12 +19,12 @@ namespace VShop.Bootstrapper;
 public class Startup
 {
     private readonly IConfiguration _configuration;
-    private readonly IList<IModule> _modules;
+    private readonly IList<Module> _modules;
 
     public Startup(IConfiguration configuration)
     {
         _configuration = configuration;
-        _modules = ModuleLoader.LoadModules(configuration);
+        _modules = ModuleLoader.LoadModules(configuration).ToList();
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -41,7 +40,8 @@ public class Startup
         
         ILogger logger = ConfigureLogger();
 
-        foreach (IModule module in _modules)
+        foreach (Module module in _modules)
+        {
             module.Initialize
             (
                 _configuration,
@@ -49,6 +49,7 @@ public class Startup
                 contextAccessor,
                 messageContextRegistry
             );
+        }
 
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();

@@ -1,11 +1,7 @@
 using MediatR;
 using Serilog;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +9,6 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.Modules.Billing.API.Automapper;
 using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Services;
@@ -28,14 +23,15 @@ using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Subscriptions;
 
+using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
+
 namespace VShop.Modules.Billing.API;
 
-internal class BillingModule : IModule
+internal class BillingModule : Module
 {
-    public string Name => "Billing";
-    public Assembly[] Assemblies { get; set; }
+    public BillingModule(IEnumerable<Assembly> assemblies) : base("Billing", assemblies) { }
 
-    public void Initialize
+    public override void Initialize
     (
         IConfiguration configuration,
         ILogger logger,
@@ -43,11 +39,11 @@ internal class BillingModule : IModule
         IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
-        RunHostedServices();
+        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        StartHostedServices(BillingCompositionRoot.ServiceProvider);
     }
 
-    public void ConfigureCompositionRoot
+    public override void ConfigureContainer
     (
         IConfiguration configuration,
         ILogger logger,
@@ -94,18 +90,9 @@ internal class BillingModule : IModule
         );
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
-        BillingCompositionRoot.SetServiceProvider(serviceProvider);
+        BillingCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         
         ModuleRegistry.AddBroadcastActions(BillingCompositionRoot.ServiceProvider, Assemblies);
         ModuleEventStoreSubscriptionRegistry.Add(BillingCompositionRoot.ServiceProvider);
-    }
-
-    private void RunHostedServices() // Database migration.
-    {
-        using IServiceScope scope = BillingCompositionRoot.CreateScope();
-        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
-            .GetAwaiter().GetResult();
     }
 }

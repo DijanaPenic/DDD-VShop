@@ -3,7 +3,6 @@ using Serilog;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using VShop.Modules.ProcessManager.Infrastructure;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration;
@@ -15,18 +14,18 @@ using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
 
+using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
+
 namespace VShop.Modules.ProcessManager.API;
 
-internal class ProcessManagerModule : IModule
+internal class ProcessManagerModule : Module
 {
-    public string Name => "ProcessManager";
-    public Assembly[] Assemblies { get; set; }
+    public ProcessManagerModule(IEnumerable<Assembly> assemblies) : base("ProcessManager", assemblies) { }
 
-    public void Initialize
+    public override void Initialize
     (
         IConfiguration configuration,
         ILogger logger,
@@ -34,11 +33,11 @@ internal class ProcessManagerModule : IModule
         IMessageContextRegistry messageContextRegistry
     )
     {
-        ConfigureCompositionRoot(configuration, logger, contextAccessor, messageContextRegistry);
-        RunHostedServices();
+        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        StartHostedServices(ProcessManagerCompositionRoot.ServiceProvider);
     }
 
-    public void ConfigureCompositionRoot
+    public override void ConfigureContainer
     (
         IConfiguration configuration,
         ILogger logger,
@@ -68,18 +67,9 @@ internal class ProcessManagerModule : IModule
         );
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
-        ProcessManagerCompositionRoot.SetServiceProvider(serviceProvider);
+        ProcessManagerCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         
         ModuleRegistry.AddBroadcastActions(ProcessManagerCompositionRoot.ServiceProvider, Assemblies);
         ModuleEventStoreSubscriptionRegistry.Add(ProcessManagerCompositionRoot.ServiceProvider);
-    }
-
-    private void RunHostedServices() // Quartz and database migration.
-    {
-        using IServiceScope scope = ProcessManagerCompositionRoot.CreateScope();
-        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
-        
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
-            .GetAwaiter().GetResult();
     }
 }
