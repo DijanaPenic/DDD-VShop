@@ -7,7 +7,6 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 
@@ -27,6 +26,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
             
             ILogger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
+                .ReadFrom.Configuration(configuration)
                 .CreateLogger();
             
             IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());

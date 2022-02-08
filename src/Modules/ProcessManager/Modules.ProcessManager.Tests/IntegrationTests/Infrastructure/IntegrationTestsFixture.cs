@@ -27,6 +27,7 @@ namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
             
             ILogger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
+                .ReadFrom.Configuration(configuration)
                 .CreateLogger();
             
             IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());

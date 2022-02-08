@@ -1,4 +1,23 @@
 {
+    "Serilog": {
+        "MinimumLevel": {
+            "Default": "Debug",
+            "Override": {
+                "Microsoft": "Warning",
+                "Microsoft.Hosting.Lifetime": "Information",
+                "Quartz": "Information"
+            }
+        },
+        "WriteTo": [
+            {
+                "Name": "Console",
+                "Args": {
+                    "theme": "Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Code, Serilog.Sinks.Console",
+                    "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] [{Module}] {Message:lj} <s:{SourceContext}>{NewLine}{Exception}"
+                }
+            }
+        ]
+    },
     "EventStore": {
         "ConnectionString": "esdb://admin:changeit@localhost:2114?tls=false&tlsVerifyCert=false"
     },
