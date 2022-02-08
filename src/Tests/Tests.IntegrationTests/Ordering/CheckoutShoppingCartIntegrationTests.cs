@@ -15,6 +15,7 @@ using VShop.Tests.IntegrationTests.Infrastructure;
 
 namespace VShop.Tests.IntegrationTests.Ordering;
 
+[Collection("Non-Parallel Tests Collection")]
 public class CheckoutShoppingCartIntegrationTests : TestBase
 {
     [Theory, CustomAutoData]

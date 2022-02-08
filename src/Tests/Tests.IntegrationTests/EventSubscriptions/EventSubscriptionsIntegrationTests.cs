@@ -20,7 +20,7 @@ using VShop.Tests.IntegrationTests.Infrastructure;
 namespace VShop.Tests.IntegrationTests.EventSubscriptions
 {
     [Collection("Non-Parallel Tests Collection")]
-    public class IntegrationEventProjectionIntegrationTests : TestBase, IClassFixture<SubscriptionFixture>
+    public class IntegrationEventProjectionIntegrationTests : TestBase//, IClassFixture<SubscriptionFixture>
     {
         private const int TimeoutInMillis = 4000;
 

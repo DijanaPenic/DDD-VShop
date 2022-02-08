@@ -36,7 +36,7 @@ internal class CatalogModule : Module
     )
     {
         ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
-        StartHostedServices(CatalogCompositionRoot.ServiceProvider);
+        StartHostedServicesAsync(CatalogCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer

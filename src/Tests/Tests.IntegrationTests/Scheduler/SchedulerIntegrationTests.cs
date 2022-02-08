@@ -1,8 +1,7 @@
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.Modules.ProcessManager.Infrastructure.Messages.Commands;
-using VShop.Modules.Sales.Domain.Models.ShoppingCart;
+using VShop.Tests.IntegrationTests.Helpers;
 using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
@@ -15,13 +14,14 @@ using VShop.SharedKernel.Scheduler.Services.Contracts;
 using VShop.SharedKernel.Tests.Customizations;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
 using VShop.Tests.IntegrationTests.Infrastructure;
+using VShop.Modules.ProcessManager.Infrastructure.Messages.Commands;
+using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 using VShop.Modules.ProcessManager.Infrastructure.Messages.Reminders;
-using VShop.Tests.IntegrationTests.Helpers;
 
 namespace VShop.Tests.IntegrationTests.Scheduler
 {
     [Collection("Non-Parallel Tests Collection")]
-    public class SchedulerIntegrationTests : TestBase, IClassFixture<SchedulerFixture>
+    public class SchedulerIntegrationTests : TestBase
     {
         [Theory, CustomAutoData]
         internal async Task Scheduled_command_is_published_in_defined_time
@@ -34,18 +34,19 @@ namespace VShop.Tests.IntegrationTests.Scheduler
             // Arrange
             IClockService clockService = new ClockService();
 
-            await ShoppingCartHelper.SaveAndPublishAsync(shoppingCart);
-        
+            await ShoppingCartHelper.SaveAsync(shoppingCart);
+
             IScheduledMessage scheduledMessage = new ScheduledMessage
             (
                 new PlaceOrderCommand(orderId, shoppingCart.Id),
                 clockService.Now
             );
-        
+
             // Act
             await ProcessManagerModule.ExecuteServiceAsync<ISchedulerService>(sut =>
-                sut.ScheduleMessageAsync(new MessageEnvelope<IScheduledMessage>(scheduledMessage, new MessageContext(context))));
-        
+                sut.ScheduleMessageAsync
+                    (new MessageEnvelope<IScheduledMessage>(scheduledMessage, new MessageContext(context))));
+
             // Assert
             await ProcessManagerModule.AssertEventuallyAsync
             (

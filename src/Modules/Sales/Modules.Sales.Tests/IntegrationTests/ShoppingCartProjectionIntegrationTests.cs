@@ -17,7 +17,7 @@ using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 namespace VShop.Modules.Sales.Tests.IntegrationTests
 {
     [Collection("Non-Parallel Tests Collection")]
-    public class ShoppingCartProjectionIntegrationTests : TestBase, IClassFixture<SubscriptionFixture>
+    public class ShoppingCartProjectionIntegrationTests : TestBase, IClassFixture<ResetDatabaseLifetime>
     {
         private const int TimeoutMillis = 10000;
             

@@ -5,13 +5,13 @@ using VShop.SharedKernel.Tests.IntegrationTests;
 
 namespace VShop.Tests.IntegrationTests.Infrastructure
 {
-    internal class ResetDatabaseLifetime : DatabaseLifetime
+    public class ResetDatabaseLifetime : DatabaseLifetime
     {
-        protected override Task ClearRelationalDatabaseAsync() => ResetRelationalDatabaseAsync();
-
-        public static async Task ResetRelationalDatabaseAsync()
+        protected override async Task ClearRelationalDatabaseAsync()
         {
-            await using NpgsqlConnection salesConnection = new(IntegrationTestsFixture.SalesModule.RelationalDbConnectionString);
+            await using NpgsqlConnection salesConnection = 
+                new(IntegrationTestsFixture.SalesModule.RelationalDbConnectionString);
+            
             await salesConnection.OpenAsync();
 
             const string salesSql = @"DELETE FROM ""shopping_cart"".""shopping_cart_info_product_item""; " +
@@ -21,7 +21,9 @@ namespace VShop.Tests.IntegrationTests.Infrastructure
             await salesConnection.ExecuteScalarAsync(salesSql);
             await salesConnection.CloseAsync();
             
-            await using NpgsqlConnection processManagerConnection = new(IntegrationTestsFixture.ProcessManagerModule.RelationalDbConnectionString);
+            await using NpgsqlConnection processManagerConnection = 
+                new(IntegrationTestsFixture.ProcessManagerModule.RelationalDbConnectionString);
+            
             await processManagerConnection.OpenAsync();
 
             const string processManagerSql = @"DELETE FROM ""subscription"".""checkpoint""; " +

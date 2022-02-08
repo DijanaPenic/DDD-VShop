@@ -18,7 +18,6 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Domain.ValueObjects;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
@@ -42,7 +41,7 @@ internal class SalesModule : Module
     )
     {
         ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
-        StartHostedServices(SalesCompositionRoot.ServiceProvider); // TODO - integration tests review.
+        StartHostedServicesAsync(SalesCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer

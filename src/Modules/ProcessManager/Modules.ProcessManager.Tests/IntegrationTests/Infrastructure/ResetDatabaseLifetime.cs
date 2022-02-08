@@ -5,11 +5,9 @@ using VShop.SharedKernel.Tests.IntegrationTests;
 
 namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
 {
-    internal abstract class ResetDatabaseLifetime : DatabaseLifetime
+    public class ResetDatabaseLifetime : DatabaseLifetime
     {
-        protected override Task ClearRelationalDatabaseAsync() => ResetRelationalDatabaseAsync();
-
-        public static async Task ResetRelationalDatabaseAsync()
+        protected override async Task ClearRelationalDatabaseAsync()
         {
             await using NpgsqlConnection connection = new(IntegrationTestsFixture.ProcessManagerModule.RelationalDbConnectionString);
             await connection.OpenAsync();

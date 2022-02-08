@@ -14,6 +14,8 @@ public interface IModuleFixture
 {
     IMessageRegistry MessageRegistry { get; }
     string RelationalDbConnectionString { get; }
+    Task StartHostedServicesAsync();
+    Task StopHostedServicesAsync();
     Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout);
     Task ExecuteHostedServiceAsync(Func<IHostedService, Task> action, string hostedServiceName);
     Task ExecuteHostedServiceAsync<TService>(Func<TService, Task> action) where TService : IHostedService;

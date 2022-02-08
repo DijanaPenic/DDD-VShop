@@ -43,13 +43,20 @@ public abstract class Module
         IMessageContextRegistry messageContextRegistry
     );
     
-    protected static void StartHostedServices(IServiceProvider serviceProvider)
+    public static Task StartHostedServicesAsync(IServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
         
-        Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)))
-            .GetAwaiter().GetResult();
+        return Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)));
+    }
+    
+    public static Task StopHostedServicesAsync(IServiceProvider serviceProvider)
+    {
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
+        
+        return Task.WhenAll(hostedServices.Select(s => s.StopAsync(CancellationToken.None)));
     }
     
     private Assembly[] GetModuleAssemblies(IEnumerable<Assembly> assemblies) => assemblies

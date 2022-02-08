@@ -26,7 +26,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
     public class OrderCommandHandlerIntegrationTests : TestBase
     {
         [Theory, CustomAutoData]
-        internal async Task Creates_the_order_from_the_shopping_cart
+        internal async Task Creates_a_new_order_from_the_shopping_cart
         (
             ShoppingCart shoppingCart,
             EntityId orderId
@@ -52,7 +52,7 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests
         }
         
         [Theory, CustomAutoData]
-        internal async Task Creating_the_order_from_the_shopping_cart_is_idempotent
+        internal async Task Creating_a_new_order_from_the_shopping_cart_is_idempotent
         (
             ShoppingCart shoppingCart,
             EntityId orderId

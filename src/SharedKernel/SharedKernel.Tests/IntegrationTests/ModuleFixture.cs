@@ -10,7 +10,7 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Services;
+using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
@@ -32,10 +32,12 @@ public class ModuleFixture : IModuleFixture
         _serviceProvider = serviceProvider;
         _configuration = configuration;
         _module = module;
-        
-        InitializePostgresDatabaseAsync().GetAwaiter().GetResult();
     }
 
+    public Task StartHostedServicesAsync() => Module.StartHostedServicesAsync(_serviceProvider);
+
+    public Task StopHostedServicesAsync() => Module.StopHostedServicesAsync(_serviceProvider);
+    
     public Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
         => new Poller(clockService, timeout).CheckAsync(probe);
 
@@ -126,8 +128,4 @@ public class ModuleFixture : IModuleFixture
                                       
         return await action(scope.ServiceProvider).ConfigureAwait(false);
     }
-    
-    private Task InitializePostgresDatabaseAsync()
-        => ExecuteHostedServiceAsync<DatabaseInitializerHostedService>
-            (hostedService => hostedService.StartAsync(CancellationToken.None));
 }

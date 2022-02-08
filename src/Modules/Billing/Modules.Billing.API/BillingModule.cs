@@ -40,7 +40,7 @@ internal class BillingModule : Module
     )
     {
         ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
-        StartHostedServices(BillingCompositionRoot.ServiceProvider);
+        StartHostedServicesAsync(BillingCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer

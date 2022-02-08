@@ -34,7 +34,7 @@ internal class ProcessManagerModule : Module
     )
     {
         ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
-        StartHostedServices(ProcessManagerCompositionRoot.ServiceProvider);
+        StartHostedServicesAsync(ProcessManagerCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer
