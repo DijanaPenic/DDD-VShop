@@ -13,7 +13,9 @@ VShop is a sample .NET application built as **Modular Monolith** with **Domain-D
 
 The VShop application uses two communication types:
 - Asynchronous event-based communication - a module publishes event(s) when something notable happens, and other modules subscribe to those events. The Publish-Subscribe pattern is built on top of the EventStoreDB database by exchanging messages via event streams (each module is publishing to its own "integration" stream). This way, events are used to implement business transactions that span multiple modules, in an eventual consistent manner.
+
 ![](docs/Images/es_integration_stream.png)
+
 - Synchronous communication between modules based on local contracts - module can publish events to other modules and execute commands on other modules. The VShop application uses **MediatR** to propagate events synchronously across modules.
 
 ## Process Manager (PM)
@@ -72,6 +74,7 @@ Both unit and integration tests have been implemented for Sales and ProcessManag
 Due to asynchronous communication, some tests must wait for the result at certain times. To correctly implement such tests, the Sampling technique and implementation described in the [Growing Object-Oriented Software, Guided by Tests](https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627) book was used.
 
 Tests preview:
+
 ![](docs/Images/integration_tests_preview.png)
 
 ## Atomicity and resiliency
