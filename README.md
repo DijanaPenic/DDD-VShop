@@ -71,6 +71,9 @@ Both unit and integration tests have been implemented for Sales and ProcessManag
 
 Due to asynchronous communication, some tests must wait for the result at certain times. To correctly implement such tests, the Sampling technique and implementation described in the [Growing Object-Oriented Software, Guided by Tests](https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627) book was used.
 
+Tests preview:
+![](docs/Images/integration_tests_preview.png)
+
 ## Atomicity and resiliency
 
 The several approaches are used when dealing with the data consistency problem:
