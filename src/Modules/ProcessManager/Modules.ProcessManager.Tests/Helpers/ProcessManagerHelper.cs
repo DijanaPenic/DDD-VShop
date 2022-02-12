@@ -6,7 +6,6 @@ using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 
 namespace VShop.Modules.ProcessManager.Tests.Helpers;
 
@@ -18,7 +17,7 @@ internal static class ProcessManagerHelper
         await IntegrationTestsFixture.ProcessManagerModule.ExecuteServiceAsync<IMessageContextRegistry>(registry =>
         {
             foreach (IBaseEvent @event in processManager.Inbox.Events)
-                registry.Set(@event, new MessageContext(new Context(SequentialGuid.Create(), SequentialGuid.Create())));
+                registry.Set(@event, new MessageContext(new Context()));
             
             return Task.CompletedTask;
         });

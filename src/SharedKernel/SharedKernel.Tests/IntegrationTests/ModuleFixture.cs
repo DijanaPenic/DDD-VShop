@@ -12,7 +12,6 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
@@ -88,7 +87,7 @@ public class ModuleFixture : IModuleFixture
 
     public Task PublishAsync(IIntegrationEvent @event, IContext context = default)
     {
-        context ??= new Context(SequentialGuid.Create(), SequentialGuid.Create());
+        context ??= new Context();
         
         return ExecuteScopeAsync(sp =>
         {

@@ -28,8 +28,8 @@ public class Context : IContext
 
     public Context
     (
-        Guid? requestId,
-        Guid? correlationId,
+        Guid? requestId = null,
+        Guid? correlationId = null,
         IIdentityContext identity = null,
         string ipAddress = null,
         string userAgent = null
