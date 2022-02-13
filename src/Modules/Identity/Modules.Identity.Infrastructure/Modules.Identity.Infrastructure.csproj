@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>VShop.Modules.Identity.Infrastructure</AssemblyName>
+        <RootNamespace>VShop.Modules.Identity.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Configuration" />
+      <Folder Include="DAL\Configurations" />
+      <Folder Include="DAL\Entities" />
+      <Folder Include="DAL\Migrations" />
+    </ItemGroup>
+
+</Project>
