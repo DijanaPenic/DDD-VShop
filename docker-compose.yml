@@ -118,3 +118,24 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_ProcessManagerTests
       POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g  
+      
+  postgres.db.identity:
+    image: postgres
+    ports: 
+      - 5446:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_Identity
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      
+      
+  postgres.db.identity.tests:
+    image: postgres
+    ports: 
+      - 5447:5432
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_DB: VShop_IdentityTests
+      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
