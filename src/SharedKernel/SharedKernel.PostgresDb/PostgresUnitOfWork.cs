@@ -12,7 +12,6 @@ public class PostgresUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbC
 {
     private readonly TDbContext _dbContext;
     public IDbContextTransaction CurrentTransaction => _dbContext.CurrentTransaction;
-
     protected PostgresUnitOfWork(TDbContext dbContext) => _dbContext = dbContext;
     
     public async Task<Guid> ExecuteAsync
