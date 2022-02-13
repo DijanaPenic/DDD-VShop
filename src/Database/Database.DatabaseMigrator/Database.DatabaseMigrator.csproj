@@ -15,6 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Modules\Identity\Modules.Identity.API\Modules.Identity.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Identity\Modules.Identity.Infrastructure\Modules.Identity.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Modules\Billing\Modules.Billing.API\Modules.Billing.API.csproj" />
       <ProjectReference Include="..\..\Modules\Billing\Modules.Billing.Infrastructure\Modules.Billing.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.API\Modules.Catalog.API.csproj" />
