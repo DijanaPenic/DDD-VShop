@@ -97,5 +97,33 @@ namespace VShop.SharedKernel.PostgresDb
             }
         }
 
+        public Task AddAsync<TEntity>(TEntity entity) where TEntity : class
+        {
+            Set<TEntity>().Add(entity);
+            return Task.CompletedTask;
+        }
+        
+        public async Task DeleteByKeyAsync<TEntity>(CancellationToken cancellationToken, params object[] keyValues)
+            where TEntity : class
+        {
+            TEntity entity = await Set<TEntity>().FindAsync(keyValues, cancellationToken);
+            if (entity is not null) Set<TEntity>().Remove(entity);
+        }
+        
+        public Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class
+        {
+            Set<TEntity>().Remove(entity);
+            return Task.CompletedTask;
+        }
+        
+        public Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
+        {
+            Entry(entity).State = EntityState.Modified;
+            return Task.CompletedTask;
+        }
+
+        public ValueTask<TEntity> FindByKeyAsync<TEntity>(CancellationToken cancellationToken, params object[] keyValues) 
+            where TEntity : class
+            => Set<TEntity>().FindAsync(keyValues, cancellationToken);
     }
 }

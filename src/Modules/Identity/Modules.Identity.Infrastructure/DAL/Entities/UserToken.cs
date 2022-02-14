@@ -10,3 +10,11 @@ internal class UserToken : DbEntity
     public string Name { get; set; }
     public string Value { get; set; }
 }
+
+internal class UserTokenKey
+{
+    public Guid UserId { get; set; }
+    public string LoginProvider { get; set; }
+    public string Name { get; set; }
+    public object[] ToArray() => new object[] { UserId, LoginProvider, Name };
+}

@@ -13,3 +13,10 @@ internal class UserRefreshToken : DbEntity
     public Client Client { get; set; }
     public Instant DateExpires { get; set; }
 }
+
+public class UserRefreshTokenKey
+{
+    public Guid UserId { get; set; }
+    public Guid ClientId { get; set; }
+    public object[] ToArray() => new object[] { UserId, ClientId };
+}
