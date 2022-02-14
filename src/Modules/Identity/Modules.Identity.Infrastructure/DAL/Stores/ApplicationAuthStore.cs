@@ -18,7 +18,7 @@ internal sealed class ApplicationAuthStore : IApplicationClientStore, IApplicati
         _clockService = clockService;
     }
 
-    #region IUserRefreshToken Members
+    #region IApplicationUserRefreshTokenStore Members
 
     public async Task AddRefreshTokenAsync(UserRefreshToken refreshToken, CancellationToken cancellationToken)
     {
@@ -63,7 +63,7 @@ internal sealed class ApplicationAuthStore : IApplicationClientStore, IApplicati
 
     #endregion
 
-    #region IClientStore Members
+    #region IApplicationClientStore Members
 
     public async Task<Client> FindClientByKeyAsync(Guid clientId, CancellationToken cancellationToken)
     {
