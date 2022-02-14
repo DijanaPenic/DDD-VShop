@@ -16,8 +16,8 @@ namespace VShop.Modules.Identity.Infrastructure.Services;
 
 internal sealed class ApplicationAuthManager
 {
-    private static readonly Dictionary<string, IEnumerable<string>> EmptyClaims = new();
     private readonly ApplicationUserManager _userManager;
+    private readonly ApplicationRoleManager _roleManager;
     private readonly IApplicationClientStore _clientStore;
     private readonly IApplicationUserRefreshTokenStore _refreshTokenStore;
     private readonly AuthOptions _options;
@@ -28,6 +28,7 @@ internal sealed class ApplicationAuthManager
     public ApplicationAuthManager
     (
         ApplicationUserManager userManager,
+        ApplicationRoleManager roleManager,
         IApplicationClientStore clientStore,
         IApplicationUserRefreshTokenStore refreshTokenStore,
         AuthOptions options,
@@ -40,6 +41,7 @@ internal sealed class ApplicationAuthManager
             throw new InvalidOperationException("Issuer signing key not set.");
 
         _userManager = userManager;
+        _roleManager = roleManager;
         _clientStore = clientStore;
         _refreshTokenStore = refreshTokenStore;
         _options = options;
@@ -58,7 +60,6 @@ internal sealed class ApplicationAuthManager
         Guid userId,
         Guid clientId,
         string externalLoginProvider = null,
-        IDictionary<string, IEnumerable<string>> claims = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -69,9 +70,8 @@ internal sealed class ApplicationAuthManager
             throw new ArgumentNullException(nameof(clientId));
         
         User user = await _userManager.FindByIdAsync(userId.ToString());
-        IList<string> roles = await _userManager.GetRolesAsync(user);
-        
         Instant now = _clockService.Now;
+        
         List<Claim> jwtClaims = new()
         {
             new Claim(ClaimTypes.Name, user.NormalizedUserName),
@@ -83,19 +83,13 @@ internal sealed class ApplicationAuthManager
             new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeMilliseconds().ToString())
         };
         
-        jwtClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        IList<string> roles = await _userManager.GetRolesAsync(user);
+        IList<Claim> roleClaims = await BuildRoleClaimsAsync(roles);
+        
+        jwtClaims.AddRange(roleClaims);
 
         if (!string.IsNullOrEmpty(externalLoginProvider))
             jwtClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, externalLoginProvider));
-
-        if (claims?.Any() is true)
-        {
-            List<Claim> customClaims = new();
-            foreach ((string claim, IEnumerable<string> values) in claims)
-                customClaims.AddRange(values.Select(value => new Claim(claim, value)));
-
-            jwtClaims.AddRange(customClaims);
-        }
 
         Client client = await _clientStore.FindClientByKeyAsync(clientId, cancellationToken);
         Instant accessTokenExpires = now.Plus(Duration.FromMinutes(client.AccessTokenLifeTime));
@@ -121,8 +115,7 @@ internal sealed class ApplicationAuthManager
             RefreshTokenExpiry = refreshToken.DateExpires.ToUnixTimeMilliseconds(),
             UserId = userId,
             Email = user.Email,
-            Roles = roles,
-            Claims = claims ?? EmptyClaims
+            Roles = roles
         };
     }
 
@@ -156,7 +149,7 @@ internal sealed class ApplicationAuthManager
         Claim authMethodClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.AuthenticationMethod);
         string provider = authMethodClaim?.Value;
 
-        return await CreateTokenAsync(user.Id, clientId, provider, null, cancellationToken);
+        return await CreateTokenAsync(user.Id, clientId, provider, cancellationToken);
     }
 
     public Task RemoveExpiredRefreshTokensAsync(CancellationToken cancellationToken = default)
@@ -211,5 +204,28 @@ internal sealed class ApplicationAuthManager
             .ValidateToken(token, _tokenValidationParameters, out SecurityToken validatedToken);
 
         return Task.FromResult((claimsPrincipal, validatedToken as JwtSecurityToken));
+    }
+    
+    private async Task<IList<Claim>> BuildRoleClaimsAsync(IEnumerable<string> roles)
+    {
+        List<Claim> claims = new();
+
+        if (!_userManager.SupportsUserRole || !_roleManager.SupportsRoleClaims) return claims;
+
+        foreach (string roleName in roles)
+        {
+            Role role = await _roleManager.FindByNameAsync(roleName);
+            if (role is not null)
+            {
+                IList<Claim> roleClaims = await _roleManager.GetClaimsAsync(role); // Add permissions
+                claims.AddRange(roleClaims.ToList());
+            }
+            
+            claims.Add(new Claim(ClaimTypes.Role, roleName)); // Add role name
+        }
+        
+        claims = claims.Distinct(new ClaimsComparer()).ToList();
+        
+        return claims;
     }
 }

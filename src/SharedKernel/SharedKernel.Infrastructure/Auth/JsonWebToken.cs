@@ -12,5 +12,4 @@ public class JsonWebToken
     public Guid UserId { get; set; }
     public IList<string> Roles { get; set; }
     public string Email { get; set; }
-    public IDictionary<string, IEnumerable<string>> Claims { get; set; }
 }
