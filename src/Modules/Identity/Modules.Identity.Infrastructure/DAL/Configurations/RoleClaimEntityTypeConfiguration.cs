@@ -1,3 +1,4 @@
+using NodaTime.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,21 +32,32 @@ internal class RoleClaimEntityTypeConfiguration : IEntityTypeConfiguration<RoleC
 
         IDictionary<string, string[]> permissions = new Dictionary<string, string[]>()
         {
-            {"d92ef5e5-f08a-4173-b83a-74618893891b", new[] {"catalog", "billing", "sales"}}, // admin
-            {"d92ef5e5-f08a-4173-b83a-74618893891b", new[] {"catalog"}}                      // store manager
+            // admin
+            {
+                "d72ef5e5-f08a-4173-b83a-74618893891b", 
+                new[] {"orders", "shopping_carts", "auth", "payments", "categories", "products"}
+            }, 
+            
+            // store manager
+            {
+                "d92ef5e5-f08a-4173-b83a-74618893891b", 
+                new[] {"categories", "products"}
+            }
         };
 
-        RoleClaim[] claims = permissions.SelectMany(permission =>
+        IEnumerable<RoleClaim> claims = permissions.SelectMany(permission =>
         {
-            (string roleId, string[] modules) = permission;
-            return modules.Select(module => new RoleClaim
+            (string roleId, string[] policies) = permission;
+            return policies.Select(policy => new RoleClaim
             {
-                Id = Guid.Parse(roleId),
-                RoleId = DeterministicGuid.Create(Guid.Parse(roleId), module),
+                Id = DeterministicGuid.Create(Guid.Parse(roleId), policy),
+                RoleId = Guid.Parse(roleId),
                 ClaimType = "permission",
-                ClaimValue = module
+                ClaimValue = policy,
+                DateCreated = InstantPattern.General.Parse("2022-01-01T00:00:00Z").Value,
+                DateUpdated = InstantPattern.General.Parse("2022-01-01T00:00:00Z").Value
             });
-        }).ToArray();
+        });
 
         builder.HasData(claims);
     }
