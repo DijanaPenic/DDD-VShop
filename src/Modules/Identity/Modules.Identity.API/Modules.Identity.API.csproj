@@ -10,8 +10,6 @@
 
     <ItemGroup>
       <Folder Include="Automapper" />
-      <Folder Include="Controllers" />
-      <Folder Include="Models" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,4 +25,18 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
+      <ProjectReference Include="..\Modules.Identity.Infrastructure\Modules.Identity.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- <InternalsVisibleTo Include="VShop.Modules.Identity.Tests" />-->
+        <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="10.1.1" />
+    </ItemGroup>
+    
 </Project>
