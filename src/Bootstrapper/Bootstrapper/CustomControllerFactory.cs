@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
+using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
-using VShop.Modules.Sales.Infrastructure.Configuration;
+using VShop.Modules.Identity.Infrastructure.Configuration;
 
 namespace VShop.Bootstrapper;
 
@@ -26,6 +27,9 @@ internal class CustomControllerFactory : IControllerFactory
         
         else if (assembly.StartsWith(CatalogCompositionRoot.NamePrefix)) 
             serviceProvider = CatalogCompositionRoot.ServiceProvider;
+        
+        else if (assembly.StartsWith(IdentityCompositionRoot.NamePrefix)) 
+            serviceProvider = IdentityCompositionRoot.ServiceProvider;
 
         else throw new Exception("ServiceProvider is missing.");
 
