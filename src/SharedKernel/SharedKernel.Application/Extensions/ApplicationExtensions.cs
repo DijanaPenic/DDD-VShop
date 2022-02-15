@@ -138,6 +138,8 @@ public static class ApplicationExtensions
         });
         
         app.UseRouting();
+
+        app.UseAuthorization();
         
         app.UseEndpoints(endpoints =>
         {

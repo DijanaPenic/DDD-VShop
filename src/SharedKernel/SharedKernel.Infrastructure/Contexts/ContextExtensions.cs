@@ -43,13 +43,22 @@ public static class ContextExtensions
 
     internal static string GetUserAgent(this HttpContext context)
         => context.Request.Headers[UserAgentKey];
-    
-    public static IServiceCollection AddContext(this IServiceCollection services, IContextAccessor contextAccessor)
+
+    public static IServiceCollection AddContext
+    (
+        this IServiceCollection services,
+        IContextAccessor contextAccessor = null
+    )
     {
+        contextAccessor ??= new ContextAccessor();
         services.AddSingleton(contextAccessor);
-        services.AddSingleton<IContextAdapter, ContextAdapter>();
         services.AddTransient(_ => contextAccessor.Context);
-            
+        
+        services.AddSingleton<IContextAdapter, ContextAdapter>();
+
+        IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
+        services.AddSingleton(httpContextAccessor);
+        
         return services;
     }
 

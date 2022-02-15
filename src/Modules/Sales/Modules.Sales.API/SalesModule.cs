@@ -18,9 +18,7 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Subscriptions;
 
@@ -30,26 +28,31 @@ namespace VShop.Modules.Sales.API;
 
 internal class SalesModule : Module
 {
-    public SalesModule(IEnumerable<Assembly> assemblies) : base("Sales", assemblies) { }
+    public override IEnumerable<string> Policies { get; } = new[]
+    {
+        "orders", 
+        "shopping_carts"
+    };
+    
+    public SalesModule(IEnumerable<Assembly> assemblies) 
+        : base("Sales", assemblies) { }
 
     public override void Initialize
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
-        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        ConfigureContainer(logger, configuration, services);
         StartHostedServicesAsync(SalesCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -57,9 +60,7 @@ internal class SalesModule : Module
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>("EventStore");
         
-        ServiceCollection services = new();
-        
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
+        services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();

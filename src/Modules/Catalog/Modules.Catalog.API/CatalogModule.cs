@@ -12,10 +12,8 @@ using VShop.Modules.Catalog.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Subscriptions;
 
@@ -25,36 +23,39 @@ namespace VShop.Modules.Catalog.API;
 
 internal class CatalogModule : Module
 {
-    public CatalogModule(IEnumerable<Assembly> assemblies) : base("Catalog", assemblies) { }
+    public override IEnumerable<string> Policies { get; } = new[]
+    {
+        "categories", 
+        "products"
+    };
 
+    public CatalogModule(IEnumerable<Assembly> assemblies) 
+        : base("Catalog", assemblies) { }
+    
     public override void Initialize
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
-        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        ConfigureContainer(logger, configuration, services);
         StartHostedServicesAsync(CatalogCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
         PostgresOptions postgresOptions = configuration
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>("EventStore");
-
-        ServiceCollection services = new();
-
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
+        
+        services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
@@ -62,6 +63,11 @@ internal class CatalogModule : Module
         services.AddSingleton<ICatalogDispatcher, CatalogDispatcher>();
         services.AddSingleton<IDispatcher, CatalogDispatcher>();
 
+        services.Decorate
+        (
+            typeof(INotificationHandler<>),
+            typeof(LoggingEventDecorator<>)
+        );
         services.Decorate
         (
             typeof(INotificationHandler<>),

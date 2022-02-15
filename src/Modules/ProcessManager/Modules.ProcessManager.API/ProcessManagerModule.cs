@@ -9,10 +9,8 @@ using VShop.Modules.ProcessManager.Infrastructure.Configuration;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
@@ -23,26 +21,25 @@ namespace VShop.Modules.ProcessManager.API;
 
 internal class ProcessManagerModule : Module
 {
-    public ProcessManagerModule(IEnumerable<Assembly> assemblies) : base("ProcessManager", assemblies) { }
+    public ProcessManagerModule(IEnumerable<Assembly> assemblies) 
+        : base("ProcessManager", assemblies) { }
 
     public override void Initialize
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
-        ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+        ConfigureContainer(logger, configuration, services);
         StartHostedServicesAsync(ProcessManagerCompositionRoot.ServiceProvider).GetAwaiter().GetResult();
     }
 
     public override void ConfigureContainer
     (
-        IConfiguration configuration,
         ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
+        IConfiguration configuration,
+        IServiceCollection services
     )
     {
         PostgresOptions postgresOptions = configuration
@@ -50,9 +47,7 @@ internal class ProcessManagerModule : Module
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>("EventStore");
         
-        ServiceCollection services = new();
-        
-        services.AddInfrastructure(Assemblies, Name, logger, contextAccessor, messageContextRegistry);
+        services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);

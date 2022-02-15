@@ -2,7 +2,7 @@
   "Identity": {
     "Module": {
       "Name": "Identity",
-      "Enabled": false
+      "Enabled": true
     }
   }
 }
