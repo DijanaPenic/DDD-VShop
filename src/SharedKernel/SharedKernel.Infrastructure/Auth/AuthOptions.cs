@@ -39,5 +39,7 @@ public class AuthOptions
         public bool HttpOnly { get; set; }
         public bool Secure { get; set; }
         public string SameSite { get; set; }
+        public bool SlidingExpiration { get; set; }
+        public int ExpireTime { get; set; }
     }
 }

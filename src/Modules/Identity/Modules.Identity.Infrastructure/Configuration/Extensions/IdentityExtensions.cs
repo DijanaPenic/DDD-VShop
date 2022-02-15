@@ -1,0 +1,47 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+
+using VShop.Modules.Identity.Infrastructure.Services;
+using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.Modules.Identity.Infrastructure.DAL.Stores;
+using VShop.Modules.Identity.Infrastructure.DAL.Stores.Contracts;
+
+namespace VShop.Modules.Identity.Infrastructure.Configuration.Extensions;
+
+internal static class IdentityExtensions
+{
+    public static IServiceCollection AddIdentity(this IServiceCollection services)
+    {
+        services.AddIdentityCore<User>(options =>
+        {
+            options.Password.RequiredLength = 8;
+            options.Password.RequireDigit = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+
+            options.Lockout.AllowedForNewUsers = true;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+            options.Lockout.MaxFailedAccessAttempts = 3;
+
+            options.User.RequireUniqueEmail = true;
+
+            options.SignIn.RequireConfirmedEmail = false;       // TODO - change after testing.
+            options.SignIn.RequireConfirmedPhoneNumber = false; // TODO - change after testing.
+        })
+        .AddRoles<Role>()
+        .AddUserManager<ApplicationUserManager>()
+        .AddRoleManager<ApplicationRoleManager>()
+        .AddDefaultTokenProviders();
+
+        services.AddScoped<ApplicationSignInManager>();
+        services.AddScoped<ApplicationAuthManager>();
+
+        services.AddScoped<IUserStore<User>, ApplicationUserStore>();
+        services.AddScoped<IRoleStore<Role>, ApplicationRoleStore>();
+        services.AddScoped<IApplicationClientStore, ApplicationAuthStore>();
+        services.AddScoped<IApplicationUserRefreshTokenStore, ApplicationAuthStore>();
+
+        return services;
+    }
+}
