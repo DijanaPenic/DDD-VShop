@@ -69,7 +69,7 @@ public class EventStoreMessageConverter : IEventStoreMessageConverter
             messageContext.MessageId,
             messageContext.Context.RequestId,
             messageContext.Context.CorrelationId,
-            messageContext.Context.Identity.Id,
+            messageContext.Context.Identity.UserId,
             _clockService.Now
         );
 

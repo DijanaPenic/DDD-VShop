@@ -3,25 +3,25 @@ using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
 
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
 public class IdentityContext : IIdentityContext
 {
-    public Guid Id { get; }
+    public Guid UserId { get; }
+    public Guid ClientId { get; }
     public bool IsAuthenticated { get; }
-    public string Role { get; }
+    public IList<string> Roles { get; }
     public IDictionary<string, IEnumerable<string>> Claims { get; }
 
-    private IdentityContext()
-    {
-    }
+    private IdentityContext() { }
 
-    public IdentityContext(Guid? id)
+    public IdentityContext(Guid? userId)
     {
-        Id = id ?? Guid.Empty;
-        IsAuthenticated = id.HasValue;
+        UserId = userId ?? Guid.Empty;
+        IsAuthenticated = userId.HasValue;
     }
 
     public IdentityContext(ClaimsPrincipal principal)
@@ -29,14 +29,25 @@ public class IdentityContext : IIdentityContext
         if (principal?.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name)) return;
 
         IsAuthenticated = principal.Identity?.IsAuthenticated is true;
-        Id = IsAuthenticated ? Guid.Parse(principal.Identity.Name) : Guid.Empty;
-        Role = principal.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        
+        UserId = IsAuthenticated 
+            ? Guid.Parse(principal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)!.Value) 
+            : Guid.Empty;
+        
+        ClientId = IsAuthenticated 
+            ? Guid.Parse(principal.Claims.Single(c => c.Type == ApplicationClaimTypes.ClientIdentifier)!.Value) 
+            : Guid.Empty;
+        
+        Roles = principal.Claims
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(c => c.Value.ToLowerInvariant())
+            .ToList();
+        
         Claims = principal.Claims
             .GroupBy(c => c.Type)
             .ToDictionary(g => g.Key, g => g.Select(c => c.Value.ToString()));
     }
-        
-    public bool IsUser() => Role is "user";
-    public bool IsAdmin() => Role is "admin";
+
+    public bool IsAdmin() => Roles.Contains("admin");
     public static IIdentityContext Empty => new IdentityContext();
 }

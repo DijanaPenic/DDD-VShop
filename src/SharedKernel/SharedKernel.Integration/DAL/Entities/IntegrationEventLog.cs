@@ -33,7 +33,7 @@ namespace VShop.SharedKernel.Integration.DAL.Entities
         )
         {
             Id = messageContext.MessageId;
-            UserId = messageContext.Context.Identity.Id;
+            UserId = messageContext.Context.Identity.UserId;
             CausationId = messageContext.Context.RequestId;
             CorrelationId = messageContext.Context.CorrelationId;
             TypeName = messageRegistry.GetName(@event.GetType());
