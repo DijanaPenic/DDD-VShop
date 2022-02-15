@@ -21,10 +21,7 @@ public class Context : IContext
         new IdentityContext(context.User),
         context.GetUserIpAddress(),
         context.GetUserAgent()
-    )
-    {
-        
-    }
+    ) { }
 
     public Context
     (

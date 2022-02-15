@@ -11,7 +11,7 @@ internal class CustomControllerFactory : IControllerFactory
 {
     public object CreateController(ControllerContext context)
     {
-        if (context is null)  throw new ArgumentNullException(nameof(context));
+        if (context is null) throw new ArgumentNullException(nameof(context));
 
         string assembly = context.ActionDescriptor.ControllerTypeInfo.AssemblyQualifiedName 
                           ?? throw new Exception("AssemblyQualifiedName is missing.");

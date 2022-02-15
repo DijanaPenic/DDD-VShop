@@ -39,7 +39,9 @@ namespace VShop.SharedKernel.Application.Decorators
 
             try
             {
-                (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() => next(), cancellationToken);
+                (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() 
+                    => next(), cancellationToken);
+                
                 await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
                 
                 _logger.Information
