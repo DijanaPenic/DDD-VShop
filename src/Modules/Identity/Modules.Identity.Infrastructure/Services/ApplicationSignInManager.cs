@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 
-using VShop.Modules.Identity.Infrastructure.Constants;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 
 namespace VShop.Modules.Identity.Infrastructure.Services;
 
@@ -105,7 +105,11 @@ internal sealed class ApplicationSignInManager
         await Context.SignOutAsync(IdentityConstants.ExternalScheme);
         await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
         await Context.SignOutAsync(ApplicationIdentityConstants.AccountVerificationScheme);
+        await Context.SignOutAsync(ApplicationIdentityConstants.AccessTokenScheme);
     }
+    
+    public Task SignInWithJsonWebTokenAsync(string userId, string accessToken)
+        => Context.SignInAsync(ApplicationIdentityConstants.AccessTokenScheme, GetAccessTokenPrincipal(userId, accessToken));
 
     /// <summary>
     /// Validates the security stamp for the specified <paramref name="principal"/> against
@@ -284,7 +288,7 @@ internal sealed class ApplicationSignInManager
     /// <returns>The task object representing the asynchronous operation.</returns>
     public async Task RememberTwoFactorClientAsync(User user)
     {
-        ClaimsPrincipal principal = await StoreRememberClient(user);
+        ClaimsPrincipal principal = await GetTwoFactorRememberMePrincipal(user);
 
         await Context.SignInAsync
         (
@@ -554,8 +558,14 @@ internal sealed class ApplicationSignInManager
         string userId = null
     )
     {
-        AuthenticationProperties properties = new AuthenticationProperties {RedirectUri = redirectUrl};
-        properties.Items[LoginProviderKey] = provider;
+        AuthenticationProperties properties = new()
+        {
+            RedirectUri = redirectUrl,
+            Items =
+            {
+                [LoginProviderKey] = provider
+            }
+        };
 
         if (userId is not null) properties.Items[XsrfKey] = userId;
 
@@ -569,7 +579,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="userId">The user whose is logging in via 2fa.</param>
     /// <param name="loginProvider">The 2fa provider.</param>
     /// <returns>A <see cref="ClaimsPrincipal"/> containing the user 2fa information.</returns>
-    public static ClaimsPrincipal StoreTwoFactorInfo(string clientId, string userId, string loginProvider)
+    private static ClaimsPrincipal GetTwoFactorPrincipal(string clientId, string userId, string loginProvider)
     {
         ClaimsIdentity identity = new(IdentityConstants.TwoFactorUserIdScheme);
 
@@ -582,10 +592,10 @@ internal sealed class ApplicationSignInManager
         return new ClaimsPrincipal(identity);
     }
 
-    public async Task<ClaimsPrincipal> StoreRememberClient(User user)
+    private async Task<ClaimsPrincipal> GetTwoFactorRememberMePrincipal(User user)
     {
         string userId = await UserManager.GetUserIdAsync(user);
-        ClaimsIdentity rememberBrowserIdentity = new ClaimsIdentity(IdentityConstants.TwoFactorRememberMeScheme);
+        ClaimsIdentity rememberBrowserIdentity = new(IdentityConstants.TwoFactorRememberMeScheme);
         rememberBrowserIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
 
         if (!UserManager.SupportsUserSecurityStamp) return new ClaimsPrincipal(rememberBrowserIdentity);
@@ -594,6 +604,16 @@ internal sealed class ApplicationSignInManager
         rememberBrowserIdentity.AddClaim(new Claim(Options.ClaimsIdentity.SecurityStampClaimType, stamp));
 
         return new ClaimsPrincipal(rememberBrowserIdentity);
+    }
+    
+    private static ClaimsPrincipal GetAccessTokenPrincipal(string userId, string token)
+    {
+        ClaimsIdentity identity = new(ApplicationIdentityConstants.AccessTokenScheme);
+
+        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
+        identity.AddClaim(new Claim(ApplicationClaimTypes.Token, token));
+
+        return new ClaimsPrincipal(identity);
     }
 
     private async Task<bool> IsTfaEnabled(User user)
@@ -626,7 +646,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 IdentityConstants.TwoFactorUserIdScheme,
-                StoreTwoFactorInfo(clientId.ToString(), userId, loginProvider)
+                GetTwoFactorPrincipal(clientId.ToString(), userId, loginProvider)
             );
 
             return SignInResult.TwoFactorRequired;
@@ -690,7 +710,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 ApplicationIdentityConstants.AccountVerificationScheme,
-                StoreAccountVerificationInfo(clientId.ToString(), userId)
+                GetAccountVerificationPrincipal(clientId.ToString(), userId)
             );
 
             return SignInResult.NotAllowed;
@@ -724,7 +744,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 ApplicationIdentityConstants.AccountVerificationScheme,
-                StoreAccountVerificationInfo(clientId.ToString(), userId)
+                GetAccountVerificationPrincipal(clientId.ToString(), userId)
             );
 
             return SignInResult.Success;
@@ -743,7 +763,7 @@ internal sealed class ApplicationSignInManager
         if (!await CanSignInAsync(user)) return SignInResult.NotAllowed;
         if (await IsLockedOut(user)) return await LockedOut(user);
 
-        // Cleanup the account verification user id cookie
+        // Cleanup the account verification user id cookie.
         await Context.SignOutAsync(ApplicationIdentityConstants.AccountVerificationScheme);
 
         return await SignInOrTwoFactorAsync(clientId, user);
@@ -771,7 +791,7 @@ internal sealed class ApplicationSignInManager
         return null;
     }
 
-    private static ClaimsPrincipal StoreAccountVerificationInfo(string clientId, string userId)
+    private static ClaimsPrincipal GetAccountVerificationPrincipal(string clientId, string userId)
     {
         ClaimsIdentity identity = new(ApplicationIdentityConstants.AccountVerificationScheme);
         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));

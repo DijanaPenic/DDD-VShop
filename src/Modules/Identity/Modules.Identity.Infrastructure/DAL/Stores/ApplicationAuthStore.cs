@@ -34,7 +34,7 @@ internal sealed class ApplicationAuthStore : IApplicationClientStore, IApplicati
         if (key is null)
             throw new ArgumentNullException(nameof(key));
 
-        await _dbContext.DeleteByKeyAsync<UserRefreshToken>(cancellationToken, key);
+        await _dbContext.DeleteByKeyAsync<UserRefreshToken>(cancellationToken, key.ToArray());
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 

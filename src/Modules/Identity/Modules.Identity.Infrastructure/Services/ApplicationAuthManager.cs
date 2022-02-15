@@ -8,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using VShop.SharedKernel.Infrastructure.Auth;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.Modules.Identity.Infrastructure.Constants;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 using VShop.Modules.Identity.Infrastructure.DAL.Stores.Contracts;
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 
 namespace VShop.Modules.Identity.Infrastructure.Services;
 
@@ -74,11 +74,9 @@ internal sealed class ApplicationAuthManager
         
         List<Claim> jwtClaims = new()
         {
-            new Claim(ClaimTypes.Name, user.NormalizedUserName),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ApplicationClaimTypes.ClientIdentifier, clientId.ToString()),
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.NormalizedUserName), // TODO - change to id.
             new Claim(JwtRegisteredClaimNames.Jti, SequentialGuid.Create().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeMilliseconds().ToString())
         };
@@ -103,7 +101,7 @@ internal sealed class ApplicationAuthManager
             expires: accessTokenExpires.ToDateTimeUtc(),
             signingCredentials: _signingCredentials
         );
-        
+
         string accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
         UserRefreshToken refreshToken = await SetNewRefreshTokenAsync(user, client, now, cancellationToken);
 
@@ -119,7 +117,7 @@ internal sealed class ApplicationAuthManager
         };
     }
 
-    public async Task<JsonWebToken> RenewTokensAsync
+    public async Task<JsonWebToken> RenewTokenAsync
     (
         string refreshToken,
         string accessToken,

@@ -338,7 +338,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(providerKey));
 
         await _dbContext.DeleteByKeyAsync<UserLogin>(cancellationToken, new UserLoginKey
-            { LoginProvider = loginProvider, ProviderKey = providerKey });
+            { LoginProvider = loginProvider, ProviderKey = providerKey }.ToArray());
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -372,7 +372,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(providerKey));
 
         UserLogin login = await _dbContext.FindByKeyAsync<UserLogin>(cancellationToken, new UserLoginKey
-            { LoginProvider = loginProvider, ProviderKey = providerKey });
+            {LoginProvider = loginProvider, ProviderKey = providerKey}.ToArray());
         if (login is null)
             return default;
 
@@ -431,7 +431,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(login));
 
         UserLogin result = await _dbContext.FindByKeyAsync<UserLogin>(cancellationToken, new UserLoginKey
-            { LoginProvider = login.LoginProvider, ProviderKey = login.ProviderKey });
+            {LoginProvider = login.LoginProvider, ProviderKey = login.ProviderKey}.ToArray());
 
         return result;
     }
@@ -465,7 +465,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(login));
 
         UserLogin loginEntity = await _dbContext.FindByKeyAsync<UserLogin>(cancellationToken, new UserLoginKey
-            { LoginProvider = login.LoginProvider, ProviderKey = login.ProviderKey });
+            {LoginProvider = login.LoginProvider, ProviderKey = login.ProviderKey}.ToArray());
         if (loginEntity is null || loginEntity.IsConfirmed != loginConfirmed)
             return default;
 
@@ -736,7 +736,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(name));
 
         UserToken userToken = await _dbContext.FindByKeyAsync<UserToken>(cancellationToken, new UserTokenKey
-            { UserId = user.Id, LoginProvider = loginProvider, Name = name });
+            {UserId = user.Id, LoginProvider = loginProvider, Name = name}.ToArray());
         if (userToken is null)
         {
             userToken = new UserToken
@@ -774,11 +774,11 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(name));
 
         UserToken userToken = await _dbContext.FindByKeyAsync<UserToken>(cancellationToken, new UserTokenKey
-            { UserId = user.Id, LoginProvider = loginProvider, Name = name });
+            {UserId = user.Id, LoginProvider = loginProvider, Name = name}.ToArray());
 
         if (userToken is not null)
         {
-            await _dbContext.DeleteByKeyAsync<UserToken>(cancellationToken, userToken);
+            await _dbContext.DeleteAsync(userToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
@@ -798,7 +798,7 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(name));
 
         UserToken userToken = await _dbContext.FindByKeyAsync<UserToken>(cancellationToken, new UserTokenKey
-            { UserId = user.Id, LoginProvider = loginProvider, Name = name });
+            {UserId = user.Id, LoginProvider = loginProvider, Name = name}.ToArray());
 
         return userToken?.Value;
     }
@@ -889,10 +889,11 @@ internal sealed class ApplicationUserStore :
             throw new ArgumentNullException(nameof(user));
 
         Instant? lockoutEndDate = user.LockoutEndDate;
+        DateTimeOffset? result = default;
 
-        if (!lockoutEndDate.HasValue) return default;
-        
-        DateTimeOffset? result = lockoutEndDate.Value.ToDateTimeOffset();
+        if (lockoutEndDate.HasValue)
+            result = lockoutEndDate.Value.ToDateTimeOffset();
+
         return Task.FromResult(result);
     }
 
