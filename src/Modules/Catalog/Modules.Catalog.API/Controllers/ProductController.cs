@@ -67,7 +67,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             _mapper.Map(request, product);
@@ -89,7 +89,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             product.IsDeleted = true;
@@ -117,7 +117,7 @@ namespace VShop.Modules.Catalog.API.Controllers
                 .Include(OptionsFactory.Create(include))
                 .SingleOrDefaultAsync(c => c.Id == productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             return Ok(product);

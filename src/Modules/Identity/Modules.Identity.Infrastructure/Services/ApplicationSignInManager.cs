@@ -109,7 +109,7 @@ internal sealed class ApplicationSignInManager
     }
     
     public Task SignInWithJsonWebTokenAsync(string userId, string accessToken)
-        => Context.SignInAsync(ApplicationIdentityConstants.AccessTokenScheme, GetAccessTokenPrincipal(userId, accessToken));
+        => Context.SignInAsync(ApplicationIdentityConstants.AccessTokenScheme, CreateAccessTokenPrincipal(userId, accessToken));
 
     /// <summary>
     /// Validates the security stamp for the specified <paramref name="principal"/> against
@@ -288,7 +288,7 @@ internal sealed class ApplicationSignInManager
     /// <returns>The task object representing the asynchronous operation.</returns>
     public async Task RememberTwoFactorClientAsync(User user)
     {
-        ClaimsPrincipal principal = await GetTwoFactorRememberMePrincipal(user);
+        ClaimsPrincipal principal = await CreateTwoFactorRememberMePrincipal(user);
 
         await Context.SignInAsync
         (
@@ -517,7 +517,8 @@ internal sealed class ApplicationSignInManager
     /// Stores any authentication tokens found in the external authentication cookie into the associated user.
     /// </summary>
     /// <param name="externalLogin">The information from the external login provider.</param>
-    /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the operation.</returns>
+    /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing
+    /// the <see cref="IdentityResult"/> of the operation.</returns>
     public async Task<IdentityResult> UpdateExternalAuthenticationTokensAsync(ExternalLoginInfo externalLogin)
     {
         if (externalLogin is null) throw new ArgumentNullException(nameof(externalLogin));
@@ -579,7 +580,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="userId">The user whose is logging in via 2fa.</param>
     /// <param name="loginProvider">The 2fa provider.</param>
     /// <returns>A <see cref="ClaimsPrincipal"/> containing the user 2fa information.</returns>
-    private static ClaimsPrincipal GetTwoFactorPrincipal(string clientId, string userId, string loginProvider)
+    private static ClaimsPrincipal CreateTwoFactorPrincipal(string clientId, string userId, string loginProvider)
     {
         ClaimsIdentity identity = new(IdentityConstants.TwoFactorUserIdScheme);
 
@@ -592,7 +593,7 @@ internal sealed class ApplicationSignInManager
         return new ClaimsPrincipal(identity);
     }
 
-    private async Task<ClaimsPrincipal> GetTwoFactorRememberMePrincipal(User user)
+    private async Task<ClaimsPrincipal> CreateTwoFactorRememberMePrincipal(User user)
     {
         string userId = await UserManager.GetUserIdAsync(user);
         ClaimsIdentity rememberBrowserIdentity = new(IdentityConstants.TwoFactorRememberMeScheme);
@@ -606,7 +607,7 @@ internal sealed class ApplicationSignInManager
         return new ClaimsPrincipal(rememberBrowserIdentity);
     }
     
-    private static ClaimsPrincipal GetAccessTokenPrincipal(string userId, string token)
+    private static ClaimsPrincipal CreateAccessTokenPrincipal(string userId, string token)
     {
         ClaimsIdentity identity = new(ApplicationIdentityConstants.AccessTokenScheme);
 
@@ -646,7 +647,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 IdentityConstants.TwoFactorUserIdScheme,
-                GetTwoFactorPrincipal(clientId.ToString(), userId, loginProvider)
+                CreateTwoFactorPrincipal(clientId.ToString(), userId, loginProvider)
             );
 
             return SignInResult.TwoFactorRequired;
@@ -710,7 +711,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 ApplicationIdentityConstants.AccountVerificationScheme,
-                GetAccountVerificationPrincipal(clientId.ToString(), userId)
+                CreateAccountVerificationPrincipal(clientId.ToString(), userId)
             );
 
             return SignInResult.NotAllowed;
@@ -725,7 +726,8 @@ internal sealed class ApplicationSignInManager
     /// Used to reset a user's lockout count.
     /// </summary>
     /// <param name="user">The user</param>
-    /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the operation.</returns>
+    /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing
+    /// the <see cref="IdentityResult"/> of the operation.</returns>
     public Task ResetLockout(User user)
         => UserManager.SupportsUserLockout ? UserManager.ResetAccessFailedCountAsync(user) : Task.CompletedTask;
 
@@ -744,7 +746,7 @@ internal sealed class ApplicationSignInManager
             await Context.SignInAsync
             (
                 ApplicationIdentityConstants.AccountVerificationScheme,
-                GetAccountVerificationPrincipal(clientId.ToString(), userId)
+                CreateAccountVerificationPrincipal(clientId.ToString(), userId)
             );
 
             return SignInResult.Success;
@@ -791,7 +793,7 @@ internal sealed class ApplicationSignInManager
         return null;
     }
 
-    private static ClaimsPrincipal GetAccountVerificationPrincipal(string clientId, string userId)
+    private static ClaimsPrincipal CreateAccountVerificationPrincipal(string clientId, string userId)
     {
         ClaimsIdentity identity = new(ApplicationIdentityConstants.AccountVerificationScheme);
         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));

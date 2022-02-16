@@ -65,7 +65,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogCategory category = await _catalogDbContext.Categories.FindAsync(categoryId);
             
-            if (category is null || category.IsDeleted is true)
+            if (category is null || category.IsDeleted)
                 return NotFound("Requested category cannot be found.");
 
             _mapper.Map(request, category);
@@ -87,7 +87,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogCategory category = await _catalogDbContext.Categories.FindAsync(categoryId);
             
-            if (category is null || category.IsDeleted is true)
+            if (category is null || category.IsDeleted)
                 return NotFound("Requested category cannot be found.");
 
             category.IsDeleted = true;
@@ -115,7 +115,7 @@ namespace VShop.Modules.Catalog.API.Controllers
                 .Include(OptionsFactory.Create(include))
                 .SingleOrDefaultAsync(c => c.Id == categoryId);
 
-            if (category is null || category.IsDeleted is true)
+            if (category is null || category.IsDeleted)
                 return NotFound("Requested category cannot be found.");
             
 
