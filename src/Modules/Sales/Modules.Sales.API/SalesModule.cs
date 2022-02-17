@@ -67,18 +67,12 @@ internal class SalesModule : Module
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));
         services.AddSingleton(SalesMessageRegistry.Initialize());
-        services.AddSingleton<ISalesDispatcher, SalesDispatcher>();
         services.AddSingleton<IDispatcher, SalesDispatcher>();
 
         services.AddTransient
         (
             typeof(IPipelineBehavior<,>),
             typeof(LoggingCommandDecorator<,>)
-        );
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(RetryPolicyCommandDecorator<,>)
         );
         // services.Decorate // Note: right now, there are no event handlers in the Sales module.
         // (

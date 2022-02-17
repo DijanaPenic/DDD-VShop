@@ -63,7 +63,7 @@ internal class IdentityModule : Module
         services.AddTransient
         (
             typeof(IPipelineBehavior<,>),
-            typeof(RetryPolicyCommandDecorator<,>)
+            typeof(TransactionalCommandDecorator<,>)
         );
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();

@@ -65,18 +65,12 @@ internal class BillingModule : Module
         services.AddTransient<IPaymentRepository, PaymentRepository>();
         services.AddAutoMapper(typeof(PaymentAutomapperProfile));
         services.AddSingleton(BillingMessageRegistry.Initialize());
-        services.AddSingleton<IBillingDispatcher, BillingDispatcher>();
         services.AddSingleton<IDispatcher, BillingDispatcher>();
 
         services.AddTransient
         (
             typeof(IPipelineBehavior<,>),
             typeof(LoggingCommandDecorator<,>)
-        );
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(RetryPolicyCommandDecorator<,>)
         );
         services.AddTransient
         (
