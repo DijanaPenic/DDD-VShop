@@ -105,11 +105,7 @@ internal sealed class ApplicationSignInManager
         await Context.SignOutAsync(IdentityConstants.ExternalScheme);
         await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
         await Context.SignOutAsync(ApplicationIdentityConstants.AccountVerificationScheme);
-        await Context.SignOutAsync(ApplicationIdentityConstants.AccessTokenScheme);
     }
-    
-    public Task SignInWithJsonWebTokenAsync(string userId, string accessToken)
-        => Context.SignInAsync(ApplicationIdentityConstants.AccessTokenScheme, CreateAccessTokenPrincipal(userId, accessToken));
 
     /// <summary>
     /// Validates the security stamp for the specified <paramref name="principal"/> against
@@ -605,16 +601,6 @@ internal sealed class ApplicationSignInManager
         rememberBrowserIdentity.AddClaim(new Claim(Options.ClaimsIdentity.SecurityStampClaimType, stamp));
 
         return new ClaimsPrincipal(rememberBrowserIdentity);
-    }
-    
-    private static ClaimsPrincipal CreateAccessTokenPrincipal(string userId, string token)
-    {
-        ClaimsIdentity identity = new(ApplicationIdentityConstants.AccessTokenScheme);
-
-        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
-        identity.AddClaim(new Claim(ApplicationClaimTypes.Token, token));
-
-        return new ClaimsPrincipal(identity);
     }
 
     private async Task<bool> IsTfaEnabled(User user)

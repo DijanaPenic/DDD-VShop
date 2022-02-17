@@ -5,6 +5,7 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.Modules.Identity.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
@@ -12,14 +13,14 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
-        private readonly IAuthService _authService;
+        private readonly IAuthenticationService _authService;
         private readonly IContext _context;
 
         public SignInCommandHandler
         (
             ApplicationUserManager userManager,
             ApplicationSignInManager signInManager,
-            IAuthService authService,
+            IAuthenticationService authService,
             IContext context
         )
         {

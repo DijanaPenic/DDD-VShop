@@ -5,6 +5,7 @@ using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 using VShop.Modules.Identity.Infrastructure.DAL.Stores;
 using VShop.Modules.Identity.Infrastructure.DAL.Stores.Contracts;
+using VShop.Modules.Identity.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Identity.Infrastructure.Configuration.Extensions;
 
@@ -48,7 +49,7 @@ internal static class IdentityExtensions
         services.AddScoped<IRoleStore<Role>, ApplicationRoleStore>();
         services.AddScoped<IApplicationClientStore, ApplicationAuthStore>();
         services.AddScoped<IApplicationUserRefreshTokenStore, ApplicationAuthStore>();
-        services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IAuthenticationService, AuthenticationService>();
         
         return services;
     }

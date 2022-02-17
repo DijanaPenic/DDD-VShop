@@ -63,11 +63,8 @@ internal sealed class ApplicationAuthManager
         CancellationToken cancellationToken = default
     )
     {
-        if (SequentialGuid.IsNullOrEmpty(userId))
-            throw new ArgumentNullException(nameof(userId));
-
-        if (SequentialGuid.IsNullOrEmpty(clientId))
-            throw new ArgumentNullException(nameof(clientId));
+        if (SequentialGuid.IsNullOrEmpty(userId)) throw new ArgumentNullException(nameof(userId));
+        if (SequentialGuid.IsNullOrEmpty(clientId)) throw new ArgumentNullException(nameof(clientId));
         
         User user = await _userManager.FindByIdAsync(userId.ToString());
         Instant now = _clockService.Now;

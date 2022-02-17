@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,22 +59,22 @@ public static class AuthExtensions
         if (!string.IsNullOrWhiteSpace(options.RoleClaimType))
             tokenValidationParameters.RoleClaimType = options.RoleClaimType;
 
-        void CookieAuthOptions(CookieAuthenticationOptions cookieOptions)
+        CookieOptions cookieOptions = new()
         {
-            cookieOptions.Cookie.HttpOnly = options.Cookie.HttpOnly;
-            cookieOptions.Cookie.SameSite = options.Cookie.SameSite?.ToLowerInvariant() switch
-            {
-                "strict" => SameSiteMode.Strict,
-                "lax" => SameSiteMode.Lax,
-                "none" => SameSiteMode.None,
-                "unspecified" => SameSiteMode.Unspecified,
-                _ => SameSiteMode.Unspecified
-            };
-            cookieOptions.ExpireTimeSpan = TimeSpan.FromMinutes(options.Cookie.ExpireTime);
-            cookieOptions.SlidingExpiration = options.Cookie.SlidingExpiration;
+            HttpOnly = options.Cookie.HttpOnly,
+            Secure = options.Cookie.Secure,
+            SameSite =  GetSameSiteMode(options)
+        };
+        
+        void CookieAuthOptions(CookieAuthenticationOptions cookieAuthOptions)
+        {
+            cookieAuthOptions.Cookie.HttpOnly = options.Cookie.HttpOnly;
+            cookieAuthOptions.Cookie.SameSite = GetSameSiteMode(options);
+            cookieAuthOptions.ExpireTimeSpan = TimeSpan.FromMinutes(options.Cookie.ExpireTime);
+            cookieAuthOptions.SlidingExpiration = options.Cookie.SlidingExpiration;
 
             // Use 401 status code instead of Login redirect which is used by default.
-            cookieOptions.Events.OnRedirectToLogin = context =>
+            cookieAuthOptions.Events.OnRedirectToLogin = context =>
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return Task.CompletedTask;
@@ -107,23 +106,20 @@ public static class AuthExtensions
                     OnMessageReceived = context =>
                     {
                         // JWT token is sent in a different field than what is expected. This allows us to feed it in.
-                        AuthenticateResult authenticateResult = context.HttpContext
-                            .AuthenticateAsync(ApplicationIdentityConstants.AccessTokenScheme).GetAwaiter().GetResult();
+                        if (context.Request.Cookies.TryGetValue(ApplicationIdentityConstants.AccessTokenScheme, out string token))
+                            context.Token = token;
 
-                        if (authenticateResult?.Principal is not null)
-                            context.Token = authenticateResult.Principal.FindFirstValue(ApplicationClaimTypes.Token);
-                        
                         return Task.CompletedTask;
                     },
                 };
             })
-            .AddCookie(ApplicationIdentityConstants.AccessTokenScheme, CookieAuthOptions)
             .AddCookie(ApplicationIdentityConstants.AccountVerificationScheme, CookieAuthOptions)
             .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, CookieAuthOptions)
             .AddCookie(IdentityConstants.TwoFactorUserIdScheme, CookieAuthOptions)
             .AddCookie(IdentityConstants.ExternalScheme, CookieAuthOptions);
 
         services.AddSingleton(options);
+        services.AddSingleton(cookieOptions);
         services.AddSingleton(tokenValidationParameters);
 
         IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
@@ -139,7 +135,7 @@ public static class AuthExtensions
                 authorization.AddPolicy
                 (
                     "ClientAuthentication",
-                    new AuthorizationPolicyBuilder(AuthSchemeConstants.ClientAuthentication)
+                    new AuthorizationPolicyBuilder(ApplicationAuthSchemes.ClientAuthenticationScheme)
                         .RequireAuthenticatedUser()
                         .Build()
                 );
@@ -153,10 +149,9 @@ public static class AuthExtensions
         app.UseAuthentication();
         app.Use(async (ctx, next) =>
         {
-            string authScheme = ctx.Request.Cookies.Keys
-                .Any(k => k.Contains(ApplicationIdentityConstants.AccessTokenScheme)) // Is user logged in?
+            string authScheme = ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccessTokenScheme) // Is user logged in?
                 ? JwtBearerDefaults.AuthenticationScheme
-                : AuthSchemeConstants.ClientAuthentication;
+                : ApplicationAuthSchemes.ClientAuthenticationScheme;
 
             AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
             if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
@@ -167,4 +162,14 @@ public static class AuthExtensions
 
         return app;
     }
+
+    private static SameSiteMode GetSameSiteMode(AuthOptions options)
+        => options.Cookie.SameSite?.ToLowerInvariant() switch
+        {
+            "strict" => SameSiteMode.Strict,
+            "lax" => SameSiteMode.Lax,
+            "none" => SameSiteMode.None,
+            "unspecified" => SameSiteMode.Unspecified,
+            _ => SameSiteMode.Unspecified
+        };
 }

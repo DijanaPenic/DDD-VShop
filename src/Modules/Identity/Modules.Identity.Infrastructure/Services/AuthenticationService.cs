@@ -1,23 +1,35 @@
+using Microsoft.AspNetCore.Http;
+
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Auth;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.Modules.Identity.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace VShop.Modules.Identity.Infrastructure.Services;
 
-internal class AuthService : IAuthService
+internal class AuthenticationService : IAuthenticationService
 {
     private readonly ApplicationAuthManager _authManager;
-    private readonly ApplicationSignInManager _signInManager;
-    private readonly IContext _context;
+    private readonly HttpContext _httpContext;
+    private readonly IIdentityContext _identityContext;
+    private readonly CookieOptions _cookieOptions;
 
-    public AuthService(ApplicationAuthManager authManager, ApplicationSignInManager signInManager, IContext context)
+    public AuthenticationService
+    (
+        ApplicationAuthManager authManager,
+        IHttpContextAccessor httpContextAccessor,
+        IContext context,
+        CookieOptions cookieOptions
+    )
     {
         _authManager = authManager;
-        _signInManager = signInManager;
-        _context = context;
+        _httpContext = httpContextAccessor.HttpContext;
+        _identityContext = context.Identity;
+        _cookieOptions = cookieOptions;
     }
 
     public async Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user)
@@ -26,8 +38,8 @@ internal class AuthService : IAuthService
         
         if (signInResult.Succeeded)
         {
-            JsonWebToken token = await _authManager.CreateTokenAsync(user.Id, _context.Identity.ClientId);
-            await _signInManager.SignInWithJsonWebTokenAsync(user.Id.ToString(), token.AccessToken); // TODO - save directly to cookie; without auth.
+            JsonWebToken token = await _authManager.CreateTokenAsync(user.Id, _identityContext.ClientId);
+            AddCookie(ApplicationIdentityConstants.AccessTokenScheme, token.AccessToken);
 
             signInResponse.Roles = token.Roles.ToArray();
             signInResponse.AccessToken = token.AccessToken;
@@ -54,6 +66,9 @@ internal class AuthService : IAuthService
 
         return Result.Unauthorized($"Failed to log in [{user.UserName}].");
     }
+    
+    private void AddCookie(string key, string value) 
+        => _httpContext.Response.Cookies.Append(key, value, _cookieOptions);
 }
 
 internal class SignInResponse
@@ -80,9 +95,4 @@ internal enum VerificationStep
     TwoFactor = 1,
     Email = 2,
     MobilePhone = 3,
-}
-
-internal interface IAuthService
-{
-    Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user);
 }

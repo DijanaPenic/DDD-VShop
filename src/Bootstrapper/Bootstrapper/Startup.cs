@@ -47,7 +47,7 @@ public class Startup
         services.AddAuth(_modules);
         services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, ClientAuthenticationHandler>
         (
-            AuthSchemeConstants.ClientAuthentication,
+            ApplicationAuthSchemes.ClientAuthenticationScheme,
             _ => { }
         );
 

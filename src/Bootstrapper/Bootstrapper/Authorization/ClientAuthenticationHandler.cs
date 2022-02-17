@@ -5,12 +5,12 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 
-using VShop.Modules.Identity.Infrastructure;
-using VShop.Modules.Identity.Infrastructure.Queries;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Auth.Constants;
-using VShop.SharedKernel.Infrastructure;
+using VShop.Modules.Identity.Infrastructure;
+using VShop.Modules.Identity.Infrastructure.Queries;
 
 namespace VShop.Bootstrapper.Authorization;
 
