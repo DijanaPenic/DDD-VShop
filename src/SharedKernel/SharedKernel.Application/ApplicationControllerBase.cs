@@ -42,7 +42,8 @@ namespace VShop.SharedKernel.Application
             (
                 validationError => BadRequest(validationError.Message),
                 systemError => InternalServerError(systemError.Message),
-                notFoundError => NotFound(notFoundError.Message)
+                notFoundError => NotFound(notFoundError.Message),
+                unauthorized => Unauthorized(unauthorized.Message)
             );
     }
 }
