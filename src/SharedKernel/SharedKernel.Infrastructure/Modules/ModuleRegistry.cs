@@ -34,7 +34,7 @@ public static class ModuleRegistry
         foreach (Type type in commandTypes)
         {
             AddBroadcastAction(type, (command, cancellationToken) =>
-                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.ExecuteCommandAsync))
+                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.SendAsync))
                     ?.MakeGenericMethod(type)
                     .Invoke(dispatcher, new[] { command, cancellationToken }));
         }
@@ -42,7 +42,7 @@ public static class ModuleRegistry
         foreach (Type type in eventTypes)
         {
             AddBroadcastAction(type, (@event, cancellationToken) =>
-                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.PublishEventAsync))
+                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.PublishAsync))
                     ?.MakeGenericMethod(type)
                     .Invoke(dispatcher, new[] { @event, cancellationToken }));
         }
