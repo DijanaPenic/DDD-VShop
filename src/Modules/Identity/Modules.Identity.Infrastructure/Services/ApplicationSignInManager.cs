@@ -730,33 +730,7 @@ internal sealed class ApplicationSignInManager
     /// the <see cref="IdentityResult"/> of the operation.</returns>
     public Task ResetLockout(User user)
         => UserManager.SupportsUserLockout ? UserManager.ResetAccessFailedCountAsync(user) : Task.CompletedTask;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clientId">The client identifier.</param>
-    /// <param name="user">The user</param>
-    public async Task<SignInResult> RegisterAsync(Guid clientId, User user)
-    {
-        if (user is null) throw new ArgumentNullException(nameof(user));
-
-        try
-        {
-            string userId = await UserManager.GetUserIdAsync(user);
-            await Context.SignInAsync
-            (
-                ApplicationIdentityConstants.AccountVerificationScheme,
-                CreateAccountVerificationPrincipal(clientId.ToString(), userId)
-            );
-
-            return SignInResult.Success;
-        }
-        catch
-        {
-            return SignInResult.Failed;
-        }
-    }
-
+    
     public async Task<SignInResult> AccountVerificationSignInAsync(Guid clientId)
     {
         User user = await GetAccountVerificationUserAsync();

@@ -12,7 +12,6 @@ namespace VShop.SharedKernel.Infrastructure.Types
             get
             {
                 _sequentialGuidGenerator ??= new SequentialGuidValueGenerator();
-
                 return _sequentialGuidGenerator;
             }
         }
@@ -20,8 +19,6 @@ namespace VShop.SharedKernel.Infrastructure.Types
         public static Guid Create() => SequentialGuidGenerator.Next(null!);
 
         public static bool IsNullOrEmpty(object value)
-        {
-            return ((value as Guid?).GetValueOrDefault() == Guid.Empty);
-        }
+            => ((value as Guid?).GetValueOrDefault() == Guid.Empty);
     }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.SharedKernel.Application.ValidationAttributes
+namespace VShop.SharedKernel.Application.ValidationAttributes // TODO - rename to Validation.
 {
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class DiscountAttribute : ValidationAttribute

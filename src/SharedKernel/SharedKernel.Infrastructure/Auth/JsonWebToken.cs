@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace VShop.SharedKernel.Infrastructure.Auth;
 
-public class JsonWebToken
+public record JsonWebToken
 {
-    public string AccessToken { get; set; }
-    public long AccessTokenExpiry { get; set; }
-    public string RefreshToken { get; set; }
-    public long RefreshTokenExpiry { get; set; }
-    public Guid UserId { get; set; }
-    public IList<string> Roles { get; set; }
-    public string Email { get; set; }
+    public string AccessToken { get; init; }
+    public long AccessTokenExpiry { get; init; }
+    public string RefreshToken { get; init; }
+    public long RefreshTokenExpiry { get; init; }
+    public Guid UserId { get; init; }
+    public IList<string> Roles { get; init; }
+    public string Email { get; init; }
 }
