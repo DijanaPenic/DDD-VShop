@@ -3,12 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 
 namespace VShop.Modules.ProcessManager.Infrastructure;
 
 public class ProcessManagerDispatcher : IProcessManagerDispatcher
 {
-    public async Task<object> ExecuteCommandAsync<TCommand>
+    public async Task<object> SendAsync<TCommand>
     (
         TCommand command,
         CancellationToken cancellationToken = default
@@ -20,7 +21,19 @@ public class ProcessManagerDispatcher : IProcessManagerDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public Task PublishEventAsync<TEvent>
+    public Task<object> QueryAsync<TQuery>
+    (
+        TQuery query,
+        CancellationToken cancellationToken = default
+    ) where TQuery : IBaseQuery
+    {
+        using IServiceScope scope = ProcessManagerCompositionRoot.CreateScope();
+        IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();
+        
+        return queryDispatcher.QueryAsync(query, cancellationToken);
+    }
+    
+    public Task PublishAsync<TEvent>
     (
         TEvent @event,
         CancellationToken cancellationToken = default
