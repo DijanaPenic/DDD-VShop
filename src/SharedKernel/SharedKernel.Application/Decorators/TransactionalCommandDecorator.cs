@@ -3,6 +3,7 @@ using Serilog;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 
@@ -35,6 +36,9 @@ namespace VShop.SharedKernel.Application.Decorators
             RequestHandlerDelegate<TResponse> next
         )
         {
+            // TODO - Temp. fix
+            if (command is IBaseQuery) return await next();
+            
             string commandTypeName = command.GetType().Name;
 
             try
