@@ -15,7 +15,7 @@ public class EventStoreProtobufSerializer : IEventStoreSerializer
         => ProtobufSerializer.FromByteArray(data, typeof(T)) as T;
 
     public object Deserialize(byte[] data, Type type) 
-        => ProtobufSerializer.FromByteArray(data, type);
+        => ProtobufSerializer.FromByteArray(data, type); // TODO - check behaviour when empty bytes.
 
     public byte[] Serialize(object data)
     {
