@@ -26,8 +26,9 @@ internal static class IdentityExtensions
 
             options.User.RequireUniqueEmail = true;
 
-            options.SignIn.RequireConfirmedEmail = false;       // TODO - change after testing.
-            options.SignIn.RequireConfirmedPhoneNumber = false; // TODO - change after testing.
+            // Changing these settings will require adjustments in SignInManager and SignIn command handlers.
+            options.SignIn.RequireConfirmedEmail = true;
+            options.SignIn.RequireConfirmedPhoneNumber = true;
         })
         .AddRoles<Role>()
         .AddUserManager<ApplicationUserManager>()
@@ -41,7 +42,8 @@ internal static class IdentityExtensions
         services.AddScoped<IRoleStore<Role>, ApplicationRoleStore>();
         services.AddScoped<IApplicationClientStore, ApplicationAuthStore>();
         services.AddScoped<IApplicationUserRefreshTokenStore, ApplicationAuthStore>();
-
+        services.AddTransient<IAuthService, AuthService>();
+        
         return services;
     }
 }

@@ -1,0 +1,57 @@
+﻿using Microsoft.AspNetCore.Identity;
+
+using VShop.SharedKernel.Infrastructure;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.Modules.Identity.Infrastructure.Services;
+using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+
+namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
+{
+    internal class SignInCommandHandler : ICommandHandler<SignInCommand, SignInResponse>
+    {
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly IAuthService _authService;
+        private readonly IContext _context;
+
+        public SignInCommandHandler
+        (
+            ApplicationUserManager userManager,
+            ApplicationSignInManager signInManager,
+            IAuthService authService,
+            IContext context
+        )
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _authService = authService;
+            _context = context;
+        }
+
+        public async Task<Result<SignInResponse>> Handle
+        (
+            SignInCommand command,
+            CancellationToken cancellationToken
+        )
+        {
+            (string userName, string password) = command;
+            Guid clientId = _context.Identity.ClientId;
+            
+            User user = await _userManager.FindByNameAsync(userName);
+            
+            if (user is null) return Result.Unauthorized("Failed to log in - invalid username and/or password.");
+            if (!user.IsApproved) return Result.Unauthorized($"User [{userName}] is not approved.");
+            
+            SignInResult signInResult = await _signInManager.PasswordSignInAsync
+            (
+                clientId,
+                user,
+                password,
+                true
+            );
+
+            return await _authService.FinalizeAuthAsync(signInResult, user);
+        }
+    }
+}

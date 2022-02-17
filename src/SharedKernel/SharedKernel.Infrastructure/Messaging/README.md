@@ -6,7 +6,7 @@ protoc --proto_path=. --csharp_out=internal_access:Modules/Catalog/Modules.Catal
 protoc --proto_path=. --csharp_out=Modules/Sales/Modules.Sales.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Integration Modules/Sales/_schemas/Events/IntegrationEvents/*.proto
 protoc --proto_path=. --csharp_out=Modules/Billing/Modules.Billing.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Billing.Integration Modules/Billing/_schemas/Events/IntegrationEvents/*.proto
 protoc --proto_path=. --csharp_out=Modules/Catalog/Modules.Catalog.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Catalog.Integration Modules/Catalog/_schemas/Events/IntegrationEvents/*.proto
-
+protoc --proto_path=. --csharp_out=Modules/Identity/Modules.Identity.Integration --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Identity.Integration Modules/Identity/_schemas/Events/IntegrationEvents/*.proto
 
 protoc --proto_path=. --csharp_out=internal_access:Modules/Sales/Modules.Sales.Domain --csharp_opt=file_extension=.generated.cs,base_namespace=VShop.Modules.Sales.Domain Modules/Sales/_schemas/Events/DomainEvents/*.proto
 

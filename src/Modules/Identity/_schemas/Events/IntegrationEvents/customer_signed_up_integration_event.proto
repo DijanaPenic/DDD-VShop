@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Identity.Integration.Events";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+
+message CustomerSignedUpIntegrationEvent 
+{
+	Uuid user_id = 1;
+	string email_confirmation_token = 2;
+}

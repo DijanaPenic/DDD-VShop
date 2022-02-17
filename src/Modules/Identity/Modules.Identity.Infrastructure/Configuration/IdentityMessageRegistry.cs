@@ -26,8 +26,8 @@ namespace VShop.Modules.Identity.Infrastructure.Configuration
 
 
             // Configure integration events - local
+            registry.Add<CustomerSignedUpIntegrationEvent>(nameof(CustomerSignedUpIntegrationEvent));
 
-            
             // Configure integration events - remote
         }
         
