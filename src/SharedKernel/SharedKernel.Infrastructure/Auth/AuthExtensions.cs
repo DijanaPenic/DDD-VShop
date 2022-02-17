@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -131,12 +132,24 @@ public static class AuthExtensions
         services.AddSingleton(options);
         services.AddSingleton(tokenValidationParameters);
 
-        IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>());
-        services.AddAuthorization(authorization =>
-        {
-            foreach (string policy in policies)
-                authorization.AddPolicy(policy, b => b.RequireClaim("permission", policy));
-        });
+        IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
+            .Select(p => p.ToLowerInvariant());
+
+        services
+            .AddAuthorization(authorization =>
+            {
+                foreach (string policy in policies)
+                    authorization.AddPolicy(policy, b => b.RequireClaim("permission", policy));
+            }).AddAuthorization(authorization =>
+            {
+                authorization.AddPolicy
+                (
+                    "ClientAuthentication",
+                    new AuthorizationPolicyBuilder(AuthSchemeConstants.ClientAuthentication)
+                        .RequireAuthenticatedUser()
+                        .Build()
+                );
+            });
 
         return services;
     }
@@ -146,15 +159,14 @@ public static class AuthExtensions
         app.UseAuthentication();
         app.Use(async (ctx, next) =>
         {
-            if (ctx.Request.Headers.ContainsKey(ApplicationIdentityConstants.AuthorizationHeader))
-                ctx.Request.Headers.Remove(ApplicationIdentityConstants.AuthorizationHeader);
-            
-            if (ctx.Request.Cookies.Keys.Any(k => k.Contains(ApplicationIdentityConstants.AccessTokenScheme)))
-            {
-                AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-                if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
-                    ctx.User = authenticateResult.Principal;
-            }
+            string authScheme = ctx.Request.Cookies.Keys
+                .Any(k => k.Contains(ApplicationIdentityConstants.AccessTokenScheme)) // Is user logged in?
+                ? JwtBearerDefaults.AuthenticationScheme
+                : AuthSchemeConstants.ClientAuthentication;
+
+            AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
+            if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
+                ctx.User = authenticateResult.Principal;
         
             await next();
         });

@@ -13,8 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.Integration\SharedKernel.Integration.csproj" />
       <ProjectReference Include="..\..\..\SharedKernel\SharedKernel.PostgresDb\SharedKernel.PostgresDb.csproj" />
+      <ProjectReference Include="..\Modules.Identity.Integration\Modules.Identity.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -52,7 +52,6 @@ internal class ProcessManagerModule : Module
         services.AddScheduler(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddSingleton(ProcessManagerMessageRegistry.Initialize());
-        services.AddSingleton<IProcessManagerDispatcher, ProcessManagerDispatcher>();
         services.AddSingleton<IDispatcher, ProcessManagerDispatcher>();
         
         services.Decorate

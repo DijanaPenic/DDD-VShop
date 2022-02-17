@@ -153,6 +153,34 @@ internal sealed class ApplicationAuthManager
     public Task RemoveExpiredRefreshTokensAsync(CancellationToken cancellationToken = default)
         => _refreshTokenStore.RemoveExpiredRefreshTokensAsync(cancellationToken);
 
+    public async Task<string> AuthenticateClientAsync
+    (
+        Guid clientId,
+        string clientSecret,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (SequentialGuid.IsNullOrEmpty(clientId)) return "Client is required.";
+
+        Client client = await _clientStore.FindClientByKeyAsync(clientId, cancellationToken);
+        
+        if(client is null) return $"Client '{clientId}' is not registered in the system.";
+        if(!client.Active) return $"Client '{clientId}' is not active.";
+        if (string.IsNullOrWhiteSpace(clientSecret)) return $"Client secret should be provided for client '{clientId}'";
+        if (client.Secret != GetSha512Hash(clientSecret)) return $"Client secret is not valid for client '{clientId}'";
+        
+        return string.Empty;
+    }
+
+    private static string GetSha512Hash(string input)
+    {
+        byte[] message = Encoding.UTF8.GetBytes(input);
+        using SHA512 alg = SHA512.Create();
+
+        byte[] hashValue = alg.ComputeHash(message);
+        return Convert.ToBase64String(hashValue);
+    }
+    
     private async Task<UserRefreshToken> SetNewRefreshTokenAsync
     (
         User user,

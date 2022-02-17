@@ -60,7 +60,6 @@ internal class CatalogModule : Module
         services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
         services.AddSingleton(CatalogMessageRegistry.Initialize());
-        services.AddSingleton<ICatalogDispatcher, CatalogDispatcher>();
         services.AddSingleton<IDispatcher, CatalogDispatcher>();
 
         services.Decorate

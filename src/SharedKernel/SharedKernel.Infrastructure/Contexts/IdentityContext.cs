@@ -26,15 +26,15 @@ public class IdentityContext : IIdentityContext
 
     public IdentityContext(ClaimsPrincipal principal)
     {
-        if (principal?.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name)) return;
+        if (principal?.Identity is null) return;
 
         IsAuthenticated = principal.Identity?.IsAuthenticated is true;
         
-        UserId = IsAuthenticated 
+        UserId = IsAuthenticated
             ? Guid.Parse(principal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)!.Value) 
             : Guid.Empty;
         
-        ClientId = IsAuthenticated 
+        ClientId = IsAuthenticated
             ? Guid.Parse(principal.Claims.Single(c => c.Type == ApplicationClaimTypes.ClientIdentifier)!.Value) 
             : Guid.Empty;
         

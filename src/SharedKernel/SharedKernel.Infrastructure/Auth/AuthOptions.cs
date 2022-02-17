@@ -4,7 +4,6 @@ namespace VShop.SharedKernel.Infrastructure.Auth;
 
 public class AuthOptions
 {
-    public bool AuthenticationDisabled { get; set; }
     public string Issuer { get; set; }
     public string IssuerSigningKey { get; set; }
     public string Authority { get; set; }

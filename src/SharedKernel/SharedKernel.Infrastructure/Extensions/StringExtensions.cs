@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace VShop.SharedKernel.Infrastructure.Extensions
@@ -22,6 +23,13 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
                 .ToTitleCase(input.ToLower())
                 .Replace(" ", string.Empty)
                 .Replace("_", string.Empty);
+        }
+        
+        public static bool IsBase64String(this string value)
+        {
+            Span<byte> buffer = new(new byte[value.Length]);
+            
+            return Convert.TryFromBase64String(value, buffer, out int _);
         }
     }
 }
