@@ -51,7 +51,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
                 true
             );
 
-            return await _authService.FinalizeAuthAsync(signInResult, user);
+            return await _authService.ProcessAuthAsync(signInResult, user);
         }
     }
 }

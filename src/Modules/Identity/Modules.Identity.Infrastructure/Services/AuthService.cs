@@ -20,7 +20,7 @@ internal class AuthService : IAuthService
         _context = context;
     }
 
-    public async Task<Result<SignInResponse>> FinalizeAuthAsync(SignInResult signInResult, User user)
+    public async Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user)
     {
         SignInResponse signInResponse = new(user.Id, user.Email, user.PhoneNumber);
         
@@ -84,5 +84,5 @@ internal enum VerificationStep
 
 internal interface IAuthService
 {
-    Task<Result<SignInResponse>> FinalizeAuthAsync(SignInResult signInResult, User user);
+    Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user);
 }

@@ -12,6 +12,12 @@ internal static class IdentityExtensions
 {
     public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            // Sets the expiry to one day.
+            options.TokenLifespan = TimeSpan.FromDays(1);
+        });
+        
         services.AddIdentityCore<User>(options =>
         {
             options.Password.RequiredLength = 8;

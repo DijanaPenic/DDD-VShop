@@ -24,12 +24,6 @@ public static class AuthExtensions
 {
     public static IServiceCollection AddAuth(this IServiceCollection services, params Module[] modules)
     {
-        services.Configure<DataProtectionTokenProviderOptions>(options =>
-        {
-            // Sets the expiry to one day.
-            options.TokenLifespan = TimeSpan.FromDays(1);
-        });
-
         AuthOptions options = services.GetOptions<AuthOptions>("Auth");
 
         TokenValidationParameters tokenValidationParameters = new()

@@ -19,16 +19,16 @@ internal class CustomControllerFactory : IControllerFactory
 
         IServiceProvider serviceProvider;
 
-        if (assembly.StartsWith(SalesCompositionRoot.NamePrefix)) 
+        if (assembly.StartsWith(SalesCompositionRoot.NamePrefix))
             serviceProvider = SalesCompositionRoot.ServiceProvider;
         
-        else if (assembly.StartsWith(BillingCompositionRoot.NamePrefix)) 
+        else if (assembly.StartsWith(BillingCompositionRoot.NamePrefix))
             serviceProvider = BillingCompositionRoot.ServiceProvider;
         
-        else if (assembly.StartsWith(CatalogCompositionRoot.NamePrefix)) 
+        else if (assembly.StartsWith(CatalogCompositionRoot.NamePrefix))
             serviceProvider = CatalogCompositionRoot.ServiceProvider;
         
-        else if (assembly.StartsWith(IdentityCompositionRoot.NamePrefix)) 
+        else if (assembly.StartsWith(IdentityCompositionRoot.NamePrefix))
             serviceProvider = IdentityCompositionRoot.ServiceProvider;
 
         else throw new Exception("ServiceProvider is missing.");
