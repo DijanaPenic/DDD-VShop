@@ -4,14 +4,15 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Identity.Infrastructure;
-using VShop.Modules.Identity.Infrastructure.Configuration;
-using VShop.Modules.Identity.Infrastructure.Configuration.Extensions;
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.PostgresDb;
+using VShop.Modules.Identity.Infrastructure;
+using VShop.Modules.Identity.Infrastructure.Configuration;
+using VShop.Modules.Identity.Infrastructure.Configuration.Extensions;
 
 using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
 
@@ -47,10 +48,13 @@ internal class IdentityModule : Module
     {
         PostgresOptions postgresOptions = configuration
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
+        EventStoreOptions eventStoreOptions = configuration
+            .GetOptions<EventStoreOptions>("EventStore");
 
         services.AddIdentity();
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
+        services.AddEventStore(eventStoreOptions.ConnectionString);
         services.AddSingleton(IdentityMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, IdentityDispatcher>();
 
