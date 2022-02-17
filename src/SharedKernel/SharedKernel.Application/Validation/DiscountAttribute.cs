@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.SharedKernel.Application.ValidationAttributes
+namespace VShop.SharedKernel.Application.Validation
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class PriceAttribute : ValidationAttribute
+    public sealed class DiscountAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value is null) return ValidationResult.Success;
 
-            if (value is not decimal price) return new ValidationResult("Invalid format.");
+            if (value is not int discount) return new ValidationResult("Invalid format.");
 
-            Result<Price> result = Price.Create(price);
+            Result<Discount> result = Discount.Create(discount);
 
             return result.IsError ? new ValidationResult(result.Error.ToString()) : ValidationResult.Success;
         }

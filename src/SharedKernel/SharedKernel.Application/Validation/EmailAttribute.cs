@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations;
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Domain.ValueObjects;
 
-namespace VShop.SharedKernel.Application.ValidationAttributes // TODO - rename to Validation.
+namespace VShop.SharedKernel.Application.Validation
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class DiscountAttribute : ValidationAttribute
+    public sealed class EmailAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value is null) return ValidationResult.Success;
 
-            if (value is not int discount) return new ValidationResult("Invalid format.");
+            if (value is not string email) return new ValidationResult("Invalid format.");
 
-            Result<Discount> result = Discount.Create(discount);
+            Result<EmailAddress> result = EmailAddress.Create(email);
 
             return result.IsError ? new ValidationResult(result.Error.ToString()) : ValidationResult.Success;
         }
