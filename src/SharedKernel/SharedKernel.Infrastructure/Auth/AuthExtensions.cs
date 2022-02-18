@@ -147,7 +147,7 @@ public static class AuthExtensions
             }
             else if (ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccountVerificationScheme))
             {
-                // Account verification is in progress.
+                // The account verification is in progress.
                 authScheme = ApplicationIdentityConstants.AccountVerificationScheme;
             }
             else

@@ -33,7 +33,6 @@ internal static class IdentityExtensions
 
             options.User.RequireUniqueEmail = true;
 
-            // Changing these settings will require adjustments in SignInManager and SignIn command handlers.
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
         })

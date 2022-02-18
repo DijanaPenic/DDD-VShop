@@ -50,5 +50,5 @@ public abstract class Module
     
     private Assembly[] GetModuleAssemblies(IEnumerable<Assembly> assemblies) 
         => assemblies.Where(a => a.FullName is not null && a.FullName.StartsWith(FullName))
-        .ToArray();
+                     .ToArray();
 }

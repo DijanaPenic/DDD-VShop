@@ -192,6 +192,7 @@ internal sealed class ApplicationSignInManager
     {
         return; // We'll be using JWT authentication.
 
+#pragma warning disable CS0162
         ClaimsPrincipal userPrincipal = await CreateUserPrincipalAsync(user);
         foreach (Claim claim in additionalClaims)
             userPrincipal.Identities.First().AddClaim(claim);
@@ -202,6 +203,7 @@ internal sealed class ApplicationSignInManager
             userPrincipal,
             authenticationProperties ?? new AuthenticationProperties()
         );
+#pragma warning restore CS0162
     }
 
     /// <summary>

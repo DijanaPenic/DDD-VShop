@@ -26,6 +26,6 @@ internal class SignUpCommandValidator : AbstractValidator<SignUpCommand>
         RuleFor(r => r.ConfirmPassword)
             .NotEmpty()
             .Equal(r => r.Password)
-            .WithMessage("The new password and confirmation password must match.");
+            .WithMessage("Password and confirmation password must match.");
     }
 }
