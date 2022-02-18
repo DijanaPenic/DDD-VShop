@@ -3,9 +3,10 @@ option csharp_namespace = "VShop.Modules.Identity.Integration.Events";
 
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
 
-message CustomerSignedUpIntegrationEvent 
+message EmailVerificationTokenRequestedIntegrationEvent 
 {
 	Uuid user_id = 1;
-	string email_confirmation_token = 2;
-	string activation_url = 3;
+	string token = 2;
+	string email = 3;
+	string confirmation_url = 4;
 }

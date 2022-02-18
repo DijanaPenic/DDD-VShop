@@ -3,9 +3,10 @@ option csharp_namespace = "VShop.Modules.Identity.Integration.Events";
 
 import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
 
-message CustomerSignedUpIntegrationEvent 
+message PhoneNumberVerificationTokenRequestedIntegrationEvent 
 {
 	Uuid user_id = 1;
-	string email_confirmation_token = 2;
-	string activation_url = 3;
+	string token = 2;
+	string phone_number = 3;
+	bool is_voice_call = 4;
 }

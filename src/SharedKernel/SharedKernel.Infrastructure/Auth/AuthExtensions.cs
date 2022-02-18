@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -125,21 +124,11 @@ public static class AuthExtensions
         IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
             .Select(p => p.ToLowerInvariant());
 
-        services
-            .AddAuthorization(authorization =>
-            {
-                foreach (string policy in policies)
-                    authorization.AddPolicy(policy, b => b.RequireClaim("permission", policy));
-            }).AddAuthorization(authorization =>
-            {
-                authorization.AddPolicy
-                (
-                    "ClientAuthentication",
-                    new AuthorizationPolicyBuilder(ApplicationAuthSchemes.ClientAuthenticationScheme)
-                        .RequireAuthenticatedUser()
-                        .Build()
-                );
-            });
+        services.AddAuthorization(authorization =>
+        {
+            foreach (string policy in policies)
+                authorization.AddPolicy(policy, b => b.RequireClaim("permission", policy));
+        });
 
         return services;
     }
@@ -149,9 +138,22 @@ public static class AuthExtensions
         app.UseAuthentication();
         app.Use(async (ctx, next) =>
         {
-            string authScheme = ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccessTokenScheme) // Is user logged in?
-                ? JwtBearerDefaults.AuthenticationScheme
-                : ApplicationAuthSchemes.ClientAuthenticationScheme;
+            string authScheme;
+            
+            if (ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccessTokenScheme))
+            {
+                // The user is logged in.
+                authScheme = JwtBearerDefaults.AuthenticationScheme;
+            }
+            else if (ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccountVerificationScheme))
+            {
+                // Account verification is in progress.
+                authScheme = ApplicationIdentityConstants.AccountVerificationScheme;
+            }
+            else
+            {
+                authScheme = ApplicationAuthSchemes.ClientAuthenticationScheme;
+            }
 
             AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
             if (authenticateResult.Succeeded && authenticateResult.Principal is not null)

@@ -12,7 +12,7 @@ using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
-    internal class SignUpCommandHandler : ICommandHandler<SignUpCommand>
+    internal class SignUpCommandHandler : ICommandHandler<SignUpCommand, Guid>
     {
         private readonly ApplicationUserManager _userManager;
         private readonly IIntegrationEventService _integrationEventService;
@@ -27,32 +27,36 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _integrationEventService = integrationEventService;
         }
 
-        public async Task<Result> Handle
+        public async Task<Result<Guid>> Handle
         (
             SignUpCommand command,
             CancellationToken cancellationToken
         )
         {
+            (string userName, string email, string password, _, _) = command;
+            
+            User existingUser = await _userManager.FindByNameAsync(userName);
+            if (existingUser is not null) 
+                return Result.ValidationError($"A user with {userName} username already exists in the system.");
+            
             User user = new()
             {
                 Id = SequentialGuid.Create(),
-                Email = command.Email,
-                UserName = command.UserName,
+                Email = email,
+                UserName = userName,
                 IsApproved = true
             };
 
-            IdentityResult userResult = await _userManager.CreateAsync(user, command.Password);
+            IdentityResult userResult = await _userManager.CreateAsync(user, password);
             if (!userResult.Succeeded) return Result.ValidationError(userResult.Errors);
             
             IdentityResult roleResult = await _userManager.AddToRoleAsync(user, Roles.Customer);
             if (!roleResult.Succeeded) return Result.ValidationError(roleResult.Errors);
 
-            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            IIntegrationEvent integrationEvent = new CustomerSignedUpIntegrationEvent(user.Id, token);
-            
+            IIntegrationEvent integrationEvent = new CustomerSignedUpIntegrationEvent(user.Id);
             await _integrationEventService.SaveEventAsync(integrationEvent, cancellationToken);
-            
-            return Result.Success;
+
+            return user.Id;
         }
     }
 }

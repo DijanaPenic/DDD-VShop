@@ -48,6 +48,7 @@ public class IdentityContext : IIdentityContext
             .ToDictionary(g => g.Key, g => g.Select(c => c.Value.ToString()));
     }
 
-    public bool IsAdmin() => Roles.Contains("admin");
+    public bool IsAdmin => Roles.Contains("admin");
     public static IIdentityContext Empty => new IdentityContext();
+    public bool IsCurrentUser(Guid userId) => UserId == userId;
 }

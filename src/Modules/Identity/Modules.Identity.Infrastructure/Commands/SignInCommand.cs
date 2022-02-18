@@ -8,9 +8,9 @@ namespace VShop.Modules.Identity.Infrastructure.Commands;
 
 internal record SignInCommand(string UserName, string Password) : ICommand<SignInResponse>;
 
-internal class SignInRequestValidator : AbstractValidator<SignInCommand>
+internal class SignInCommandValidator : AbstractValidator<SignInCommand>
 {
-    public SignInRequestValidator()
+    public SignInCommandValidator()
     {
         RuleFor(r => r.UserName).NotEmpty();
         RuleFor(r => r.Password).NotEmpty().Password();
