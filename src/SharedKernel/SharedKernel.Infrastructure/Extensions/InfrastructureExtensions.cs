@@ -1,8 +1,9 @@
 using MediatR;
 using Serilog;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using System.Reflection;
+using System.Collections.Generic;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -50,13 +51,10 @@ public static class InfrastructureExtensions
     public static TOptions GetOptions<TOptions>(this IConfiguration configuration, string sectionName)
         => configuration.GetSection(sectionName).Get<TOptions>();
     
-    private static IServiceCollection AddFluentValidation(this IServiceCollection services, Assembly[] assemblies)
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        services.AddFluentValidation(config =>
-        {
-            config.RegisterValidatorsFromAssemblies(assemblies);
-            config.ValidatorOptions.CascadeMode = CascadeMode.Stop;
-        });
+        services.AddFluentValidation(fv => fv
+            .RegisterValidatorsFromAssemblies(assemblies, includeInternalTypes: true));
 
         return services;
     }
