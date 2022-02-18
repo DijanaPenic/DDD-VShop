@@ -1,5 +1,6 @@
 using Serilog;
 using System.Security.Claims;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -59,6 +60,17 @@ internal sealed class ApplicationSignInManager
 
     public async Task<ClaimsPrincipal> CreateUserPrincipalAsync(User user) 
         => await ClaimsFactory.CreateAsync(user);
+    
+    /// <summary>
+    /// Returns true if the principal has an identity with the application cookie identity
+    /// </summary>
+    /// <param name="principal">The <see cref="ClaimsPrincipal"/> instance.</param>
+    /// <returns>True if the user is logged in with identity.</returns>
+    public bool IsSignedIn(ClaimsPrincipal principal)
+    {
+        if (principal is null) throw new ArgumentNullException(nameof(principal));
+        return principal.Identities.Any(i => i.AuthenticationType == IdentityConstants.ApplicationScheme);
+    }
 
     /// <summary>
     /// Returns a flag indicating whether the specified user can sign in.
@@ -96,12 +108,108 @@ internal sealed class ApplicationSignInManager
 
         return true;
     }
+    
+    /// <summary>
+    /// Signs in the specified <paramref name="user"/>, whilst preserving the existing
+    /// AuthenticationProperties of the current signed-in user like rememberMe, as an asynchronous operation.
+    /// </summary>
+    /// <param name="user">The user to sign-in.</param>
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    public async Task RefreshSignInAsync(User user)
+    {
+        AuthenticateResult auth = await Context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
+        IList<Claim> claims = Array.Empty<Claim>();
+
+        Claim authenticationMethod = auth.Principal?.FindFirst(ClaimTypes.AuthenticationMethod);
+        Claim amr = auth.Principal?.FindFirst("amr");
+
+        if (authenticationMethod is not null || amr is not null)
+        {
+            claims = new List<Claim>();
+            
+            if (authenticationMethod != null) claims.Add(authenticationMethod);
+            if (amr is not null) claims.Add(amr);
+        }
+
+        await SignInWithClaimsAsync(user, auth.Properties, claims);
+    }
+    
+    /// <summary>
+    /// Signs in the specified <paramref name="user"/>.
+    /// </summary>
+    /// <param name="user">The user to sign-in.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
+    /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    [SuppressMessage("ApiDesign", "RS0026:Do not add multiple public overloads with optional parameters", Justification = "Required for backwards compatibility")]
+    public Task SignInAsync(User user, bool isPersistent = false, string authenticationMethod = null)
+        => SignInAsync(user, new AuthenticationProperties { IsPersistent = isPersistent }, authenticationMethod);
+
+    /// <summary>
+    /// Signs in the specified <paramref name="user"/>.
+    /// </summary>
+    /// <param name="user">The user to sign-in.</param>
+    /// <param name="authenticationProperties">Properties applied to the login and authentication cookie.</param>
+    /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    [SuppressMessage("ApiDesign", "RS0026:Do not add multiple public overloads with optional parameters",
+        Justification = "Required for backwards compatibility")]
+    public Task SignInAsync(User user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
+    {
+        IList<Claim> additionalClaims = Array.Empty<Claim>();
+        if (authenticationMethod is not null)
+        {
+            additionalClaims = new List<Claim>();
+            additionalClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
+        }
+
+        return SignInWithClaimsAsync(user, authenticationProperties, additionalClaims);
+    }
+
+    /// <summary>
+    /// Signs in the specified <paramref name="user"/>.
+    /// </summary>
+    /// <param name="user">The user to sign-in.</param>
+    /// <param name="additionalClaims">Additional claims that will be stored in the cookie.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    public Task SignInWithClaimsAsync(User user, IEnumerable<Claim> additionalClaims, bool isPersistent = false)
+        => SignInWithClaimsAsync(user, new AuthenticationProperties {IsPersistent = isPersistent}, additionalClaims);
+
+    /// <summary>
+    /// Signs in the specified <paramref name="user"/>.
+    /// </summary>
+    /// <param name="user">The user to sign-in.</param>
+    /// <param name="authenticationProperties">Properties applied to the login and authentication cookie.</param>
+    /// <param name="additionalClaims">Additional claims that will be stored in the cookie.</param>
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    public async Task SignInWithClaimsAsync
+    (
+        User user,
+        AuthenticationProperties authenticationProperties,
+        IEnumerable<Claim> additionalClaims
+    )
+    {
+        return; // We'll be using JWT authentication.
+
+        ClaimsPrincipal userPrincipal = await CreateUserPrincipalAsync(user);
+        foreach (Claim claim in additionalClaims)
+            userPrincipal.Identities.First().AddClaim(claim);
+
+        await Context.SignInAsync
+        (
+            IdentityConstants.ApplicationScheme,
+            userPrincipal,
+            authenticationProperties ?? new AuthenticationProperties()
+        );
+    }
 
     /// <summary>
     /// Signs the current user out of the application.
     /// </summary>
     public async Task SignOutAsync()
     {
+        // await Context.SignOutAsync(IdentityConstants.ApplicationScheme); // We'll be using JWT authentication.
         await Context.SignOutAsync(IdentityConstants.ExternalScheme);
         await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
         await Context.SignOutAsync(ApplicationIdentityConstants.AccountVerificationScheme);
@@ -168,6 +276,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="user">The user to sign in.</param>
     /// <param name="password">The password to attempt to sign in with.</param>
     /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
     /// for the sign-in attempt.</returns>
     public async Task<SignInResult> PasswordSignInAsync
@@ -175,7 +284,8 @@ internal sealed class ApplicationSignInManager
         Guid clientId,
         User user,
         string password,
-        bool lockoutOnFailure
+        bool lockoutOnFailure,
+        bool isPersistent = false
     )
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
@@ -183,7 +293,7 @@ internal sealed class ApplicationSignInManager
         SignInResult passwordAttempt = await CheckPasswordSignInAsync(clientId, user, password, lockoutOnFailure);
         if (!passwordAttempt.Succeeded) return passwordAttempt;
         
-        return await SignInOrTwoFactorAsync(clientId, user);
+        return await SignInOrTwoFactorAsync(clientId, user, isPersistent);
     }
 
     /// <summary>
@@ -194,6 +304,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="userName">The user name to sign in.</param>
     /// <param name="password">The password to attempt to sign in with.</param>
     /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
     /// for the sign-in attempt.</returns>
     public async Task<SignInResult> PasswordSignInAsync
@@ -201,13 +312,14 @@ internal sealed class ApplicationSignInManager
         Guid clientId,
         string userName,
         string password,
-        bool lockoutOnFailure
+        bool lockoutOnFailure,
+        bool isPersistent = false
     )
     {
         User user = await UserManager.FindByNameAsync(userName);
         if (user is null) return SignInResult.Failed;
 
-        return await PasswordSignInAsync(clientId, user, password, lockoutOnFailure);
+        return await PasswordSignInAsync(clientId, user, password, isPersistent, lockoutOnFailure);
     }
 
     /// <summary>
@@ -230,7 +342,7 @@ internal sealed class ApplicationSignInManager
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
 
-        SignInResult error = await PreSignInCheck(clientId, user);
+        SignInResult error = await PreSignInAsync(clientId, user);
         if (error is not null) return error;
 
         if (await UserManager.CheckPasswordAsync(user, password))
@@ -273,7 +385,7 @@ internal sealed class ApplicationSignInManager
         string userId = await UserManager.GetUserIdAsync(user);
         AuthenticateResult result = await Context.AuthenticateAsync(IdentityConstants.TwoFactorRememberMeScheme);
 
-        return (result?.Principal is not null && result.Principal.FindFirstValue(ClaimTypes.NameIdentifier) == userId);
+        return (result.Principal is not null && result.Principal.FindFirstValue(ClaimTypes.NameIdentifier) == userId);
     }
 
     /// <summary>
@@ -317,31 +429,10 @@ internal sealed class ApplicationSignInManager
         IdentityResult result = await UserManager.RedeemTwoFactorRecoveryCodeAsync(user, recoveryCode);
         if (!result.Succeeded) return SignInResult.Failed;
         
-        await DoTwoFactorSignInAsync(user, twoFactorInfo, rememberClient: false);
+        await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent: false, rememberClient: false);
         return SignInResult.Success;
 
         // We don't protect against brute force attacks since codes are expected to be random.
-    }
-
-    private async Task DoTwoFactorSignInAsync
-    (
-        User user,
-        TwoFactorAuthenticationInfo twoFactorInfo,
-        bool rememberClient
-    )
-    {
-        // When token is verified correctly, clear the access failed count used for lockout
-        await ResetLockout(user);
-
-        // Cleanup external cookie
-        if (twoFactorInfo.LoginProvider is not null)
-            await Context.SignOutAsync(IdentityConstants.ExternalScheme);
-
-        // Cleanup two factor user id cookie
-        await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
-        if (rememberClient) await RememberTwoFactorClientAsync(user);
-        
-        // JWT token will be returned to the user.
     }
 
     /// <summary>
@@ -351,10 +442,16 @@ internal sealed class ApplicationSignInManager
     /// <param name="code">The two factor authentication code to validate.</param>
     /// <param name="rememberClient">Flag indicating whether the current browser should be remember, suppressing all further 
     /// two factor authentication prompts.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
     /// for the sign-in attempt.</returns>
-    public async Task<SignInResult> TwoFactorAuthenticatorSignInAsync(Guid clientId, string code,
-        bool rememberClient)
+    public async Task<SignInResult> TwoFactorAuthenticatorSignInAsync
+    (
+        Guid clientId,
+        string code,
+        bool rememberClient,
+        bool isPersistent = false
+    )
     {
         TwoFactorAuthenticationInfo twoFactorInfo = await GetTwoFactorInfoAsync();
         if (twoFactorInfo?.UserId is null) return SignInResult.Failed;
@@ -362,12 +459,12 @@ internal sealed class ApplicationSignInManager
         User user = await UserManager.FindByIdAsync(twoFactorInfo.UserId);
         if (user is null) return SignInResult.Failed;
 
-        SignInResult error = await PreSignInCheck(clientId, user);
+        SignInResult error = await PreSignInAsync(clientId, user);
         if (error is not null) return error;
 
         if (await UserManager.VerifyTwoFactorTokenAsync(user, Options.Tokens.AuthenticatorTokenProvider, code))
         {
-            await DoTwoFactorSignInAsync(user, twoFactorInfo, rememberClient);
+            await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent, rememberClient);
             return SignInResult.Success;
         }
 
@@ -384,6 +481,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="code">The two factor authentication code to validate.</param>
     /// <param name="rememberClient">Flag indicating whether the current browser should be remember, suppressing all further 
     /// two factor authentication prompts.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
     /// for the sign-in attempt.</returns>
     public async Task<SignInResult> TwoFactorSignInAsync
@@ -391,7 +489,8 @@ internal sealed class ApplicationSignInManager
         Guid clientId,
         string provider,
         string code,
-        bool rememberClient
+        bool rememberClient,
+        bool isPersistent = false
     )
     {
         TwoFactorAuthenticationInfo twoFactorInfo = await GetTwoFactorInfoAsync();
@@ -400,12 +499,12 @@ internal sealed class ApplicationSignInManager
         User user = await UserManager.FindByIdAsync(twoFactorInfo.UserId);
         if (user is null) return SignInResult.Failed;
 
-        SignInResult error = await PreSignInCheck(clientId, user);
+        SignInResult error = await PreSignInAsync(clientId, user);
         if (error is not null) return error;
 
         if (await UserManager.VerifyTwoFactorTokenAsync(user, provider, code))
         {
-            await DoTwoFactorSignInAsync(user, twoFactorInfo, rememberClient);
+            await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent, rememberClient);
             return SignInResult.Success;
         }
 
@@ -427,16 +526,36 @@ internal sealed class ApplicationSignInManager
         return await UserManager.FindByIdAsync(info.UserId);
     }
 
-    /// <summary>
-    /// Signs in a user via a previously registered third party login, as an asynchronous operation.
-    /// </summary>
-    /// <param name="clientId">The client identifier.</param>
-    /// <param name="loginProvider">The login provider to use.</param>
-    /// <param name="providerKey">The unique provider identifier for the user.</param>
-    /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
-    /// for the sign-in attempt.</returns>
-    public Task<SignInResult> ExternalLoginSignInAsync(Guid clientId, string loginProvider, string providerKey)
-        => ExternalLoginSignInAsync(clientId, loginProvider, providerKey, bypassTwoFactor: false);
+    private async Task DoTwoFactorSignInAsync
+    (
+        User user,
+        TwoFactorAuthenticationInfo twoFactorInfo,
+        bool rememberClient,
+        bool isPersistent = false
+    )
+    {
+        // When token is verified correctly, clear the access failed count used for lockout
+        await ResetLockout(user);
+        
+        List<Claim> claims = new() {new Claim("amr", "mfa")};
+
+        // Cleanup external cookie
+        if (twoFactorInfo.LoginProvider is not null)
+        {
+            claims.Add(new Claim(ClaimTypes.AuthenticationMethod, twoFactorInfo.LoginProvider));
+            await Context.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+
+        // Cleanup external cookie
+        if (twoFactorInfo.LoginProvider is not null)
+            await Context.SignOutAsync(IdentityConstants.ExternalScheme);
+
+        // Cleanup two factor user id cookie
+        await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
+        if (rememberClient) await RememberTwoFactorClientAsync(user);
+        
+        await SignInWithClaimsAsync(user, claims, isPersistent);
+    }
 
     /// <summary>
     /// Signs in a user via a previously registered third party login, as an asynchronous operation.
@@ -445,6 +564,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="loginProvider">The login provider to use.</param>
     /// <param name="providerKey">The unique provider identifier for the user.</param>
     /// <param name="bypassTwoFactor">Flag indicating whether to bypass two factor authentication.</param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
     /// for the sign-in attempt.</returns>
     public async Task<SignInResult> ExternalLoginSignInAsync
@@ -452,16 +572,17 @@ internal sealed class ApplicationSignInManager
         Guid clientId,
         string loginProvider,
         string providerKey,
-        bool bypassTwoFactor
+        bool bypassTwoFactor = false,
+        bool isPersistent = false
     )
     {
         User user = await UserManager.FindByLoginAsync(loginProvider, providerKey);
         if (user is null) return SignInResult.Failed;
 
-        SignInResult error = await PreSignInCheck(clientId, user);
+        SignInResult error = await PreSignInAsync(clientId, user);
         if (error is not null) return error;
 
-        return await SignInOrTwoFactorAsync(clientId, user, loginProvider, bypassTwoFactor);
+        return await SignInOrTwoFactorAsync(clientId, user, isPersistent, loginProvider, bypassTwoFactor);
     }
 
     /// <summary>
@@ -483,9 +604,9 @@ internal sealed class ApplicationSignInManager
     public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
     {
         AuthenticateResult auth = await Context.AuthenticateAsync(IdentityConstants.ExternalScheme);
-        IDictionary<string, string> items = auth?.Properties?.Items;
+        IDictionary<string, string> items = auth.Properties?.Items;
 
-        if (auth?.Principal is null || items is null || !items.ContainsKey(LoginProviderKey)) return null;
+        if (auth.Principal is null || items is null || !items.ContainsKey(LoginProviderKey)) return null;
 
         if (expectedXsrf is not null)
         {
@@ -614,6 +735,7 @@ internal sealed class ApplicationSignInManager
     /// </summary>
     /// <param name="clientId">The client identifier.</param>
     /// <param name="user"></param>
+    /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
     /// <param name="loginProvider">The login provider to use. Default is null</param>
     /// <param name="bypassTwoFactor">Flag indicating whether to bypass two factor authentication. Default is false</param>
     /// <returns>Returns a <see cref="SignInResult"/></returns>
@@ -621,6 +743,7 @@ internal sealed class ApplicationSignInManager
     (
         Guid clientId,
         User user,
+        bool isPersistent = false,
         string loginProvider = null,
         bool bypassTwoFactor = false
     )
@@ -641,9 +764,14 @@ internal sealed class ApplicationSignInManager
 
         // Cleanup external cookie
         if (loginProvider is not null)
+        {
             await Context.SignOutAsync(IdentityConstants.ExternalScheme);
-        
-        // else - JWT token will be returned to the user.
+            await SignInAsync(user, isPersistent, loginProvider);
+        }
+        else
+        {
+            await SignInWithClaimsAsync(user, new[] { new Claim("amr", "pwd") }, isPersistent);
+        }
 
         return SignInResult.Success;
     }
@@ -651,7 +779,7 @@ internal sealed class ApplicationSignInManager
     public async Task<TwoFactorAuthenticationInfo> GetTwoFactorInfoAsync()
     {
         AuthenticateResult result = await Context.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
-        if (result?.Principal is not null)
+        if (result.Principal is not null)
         {
             return new TwoFactorAuthenticationInfo
             {
@@ -689,7 +817,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="clientId">The client identifier.</param>
     /// <param name="user">The user</param>
     /// <returns>Null if the user should be allowed to sign in, otherwise the SignInResult why they should be denied.</returns>
-    public async Task<SignInResult> PreSignInCheck(Guid clientId, User user)
+    public async Task<SignInResult> PreSignInAsync(Guid clientId, User user)
     {
         if (!await CanSignInAsync(user))
         {
@@ -702,6 +830,9 @@ internal sealed class ApplicationSignInManager
 
             return SignInResult.NotAllowed;
         }
+
+        // Cleanup the account verification user id cookie.
+        await Context.SignOutAsync(ApplicationIdentityConstants.AccountVerificationScheme);
 
         if (await IsLockedOut(user)) return await LockedOut(user);
         
@@ -743,7 +874,7 @@ internal sealed class ApplicationSignInManager
     public async Task<AccountVerificationInfo> GetAccountVerificationInfoAsync()
     {
         AuthenticateResult result = await Context.AuthenticateAsync(ApplicationIdentityConstants.AccountVerificationScheme);
-        if (result?.Principal is not null)
+        if (result.Principal is not null)
             return new AccountVerificationInfo
             {
                 UserId = result.Principal.FindFirstValue(ClaimTypes.NameIdentifier),
