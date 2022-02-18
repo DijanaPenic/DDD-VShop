@@ -11,24 +11,21 @@ namespace VShop.SharedKernel.Infrastructure.Commands
     internal class CommandDispatcher: ICommandDispatcher
     {
         private readonly IMediator _mediator;
-        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IContextAdapter _contextAdapter;
 
         public CommandDispatcher
         (
             IMediator mediator,
-            IMessageContextRegistry messageContextRegistry,
             IContextAdapter contextAdapter
         )
         {
             _mediator = mediator;
-            _messageContextRegistry = messageContextRegistry;
             _contextAdapter = contextAdapter;
         }
 
         public Task<Result> SendAsync(ICommand command, CancellationToken cancellationToken = default)
         {
-            _contextAdapter.ChangeContext(_messageContextRegistry.Get(command), command.GetType());
+            _contextAdapter.ChangeContext(command);
             return _mediator.Send(command, cancellationToken);
         }
 
@@ -38,13 +35,13 @@ namespace VShop.SharedKernel.Infrastructure.Commands
             CancellationToken cancellationToken = default
         )
         {
-            _contextAdapter.ChangeContext(_messageContextRegistry.Get(command), command.GetType());
+            _contextAdapter.ChangeContext(command);
             return _mediator.Send(command, cancellationToken);
         }
 
         public Task<object> SendAsync(object command, CancellationToken cancellationToken = default)
         {
-            _contextAdapter.ChangeContext(_messageContextRegistry.Get((IMessage)command), command.GetType());
+            _contextAdapter.ChangeContext((IMessage)command);
             return _mediator.Send(command, cancellationToken);
         }
     }
