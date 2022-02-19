@@ -80,7 +80,7 @@ namespace VShop.Modules.Sales.API.Controllers
         }
         
         [HttpPut]
-        [Route("{shoppingCartId:guid}/actions/checkout")]
+        [Route("{shoppingCartId:guid}/checkout")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -121,13 +121,13 @@ namespace VShop.Modules.Sales.API.Controllers
             return HandleResult(result, Created);
         }
         
-        [HttpPut]
+        [HttpPatch]
         [Route("{shoppingCartId:guid}/products/{productId:guid}")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SetProductPriceAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -141,7 +141,7 @@ namespace VShop.Modules.Sales.API.Controllers
 
             Result commandResult = await _commandDispatcher.SendAsync(command);
         
-            return HandleResult(commandResult, Ok);
+            return HandleResult(commandResult, NoContent);
         }
         
         [HttpDelete]
@@ -173,7 +173,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SetContactInformationAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -185,7 +185,7 @@ namespace VShop.Modules.Sales.API.Controllers
 
             Result result = await _commandDispatcher.SendAsync(command);
         
-            return HandleResult(result, Ok);
+            return HandleResult(result, NoContent);
         }
         
         [HttpPost]
@@ -194,7 +194,7 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SetDeliveryAddressAsync
         (
             [FromRoute] Guid shoppingCartId,
@@ -206,7 +206,7 @@ namespace VShop.Modules.Sales.API.Controllers
 
             Result result = await _commandDispatcher.SendAsync(command);
         
-            return HandleResult(result, Ok);
+            return HandleResult(result, NoContent);
         }
     }
 }
