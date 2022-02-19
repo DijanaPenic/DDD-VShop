@@ -103,6 +103,25 @@ internal partial class AccountController : ApplicationControllerBase
         return HandleResult(result, NoContent);
     }
     
+    [HttpGet]
+    [Route("{userId:guid}")]
+    [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
+    [Authorize]
+    public async Task<IActionResult> GetAsync([FromRoute] Guid userId)
+    {
+        bool hasPermissions = _identityContext.IsCurrentUser(userId) || _identityContext.IsAuthorized(Policy);
+        if (!hasPermissions) return Forbid();
+
+        GetUserQuery query = new(userId);
+        Result<User> result = await _queryDispatcher.QueryAsync(query);
+        
+        return HandleResult(result, Ok);
+    }
+    
     [HttpPost]
     [Route("{userId:guid}/send-token")]
     [Consumes("application/json")]
