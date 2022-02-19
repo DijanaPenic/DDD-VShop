@@ -140,20 +140,13 @@ public static class AuthExtensions
         {
             string authScheme;
             
-            if (ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccessTokenScheme))
-            {
-                // The user is logged in.
+            if (ctx.ContainsCookie(ApplicationIdentityConstants.AccessTokenScheme))
                 authScheme = JwtBearerDefaults.AuthenticationScheme;
-            }
-            else if (ctx.Request.Cookies.ContainsKey(ApplicationIdentityConstants.AccountVerificationScheme))
-            {
-                // The account verification is in progress.
+            else if (ctx.ContainsCookie(ApplicationIdentityConstants.AccountVerificationScheme))
                 authScheme = ApplicationIdentityConstants.AccountVerificationScheme;
-            }
-            else
-            {
-                authScheme = ApplicationAuthSchemes.ClientAuthenticationScheme;
-            }
+            else if (ctx.ContainsCookie(IdentityConstants.TwoFactorUserIdScheme))
+                authScheme = IdentityConstants.TwoFactorUserIdScheme;
+            else authScheme = ApplicationAuthSchemes.ClientAuthenticationScheme;
 
             AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
             if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
@@ -165,6 +158,11 @@ public static class AuthExtensions
         return app;
     }
 
+    private static bool ContainsCookie(this HttpContext ctx, string name)
+        => ctx.Request.Cookies
+            .Select(c => c.Key)
+            .Any(k => k.Contains(name));
+    
     private static SameSiteMode GetSameSiteMode(AuthOptions options)
         => options.Cookie.SameSite?.ToLowerInvariant() switch
         {

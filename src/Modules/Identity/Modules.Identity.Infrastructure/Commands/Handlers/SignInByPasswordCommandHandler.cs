@@ -5,18 +5,19 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.Modules.Identity.Infrastructure.Models;
 using VShop.Modules.Identity.Infrastructure.Services.Contracts;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
-    internal class SignInCommandHandler : ICommandHandler<SignInCommand, SignInResponse>
+    internal class SignInByPasswordCommandHandler : ICommandHandler<SignInByPasswordCommand, SignInInfo>
     {
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IAuthenticationService _authService;
         private readonly IContext _context;
 
-        public SignInCommandHandler
+        public SignInByPasswordCommandHandler
         (
             ApplicationUserManager userManager,
             ApplicationSignInManager signInManager,
@@ -30,9 +31,9 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _context = context;
         }
 
-        public async Task<Result<SignInResponse>> Handle
+        public async Task<Result<SignInInfo>> Handle
         (
-            SignInCommand command,
+            SignInByPasswordCommand command,
             CancellationToken cancellationToken
         )
         {

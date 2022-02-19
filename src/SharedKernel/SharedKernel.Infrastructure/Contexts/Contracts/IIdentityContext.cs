@@ -10,6 +10,6 @@ public interface IIdentityContext
     public Guid ClientId { get; }
     public IList<string> Roles { get; }
     IDictionary<string, IEnumerable<string>> Claims { get; }
-    bool IsAdmin { get; }
     bool IsCurrentUser(Guid userId);
+    bool IsAuthorized(string policy);
 }
