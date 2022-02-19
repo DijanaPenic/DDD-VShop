@@ -18,14 +18,14 @@ internal class SignUpCommandValidator : AbstractValidator<SignUpCommand>
 {
     public SignUpCommandValidator()
     {
-        RuleFor(r => r.UserName).NotEmpty();
-        RuleFor(r => r.Email).NotEmpty().EmailAddress();
-        RuleFor(r => r.ActivationUrl).NotEmpty();
+        RuleFor(c => c.UserName).NotEmpty();
+        RuleFor(c => c.Email).NotEmpty().EmailAddress();
+        RuleFor(c => c.ActivationUrl).NotEmpty();
         
-        RuleFor(r => r.Password).NotEmpty().Password();
-        RuleFor(r => r.ConfirmPassword)
+        RuleFor(c => c.Password).NotEmpty().Password();
+        RuleFor(c => c.ConfirmPassword)
             .NotEmpty()
-            .Equal(r => r.Password)
+            .Equal(c => c.Password)
             .WithMessage("Password and confirmation password must match.");
     }
 }

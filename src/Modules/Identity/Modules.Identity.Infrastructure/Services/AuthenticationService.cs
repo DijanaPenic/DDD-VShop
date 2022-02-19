@@ -4,6 +4,7 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Auth;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+using VShop.Modules.Identity.Infrastructure.Models;
 using VShop.Modules.Identity.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Auth.Constants;
 
@@ -32,9 +33,9 @@ internal class AuthenticationService : IAuthenticationService
         _cookieOptions = cookieOptions;
     }
 
-    public async Task<Result<SignInResponse>> FinalizeSignInAsync(SignInResult signInResult, User user)
+    public async Task<Result<SignInInfo>> FinalizeSignInAsync(SignInResult signInResult, User user)
     {
-        SignInResponse signInResponse = new(user.Id, user.Email, user.PhoneNumber);
+        SignInInfo signInResponse = new(user.Id, user.Email, user.PhoneNumber);
         
         if (signInResult.Succeeded)
         {
@@ -44,7 +45,7 @@ internal class AuthenticationService : IAuthenticationService
             signInResponse.Roles = token.Roles.ToArray();
             signInResponse.AccessToken = token.AccessToken;
             signInResponse.RefreshToken = token.RefreshToken;
-            signInResponse.VerificationStep = VerificationStep.None;
+            signInResponse.VerificationStep = AccountVerificationStep.None;
 
             return signInResponse;
         }
@@ -52,13 +53,13 @@ internal class AuthenticationService : IAuthenticationService
         if (signInResult.IsLockedOut) return Result.Unauthorized($"User [{user.UserName}] has been locked out.");
         if (signInResult.RequiresTwoFactor)
         {
-            signInResponse.VerificationStep = VerificationStep.TwoFactor;
+            signInResponse.VerificationStep = AccountVerificationStep.TwoFactor;
             return signInResponse;
         }
         if (signInResult.IsNotAllowed)
         {
-            if (!user.EmailConfirmed) signInResponse.VerificationStep = VerificationStep.Email;
-            else if (!user.PhoneNumberConfirmed) signInResponse.VerificationStep = VerificationStep.MobilePhone;
+            if (!user.EmailConfirmed) signInResponse.VerificationStep = AccountVerificationStep.Email;
+            else if (!user.PhoneNumberConfirmed) signInResponse.VerificationStep = AccountVerificationStep.MobilePhone;
             else return Result.ValidationError($"User [{user.UserName}] is not allowed to log in.");
 
             return signInResponse;
@@ -78,30 +79,4 @@ internal class AuthenticationService : IAuthenticationService
     
     private void DeleteCookie(string key) 
         => _httpContext.Response.Cookies.Delete(key, _cookieOptions);
-}
-
-internal class SignInResponse
-{
-    public Guid UserId { get; }
-    public string Email { get; }
-    public string PhoneNumber { get; }
-    public string[] Roles { get; set; }
-    public string AccessToken { get; set; }
-    public string RefreshToken { get; set; }
-    public VerificationStep VerificationStep { get; set; }
-        
-    public SignInResponse(Guid userId, string email, string phoneNumber)
-    {
-        UserId = userId;
-        Email = email;
-        PhoneNumber = phoneNumber;
-    }
-}
-    
-internal enum VerificationStep
-{
-    None = 0,
-    TwoFactor = 1,
-    Email = 2,
-    MobilePhone = 3,
 }
