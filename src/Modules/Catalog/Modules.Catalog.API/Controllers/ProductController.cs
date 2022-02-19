@@ -35,7 +35,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpPost]
-        [Route("")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -80,7 +79,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpDelete]
         [Route("{productId:guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -102,11 +100,10 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpGet]
         [Route("{productId:Guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(CatalogProduct), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetProductAsync
         (
             [FromRoute] Guid productId,
@@ -124,12 +121,10 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpGet]
-        [Route("")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedItemsResponse<CatalogProduct>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetProductsAsync
         (
@@ -174,7 +169,6 @@ namespace VShop.Modules.Catalog.API.Controllers
                 return Result.ValidationError("ids value invalid. Must be comma-separated list of guids.");
 
             IEnumerable<Guid> idsToSelect = guidIds.Select(id => id.Value);
-
             Expression<Func<CatalogProduct, bool>> filterExpression = ci => idsToSelect.Contains(ci.Id);
             
             return filterExpression;

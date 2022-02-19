@@ -33,7 +33,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpPost]
-        [Route("")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -78,7 +77,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpDelete]
         [Route("{categoryId:guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -100,11 +98,10 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpGet]
         [Route("{categoryId:guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(CatalogCategory), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCategoryAsync
         (
             [FromRoute] Guid categoryId,
@@ -118,17 +115,14 @@ namespace VShop.Modules.Catalog.API.Controllers
             if (category is null || category.IsDeleted)
                 return NotFound("Requested category cannot be found.");
             
-
             return Ok(category);
         }
         
         [HttpGet]
-        [Route("")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedItemsResponse<CatalogProduct>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCategoriesAsync
         (
             [FromQuery] string include = DefaultParameters.Include,
@@ -140,7 +134,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             IList<CatalogCategory> categories = await _catalogDbContext.Categories
                 .OrderBy(SortingFactory.Create(sortOrder))
-                .Filter(c => c.IsDeleted == false)
+                .Filter(p => p.IsDeleted == false)
                 .Filter(searchPhrase, nameof(CatalogCategory.Name))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))
@@ -155,11 +149,10 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpGet]
         [Route("{categoryId:Guid}/products")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedItemsResponse<CatalogProduct>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetCategoryProductsAsync
         (
@@ -173,7 +166,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             IList<CatalogProduct> products = await _catalogDbContext.Products
                 .OrderBy(SortingFactory.Create(sortOrder))
-                .Filter(c => c.IsDeleted == false && c.CategoryId == categoryId)
+                .Filter(p => p.IsDeleted == false && p.CategoryId == categoryId)
                 .Filter(searchPhrase, nameof(CatalogCategory.Name))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))

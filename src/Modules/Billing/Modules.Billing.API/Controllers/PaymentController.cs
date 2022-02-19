@@ -25,18 +25,17 @@ namespace VShop.Modules.Billing.API.Controllers
         }
 
         [HttpPost]
-        [Route("")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> TransferAsync([FromBody] TransferRequest request)
         {
             TransferCommand command = _mapper.Map<TransferCommand>(request);
             Result result = await _commandDispatcher.SendAsync(command);
 
-            return HandleResult(result, Ok);
+            return HandleResult(result, NoContent);
         }
     }
 }
