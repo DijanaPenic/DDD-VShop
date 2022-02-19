@@ -7,5 +7,7 @@ namespace VShop.Modules.Identity.Infrastructure.Services.Contracts;
 
 internal interface IAuthenticationService
 {
-    Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user);
+    Task<Result<SignInResponse>> FinalizeSignInAsync(SignInResult signInResult, User user);
+    Task FinalizeSignOutAsync();
+
 }

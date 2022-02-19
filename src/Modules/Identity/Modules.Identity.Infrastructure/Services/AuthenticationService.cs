@@ -32,7 +32,7 @@ internal class AuthenticationService : IAuthenticationService
         _cookieOptions = cookieOptions;
     }
 
-    public async Task<Result<SignInResponse>> ProcessAuthAsync(SignInResult signInResult, User user)
+    public async Task<Result<SignInResponse>> FinalizeSignInAsync(SignInResult signInResult, User user)
     {
         SignInResponse signInResponse = new(user.Id, user.Email, user.PhoneNumber);
         
@@ -66,9 +66,18 @@ internal class AuthenticationService : IAuthenticationService
 
         return Result.Unauthorized($"Failed to log in [{user.UserName}].");
     }
-    
+
+    public Task FinalizeSignOutAsync()
+    {
+        DeleteCookie(ApplicationIdentityConstants.AccessTokenScheme);
+        return Task.CompletedTask;
+    }
+
     private void AddCookie(string key, string value) 
         => _httpContext.Response.Cookies.Append(key, value, _cookieOptions);
+    
+    private void DeleteCookie(string key) 
+        => _httpContext.Response.Cookies.Delete(key, _cookieOptions);
 }
 
 internal class SignInResponse
