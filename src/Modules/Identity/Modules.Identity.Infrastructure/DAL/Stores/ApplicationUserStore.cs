@@ -904,7 +904,7 @@ internal sealed class ApplicationUserStore :
         if (user is null)
             throw new ArgumentNullException(nameof(user));
 
-        user.LockoutEndDate = lockoutEnd?.Date.ToInstant();
+        user.LockoutEndDate = lockoutEnd is null ? null : Instant.FromDateTimeOffset(lockoutEnd.Value);
 
         return Task.CompletedTask;
     }
