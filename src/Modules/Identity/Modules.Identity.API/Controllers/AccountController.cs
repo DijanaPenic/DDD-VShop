@@ -96,7 +96,7 @@ internal partial class AccountController : ApplicationControllerBase
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ClientAuthorization]
+    [Authorize(AuthenticationSchemes = "ClientAuthenticationScheme, Bearer")]
     public async Task<IActionResult> VerifyAsync([FromRoute] Guid userId, [FromBody] VerifyCommand command)
     {
         Result result = await _commandDispatcher.SendAsync(command with{ UserId = userId });
@@ -110,12 +110,9 @@ internal partial class AccountController : ApplicationControllerBase
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [Authorize]
+    [Authorize(Policy)]
     public async Task<IActionResult> GetAsync([FromRoute] Guid userId)
     {
-        bool hasPermissions = _identityContext.IsCurrentUser(userId) || _identityContext.IsAuthorized(Policy);
-        if (!hasPermissions) return Forbid();
-
         GetUserQuery query = new(userId);
         Result<User> result = await _queryDispatcher.QueryAsync(query);
         
