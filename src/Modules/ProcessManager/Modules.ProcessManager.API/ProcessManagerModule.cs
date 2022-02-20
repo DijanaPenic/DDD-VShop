@@ -4,16 +4,16 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.ProcessManager.Infrastructure;
-using VShop.Modules.ProcessManager.Infrastructure.Configuration;
-using VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.Subscriptions;
+using VShop.Modules.ProcessManager.Infrastructure;
+using VShop.Modules.ProcessManager.Infrastructure.Configuration;
+using VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
 
 using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
 

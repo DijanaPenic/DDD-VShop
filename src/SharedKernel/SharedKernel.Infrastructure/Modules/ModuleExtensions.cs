@@ -14,14 +14,10 @@ public static class ModuleExtensions
         => builder.ConfigureAppConfiguration((ctx, cfg) =>
         {
             foreach (string settings in GetSettings("*"))
-            {
                 cfg.AddJsonFile(settings);
-            }
 
             foreach (string settings in GetSettings($"*.{ctx.HostingEnvironment.EnvironmentName}"))
-            {
                 cfg.AddJsonFile(settings);
-            }
 
             IEnumerable<string> GetSettings(string pattern)
                 => Directory.EnumerateFiles

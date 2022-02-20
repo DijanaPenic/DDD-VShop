@@ -10,13 +10,13 @@ using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Services;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Auth;
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.Modules.ProcessManager.Infrastructure;
 using VShop.Modules.Sales.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Auth.Constants;
 
 using ILogger = Serilog.ILogger;
 
@@ -58,7 +58,7 @@ public class Startup
 
         services.AddApplication(_configuration);
         services.AddFluentValidation(_modules.SelectMany(m => m.Assemblies).ToArray());
-        services.AddSingleton<IControllerFactory, CustomControllerFactory>();
+        services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();
     }

@@ -1,9 +1,9 @@
 using MediatR;
 using Serilog;
-using FluentValidation;
 using System.Reflection;
 using System.Collections.Generic;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

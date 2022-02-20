@@ -1,6 +1,5 @@
 using Force.DeepCloner;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure;

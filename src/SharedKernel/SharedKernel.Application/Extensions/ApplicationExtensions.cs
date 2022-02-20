@@ -2,11 +2,13 @@ using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
 using EventStore.Client;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -56,7 +58,8 @@ public static class ApplicationExtensions
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
-        }).ConfigureApplicationPartManager(manager =>
+        })
+        .ConfigureApplicationPartManager(manager =>
         {
             List<ApplicationPart> removedParts = new();
             foreach (string disabledModule in disabledModules)
@@ -67,10 +70,8 @@ public static class ApplicationExtensions
             }
 
             foreach (ApplicationPart part in removedParts)
-            {
                 manager.ApplicationParts.Remove(part);
-            }
-                
+
             manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
         });
         
@@ -151,5 +152,21 @@ public static class ApplicationExtensions
 
         return app;
     }
+    
+    public static IServiceCollection AddApplication(this IServiceCollection services, Assembly[] assemblies)
+    {
+        services.AddControllersAsServices(assemblies);
 
+        return services;
+    }
+
+    private static IServiceCollection AddControllersAsServices(this IServiceCollection services, Assembly[] assemblies)
+    {
+        services.Scan(s => s.FromAssemblies(assemblies)
+            .AddClasses(f => f.AssignableTo(typeof(ControllerBase)))
+            .AsSelf()
+            .WithTransientLifetime());
+
+        return services;
+    }
 }

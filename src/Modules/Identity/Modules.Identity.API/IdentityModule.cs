@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
@@ -52,6 +53,7 @@ internal class IdentityModule : Module
             .GetOptions<EventStoreOptions>("EventStore");
 
         services.AddIdentity();
+        services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);

@@ -5,17 +5,18 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.PostgresDb;
+using VShop.SharedKernel.EventStoreDb;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Application.Decorators;
+using VShop.SharedKernel.Application.Extensions;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.Modules.Catalog.API.Automapper;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.PostgresDb;
-using VShop.SharedKernel.EventStoreDb;
-using VShop.SharedKernel.Application.Decorators;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Extensions;
-using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Subscriptions;
 
 using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
 
@@ -55,6 +56,7 @@ internal class CatalogModule : Module
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>("EventStore");
         
+        services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);

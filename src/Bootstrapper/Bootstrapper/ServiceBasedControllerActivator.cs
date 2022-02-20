@@ -8,12 +8,12 @@ using VShop.Modules.Identity.Infrastructure.Configuration;
 
 namespace VShop.Bootstrapper;
 
-internal class CustomControllerFactory : IControllerFactory
+internal sealed class ServiceBasedControllerActivator : IControllerActivator
 {
-    public object CreateController(ControllerContext context)
+    public object Create(ControllerContext context)
     {
         if (context is null) throw new ArgumentNullException(nameof(context));
-
+        
         string assembly = context.ActionDescriptor.ControllerTypeInfo.AssemblyQualifiedName 
                           ?? throw new Exception("AssemblyQualifiedName is missing.");
 
@@ -33,11 +33,18 @@ internal class CustomControllerFactory : IControllerFactory
 
         else throw new Exception("ServiceProvider is missing.");
 
+        IServiceScope scope = serviceProvider.CreateScope();
+        context.HttpContext.Items[typeof(IServiceScope)] = scope;
+        
         Type controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();
-        object controller = ActivatorUtilities.CreateInstance(serviceProvider, controllerType);
-
+        object controller = scope.ServiceProvider.GetRequiredService(controllerType);
+        
         return controller;
     }
 
-    public void ReleaseController(ControllerContext context, object controller) { }
-} 
+    public void Release(ControllerContext context, object controller)
+    {
+        IDisposable disposable = (IDisposable)context.HttpContext.Items[typeof(IServiceScope)];
+        disposable?.Dispose();
+    }
+}

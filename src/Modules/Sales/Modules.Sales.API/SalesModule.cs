@@ -10,6 +10,10 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Subscriptions;
+using VShop.SharedKernel.Application.Extensions;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure;
@@ -18,9 +22,6 @@ using VShop.Modules.Sales.Infrastructure.Queries.Contracts;
 using VShop.Modules.Sales.Infrastructure.Services;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Subscriptions;
 
 using Module = VShop.SharedKernel.Infrastructure.Modules.Module;
 
@@ -60,6 +61,7 @@ internal class SalesModule : Module
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>("EventStore");
         
+        services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);
         services.AddEventStore(eventStoreOptions.ConnectionString);
