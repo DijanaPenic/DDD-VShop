@@ -2,7 +2,6 @@ using Serilog;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Infrastructure.Auth;
 using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Modules;
@@ -33,7 +32,6 @@ namespace VShop.Modules.Sales.Tests.IntegrationTests.Infrastructure
             services.AddSingleton(configuration);
             services.AddContext(new MockContextAccessor());
             services.AddMessaging();
-            services.AddAuth(module);
 
             module.ConfigureContainer(logger, configuration, services);
 

@@ -9,10 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Automapper" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Include="module.identity.development.json">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
