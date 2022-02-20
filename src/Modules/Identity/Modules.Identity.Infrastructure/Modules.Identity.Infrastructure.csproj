@@ -27,6 +27,7 @@
     <ItemGroup>
         <!--<InternalsVisibleTo Include="VShop.Modules.Identity.Tests" />-->
         <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+        <InternalsVisibleTo Include="VShop.Modules.Identity.API" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventSourcing.Stores;
@@ -8,7 +7,6 @@ using VShop.SharedKernel.Integration.Extensions;
 using VShop.SharedKernel.Integration.Stores;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 
-[assembly: InternalsVisibleTo("VShop.Modules.ProcessManager.API")]
 namespace VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
 
 internal static class EventStoreExtensions

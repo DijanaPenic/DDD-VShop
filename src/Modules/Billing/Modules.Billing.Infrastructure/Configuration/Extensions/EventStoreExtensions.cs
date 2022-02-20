@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Integration.Extensions;
@@ -8,7 +7,6 @@ using VShop.SharedKernel.Integration.Services;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.SharedKernel.Integration.Stores.Contracts;
 
-[assembly: InternalsVisibleTo("VShop.Modules.Billing.API")]
 namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
 {
     internal static class EventStoreExtensions

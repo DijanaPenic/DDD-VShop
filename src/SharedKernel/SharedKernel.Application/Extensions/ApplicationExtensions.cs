@@ -75,15 +75,16 @@ public static class ApplicationExtensions
             manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
         });
         
-        services.AddSwaggerGen(swagger =>
-        {
-            swagger.CustomSchemaIds(t => t.FullName);
-            swagger.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Modular API",
-                Version = "v1"
-            });
-        });
+        // TODO - resolve Swagger.
+        // services.AddSwaggerGen(swagger =>
+        // {
+        //     swagger.CustomSchemaIds(t => t.FullName);
+        //     swagger.SwaggerDoc("v1", new OpenApiInfo
+        //     {
+        //         Title = "Modular API",
+        //         Version = "v1"
+        //     });
+        // });
 
         return services;
     }
