@@ -8,7 +8,7 @@ internal static class QueryExtensions
 {
     public static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        services.AddSingleton<IQueryDispatcher, QueryDispatcher>();
+        services.AddScoped<IQueryDispatcher, QueryDispatcher>();
         
         return services;
     }
