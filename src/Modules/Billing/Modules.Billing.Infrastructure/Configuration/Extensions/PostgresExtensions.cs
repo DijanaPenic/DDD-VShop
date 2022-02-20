@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;

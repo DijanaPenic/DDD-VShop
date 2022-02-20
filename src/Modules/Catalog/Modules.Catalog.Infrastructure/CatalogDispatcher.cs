@@ -21,7 +21,7 @@ public class CatalogDispatcher : ICatalogDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public Task<object> QueryAsync<TQuery>
+    public async Task<object> QueryAsync<TQuery>
     (
         TQuery query,
         CancellationToken cancellationToken = default
@@ -30,10 +30,10 @@ public class CatalogDispatcher : ICatalogDispatcher
         using IServiceScope scope = CatalogCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();
         
-        return queryDispatcher.QueryAsync(query, cancellationToken);
+        return await queryDispatcher.QueryAsync(query, cancellationToken);
     }
     
-    public Task PublishAsync<TEvent>
+    public async Task PublishAsync<TEvent>
     (
         TEvent @event,
         CancellationToken cancellationToken = default
@@ -42,6 +42,6 @@ public class CatalogDispatcher : ICatalogDispatcher
         using IServiceScope scope = CatalogCompositionRoot.CreateScope();
         IEventDispatcher eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
 
-        return eventDispatcher.PublishAsync(@event, cancellationToken);
+        await eventDispatcher.PublishAsync(@event, cancellationToken);
     }
 }

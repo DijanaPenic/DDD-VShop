@@ -9,7 +9,7 @@ namespace VShop.Modules.Identity.Infrastructure;
 
 public class IdentityDispatcher : IIdentityDispatcher
 {
-    public Task<object> SendAsync<TCommand>
+    public async Task<object> SendAsync<TCommand>
     (
         TCommand command,
         CancellationToken cancellationToken = default
@@ -18,10 +18,10 @@ public class IdentityDispatcher : IIdentityDispatcher
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
 
-        return commandDispatcher.SendAsync(command, cancellationToken);
+        return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public Task<object> QueryAsync<TQuery>
+    public async Task<object> QueryAsync<TQuery>
     (
         TQuery query,
         CancellationToken cancellationToken = default
@@ -30,10 +30,10 @@ public class IdentityDispatcher : IIdentityDispatcher
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();
         
-        return queryDispatcher.QueryAsync(query, cancellationToken);
+        return await queryDispatcher.QueryAsync(query, cancellationToken);
     }
 
-    public Task PublishAsync<TEvent>
+    public async Task PublishAsync<TEvent>
     (
         TEvent @event,
         CancellationToken cancellationToken = default
@@ -42,6 +42,6 @@ public class IdentityDispatcher : IIdentityDispatcher
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         IEventDispatcher eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
 
-        return eventDispatcher.PublishAsync(@event, cancellationToken);
+        await eventDispatcher.PublishAsync(@event, cancellationToken);
     }
 }
