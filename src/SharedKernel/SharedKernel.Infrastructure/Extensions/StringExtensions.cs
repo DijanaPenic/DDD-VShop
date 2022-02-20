@@ -13,7 +13,7 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
             if (string.IsNullOrEmpty(input)) return input;
 
             Match startUnderscores = Regex.Match(input, @"^_+");
-            return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
+            return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLowerInvariant();
         }
         
         public static string ToPascalCase(this string input)
@@ -21,7 +21,7 @@ namespace VShop.SharedKernel.Infrastructure.Extensions
             if (!input.Contains(' ')) input = Regex.Replace(input, "(?<=[a-z])(?=[A-Z])", " ");
             
             return CultureInfo.CurrentCulture.TextInfo
-                .ToTitleCase(input.ToLower())
+                .ToTitleCase(input.ToLowerInvariant())
                 .Replace(" ", string.Empty)
                 .Replace("_", string.Empty);
         }
