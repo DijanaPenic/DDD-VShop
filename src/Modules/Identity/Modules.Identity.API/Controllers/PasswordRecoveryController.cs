@@ -1,26 +1,16 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
-using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Commands;
 using VShop.Modules.Identity.Infrastructure.Attributes;
 
 namespace VShop.Modules.Identity.API.Controllers;
 
-[ApiController]
-[Route("api/password-recovery")]
-internal class PasswordRecoveryController : ApplicationControllerBase
+internal partial class AccountController
 {
-    private const string Policy = "auth";
-
-    private readonly ICommandDispatcher _commandDispatcher;
-
-    public PasswordRecoveryController(ICommandDispatcher commandDispatcher)
-        => _commandDispatcher = commandDispatcher;
-
     [HttpPost]
+    [Route("password-recovery")]
     [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -34,6 +24,7 @@ internal class PasswordRecoveryController : ApplicationControllerBase
     }
     
     [HttpPut]
+    [Route("password-recovery")]
     [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
