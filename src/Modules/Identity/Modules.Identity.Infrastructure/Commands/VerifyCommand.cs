@@ -12,15 +12,15 @@ internal class VerifyCommandValidator : AbstractValidator<VerifyCommand>
 {
     public VerifyCommandValidator()
     {
-        RuleFor(av => av.Type).NotEmpty();
+        RuleFor(c => c.Type).NotEmpty();
        
-        When(av => av.Type == AccountVerificationType.PhoneNumber, () =>
+        When(c => c.Type == AccountVerificationType.PhoneNumber, () =>
         {
-            RuleFor(av => av.PhoneNumber).NotEmpty().PhoneNumber();
-            RuleFor(av => av.Token).NotEmpty();
+            RuleFor(c => c.PhoneNumber).NotEmpty().PhoneNumber();
+            RuleFor(c => c.Token).NotEmpty();
         }).Otherwise
         (() => {
-            RuleFor(av => av.Token).NotEmpty().Base64Encoded();
+            RuleFor(c => c.Token).NotEmpty().Base64Encoded();
         });
     }
 }

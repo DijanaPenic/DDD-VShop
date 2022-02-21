@@ -1,12 +1,12 @@
 ﻿using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 using VShop.Modules.Identity.Infrastructure.Commands.Shared;
 using VShop.Modules.Identity.Integration.Events;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Integration.Services.Contracts;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {

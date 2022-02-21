@@ -140,16 +140,4 @@ internal partial class AccountController : ApplicationControllerBase
         Result result = await _commandDispatcher.SendAsync(command with { UserId = userId });
         return HandleResult(result, NoContent);
     }
-    
-    // For testing purposes -> remove after testing.
-    [HttpPost]
-    [Route("test-auth")]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [Authorize(Policy)]
-    public IActionResult TestAuthorizationAsync()
-    {
-        return Ok();
-    }
 }

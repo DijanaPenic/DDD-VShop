@@ -20,15 +20,15 @@ internal class SendVerificationTokenCommandValidator : AbstractValidator<SendVer
 {
     public SendVerificationTokenCommandValidator()
     { 
-        RuleFor(av => av.Type).NotEmpty();
+        RuleFor(c => c.Type).NotEmpty();
             
-        When(av => av.Type == AccountVerificationType.PhoneNumber, () =>
+        When(c => c.Type is AccountVerificationType.PhoneNumber, () =>
         {
-            RuleFor(av => av.CountryCodeNumber).NotEmpty();
-            RuleFor(av => av.PhoneNumber).NotEmpty().PhoneNumber();
+            RuleFor(c => c.CountryCodeNumber).NotEmpty();
+            RuleFor(c => c.PhoneNumber).NotEmpty().PhoneNumber();
         }).Otherwise(() =>
         {
-            RuleFor(av => av.ConfirmationUrl).NotEmpty();
+            RuleFor(c => c.ConfirmationUrl).NotEmpty();
         });
     }
 }
