@@ -42,8 +42,8 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 
                 integrationEvent = new EmailVerificationTokenRequestedIntegrationEvent
                 (
-                    user.Id, token.Base64Encode(),
-                    user.Email, command.ConfirmationUrl
+                    user.Id, user.Email, 
+                    token, command.ConfirmationUrl
                 );
             }
             else
@@ -53,8 +53,8 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
                 
                 integrationEvent = new PhoneNumberVerificationTokenRequestedIntegrationEvent
                 (
-                    user.Id, token,
-                    phoneNumber, command.IsVoiceCall
+                    user.Id, phoneNumber, 
+                    token, command.IsVoiceCall
                 );
             }
             

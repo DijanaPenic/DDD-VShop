@@ -11,8 +11,8 @@ internal record SignUpCommand
     string Email,
     string Password,
     string ConfirmPassword,
-    string ActivationUrl
-) : ICommand<Guid>;
+    string ConfirmationUrl
+) : ICommand;
 
 internal class SignUpCommandValidator : AbstractValidator<SignUpCommand>
 {
@@ -20,7 +20,7 @@ internal class SignUpCommandValidator : AbstractValidator<SignUpCommand>
     {
         RuleFor(c => c.UserName).NotEmpty();
         RuleFor(c => c.Email).NotEmpty().EmailAddress();
-        RuleFor(c => c.ActivationUrl).NotEmpty();
+        RuleFor(c => c.ConfirmationUrl).NotEmpty();
         
         RuleFor(c => c.Password).NotEmpty().Password();
         RuleFor(c => c.ConfirmPassword)

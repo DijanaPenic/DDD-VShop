@@ -4,7 +4,6 @@ using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Identity.Integration.Events;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
-using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
@@ -42,7 +41,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
                 UserId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                Token = token.Base64Encode(),
+                Token = token,
                 ConfirmationUrl = confirmationUrl
             };
 

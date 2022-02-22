@@ -9,7 +9,6 @@ using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Commands;
 using VShop.Modules.Identity.Infrastructure.Attributes;
-using VShop.Modules.Identity.Infrastructure.Commands.Shared;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 using VShop.Modules.Identity.Infrastructure.Models;
 using VShop.Modules.Identity.Infrastructure.Queries;
@@ -48,18 +47,8 @@ internal partial class AccountController : ApplicationControllerBase
     [ClientAuthorization]
     public async Task<IActionResult> SignUpAsync([FromBody] SignUpCommand command)
     {
-        Result<Guid> signUpResult = await _commandDispatcher.SendAsync(command);
-        if(signUpResult.IsError) return HandleError(signUpResult.Error);
-        
-        SendVerificationTokenCommand sendTokenCommand = new()
-        {
-            UserId = signUpResult.Data,
-            Type = AccountVerificationType.Email,
-            ConfirmationUrl = command.ActivationUrl
-        };
-        
-        Result sendTokenResult = await _commandDispatcher.SendAsync(sendTokenCommand);
-        return HandleResult(sendTokenResult, NoContent);
+        Result result = await _commandDispatcher.SendAsync(command);
+        return HandleResult(result, NoContent);
     }
     
     [HttpPost]
@@ -111,7 +100,7 @@ internal partial class AccountController : ApplicationControllerBase
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [Authorize(Policy)]
-    public async Task<IActionResult> GetAsync([FromRoute] Guid userId)
+    public async Task<IActionResult> GetUserAsync([FromRoute] Guid userId)
     {
         GetUserQuery query = new(userId);
         Result<User> result = await _queryDispatcher.QueryAsync(query);

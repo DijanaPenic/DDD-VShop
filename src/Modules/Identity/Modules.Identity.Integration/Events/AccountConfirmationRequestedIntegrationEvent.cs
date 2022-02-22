@@ -2,13 +2,12 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 namespace VShop.Modules.Identity.Integration.Events;
 
-public partial class PasswordRecoveryRequestedIntegrationEvent : IIntegrationEvent
+public partial class AccountConfirmationRequestedIntegrationEvent : IIntegrationEvent
 {
-    public PasswordRecoveryRequestedIntegrationEvent
+    public AccountConfirmationRequestedIntegrationEvent
     (
         Guid userId,
         string email,
-        string userName,
         string token,
         string confirmationUrl
     )
@@ -16,7 +15,6 @@ public partial class PasswordRecoveryRequestedIntegrationEvent : IIntegrationEve
         UserId = userId;
         Token = token;
         Email = email;
-        UserName = userName;
         ConfirmationUrl = confirmationUrl;
     }
 }

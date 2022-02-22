@@ -7,8 +7,8 @@ public partial class EmailVerificationTokenRequestedIntegrationEvent : IIntegrat
     public EmailVerificationTokenRequestedIntegrationEvent
     (
         Guid userId,
-        string token,
         string email,
+        string token,
         string confirmationUrl
     )
     {

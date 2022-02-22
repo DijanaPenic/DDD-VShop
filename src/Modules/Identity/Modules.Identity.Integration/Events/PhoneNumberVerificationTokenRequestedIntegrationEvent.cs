@@ -7,8 +7,8 @@ public partial class PhoneNumberVerificationTokenRequestedIntegrationEvent : IIn
     public PhoneNumberVerificationTokenRequestedIntegrationEvent
     (
         Guid userId,
-        string token,
         string phoneNumber,
+        string token,
         bool isVoiceCall
     )
     {
