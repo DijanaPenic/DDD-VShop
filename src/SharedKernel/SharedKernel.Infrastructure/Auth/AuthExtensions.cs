@@ -22,7 +22,7 @@ public static class AuthExtensions
 {
     public static IServiceCollection AddAuth(this IServiceCollection services, params Module[] modules)
     {
-        AuthOptions options = services.GetOptions<AuthOptions>("Auth");
+        AuthOptions options = services.GetOptions<AuthOptions>(AuthOptions.Section);
 
         TokenValidationParameters tokenValidationParameters = new()
         {

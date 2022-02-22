@@ -45,7 +45,7 @@ internal class ProcessManagerModule : Module
         PostgresOptions postgresOptions = configuration
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration
-            .GetOptions<EventStoreOptions>("EventStore");
+            .GetOptions<EventStoreOptions>(EventStoreOptions.Section);
         
         services.AddInfrastructure(Assemblies, Name, logger);
         services.AddPostgres(postgresOptions.ConnectionString);

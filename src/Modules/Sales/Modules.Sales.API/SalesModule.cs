@@ -59,7 +59,7 @@ internal class SalesModule : Module
         PostgresOptions postgresOptions = configuration
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration
-            .GetOptions<EventStoreOptions>("EventStore");
+            .GetOptions<EventStoreOptions>(EventStoreOptions.Section);
         
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
