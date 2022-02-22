@@ -142,10 +142,16 @@ public static class AuthExtensions
             
             if (ctx.ContainsCookie(ApplicationIdentityConstants.AccessTokenScheme))
                 authScheme = JwtBearerDefaults.AuthenticationScheme;
+            
             else if (ctx.ContainsCookie(ApplicationIdentityConstants.AccountVerificationScheme))
                 authScheme = ApplicationIdentityConstants.AccountVerificationScheme;
+            
             else if (ctx.ContainsCookie(IdentityConstants.TwoFactorUserIdScheme))
                 authScheme = IdentityConstants.TwoFactorUserIdScheme;
+            
+            else if (ctx.ContainsCookie(IdentityConstants.ExternalScheme))
+                authScheme = IdentityConstants.ExternalScheme;
+            
             else authScheme = ApplicationAuthSchemes.ClientAuthenticationScheme;
 
             AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
