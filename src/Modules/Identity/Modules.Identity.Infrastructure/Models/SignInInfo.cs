@@ -17,11 +17,3 @@ internal class SignInInfo
         PhoneNumber = phoneNumber;
     }
 }
-
-internal enum AccountVerificationStep
-{
-    None = 0,
-    TwoFactor = 1,
-    Email = 2,
-    MobilePhone = 3,
-}

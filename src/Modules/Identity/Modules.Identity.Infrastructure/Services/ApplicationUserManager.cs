@@ -44,7 +44,6 @@ internal sealed class ApplicationUserManager : UserManager<User>
         if (await _userRoleStore.IsInRoleAsync(user, normalizedRole, CancellationToken))
         {
             Logger.LogWarning(5, "User {userId} is already in role {role}.", await GetUserIdAsync(user), role);
-
             return IdentityResult.Failed(ErrorDescriber.UserAlreadyInRole(role));
         }
 
@@ -66,14 +65,11 @@ internal sealed class ApplicationUserManager : UserManager<User>
         return await _userStore.UpdateAsync(user, CancellationToken);
     }
 
-    // User can initiate external login request multiple times, so need to support update of the existing login record
+    // User can initiate external login request multiple times, so need to support update of the existing login record.
     public async Task<IdentityResult> AddOrUpdateLoginAsync(User user, UserLoginInfo login, string token)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
-
-        if (login is null)
-            throw new ArgumentNullException(nameof(login));
+        if (user is null) throw new ArgumentNullException(nameof(user));
+        if (login is null) throw new ArgumentNullException(nameof(login));
 
         try
         {
@@ -100,11 +96,8 @@ internal sealed class ApplicationUserManager : UserManager<User>
 
     public async Task<IdentityResult> ConfirmLoginAsync(User user, string token)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
-
-        if (string.IsNullOrEmpty(token))
-            throw new ArgumentNullException(nameof(token));
+        if (user is null) throw new ArgumentNullException(nameof(user));
+        if (string.IsNullOrEmpty(token)) throw new ArgumentNullException(nameof(token));
 
         try
         {
@@ -128,8 +121,7 @@ internal sealed class ApplicationUserManager : UserManager<User>
 
     public async Task<IdentityResult> ApproveUserAsync(User user)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
+        if (user is null) throw new ArgumentNullException(nameof(user));
 
         await _userStore.ApproveUserAsync(user, CancellationToken);
         return await _userStore.UpdateAsync(user, CancellationToken);
@@ -137,8 +129,7 @@ internal sealed class ApplicationUserManager : UserManager<User>
 
     public async Task<IdentityResult> DisapproveUserAsync(User user)
     {
-        if (user is null)
-            throw new ArgumentNullException(nameof(user));
+        if (user is null) throw new ArgumentNullException(nameof(user));
 
         await _userStore.DisapproveUserAsync(user, CancellationToken);
         return await _userStore.UpdateAsync(user, CancellationToken);
