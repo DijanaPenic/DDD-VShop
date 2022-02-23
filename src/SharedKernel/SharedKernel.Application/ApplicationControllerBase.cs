@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Errors;
@@ -45,5 +47,25 @@ namespace VShop.SharedKernel.Application
                 notFoundError => NotFound(notFoundError.Message),
                 unauthorized => Unauthorized(unauthorized.Message)
             );
+        
+        protected class ChallengeResult : ActionResult
+        {
+            public AuthenticationProperties AuthenticationProperties { get; }
+            public string AuthScheme { get; }
+        
+            public ChallengeResult(AuthenticationProperties authenticationProperties, string authScheme)
+            {
+                AuthenticationProperties = authenticationProperties;
+                AuthScheme = authScheme;
+            }
+
+            public override async Task ExecuteResultAsync(ActionContext context)
+            {
+                if (context is null) throw new ArgumentNullException(nameof(context));
+
+                await context.HttpContext.ChallengeAsync(AuthScheme, AuthenticationProperties);
+                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            }
+        }
     }
 }

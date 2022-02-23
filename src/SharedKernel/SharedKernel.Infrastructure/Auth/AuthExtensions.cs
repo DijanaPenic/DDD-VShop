@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Auth.Constants;
+using VShop.SharedKernel.Infrastructure.Auth.Handlers;
 
 namespace VShop.SharedKernel.Infrastructure.Auth;
 
@@ -80,6 +83,19 @@ public static class AuthExtensions
             };
         }
         
+        Action<OAuthOptions> ExternalLoginAuthOptions(string providerName)
+        {
+            ExternalLoginOptions config = services.GetOptions<ExternalLoginOptions>
+                ($"{ExternalLoginOptions.SectionName}:{providerName}");
+
+            return loginAuthOptions =>
+            {
+                loginAuthOptions.ClientId = config.ClientId;
+                loginAuthOptions.ClientSecret = config.ClientSecret;
+                loginAuthOptions.SignInScheme = IdentityConstants.ExternalScheme;
+            };
+        }
+        
         services
             .AddAuthentication(o =>
             {
@@ -112,6 +128,7 @@ public static class AuthExtensions
                     },
                 };
             })
+            .AddGoogle(ExternalLoginAuthOptions(ExternalLoginProviders.Google))
             .AddCookie(ApplicationIdentityConstants.AccountVerificationScheme, CookieAuthOptions)
             .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, CookieAuthOptions)
             .AddCookie(IdentityConstants.TwoFactorUserIdScheme, CookieAuthOptions)
@@ -120,6 +137,7 @@ public static class AuthExtensions
         services.AddSingleton(options);
         services.AddSingleton(cookieOptions);
         services.AddSingleton(tokenValidationParameters);
+        services.AddTransient<GoogleHandler, ApplicationGoogleHandler>();
 
         IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
             .Select(p => p.ToLowerInvariant());
