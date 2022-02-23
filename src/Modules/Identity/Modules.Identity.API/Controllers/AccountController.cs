@@ -78,7 +78,7 @@ internal partial class AccountController : ApplicationControllerBase
         return HandleResult(result, NoContent);
     }
     
-    [HttpPost]
+    [HttpPut]
     [Route("{userId:guid}/verify")]
     [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]

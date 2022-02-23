@@ -14,6 +14,5 @@ internal class DisconnectExternalLoginCommandValidator : AbstractValidator<Disco
         RuleFor(c => c.UserId).NotEmpty();
         RuleFor(c => c.LoginProvider).NotEmpty();
         RuleFor(c => c.ProviderKey).NotEmpty();
-
     }
 }

@@ -8,7 +8,7 @@ internal record SignUpExternalCommand
 (
     string UserName, 
     string AssociateEmail, 
-    bool AssociateExistingAccount, 
+    bool AssociateAccount, 
     string ConfirmationUrl
 ) : ICommand;
     
@@ -17,7 +17,7 @@ internal class SignUpExternalCommandValidator : AbstractValidator<SignUpExternal
 {
     public SignUpExternalCommandValidator()
     {
-        RuleFor(c => c.AssociateExistingAccount).NotEmpty();
+        RuleFor(c => c.AssociateAccount).NotEmpty();
         RuleFor(c => c.ConfirmationUrl).NotEmpty();
     }
 }
