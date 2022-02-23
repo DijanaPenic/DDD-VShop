@@ -11,4 +11,5 @@ internal interface IApplicationLoginUserStore : IUserLoginStore<User>
     Task ConfirmLoginAsync(UserLogin login, CancellationToken cancellationToken);
     Task<UserLogin> FindLoginAsync(UserLoginInfo login, CancellationToken cancellationToken);
     Task<UserLogin> FindLoginAsync(User user, string token, CancellationToken cancellationToken);
+    Task<User> FindByLoginAsync(UserLoginInfo login, bool loginConfirmed, CancellationToken cancellationToken);
 }

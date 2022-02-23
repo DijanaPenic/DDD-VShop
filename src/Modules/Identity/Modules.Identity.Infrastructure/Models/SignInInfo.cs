@@ -1,3 +1,5 @@
+using VShop.Modules.Identity.Infrastructure.DAL.Entities;
+
 namespace VShop.Modules.Identity.Infrastructure.Models;
 
 internal class SignInInfo
@@ -10,10 +12,10 @@ internal class SignInInfo
     public string RefreshToken { get; set; }
     public AccountVerificationStep VerificationStep { get; set; }
         
-    public SignInInfo(Guid userId, string email, string phoneNumber)
+    public SignInInfo(User user)
     {
-        UserId = userId;
-        Email = email;
-        PhoneNumber = phoneNumber;
+        UserId = user.Id;
+        Email = user.Email;
+        PhoneNumber = user.PhoneNumber;
     }
 }

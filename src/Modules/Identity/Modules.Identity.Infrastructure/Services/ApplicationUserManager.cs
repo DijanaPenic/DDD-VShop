@@ -64,9 +64,14 @@ internal sealed class ApplicationUserManager : UserManager<User>
         await _passwordStore.SetPasswordHashAsync(user, newPasswordHash, CancellationToken);
         return await _userStore.UpdateAsync(user, CancellationToken);
     }
+    
+    public Task<User> FindByLoginAsync(UserLoginInfo login, bool loginConfirmed = true)
+    {
+        if (login is null) throw new ArgumentNullException(nameof(login));
+        return _loginStore.FindByLoginAsync(login, loginConfirmed, CancellationToken);
+    }
 
-    // User can initiate external login request multiple times, so need to support update of the existing login record.
-    public async Task<IdentityResult> AddOrUpdateLoginAsync(User user, UserLoginInfo login, string token)
+    public async Task<IdentityResult> SetLoginAsync(User user, UserLoginInfo login, string token)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
         if (login is null) throw new ArgumentNullException(nameof(login));

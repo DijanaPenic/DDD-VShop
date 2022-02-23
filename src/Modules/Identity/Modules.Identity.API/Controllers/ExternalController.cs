@@ -43,6 +43,20 @@ internal partial class AccountController
         Result<AuthenticationProperties> result = await _commandDispatcher.SendAsync(command);
         return new ChallengeResult(result.Data, command.Provider);
     }
+    
+    [HttpPost]
+    [Route("external/sign-in")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(SignInInfo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [Authorize(AuthenticationSchemes = "Identity.External")]
+    public async Task<IActionResult> SignInAsync([FromBody] SignInExternalCommand command)
+    {
+        Result<SignInInfo> result = await _commandDispatcher.SendAsync(command);
+        return HandleResult(result, Ok);
+    }
 
     [HttpPost]
     [Route("external/sign-up")]
@@ -57,21 +71,7 @@ internal partial class AccountController
         Result result = await _commandDispatcher.SendAsync(command);
         return HandleResult(result, NoContent);
     }
-    
-    [HttpPost]
-    [Route("external/sign-in")]
-    [Consumes("application/json")]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [Authorize(AuthenticationSchemes = "Identity.External")]
-    public async Task<IActionResult> SignInAsync([FromBody] SignInExternalCommand command)
-    {
-        Result result = await _commandDispatcher.SendAsync(command);
-        return HandleResult(result, NoContent);
-    }
-    
+
     [HttpGet]
     [Route("{userId:guid}/external")]
     [ProducesResponseType(typeof(List<ExternalLoginInfo>), (int)HttpStatusCode.OK)]

@@ -33,13 +33,22 @@ internal class AuthenticationService : IAuthenticationService
         _cookieOptions = cookieOptions;
     }
 
-    public async Task<Result<SignInInfo>> FinalizeSignInAsync(SignInResult signInResult, User user)
+    public async Task<Result<SignInInfo>> FinalizeSignInAsync
+    (
+        SignInResult signInResult,
+        User user,
+        string externalLoginProvider = null
+    )
     {
-        SignInInfo signInResponse = new(user.Id, user.Email, user.PhoneNumber);
-        
+        SignInInfo signInResponse = new(user);
         if (signInResult.Succeeded)
         {
-            JsonWebToken token = await _authManager.CreateTokenAsync(user.Id, _identityContext.ClientId);
+            JsonWebToken token = await _authManager.CreateTokenAsync
+            (
+                user.Id,
+                _identityContext.ClientId,
+                externalLoginProvider
+            );
             AddCookie(ApplicationIdentityConstants.AccessTokenScheme, token.AccessToken);
 
             signInResponse.Roles = token.Roles.ToArray();
