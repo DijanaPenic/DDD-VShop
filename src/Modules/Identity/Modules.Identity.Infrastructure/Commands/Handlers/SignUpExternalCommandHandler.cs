@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Identity.Integration.Events;
@@ -41,12 +40,12 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 
             (string userName, string associateEmail, bool associate, string confirmationUrl) = command;
             
-            if (associate) return await AssociateUserAsync(externalLoginInfo, associateEmail, confirmationUrl, cancellationToken);
+            if (associate) return await AssociateToUserAsync(externalLoginInfo, associateEmail, confirmationUrl, cancellationToken);
             
             return await CreateUserAsync(externalLoginInfo, userName, cancellationToken);
         }
 
-        private async Task<Result> AssociateUserAsync
+        private async Task<Result> AssociateToUserAsync
         (
             UserLoginInfo loginInfo,
             string associateEmail,
@@ -57,12 +56,12 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             User existingUser = await _userManager.FindByEmailAsync(associateEmail);
             
             if (existingUser is null) return Result.NotFoundError("User not found.");
-            if (!existingUser.IsApproved) return Result.ValidationError("User not allowed.");
+            if (!existingUser.IsApproved) return Result.ValidationError("User not approved.");
             if (!existingUser.EmailConfirmed) return Result.ValidationError("User email not confirmed.");
 
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(existingUser);
 
-            IdentityResult result = await _userManager.AddOrUpdateLoginAsync(existingUser, loginInfo, token);
+            IdentityResult result = await _userManager.SetLoginAsync(existingUser, loginInfo, token);
             if (!result.Succeeded) return Result.ValidationError(result.Errors);
 
             ExternalAccountConfirmationRequestedIntegrationEvent integrationEvent = new
@@ -82,6 +81,10 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             CancellationToken cancellationToken = default
         )
         {
+            User existingUser = await _userManager.FindByNameAsync(userName);
+            if (existingUser is not null) 
+                return Result.ValidationError($"A user with {userName} username already exists in the system.");
+            
             string email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             string phoneNumber = loginInfo.Principal.FindFirstValue(ClaimTypes.MobilePhone);
 
@@ -109,7 +112,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             IdentityResult createLoginResult = await _userManager.AddLoginAsync(newUser, loginInfo);
             if (!createLoginResult.Succeeded) return Result.ValidationError(createLoginResult.Errors);
             
-            IIntegrationEvent integrationEvent = new CustomerSignedUpIntegrationEvent(newUser.Id);
+            CustomerSignedUpIntegrationEvent integrationEvent = new(newUser.Id);
             await _integrationEventService.SaveEventAsync(integrationEvent, cancellationToken);
             
             return Result.Success;
