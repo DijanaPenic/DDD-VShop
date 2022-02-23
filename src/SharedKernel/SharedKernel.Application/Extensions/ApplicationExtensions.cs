@@ -130,15 +130,15 @@ public static class ApplicationExtensions
             ForwardedHeaders = ForwardedHeaders.All
         });
         
-        app.UseSwagger();
-        
-        app.UseReDoc(reDoc =>
-        {
-            reDoc.RoutePrefix = "docs";
-            reDoc.SpecUrl("/swagger/v1/swagger.json");
-            reDoc.DocumentTitle = "Modular API";
-        });
-        
+        // app.UseSwagger();
+        //
+        // app.UseReDoc(reDoc =>
+        // {
+        //     reDoc.RoutePrefix = "docs";
+        //     reDoc.SpecUrl("/swagger/v1/swagger.json");
+        //     reDoc.DocumentTitle = "Modular API";
+        // });
+        //
         app.UseRouting();
 
         app.UseAuthorization();

@@ -81,7 +81,7 @@ internal partial class AccountController
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [Authorize]
-    public async Task<IActionResult> GetExternalLoginAsync([FromRoute] Guid userId)
+    public async Task<IActionResult> GetExternalLoginsAsync([FromRoute] Guid userId)
     {
         bool hasPermissions = _identityContext.IsCurrentUser(userId) || _identityContext.IsAuthorized(Policy);
         if (!hasPermissions) return Forbid();

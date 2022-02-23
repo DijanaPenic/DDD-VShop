@@ -13,7 +13,8 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
     {
         private readonly ApplicationUserManager _userManager;
 
-        public VerifyCommandHandler(ApplicationUserManager userManager) => _userManager = userManager;
+        public VerifyCommandHandler(ApplicationUserManager userManager) 
+            => _userManager = userManager;
 
         public async Task<Result> Handle
         (

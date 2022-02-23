@@ -398,7 +398,7 @@ internal sealed class ApplicationUserStore :
         if (string.IsNullOrWhiteSpace(token))
             throw new ArgumentNullException(nameof(token));
 
-        UserLogin loginEntity = new UserLogin
+        UserLogin loginEntity = new()
         {
             LoginProvider = login.LoginProvider,
             ProviderDisplayName = login.ProviderDisplayName,

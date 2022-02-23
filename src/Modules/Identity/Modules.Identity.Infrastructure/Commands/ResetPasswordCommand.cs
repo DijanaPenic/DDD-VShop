@@ -15,7 +15,8 @@ internal class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCo
 
         RuleFor(c => c.ConfirmPassword)
             .NotEmpty()
-            .Equal(c => c.Password).WithMessage("The new password and confirmation password must match.");
+            .Equal(c => c.Password)
+            .WithMessage("The new password and confirmation password must match.");
 
         RuleFor(c => c.Token).NotEmpty().Base64Encoded();
         RuleFor(c => c.UserId).NotEmpty();

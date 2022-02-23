@@ -9,5 +9,5 @@ public class ClaimsComparer : IEqualityComparer<Claim>
         => y is not null && x is not null && x.Value == y.Value;
 
     public int GetHashCode(Claim claim)
-        => claim.Value?.GetHashCode() ?? 0;
+        => claim.Value.GetHashCode();
 }

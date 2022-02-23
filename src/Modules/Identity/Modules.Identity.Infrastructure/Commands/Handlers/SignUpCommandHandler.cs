@@ -53,10 +53,10 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             IdentityResult roleResult = await _userManager.AddToRoleAsync(user, Roles.Customer);
             if (!roleResult.Succeeded) return Result.ValidationError(roleResult.Errors);
 
-            IIntegrationEvent customerSignedUpIntegrationEvent = new CustomerSignedUpIntegrationEvent(user.Id);
+            CustomerSignedUpIntegrationEvent customerSignedUpIntegrationEvent = new(user.Id);
             
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            IIntegrationEvent confirmationRequestedIntegrationEvent = new AccountConfirmationRequestedIntegrationEvent
+            AccountConfirmationRequestedIntegrationEvent confirmationRequestedIntegrationEvent = new
             (
                 user.Id, email, 
                 token, confirmationUrl
