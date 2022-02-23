@@ -28,16 +28,16 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 
             string decodedToken = token.Base64Decode();
 
-            if (user.EmailConfirmed)
+            if (!user.EmailConfirmed)
             {
-                // Create a new external login for the user.
-                IdentityResult confirmLoginResult = await _userManager.ConfirmLoginAsync(user, decodedToken);
-                if (!confirmLoginResult.Succeeded) return Result.ValidationError(confirmLoginResult.Errors);
+                // External provider is authenticated source so we can confirm the email.
+                IdentityResult confirmEmailResult = await _userManager.ConfirmEmailAsync(user, decodedToken);
+                if (!confirmEmailResult.Succeeded) return Result.ValidationError(confirmEmailResult.Errors);
             }
-            
-            // External provider is authenticated source so we can confirm the email.
-            IdentityResult confirmEmailResult = await _userManager.ConfirmEmailAsync(user, decodedToken);
-            if (!confirmEmailResult.Succeeded) return Result.ValidationError(confirmEmailResult.Errors);
+
+            // Create a new external login for the user.
+            IdentityResult confirmLoginResult = await _userManager.ConfirmLoginAsync(user, decodedToken);
+            if (!confirmLoginResult.Succeeded) return Result.ValidationError(confirmLoginResult.Errors);
             
             return Result.Success;
         }
