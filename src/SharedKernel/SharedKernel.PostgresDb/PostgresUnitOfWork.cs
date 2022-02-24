@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-
+using Serilog;
 using VShop.SharedKernel.PostgresDb.Contracts;
 
 namespace VShop.SharedKernel.PostgresDb;
@@ -11,9 +11,15 @@ namespace VShop.SharedKernel.PostgresDb;
 public class PostgresUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbContextBase
 {
     private readonly TDbContext _dbContext;
+    private readonly ILogger _logger;
     public IDbContextTransaction CurrentTransaction => _dbContext.CurrentTransaction;
-    protected PostgresUnitOfWork(TDbContext dbContext) => _dbContext = dbContext;
-    
+
+    protected PostgresUnitOfWork(TDbContext dbContext, ILogger logger)
+    {
+        _dbContext = dbContext;
+        _logger = logger;
+    }
+
     public async Task<Guid> ExecuteAsync
     (
         Func<Task> action,
@@ -36,9 +42,11 @@ public class PostgresUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbC
                 return transactionId;
             });
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.Error(ex, "Unhandled error has occurred");
             await _dbContext.RollbackTransactionAsync(cancellationToken);
+            
             throw;
         }
     }
@@ -63,9 +71,11 @@ public class PostgresUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbC
                 return (transactionId, response);
             });
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.Error(ex, "Unhandled error has occurred");
             await _dbContext.RollbackTransactionAsync(cancellationToken);
+            
             throw;
         }
     }
