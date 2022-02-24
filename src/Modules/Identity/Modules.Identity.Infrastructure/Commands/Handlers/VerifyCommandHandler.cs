@@ -30,7 +30,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             IdentityResult verificationResult;
             
             if (type is AccountVerificationType.Email)
-                verificationResult = await _userManager.ConfirmEmailAsync(user, token.Base64Decode());
+                verificationResult = await _userManager.ConfirmEmailAsync(user, token);
             else
                 verificationResult = await _userManager.ChangePhoneNumberAsync(user, phoneNumber.GetDigits(), token);
 

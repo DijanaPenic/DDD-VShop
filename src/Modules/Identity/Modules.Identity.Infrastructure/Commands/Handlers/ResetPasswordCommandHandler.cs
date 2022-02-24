@@ -4,7 +4,6 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
-using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
@@ -27,7 +26,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             IdentityResult result = await _userManager.ResetPasswordAsync
             (
                 user,
-                command.Token.Base64Decode(),
+                command.Token,
                 command.Password
             );
             if (!result.Succeeded) return Result.ValidationError(result.Errors);

@@ -18,9 +18,9 @@ internal class VerifyCommandValidator : AbstractValidator<VerifyCommand>
         {
             RuleFor(c => c.PhoneNumber).NotEmpty().PhoneNumber();
             RuleFor(c => c.Token).NotEmpty();
-        }).Otherwise
-        (() => {
-            RuleFor(c => c.Token).NotEmpty().Base64Encoded();
+        }).Otherwise(() => 
+        {
+            RuleFor(c => c.Token).NotEmpty();
         });
     }
 }
