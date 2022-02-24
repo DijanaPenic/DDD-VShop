@@ -26,9 +26,12 @@ namespace VShop.Modules.Identity.Infrastructure.Configuration
 
 
             // Configure integration events - local
+            registry.Add<AccountConfirmationRequestedIntegrationEvent>(nameof(AccountConfirmationRequestedIntegrationEvent));
             registry.Add<CustomerSignedUpIntegrationEvent>(nameof(CustomerSignedUpIntegrationEvent));
-            registry.Add<PhoneNumberVerificationTokenRequestedIntegrationEvent>(nameof(PhoneNumberVerificationTokenRequestedIntegrationEvent));
             registry.Add<EmailVerificationTokenRequestedIntegrationEvent>(nameof(EmailVerificationTokenRequestedIntegrationEvent));
+            registry.Add<ExternalAccountConfirmationRequestedIntegrationEvent>(nameof(ExternalAccountConfirmationRequestedIntegrationEvent));
+            registry.Add<PasswordRecoveryRequestedIntegrationEvent>(nameof(PasswordRecoveryRequestedIntegrationEvent));
+            registry.Add<PhoneNumberVerificationTokenRequestedIntegrationEvent>(nameof(PhoneNumberVerificationTokenRequestedIntegrationEvent));
 
             // Configure integration events - remote
         }
