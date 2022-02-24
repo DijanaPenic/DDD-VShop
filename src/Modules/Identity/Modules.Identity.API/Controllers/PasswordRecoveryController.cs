@@ -24,16 +24,16 @@ internal partial class AccountController
     }
     
     [HttpPut]
-    [Route("password-recovery")]
+    [Route("{userId:guid}/password-recovery")]
     [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ClientAuthorization]
-    public async Task<IActionResult> ResetAsync([FromBody] ResetPasswordCommand command)
+    public async Task<IActionResult> ResetAsync([FromRoute] Guid userId, [FromBody] ResetPasswordCommand command)
     {
-        Result result = await _commandDispatcher.SendAsync(command);
+        Result result = await _commandDispatcher.SendAsync(command with { UserId = userId});
         return HandleResult(result, NoContent);
     }
 }
