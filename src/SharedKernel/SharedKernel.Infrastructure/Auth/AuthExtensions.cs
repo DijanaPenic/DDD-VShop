@@ -137,7 +137,6 @@ public static class AuthExtensions
         services.AddSingleton(options);
         services.AddSingleton(cookieOptions);
         services.AddSingleton(tokenValidationParameters);
-        services.AddTransient<GoogleHandler, ApplicationGoogleHandler>();
 
         IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
             .Select(p => p.ToLowerInvariant());
