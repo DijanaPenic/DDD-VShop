@@ -37,18 +37,15 @@ internal class AuthenticationService : IAuthenticationService
     (
         SignInResult signInResult,
         User user,
-        string externalLoginProvider = null
+        string loginProvider = null
     )
     {
         SignInInfo signInResponse = new(user);
         if (signInResult.Succeeded)
         {
-            JsonWebToken token = await _authManager.CreateTokenAsync
-            (
-                user.Id,
-                _identityContext.ClientId,
-                externalLoginProvider
-            );
+            Guid clientId = _identityContext.ClientId;
+            JsonWebToken token = await _authManager.CreateTokenAsync(user.Id, clientId, loginProvider);
+            
             AddCookie(ApplicationIdentityConstants.AccessTokenScheme, token.AccessToken);
 
             signInResponse.Roles = token.Roles.ToArray();
@@ -83,9 +80,9 @@ internal class AuthenticationService : IAuthenticationService
         return Task.CompletedTask;
     }
 
-    private void AddCookie(string key, string value) 
+    private void AddCookie(string key, string value)
         => _httpContext.Response.Cookies.Append(key, value, _cookieOptions);
     
-    private void DeleteCookie(string key) 
+    private void DeleteCookie(string key)
         => _httpContext.Response.Cookies.Delete(key, _cookieOptions);
 }

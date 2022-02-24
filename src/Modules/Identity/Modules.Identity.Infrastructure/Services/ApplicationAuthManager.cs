@@ -59,7 +59,7 @@ internal sealed class ApplicationAuthManager
     (
         Guid userId,
         Guid clientId,
-        string externalLoginProvider = null,
+        string loginProvider = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -83,8 +83,8 @@ internal sealed class ApplicationAuthManager
         
         jwtClaims.AddRange(roleClaims);
 
-        if (!string.IsNullOrEmpty(externalLoginProvider))
-            jwtClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, externalLoginProvider));
+        if (!string.IsNullOrEmpty(loginProvider))
+            jwtClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, loginProvider));
 
         Client client = await _clientStore.FindClientByKeyAsync(clientId, cancellationToken);
         Instant accessTokenExpires = now.Plus(Duration.FromMinutes(client.AccessTokenLifeTime));

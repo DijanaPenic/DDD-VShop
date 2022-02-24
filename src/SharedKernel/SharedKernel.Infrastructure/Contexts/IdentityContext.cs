@@ -50,7 +50,7 @@ public class IdentityContext : IIdentityContext
 
     public static IIdentityContext Empty => new IdentityContext();
     public bool IsCurrentUser(Guid userId) => UserId == userId;
-    public bool IsAuthorized(string policy) 
+    public bool IsAuthorized(string policy)
         => Claims
             .Where(c => c.Key == "permission")
             .SelectMany(c => c.Value)

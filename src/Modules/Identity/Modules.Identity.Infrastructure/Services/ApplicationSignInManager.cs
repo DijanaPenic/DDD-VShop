@@ -50,8 +50,7 @@ internal sealed class ApplicationSignInManager
         get
         {
             HttpContext context = _context ?? _contextAccessor?.HttpContext;
-            if (context is null)
-                throw new InvalidOperationException("HttpContext must not be null.");
+            if (context is null) throw new InvalidOperationException("HttpContext must not be null.");
 
             return context;
         }
@@ -84,7 +83,7 @@ internal sealed class ApplicationSignInManager
     {
         if (Options.SignIn.RequireConfirmedEmail && !(await UserManager.IsEmailConfirmedAsync(user)))
         {
-            Logger.Warning("User {userId} cannot sign in without a confirmed email.",
+            Logger.Warning("User {UserId} cannot sign in without a confirmed email",
                 await UserManager.GetUserIdAsync(user));
 
             return false;
@@ -92,7 +91,7 @@ internal sealed class ApplicationSignInManager
 
         if (Options.SignIn.RequireConfirmedPhoneNumber && !(await UserManager.IsPhoneNumberConfirmedAsync(user)))
         {
-            Logger.Warning("User {userId} cannot sign in without a confirmed phone number.",
+            Logger.Warning("User {UserId} cannot sign in without a confirmed phone number",
                 await UserManager.GetUserIdAsync(user));
 
             return false;
@@ -100,7 +99,7 @@ internal sealed class ApplicationSignInManager
 
         if (Options.SignIn.RequireConfirmedAccount && !(await _confirmation.IsConfirmedAsync(UserManager, user)))
         {
-            Logger.Warning("User {userId} cannot sign in without a confirmed account.",
+            Logger.Warning("User {UserId} cannot sign in without a confirmed account",
                 await UserManager.GetUserIdAsync(user));
 
             return false;
@@ -232,7 +231,7 @@ internal sealed class ApplicationSignInManager
         if (await ValidateSecurityStampAsync(user, principal.FindFirstValue(Options.ClaimsIdentity.SecurityStampClaimType))) 
             return user;
 
-        Logger.Debug("Failed to validate a security stamp.");
+        Logger.Debug("Failed to validate a security stamp");
 
         return null;
     }
@@ -253,7 +252,7 @@ internal sealed class ApplicationSignInManager
         if (await ValidateSecurityStampAsync(user, principal.FindFirstValue(Options.ClaimsIdentity.SecurityStampClaimType))) 
             return user;
 
-        Logger.Debug("Failed to validate a security stamp.");
+        Logger.Debug("Failed to validate a security stamp");
 
         return null;
     }
@@ -360,7 +359,7 @@ internal sealed class ApplicationSignInManager
             return SignInResult.Success;
         }
 
-        Logger.Warning("User {userId} failed to provide the correct password.",
+        Logger.Warning("User {UserId} failed to provide the correct password",
             await UserManager.GetUserIdAsync(user));
 
         if (UserManager.SupportsUserLockout && lockoutOnFailure)
@@ -809,7 +808,7 @@ internal sealed class ApplicationSignInManager
     /// <returns>A locked out SignInResult</returns>
     public async Task<SignInResult> LockedOut(User user)
     {
-        Logger.Warning("User {userId} is currently locked out.", await UserManager.GetUserIdAsync(user));
+        Logger.Warning("User {UserId} is currently locked out", await UserManager.GetUserIdAsync(user));
         return SignInResult.LockedOut;
     }
 
@@ -867,7 +866,6 @@ internal sealed class ApplicationSignInManager
     public async Task<User> GetAccountVerificationUserAsync()
     {
         AccountVerificationInfo verificationInfo = await GetAccountVerificationInfoAsync();
-
         if (verificationInfo?.UserId is not null) return await UserManager.FindByIdAsync(verificationInfo.UserId);
         
         return default;
@@ -877,13 +875,14 @@ internal sealed class ApplicationSignInManager
     {
         AuthenticateResult result = await Context.AuthenticateAsync(ApplicationIdentityConstants.AccountVerificationScheme);
         if (result.Principal is not null)
+        {
             return new AccountVerificationInfo
             {
                 UserId = result.Principal.FindFirstValue(ClaimTypes.NameIdentifier),
                 ClientId = result.Principal.FindFirstValue(ApplicationClaimTypes.ClientIdentifier)
             };
-
-        return null;
+        }
+        return default;
     }
 
     private static ClaimsPrincipal CreateAccountVerificationPrincipal(string clientId, string userId)

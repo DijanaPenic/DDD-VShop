@@ -8,6 +8,6 @@ namespace VShop.Modules.Identity.Infrastructure.Services.Contracts;
 
 internal interface IAuthenticationService
 {
-    Task<Result<SignInInfo>> FinalizeSignInAsync(SignInResult signInResult, User user, string externalLoginProvider = null);
+    Task<Result<SignInInfo>> FinalizeSignInAsync(SignInResult signInResult, User user, string loginProvider = null);
     Task FinalizeSignOutAsync();
 }

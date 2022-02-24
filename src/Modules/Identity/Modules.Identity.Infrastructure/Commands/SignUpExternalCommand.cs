@@ -8,16 +8,14 @@ internal record SignUpExternalCommand
 (
     string UserName, 
     string AssociateEmail, 
-    bool AssociateAccount, 
+    bool AssociateToAccount, 
     string ConfirmationUrl
 ) : ICommand;
-    
 
 internal class SignUpExternalCommandValidator : AbstractValidator<SignUpExternalCommand>
 {
     public SignUpExternalCommandValidator()
     {
-        RuleFor(c => c.AssociateAccount).NotEmpty();
         RuleFor(c => c.ConfirmationUrl).NotEmpty();
     }
 }

@@ -64,7 +64,8 @@ internal class ClientAuthenticationHandler : AuthenticationHandler<Authenticatio
         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()));
         
         ClaimsPrincipal claimsPrincipal = new(identity);
+        AuthenticationTicket authenticationTicket = new(claimsPrincipal, Scheme.Name);
 
-        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
+        return AuthenticateResult.Success(authenticationTicket);
     }
 }
