@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 
 using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 using VShop.Modules.Identity.Integration.Events;
@@ -10,8 +9,6 @@ using VShop.Modules.Identity.Infrastructure.Models;
 using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.Services.Contracts;
 using VShop.Modules.Identity.Infrastructure.DAL.Entities;
-
-using ExternalLoginInfo = Microsoft.AspNetCore.Identity.ExternalLoginInfo;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
@@ -21,22 +18,19 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         private readonly ApplicationSignInManager _signInManager;
         private readonly IIntegrationEventService _integrationEventService;
         private readonly IAuthenticationService _authService;
-        private readonly IIdentityContext _identityContext;
 
         public SignInExternalCommandHandler
         (
             ApplicationUserManager userManager,
             ApplicationSignInManager signInManager,
             IIntegrationEventService integrationEventService,
-            IAuthenticationService authService,
-            IContext context 
+            IAuthenticationService authService
         )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _integrationEventService = integrationEventService;
             _authService = authService;
-            _identityContext = context.Identity;
         }
 
         public async Task<Result<SignInInfo>> Handle
@@ -45,7 +39,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             CancellationToken cancellationToken
         )
         {
-            ExternalLoginInfo externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
+            ExternalAuthInfo externalLoginInfo = await _signInManager.GetExternalAuthInfoAsync();
             if (externalLoginInfo is null) return Result.Unauthorized("External authentication has failed.");
 
             User user = await _userManager.FindByLoginAsync(externalLoginInfo);
@@ -98,11 +92,12 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             return new SignInInfo(user) { VerificationStep = AccountVerificationStep.Email };
         }
 
-        private async Task<Result<SignInInfo>> ExternalLoginSignInAsync(User user, UserLoginInfo loginInfo)
+        private async Task<Result<SignInInfo>> ExternalLoginSignInAsync(User user, ExternalAuthInfo loginInfo)
         {
+            Guid clientId = Guid.Parse(loginInfo.ClientId);
             SignInResult signInResult = await _signInManager.ExternalLoginSignInAsync
             (
-                _identityContext.ClientId,
+                clientId,
                 loginInfo.LoginProvider, 
                 loginInfo.ProviderKey, 
                 true

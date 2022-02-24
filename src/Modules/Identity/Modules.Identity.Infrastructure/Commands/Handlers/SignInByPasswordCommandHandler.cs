@@ -3,10 +3,10 @@
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.Modules.Identity.Infrastructure.Services;
-using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 using VShop.Modules.Identity.Infrastructure.Models;
+using VShop.Modules.Identity.Infrastructure.Services;
 using VShop.Modules.Identity.Infrastructure.Services.Contracts;
+using VShop.Modules.Identity.Infrastructure.DAL.Entities;
 
 namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
 {
@@ -15,7 +15,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         private readonly ApplicationUserManager _userManager;
         private readonly ApplicationSignInManager _signInManager;
         private readonly IAuthenticationService _authService;
-        private readonly IContext _context;
+        private readonly IIdentityContext _identityContext;
 
         public SignInByPasswordCommandHandler
         (
@@ -28,7 +28,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _userManager = userManager;
             _signInManager = signInManager;
             _authService = authService;
-            _context = context;
+            _identityContext = context.Identity;
         }
 
         public async Task<Result<SignInInfo>> Handle
@@ -38,7 +38,6 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         )
         {
             (string userName, string password) = command;
-            Guid clientId = _context.Identity.ClientId;
             
             User user = await _userManager.FindByNameAsync(userName);
             
@@ -47,7 +46,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             
             SignInResult signInResult = await _signInManager.PasswordSignInAsync
             (
-                clientId,
+                _identityContext.ClientId,
                 user,
                 password,
                 true

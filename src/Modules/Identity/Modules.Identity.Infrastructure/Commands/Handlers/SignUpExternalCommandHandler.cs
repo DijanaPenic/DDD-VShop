@@ -35,7 +35,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             CancellationToken cancellationToken
         )
         {
-            ExternalLoginInfo externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
+            ExternalLoginInfo externalLoginInfo = await _signInManager.GetExternalAuthInfoAsync();
             if (externalLoginInfo is null) return Result.Unauthorized("External authentication has failed.");
 
             (string userName, string associateEmail, bool associate, string confirmationUrl) = command;

@@ -14,6 +14,7 @@ namespace VShop.Modules.Identity.Infrastructure.Services;
 internal sealed class ApplicationSignInManager
 {
     private const string LoginProviderKey = "LoginProvider";
+    private const string ClientKey = "Client";
     private const string XsrfKey = "XsrfId";
 
     public ApplicationSignInManager
@@ -156,11 +157,10 @@ internal sealed class ApplicationSignInManager
     public Task SignInAsync(User user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
     {
         IList<Claim> additionalClaims = Array.Empty<Claim>();
-        if (authenticationMethod is not null)
-        {
-            additionalClaims = new List<Claim>();
-            additionalClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
-        }
+        if (authenticationMethod is null) return SignInWithClaimsAsync(user, authenticationProperties, additionalClaims);
+        
+        additionalClaims = new List<Claim>();
+        additionalClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
 
         return SignInWithClaimsAsync(user, authenticationProperties, additionalClaims);
     }
@@ -393,17 +393,17 @@ internal sealed class ApplicationSignInManager
     /// Sets a flag on the browser to indicate the user has selected "Remember this browser" for two factor authentication purposes,
     /// as an asynchronous operation.
     /// </summary>
+    /// <param name="clientId">The client identifier.</param>
     /// <param name="user">The user who choose "remember this browser".</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
-    public async Task RememberTwoFactorClientAsync(User user)
+    public async Task RememberTwoFactorClientAsync(Guid clientId, User user)
     {
-        ClaimsPrincipal principal = await CreateTwoFactorRememberMePrincipal(user);
+        ClaimsPrincipal principal = await CreateTwoFactorRememberMePrincipal(clientId, user);
 
         await Context.SignInAsync
         (
             IdentityConstants.TwoFactorRememberMeScheme,
-            principal,
-            new AuthenticationProperties { IsPersistent = true }
+            principal
         );
     }
 
@@ -411,17 +411,17 @@ internal sealed class ApplicationSignInManager
     /// Clears the "Remember this browser flag" from the current browser, as an asynchronous operation.
     /// </summary>
     /// <returns>The task object representing the asynchronous operation.</returns>
-    public Task ForgetTwoFactorClientAsync()
-        => Context.SignOutAsync(IdentityConstants.TwoFactorRememberMeScheme);
+    public Task ForgetTwoFactorClientAsync() => Context.SignOutAsync(IdentityConstants.TwoFactorRememberMeScheme);
 
     /// <summary>
     /// Signs in the user without two factor authentication using a two factor recovery code.
     /// </summary>
+    /// <param name="clientId">The client identifier.</param>
     /// <param name="recoveryCode">The two factor recovery code.</param>
     /// <returns></returns>
-    public async Task<SignInResult> TwoFactorRecoveryCodeSignInAsync(string recoveryCode)
+    public async Task<SignInResult> TwoFactorRecoveryCodeSignInAsync(Guid clientId, string recoveryCode)
     {
-        TwoFactorAuthenticationInfo twoFactorInfo = await GetTwoFactorInfoAsync();
+        TwoFactorInfo twoFactorInfo = await GetTwoFactorInfoAsync();
         if (twoFactorInfo?.UserId is null) return SignInResult.Failed;
 
         User user = await UserManager.FindByIdAsync(twoFactorInfo.UserId);
@@ -430,7 +430,7 @@ internal sealed class ApplicationSignInManager
         IdentityResult result = await UserManager.RedeemTwoFactorRecoveryCodeAsync(user, recoveryCode);
         if (!result.Succeeded) return SignInResult.Failed;
         
-        await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent: false, rememberClient: false);
+        await DoTwoFactorSignInAsync(clientId, user, twoFactorInfo, isPersistent: false, rememberClient: false);
         return SignInResult.Success;
 
         // We don't protect against brute force attacks since codes are expected to be random.
@@ -454,7 +454,7 @@ internal sealed class ApplicationSignInManager
         bool isPersistent = false
     )
     {
-        TwoFactorAuthenticationInfo twoFactorInfo = await GetTwoFactorInfoAsync();
+        TwoFactorInfo twoFactorInfo = await GetTwoFactorInfoAsync();
         if (twoFactorInfo?.UserId is null) return SignInResult.Failed;
 
         User user = await UserManager.FindByIdAsync(twoFactorInfo.UserId);
@@ -465,7 +465,7 @@ internal sealed class ApplicationSignInManager
 
         if (await UserManager.VerifyTwoFactorTokenAsync(user, Options.Tokens.AuthenticatorTokenProvider, code))
         {
-            await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent, rememberClient);
+            await DoTwoFactorSignInAsync(clientId, user, twoFactorInfo, isPersistent, rememberClient);
             return SignInResult.Success;
         }
 
@@ -494,7 +494,7 @@ internal sealed class ApplicationSignInManager
         bool isPersistent = false
     )
     {
-        TwoFactorAuthenticationInfo twoFactorInfo = await GetTwoFactorInfoAsync();
+        TwoFactorInfo twoFactorInfo = await GetTwoFactorInfoAsync();
         if (twoFactorInfo?.UserId is null) return SignInResult.Failed;
 
         User user = await UserManager.FindByIdAsync(twoFactorInfo.UserId);
@@ -505,7 +505,7 @@ internal sealed class ApplicationSignInManager
 
         if (await UserManager.VerifyTwoFactorTokenAsync(user, provider, code))
         {
-            await DoTwoFactorSignInAsync(user, twoFactorInfo, isPersistent, rememberClient);
+            await DoTwoFactorSignInAsync(clientId, user, twoFactorInfo, isPersistent, rememberClient);
             return SignInResult.Success;
         }
 
@@ -521,7 +521,7 @@ internal sealed class ApplicationSignInManager
     /// for the sign-in attempt.</returns>
     public async Task<User> GetTwoFactorAuthenticationUserAsync()
     {
-        TwoFactorAuthenticationInfo info = await GetTwoFactorInfoAsync();
+        TwoFactorInfo info = await GetTwoFactorInfoAsync();
         if (info is null) return null;
 
         return await UserManager.FindByIdAsync(info.UserId);
@@ -529,8 +529,9 @@ internal sealed class ApplicationSignInManager
 
     private async Task DoTwoFactorSignInAsync
     (
+        Guid clientId,
         User user,
-        TwoFactorAuthenticationInfo twoFactorInfo,
+        TwoFactorInfo twoFactorInfo,
         bool rememberClient,
         bool isPersistent = false
     )
@@ -553,7 +554,7 @@ internal sealed class ApplicationSignInManager
 
         // Cleanup two factor user id cookie
         await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
-        if (rememberClient) await RememberTwoFactorClientAsync(user);
+        if (rememberClient) await RememberTwoFactorClientAsync(clientId, user);
         
         await SignInWithClaimsAsync(user, claims, isPersistent);
     }
@@ -600,9 +601,9 @@ internal sealed class ApplicationSignInManager
     /// Gets the external login information for the current login, as an asynchronous operation.
     /// </summary>
     /// <param name="expectedXsrf">Flag indication whether a Cross Site Request Forgery token was expected in the current request.</param>
-    /// <returns>The task object representing the asynchronous operation containing the <see name="ExternalLoginInfo"/>
+    /// <returns>The task object representing the asynchronous operation containing the <see name="ExternalAuthInfo"/>
     /// for the sign-in attempt.</returns>
-    public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
+    public async Task<ExternalAuthInfo> GetExternalAuthInfoAsync(string expectedXsrf = null)
     {
         AuthenticateResult auth = await Context.AuthenticateAsync(IdentityConstants.ExternalScheme);
         IDictionary<string, string> items = auth.Properties?.Items;
@@ -624,8 +625,8 @@ internal sealed class ApplicationSignInManager
 
         string providerDisplayName = (await GetExternalAuthenticationSchemesAsync())
                                      .FirstOrDefault(p => p.Name == provider)?.DisplayName ?? provider;
-
-        return new ExternalLoginInfo(auth.Principal, provider, providerKey, providerDisplayName)
+        
+        return new ExternalAuthInfo(auth.Principal, provider, providerKey, providerDisplayName, items[ClientKey])
         {
             AuthenticationTokens = auth.Properties.GetTokens()
         };
@@ -637,7 +638,7 @@ internal sealed class ApplicationSignInManager
     /// <param name="externalLogin">The information from the external login provider.</param>
     /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing
     /// the <see cref="IdentityResult"/> of the operation.</returns>
-    public async Task<IdentityResult> UpdateExternalAuthenticationTokensAsync(ExternalLoginInfo externalLogin)
+    public async Task<IdentityResult> UpdateExternalAuthenticationTokensAsync(ExternalAuthInfo externalLogin)
     {
         if (externalLogin is null) throw new ArgumentNullException(nameof(externalLogin));
 
@@ -666,12 +667,14 @@ internal sealed class ApplicationSignInManager
     /// <summary>
     /// Configures the redirect URL and user identifier for the specified external login <paramref name="provider"/>.
     /// </summary>
+    /// <param name="clientId">The client id.</param>
     /// <param name="provider">The provider to configure.</param>
     /// <param name="redirectUrl">The external login URL users should be redirected to during the login flow.</param>
     /// <param name="userId">The current user's identifier, which will be used to provide CSRF protection.</param>
     /// <returns>A configured <see cref="AuthenticationProperties"/>.</returns>
     public AuthenticationProperties ConfigureExternalAuthenticationProperties
     (
+        Guid clientId,
         string provider,
         string redirectUrl,
         string userId = null
@@ -682,7 +685,8 @@ internal sealed class ApplicationSignInManager
             RedirectUri = redirectUrl,
             Items =
             {
-                [LoginProviderKey] = provider
+                [LoginProviderKey] = provider,
+                [ClientKey] = clientId.ToString()
             }
         };
 
@@ -711,24 +715,25 @@ internal sealed class ApplicationSignInManager
         return new ClaimsPrincipal(identity);
     }
 
-    private async Task<ClaimsPrincipal> CreateTwoFactorRememberMePrincipal(User user)
+    private async Task<ClaimsPrincipal> CreateTwoFactorRememberMePrincipal(Guid clientId, User user)
     {
         string userId = await UserManager.GetUserIdAsync(user);
-        ClaimsIdentity rememberBrowserIdentity = new(IdentityConstants.TwoFactorRememberMeScheme);
-        rememberBrowserIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
+        ClaimsIdentity identity = new(IdentityConstants.TwoFactorRememberMeScheme);
+        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
 
-        if (!UserManager.SupportsUserSecurityStamp) return new ClaimsPrincipal(rememberBrowserIdentity);
+        if (!UserManager.SupportsUserSecurityStamp) return new ClaimsPrincipal(identity);
         
         string stamp = await UserManager.GetSecurityStampAsync(user);
-        rememberBrowserIdentity.AddClaim(new Claim(Options.ClaimsIdentity.SecurityStampClaimType, stamp));
+        identity.AddClaim(new Claim(Options.ClaimsIdentity.SecurityStampClaimType, stamp));
+        identity.AddClaim(new Claim(ApplicationClaimTypes.ClientIdentifier, clientId.ToString()));
 
-        return new ClaimsPrincipal(rememberBrowserIdentity);
+        return new ClaimsPrincipal(identity);
     }
 
     private async Task<bool> IsTfaEnabled(User user)
         => UserManager.SupportsUserTwoFactor &&
-        await UserManager.GetTwoFactorEnabledAsync(user) &&
-        (await UserManager.GetValidTwoFactorProvidersAsync(user)).Count > 0;
+           await UserManager.GetTwoFactorEnabledAsync(user) &&
+           (await UserManager.GetValidTwoFactorProvidersAsync(user)).Count > 0;
 
     /// <summary>
     /// Signs in the specified <paramref name="user"/> if <paramref name="bypassTwoFactor"/> is set to false.
@@ -777,12 +782,12 @@ internal sealed class ApplicationSignInManager
         return SignInResult.Success;
     }
 
-    public async Task<TwoFactorAuthenticationInfo> GetTwoFactorInfoAsync()
+    public async Task<TwoFactorInfo> GetTwoFactorInfoAsync()
     {
         AuthenticateResult result = await Context.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
         if (result.Principal is not null)
         {
-            return new TwoFactorAuthenticationInfo
+            return new TwoFactorInfo
             {
                 UserId = result.Principal.FindFirstValue(ClaimTypes.NameIdentifier),
                 LoginProvider = result.Principal.FindFirstValue(ClaimTypes.AuthenticationMethod),
@@ -895,15 +900,32 @@ internal sealed class ApplicationSignInManager
     }
 }
 
-internal class TwoFactorAuthenticationInfo
+internal sealed class TwoFactorInfo
 {
     public string UserId { get; init; }
     public string LoginProvider { get; init; }
     public string ClientId { get; init; }
 }
 
-internal class AccountVerificationInfo
+internal sealed class AccountVerificationInfo
 {
     public string UserId { get; init; }
     public string ClientId { get; init; }
+}
+
+internal sealed class ExternalAuthInfo : ExternalLoginInfo
+{
+    public string ClientId { get; }
+
+    public ExternalAuthInfo
+    (
+        ClaimsPrincipal principal,
+        string loginProvider,
+        string providerKey,
+        string displayName,
+        string clientId
+    ) : base(principal, loginProvider, providerKey, displayName)
+    {
+        ClientId = clientId;
+    }
 }

@@ -30,31 +30,34 @@ internal partial class AccountController
         
         return Ok(result.Data);
     }
-    
-    [HttpPost]
-    [Route("external/initiate")]
-    [Consumes("application/json")]
+
+    [HttpGet]
+    [Route("external/callback")]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ClientAuthorization]
-    public async Task<IActionResult> InitiateAsync([FromBody] InitiateExternalLoginCommand command)
+    public async Task<IActionResult> GetCallbackAsync([FromQuery] string provider, [FromQuery] string returnUrl)
     {
+        InitiateExternalLoginCommand command = new(provider, returnUrl);
         Result<AuthenticationProperties> result = await _commandDispatcher.SendAsync(command);
+        
         return new ChallengeResult(result.Data, command.Provider);
     }
     
     [HttpPost]
     [Route("external/sign-in")]
-    [Consumes("application/json")]
     [ProducesResponseType(typeof(SignInInfo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [Authorize(AuthenticationSchemes = "Identity.External")]
-    public async Task<IActionResult> SignInAsync([FromBody] SignInExternalCommand command)
+    public async Task<IActionResult> SignInAsync([FromQuery] string confirmationUrl)
     {
+        SignInExternalCommand command = new(confirmationUrl);
         Result<SignInInfo> result = await _commandDispatcher.SendAsync(command);
+        
         return HandleResult(result, Ok);
     }
 
@@ -65,7 +68,7 @@ internal partial class AccountController
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [Authorize(AuthenticationSchemes = "Identity.External")] // TODO - cannot combine with the ClientId verification.
+    [Authorize(AuthenticationSchemes = "Identity.External")]
     public async Task<IActionResult> SignUpAsync([FromBody] SignUpExternalCommand command)
     {
         Result result = await _commandDispatcher.SendAsync(command);
@@ -97,8 +100,8 @@ internal partial class AccountController
     
     [HttpDelete]
     [Route("{userId:guid}/external")]
-    [Consumes("application/json")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -107,19 +110,23 @@ internal partial class AccountController
     public async Task<IActionResult> DeleteExternalLoginAsync
     (
         [FromRoute] Guid userId,
-        [FromBody] DisconnectExternalLoginCommand command
+        [FromQuery] string loginProvider,
+        [FromQuery] string providerKey
     )
     {
         bool hasPermissions = _identityContext.IsCurrentUser(userId) || _identityContext.IsAuthorized(Policy);
         if (!hasPermissions) return Forbid();
+
+        DisconnectExternalLoginCommand command = new(userId, loginProvider, providerKey);
+        Result result = await _commandDispatcher.SendAsync(command);
         
-        Result result = await _commandDispatcher.SendAsync(command with { UserId = userId });
         return HandleResult(result, NoContent);
     }
     
     [HttpPut]
     [Route("{userId:guid}/external/verify")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]

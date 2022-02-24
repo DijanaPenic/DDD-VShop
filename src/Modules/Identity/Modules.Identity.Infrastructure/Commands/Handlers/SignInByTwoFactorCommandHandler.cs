@@ -35,13 +35,13 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             User user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user is null) return Result.NotFoundError("User not found.");
 
-            TwoFactorAuthenticationInfo twoFactorInfo = await _signInManager.GetTwoFactorInfoAsync();
+            TwoFactorInfo twoFactorInfo = await _signInManager.GetTwoFactorInfoAsync();
             Guid clientId = Guid.Parse(twoFactorInfo.ClientId);
             
             SignInResult signInResult;
             
             if (useRecoveryCode)
-                signInResult = await _signInManager.TwoFactorRecoveryCodeSignInAsync(code);
+                signInResult = await _signInManager.TwoFactorRecoveryCodeSignInAsync(clientId, code);
             else
             {
                 //Note: rememberClient: false - don't want to suppress future two-factor auth requests.
