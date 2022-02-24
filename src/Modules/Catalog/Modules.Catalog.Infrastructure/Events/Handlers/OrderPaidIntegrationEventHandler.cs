@@ -13,16 +13,16 @@ namespace VShop.Modules.Catalog.Infrastructure.Events.Handlers
     internal class OrderPaidIntegrationEventHandler : IEventHandler<OrderStatusSetToPaidIntegrationEvent>
     {
         private readonly CatalogDbContext _catalogDbContext;
-        private readonly IIntegrationEventService _catalogIntegrationEventService;
+        private readonly IIntegrationEventService _integrationEventService;
 
         public OrderPaidIntegrationEventHandler
         (
             CatalogDbContext catalogDbContext,
-            IIntegrationEventService catalogIntegrationEventService
+            IIntegrationEventService integrationEventService
         )
         {
             _catalogDbContext = catalogDbContext;
-            _catalogIntegrationEventService = catalogIntegrationEventService;
+            _integrationEventService = integrationEventService;
         }
 
         public async Task Handle(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Events.Handlers
                 confirmedOrderLines
             );
             
-            await _catalogIntegrationEventService.SaveEventAsync
+            await _integrationEventService.SaveEventAsync
             (
                 orderStockConfirmedIntegrationEvent,
                 cancellationToken
