@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
@@ -17,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Auth.Constants;
-using VShop.SharedKernel.Infrastructure.Auth.Handlers;
 
 namespace VShop.SharedKernel.Infrastructure.Auth;
 
@@ -125,7 +123,7 @@ public static class AuthExtensions
                             context.Token = token;
 
                         return Task.CompletedTask;
-                    },
+                    }
                 };
             })
             .AddGoogle(ExternalLoginAuthOptions(ExternalLoginProviders.Google))
@@ -138,7 +136,8 @@ public static class AuthExtensions
         services.AddSingleton(cookieOptions);
         services.AddSingleton(tokenValidationParameters);
 
-        IEnumerable<string> policies = modules.SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
+        IEnumerable<string> policies = modules
+            .SelectMany(m => m.Policies ?? Enumerable.Empty<string>())
             .Select(p => p.ToLowerInvariant());
 
         services.AddAuthorization(authorization =>
@@ -152,33 +151,42 @@ public static class AuthExtensions
     
     public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
     {
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            Secure = CookieSecurePolicy.Always
+        });
         app.UseAuthentication();
         app.Use(async (ctx, next) =>
         {
-            string authScheme;
-            
             if (ctx.ContainsCookie(ApplicationIdentityConstants.AccessTokenScheme))
-                authScheme = JwtBearerDefaults.AuthenticationScheme;
+                await ctx.MapAuthAsync(JwtBearerDefaults.AuthenticationScheme);
             
             else if (ctx.ContainsCookie(ApplicationIdentityConstants.AccountVerificationScheme))
-                authScheme = ApplicationIdentityConstants.AccountVerificationScheme;
+                await ctx.MapAuthAsync(ApplicationIdentityConstants.AccountVerificationScheme);
             
             else if (ctx.ContainsCookie(IdentityConstants.TwoFactorUserIdScheme))
-                authScheme = IdentityConstants.TwoFactorUserIdScheme;
+                await ctx.MapAuthAsync(IdentityConstants.TwoFactorUserIdScheme);
             
             else if (ctx.ContainsCookie(IdentityConstants.ExternalScheme))
-                authScheme = IdentityConstants.ExternalScheme;
+                await ctx.MapAuthAsync(IdentityConstants.ExternalScheme);
             
-            else authScheme = ApplicationAuthSchemes.ClientAuthenticationScheme;
+            else if(ctx.Request.Headers.ContainsKey(ApplicationHeaders.AuthorizationHeader))
+                await ctx.MapAuthAsync(ApplicationAuthSchemes.ClientAuthenticationScheme);
 
-            AuthenticateResult authenticateResult = await ctx.AuthenticateAsync(authScheme);
-            if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
-                ctx.User = authenticateResult.Principal;
-        
             await next();
         });
 
         return app;
+    }
+
+    private static async Task MapAuthAsync(this HttpContext ctx, string authScheme)
+    {
+        AuthenticateResult authResult = await ctx.AuthenticateAsync(authScheme);
+        if (authResult.Succeeded && authResult.Principal is not null)
+        {
+            ctx.User = authResult.Principal;
+            ctx.Items["Properties"] = authResult.Properties;
+        }
     }
 
     private static bool ContainsCookie(this HttpContext ctx, string name)

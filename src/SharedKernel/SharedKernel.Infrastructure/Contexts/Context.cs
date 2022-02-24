@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
@@ -18,7 +19,7 @@ public class Context : IContext
     (
         context.TryGetRequestId(),
         context.TryGetCorrelationId(),
-        new IdentityContext(context.User),
+        new IdentityContext(context.User, context.Items["Properties"] as AuthenticationProperties),
         context.GetUserIpAddress(),
         context.GetUserAgent()
     ) { }

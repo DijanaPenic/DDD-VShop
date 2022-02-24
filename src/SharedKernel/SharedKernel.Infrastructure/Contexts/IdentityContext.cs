@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication;
 
 using VShop.SharedKernel.Infrastructure.Auth.Constants;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
@@ -24,20 +25,21 @@ public class IdentityContext : IIdentityContext
         IsAuthenticated = userId.HasValue;
     }
 
-    public IdentityContext(ClaimsPrincipal principal)
+    public IdentityContext(ClaimsPrincipal principal, AuthenticationProperties authProperties)
     {
         if (principal?.Identity is null) return;
 
-        IsAuthenticated = principal.Identity?.IsAuthenticated is true;
+        IsAuthenticated = principal.Identity.IsAuthenticated;
         
-        UserId = IsAuthenticated
-            ? Guid.Parse(principal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)!.Value) 
-            : Guid.Empty;
-        
-        ClientId = IsAuthenticated
-            ? Guid.Parse(principal.Claims.Single(c => c.Type == ApplicationClaimTypes.ClientIdentifier)!.Value) 
-            : Guid.Empty;
-        
+        if(IsAuthenticated)
+        {
+            Claim userClaim = principal.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            UserId = Guid.TryParse(userClaim?.Value, out Guid userId) ? userId : Guid.Empty;
+            
+            Claim clientClaim = principal.Claims.SingleOrDefault(c => c.Type == ApplicationClaimTypes.ClientIdentifier);
+            ClientId = Guid.TryParse(clientClaim?.Value ?? authProperties?.Items["Client"], out Guid clientId) ? clientId : Guid.Empty;
+        }
+
         Roles = principal.Claims
             .Where(c => c.Type == ClaimTypes.Role)
             .Select(c => c.Value.ToLowerInvariant())
