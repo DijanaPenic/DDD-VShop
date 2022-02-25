@@ -21,6 +21,8 @@ public abstract class Module
         get { yield break; }
     }
 
+    public virtual bool AutomaticValidationEnabled => false;
+
     public Assembly[] Assemblies { get; }
 
     protected Module(string name, IEnumerable<Assembly> assemblies)

@@ -20,7 +20,7 @@ internal sealed class ErrorHandlerMiddleware : IMiddleware
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Unhandled error has occurred");
+            _logger.Error(ex, "An error has occurred");
             await HandleErrorAsync(context, ex);
         }
     }
@@ -39,15 +39,15 @@ internal sealed class ErrorHandlerMiddleware : IMiddleware
         {
             FluentValidation.ValidationException ex => new ExceptionResponse
             (
-                ex.Errors.Select(e => new
+                ex.Errors.GroupBy(e => e.PropertyName).Select(eg => new
                 {
-                    e.PropertyName,
-                    e.ErrorMessage
+                    Property = eg.Key,
+                    Errors = eg.Select(e => e.ErrorMessage)
                 }),
                 HttpStatusCode.BadRequest
             ),
             AppExceptions.ValidationException => new ExceptionResponse(exception.Message, HttpStatusCode.BadRequest),
-            _ => new ExceptionResponse("An error has occurred.", HttpStatusCode.InternalServerError)
+            _ => new ExceptionResponse(exception.InnerException?.Message ?? exception.Message, HttpStatusCode.InternalServerError)
         };
     
     private record ExceptionResponse(object Message, HttpStatusCode StatusCode);

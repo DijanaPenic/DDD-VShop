@@ -30,6 +30,8 @@ internal class CatalogModule : Module
         "products"
     };
 
+    public override bool AutomaticValidationEnabled => true;
+
     public CatalogModule(IEnumerable<Assembly> assemblies) 
         : base("Catalog", assemblies) { }
     
