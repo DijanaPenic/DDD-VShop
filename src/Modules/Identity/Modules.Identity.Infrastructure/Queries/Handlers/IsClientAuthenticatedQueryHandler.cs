@@ -17,10 +17,12 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
             CancellationToken cancellationToken
         )
         {
+            (Guid clientId, string clientSecret) = query;
+            
             string clientAuthResult = await _authManager.AuthenticateClientAsync
             (
-                query.ClientId,
-                query.ClientSecret,
+                clientId,
+                clientSecret,
                 cancellationToken
             );
             

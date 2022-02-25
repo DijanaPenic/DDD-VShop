@@ -42,6 +42,9 @@ internal partial class AccountController
         InitiateExternalLoginCommand command = new(provider, returnUrl);
         Result<AuthenticationProperties> result = await _commandDispatcher.SendAsync(command);
         
+        // Location's return_url (in the challenge response) will point back to API for external authentication
+        // (by default: the "signin-google" endpoint). After successful authentication, the user will be redirected to
+        // the return_url from this endpoint (the client app).
         return new ChallengeResult(result.Data, command.Provider);
     }
     

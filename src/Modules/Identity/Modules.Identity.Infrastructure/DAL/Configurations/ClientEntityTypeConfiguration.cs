@@ -25,6 +25,9 @@ internal class ClientEntityTypeConfiguration : IEntityTypeConfiguration<Client>
         // Set indices
         builder.HasIndex(c => c.Name).HasDatabaseName("NameIndex").IsUnique();
         
+        // TODO - change index names to snake case.
+        // TODO - missing DateCreated and DateUpdated fields.
+        
         // A concurrency token for use with the optimistic concurrency checking
         builder.UseXminAsConcurrencyToken();
 
