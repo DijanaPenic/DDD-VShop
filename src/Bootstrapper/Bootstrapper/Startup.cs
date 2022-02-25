@@ -57,7 +57,7 @@ public class Startup
             module.Initialize(logger, _configuration, services.Clone());
 
         services.AddApplication(_configuration);
-        services.AddFluentValidation(_modules.SelectMany(m => m.Assemblies).ToArray());
+        services.AddValidation(_modules.SelectMany(m => m.Assemblies).ToArray());
         services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
         services.AddSingleton(ModuleEventStoreSubscriptionRegistry.Services);
         services.AddHostedService<EventStoreHostedService>();

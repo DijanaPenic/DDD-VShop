@@ -12,7 +12,6 @@ internal class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCo
     public ResetPasswordCommandValidator()
     {
         RuleFor(c => c.Password).NotEmpty().Password();
-
         RuleFor(c => c.ConfirmPassword)
             .NotEmpty()
             .Equal(c => c.Password)

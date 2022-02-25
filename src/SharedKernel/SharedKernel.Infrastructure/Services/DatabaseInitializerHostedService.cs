@@ -23,7 +23,7 @@ namespace VShop.SharedKernel.Infrastructure.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("Starting database initializer hosted service.");
+            _logger.Information("Starting database initializer hosted service");
             
             IEnumerable<Type> dbContextTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
@@ -35,14 +35,18 @@ namespace VShop.SharedKernel.Infrastructure.Services
                 if (scope.ServiceProvider.GetService(dbContextType) is not DbContext dbContext) continue;
 
                 await dbContext.Database.MigrateAsync(cancellationToken);
-                
-                _logger.Information($"Finished database migration for: {dbContext.GetType().Name}.");
+
+                _logger.Information
+                (
+                    "Finished database migration for: {TypeName}",
+                    dbContext.GetType().Name
+                );
             }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("Stopping database initializer hosted service.");
+            _logger.Information("Stopping database initializer hosted service");
             
             return Task.CompletedTask;
         }

@@ -3,7 +3,6 @@ using Serilog;
 using System.Reflection;
 using System.Collections.Generic;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,7 +31,7 @@ public static class InfrastructureExtensions
         services.AddEvents();
         services.AddMediatR(assemblies);
         services.AddLogging(logger, moduleName);
-        services.AddFluentValidation(assemblies);
+        services.AddValidation(assemblies);
         services.AddSingleton<IClockService, ClockService>();
         services.AddHostedService<DatabaseInitializerHostedService>();
         services.AddModuleRequests();
@@ -40,7 +39,8 @@ public static class InfrastructureExtensions
         return services;
     }
 
-    public static TOptions GetOptions<TOptions>(this IServiceCollection services, string sectionName) where TOptions : new()
+    public static TOptions GetOptions<TOptions>(this IServiceCollection services, string sectionName) 
+        where TOptions : new()
     {
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
         IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -51,7 +51,7 @@ public static class InfrastructureExtensions
     public static TOptions GetOptions<TOptions>(this IConfiguration configuration, string sectionName)
         => configuration.GetSection(sectionName).Get<TOptions>();
     
-    public static IServiceCollection AddFluentValidation(this IServiceCollection services, IEnumerable<Assembly> assemblies)
+    public static IServiceCollection AddValidation(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services.AddFluentValidation(fv => fv
             .RegisterValidatorsFromAssemblies(assemblies, includeInternalTypes: true));

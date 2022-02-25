@@ -78,7 +78,6 @@ namespace VShop.SharedKernel.Integration.Projections
                 }
                 
                 await checkpointUpdate(subscriptionDbContext);
-                
                 await subscriptionDbContext.CommitTransactionAsync(cancellationToken);
             });
         }

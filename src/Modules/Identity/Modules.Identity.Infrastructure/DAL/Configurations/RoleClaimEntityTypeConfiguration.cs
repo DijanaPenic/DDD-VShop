@@ -34,13 +34,13 @@ internal class RoleClaimEntityTypeConfiguration : IEntityTypeConfiguration<RoleC
         {
             // admin
             {
-                "d72ef5e5-f08a-4173-b83a-74618893891b", 
+                "d72ef5e5-f08a-4173-b83a-74618893891b",
                 new[] {"orders", "shopping_carts", "auth", "payments", "categories", "products"}
             }, 
             
             // store manager
             {
-                "d92ef5e5-f08a-4173-b83a-74618893891b", 
+                "d92ef5e5-f08a-4173-b83a-74618893891b",
                 new[] {"categories", "products"}
             }
         };

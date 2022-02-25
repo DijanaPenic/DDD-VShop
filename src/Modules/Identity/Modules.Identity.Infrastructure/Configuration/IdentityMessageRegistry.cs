@@ -38,8 +38,7 @@ namespace VShop.Modules.Identity.Infrastructure.Configuration
         
         private static void RegisterTransformations(this MessageRegistry registry)
         {
-            // CAUTION: this is just a showcase example.
-            //registry.Register<ShoppingCartCreatedDomainEvent, ShoppingCartCreatedDomainEvent2>(ShoppingCartCreatedDomainEvent2.ConvertFrom);
+
         }
     }
 }
