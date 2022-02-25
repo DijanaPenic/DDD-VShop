@@ -40,32 +40,19 @@ namespace VShop.SharedKernel.Application.Decorators
             if (command is IBaseQuery) return await next();
             
             string commandTypeName = command.GetType().Name;
+        
+            (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() 
+                => next(), cancellationToken);
+            
+            await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
+            
+            _logger.Information
+            (
+                "Commit transaction {TransactionId} for {CommandName}",
+                transactionId, commandTypeName
+            );
 
-            try
-            {
-                (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() 
-                    => next(), cancellationToken);
-                
-                await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
-                
-                _logger.Information
-                (
-                    "Commit transaction {TransactionId} for {CommandName}",
-                    transactionId, commandTypeName
-                );
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error
-                (
-                    ex, "Error Handling transaction for {CommandName} ({@Command})",
-                    commandTypeName, command
-                );
-
-                throw;
-            }
+            return response;
         }
     }
 }

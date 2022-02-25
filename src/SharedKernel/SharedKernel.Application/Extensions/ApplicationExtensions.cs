@@ -4,7 +4,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using EventStore.Client;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -14,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
+using VShop.SharedKernel.Application.Exceptions;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Extensions;
@@ -21,7 +21,6 @@ using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Application.Providers;
 using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
-
 namespace VShop.SharedKernel.Application.Extensions;
 
 public static class ApplicationExtensions
@@ -39,6 +38,7 @@ public static class ApplicationExtensions
             if (!bool.Parse(value)) disabledModules.Add(key.Split(":")[0]);
         }
 
+        services.AddScoped<ErrorHandlerMiddleware>();
         services.AddControllers(options =>
         {
             options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
@@ -139,6 +139,7 @@ public static class ApplicationExtensions
         //     reDoc.DocumentTitle = "Modular API";
         // });
         //
+        app.UseMiddleware<ErrorHandlerMiddleware>();
         app.UseRouting();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
@@ -155,7 +156,6 @@ public static class ApplicationExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services, Assembly[] assemblies)
     {
         services.AddControllersAsServices(assemblies);
-
         return services;
     }
 

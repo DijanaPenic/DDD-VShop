@@ -68,6 +68,11 @@ internal class IdentityModule : Module
         services.AddTransient
         (
             typeof(IPipelineBehavior<,>),
+            typeof(ValidationCommandDecorator<,>)
+        );
+        services.AddTransient
+        (
+            typeof(IPipelineBehavior<,>),
             typeof(TransactionalCommandDecorator<,>)
         );
 

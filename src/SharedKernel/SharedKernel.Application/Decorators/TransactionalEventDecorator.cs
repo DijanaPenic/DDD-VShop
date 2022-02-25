@@ -32,30 +32,17 @@ namespace VShop.SharedKernel.Application.Decorators
         public async Task Handle(TEvent @event, CancellationToken cancellationToken)
         {
             string eventTypeName = @event.GetType().Name;
-
-            try
-            {
-                Guid transactionId = await _unitOfWork.ExecuteAsync(() 
-                    => _inner.Handle(@event, cancellationToken), cancellationToken);
-                
-                await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
-                
-                _logger.Information
-                (
-                    "Commit transaction {TransactionId} for {EventName}",
-                    transactionId, eventTypeName
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error
-                (
-                    ex, "Error Handling transaction for {EventName} ({@Event})",
-                    eventTypeName, @event
-                );
-
-                throw;
-            }
+            
+            Guid transactionId = await _unitOfWork.ExecuteAsync(()
+                => _inner.Handle(@event, cancellationToken), cancellationToken);
+            
+            await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
+            
+            _logger.Information
+            (
+                "Commit transaction {TransactionId} for {EventName}",
+                transactionId, eventTypeName
+            );
         }
     }
 }
