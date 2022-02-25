@@ -129,4 +129,27 @@ internal partial class AccountController : ApplicationControllerBase
         Result result = await _commandDispatcher.SendAsync(command with { UserId = userId });
         return HandleResult(result, NoContent);
     }
+    
+    [HttpPut]
+    [Route("{userId:guid}/set-password")]
+    [Consumes("application/json")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
+    [Authorize]
+    public async Task<IActionResult> SetPasswordAsync
+    (
+        [FromRoute] Guid userId,
+        [FromBody] SetPasswordCommand command
+    )
+    {
+        bool hasPermissions = _identityContext.IsCurrentUser(userId) || _identityContext.IsAuthorized(Policy);
+        if (!hasPermissions) return Forbid();
+
+        Result result = await _commandDispatcher.SendAsync(command with { UserId = userId });
+        return HandleResult(result, NoContent);
+    }
 }
