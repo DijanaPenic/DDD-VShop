@@ -16,6 +16,13 @@ internal class SignUpExternalCommandValidator : AbstractValidator<SignUpExternal
 {
     public SignUpExternalCommandValidator()
     {
-        RuleFor(c => c.ConfirmationUrl).NotEmpty();
+        When(c => c.AssociateToAccount, () =>
+        {
+            RuleFor(c => c.ConfirmationUrl).NotEmpty();
+            RuleFor(c => c.AssociateEmail).NotEmpty();
+        }).Otherwise(() =>
+        {
+            RuleFor(c => c.UserName).NotEmpty();
+        });
     }
 }

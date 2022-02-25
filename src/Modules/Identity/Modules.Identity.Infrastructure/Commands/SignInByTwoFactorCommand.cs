@@ -11,6 +11,6 @@ internal class SignInByTwoFactorCommandCommandValidator : AbstractValidator<Sign
 {
     public SignInByTwoFactorCommandCommandValidator()
     {
-        RuleFor(c => c.Code).NotEmpty().Length(6, 6);
+        RuleFor(c => c.Code).NotEmpty().Length(6);
     }
 }
