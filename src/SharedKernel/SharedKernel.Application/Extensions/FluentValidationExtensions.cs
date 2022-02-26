@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 
+using VShop.SharedKernel.Infrastructure.Extensions;
+
 namespace VShop.SharedKernel.Application.Extensions
 {
     public static class FluentValidationExtensions

@@ -2,16 +2,18 @@ using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
 using EventStore.Client;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
+using VShop.SharedKernel.Application.Exceptions;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Extensions;
@@ -19,7 +21,6 @@ using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Application.Providers;
 using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
-
 namespace VShop.SharedKernel.Application.Extensions;
 
 public static class ApplicationExtensions
@@ -37,6 +38,7 @@ public static class ApplicationExtensions
             if (!bool.Parse(value)) disabledModules.Add(key.Split(":")[0]);
         }
 
+        services.AddScoped<ErrorHandlerMiddleware>();
         services.AddControllers(options =>
         {
             options.ValueProviderFactories.Add(new SnakeCaseQueryValueProviderFactory());
@@ -56,7 +58,8 @@ public static class ApplicationExtensions
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
-        }).ConfigureApplicationPartManager(manager =>
+        })
+        .ConfigureApplicationPartManager(manager =>
         {
             List<ApplicationPart> removedParts = new();
             foreach (string disabledModule in disabledModules)
@@ -67,22 +70,21 @@ public static class ApplicationExtensions
             }
 
             foreach (ApplicationPart part in removedParts)
-            {
                 manager.ApplicationParts.Remove(part);
-            }
-                
+
             manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
         });
         
-        services.AddSwaggerGen(swagger =>
-        {
-            swagger.CustomSchemaIds(t => t.FullName);
-            swagger.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Modular API",
-                Version = "v1"
-            });
-        });
+        // TODO - resolve Swagger.
+        // services.AddSwaggerGen(swagger =>
+        // {
+        //     swagger.CustomSchemaIds(t => t.FullName);
+        //     swagger.SwaggerDoc("v1", new OpenApiInfo
+        //     {
+        //         Title = "Modular API",
+        //         Version = "v1"
+        //     });
+        // });
 
         return services;
     }
@@ -128,17 +130,18 @@ public static class ApplicationExtensions
             ForwardedHeaders = ForwardedHeaders.All
         });
         
-        app.UseSwagger();
-        
-        app.UseReDoc(reDoc =>
-        {
-            reDoc.RoutePrefix = "docs";
-            reDoc.SpecUrl("/swagger/v1/swagger.json");
-            reDoc.DocumentTitle = "Modular API";
-        });
-        
+        // app.UseSwagger();
+        //
+        // app.UseReDoc(reDoc =>
+        // {
+        //     reDoc.RoutePrefix = "docs";
+        //     reDoc.SpecUrl("/swagger/v1/swagger.json");
+        //     reDoc.DocumentTitle = "Modular API";
+        // });
+        //
+        app.UseMiddleware<ErrorHandlerMiddleware>();
         app.UseRouting();
-        
+        app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
@@ -149,5 +152,20 @@ public static class ApplicationExtensions
 
         return app;
     }
+    
+    public static IServiceCollection AddApplication(this IServiceCollection services, Assembly[] assemblies)
+    {
+        services.AddControllersAsServices(assemblies);
+        return services;
+    }
 
+    private static IServiceCollection AddControllersAsServices(this IServiceCollection services, Assembly[] assemblies)
+    {
+        services.Scan(s => s.FromAssemblies(assemblies)
+            .AddClasses(f => f.AssignableTo(typeof(ControllerBase)))
+            .AsSelf()
+            .WithTransientLifetime());
+
+        return services;
+    }
 }

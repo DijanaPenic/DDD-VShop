@@ -4,6 +4,7 @@ using Google.Protobuf;
 
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
+using IProtoMessage = Google.Protobuf.IMessage;
 using IMessage = VShop.SharedKernel.Infrastructure.Messaging.Contracts.IMessage;
 
 namespace VShop.SharedKernel.Infrastructure.Messaging
@@ -12,7 +13,7 @@ namespace VShop.SharedKernel.Infrastructure.Messaging
     {
         public ScheduledMessage(IMessage message, Instant scheduledTime)
         {
-            Body = message.ToByteString();
+            Body = (message is IProtoMessage proto) ? proto.ToByteString() : ByteString.Empty;
             TypeName = message.GetType().AssemblyQualifiedName;
             ScheduledTime = scheduledTime.ToTimestamp();
         }

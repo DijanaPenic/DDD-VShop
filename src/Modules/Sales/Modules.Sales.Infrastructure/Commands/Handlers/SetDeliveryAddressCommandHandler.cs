@@ -14,7 +14,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
         
         public SetDeliveryAddressCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
-        => _shoppingCartStore = shoppingCartStore;
+            => _shoppingCartStore = shoppingCartStore;
         
         public async Task<Result> Handle
         (

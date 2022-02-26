@@ -9,9 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
 public abstract class Module
@@ -19,7 +16,14 @@ public abstract class Module
     public const string Prefix = "VShop.Modules.";
     public string Name { get; }
     protected string FullName => $"{Prefix}{Name}";
-    protected Assembly[] Assemblies { get; }
+    public virtual IEnumerable<string> Policies
+    {
+        get { yield break; }
+    }
+
+    public virtual bool AutomaticValidationEnabled => false;
+
+    public Assembly[] Assemblies { get; }
 
     protected Module(string name, IEnumerable<Assembly> assemblies)
     {
@@ -27,21 +31,8 @@ public abstract class Module
         Assemblies = GetModuleAssemblies(assemblies);
     }
 
-    public abstract void Initialize
-    (
-        IConfiguration configuration,
-        ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
-    );
-
-    public abstract void ConfigureContainer
-    (
-        IConfiguration configuration,
-        ILogger logger,
-        IContextAccessor contextAccessor,
-        IMessageContextRegistry messageContextRegistry
-    );
+    public abstract void Initialize(ILogger logger, IConfiguration configuration, IServiceCollection services);
+    public abstract void ConfigureContainer(ILogger logger, IConfiguration configuration, IServiceCollection services);
     
     public static Task StartHostedServicesAsync(IServiceProvider serviceProvider)
     {
@@ -59,7 +50,7 @@ public abstract class Module
         return Task.WhenAll(hostedServices.Select(s => s.StopAsync(CancellationToken.None)));
     }
     
-    private Assembly[] GetModuleAssemblies(IEnumerable<Assembly> assemblies) => assemblies
-        .Where(a => a.FullName is not null && a.FullName.StartsWith(FullName))
-        .ToArray();
+    private Assembly[] GetModuleAssemblies(IEnumerable<Assembly> assemblies) 
+        => assemblies.Where(a => a.FullName is not null && a.FullName.StartsWith(FullName))
+                     .ToArray();
 }

@@ -17,18 +17,18 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
     {
         private readonly IPaymentService _paymentService;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IIntegrationEventService _billingIntegrationEventService;
+        private readonly IIntegrationEventService _integrationEventService;
 
         public TransferCommandHandler
         (
             IPaymentService paymentService,
             IPaymentRepository paymentRepository,
-            IIntegrationEventService billingIntegrationEventService
+            IIntegrationEventService integrationEventService
         )
         {
             _paymentService = paymentService;
             _paymentRepository = paymentRepository;
-            _billingIntegrationEventService = billingIntegrationEventService;
+            _integrationEventService = integrationEventService;
         }
 
         public async Task<Result> Handle(TransferCommand command, CancellationToken cancellationToken)
@@ -66,7 +66,7 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
                 ? new PaymentFailedIntegrationEvent(command.OrderId)
                 : new PaymentSucceededIntegrationEvent(command.OrderId);
             
-            await _billingIntegrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
+            await _integrationEventService.SaveEventAsync(paymentIntegrationEvent, cancellationToken);
             
             return transferResult.IsError ? transferResult.Error : Result.Success;
         }

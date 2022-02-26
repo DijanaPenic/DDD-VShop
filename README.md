@@ -184,9 +184,9 @@ List of features:
 | Sales Module |  Completed |
 | Catalog Module |  Completed |
 | Process Manager Module |  Completed |
+| Identity Module |  Completed |
 | Shipping Module |  TODO |
 | Administration Module | TODO  |
-| Identity Module |  TODO |
 
 ## How to Run
 

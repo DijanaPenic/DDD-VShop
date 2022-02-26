@@ -1,13 +1,13 @@
 using Moq;
 using System.Reflection;
 
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.DAL;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Billing.Infrastructure.DAL;
 using VShop.Modules.Catalog.Infrastructure.DAL;
+using VShop.Modules.Identity.Infrastructure.DAL;
 using VShop.Modules.ProcessManager.Infrastructure.DAL;
 using VShop.SharedKernel.Integration.DAL;
 using VShop.SharedKernel.PostgresDb.Extensions;
@@ -30,6 +30,7 @@ public class Startup
             "billing" => typeof(BillingDbContext).Assembly,
             "catalog" => typeof(CatalogDbContext).Assembly,
             "processmanager" => typeof(ProcessManagerDbContext).Assembly,
+            "identity" => typeof(IdentityDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
         
@@ -41,6 +42,7 @@ public class Startup
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddDbContext<IntegrationDbContext>();
+        services.AddDbContext<IdentityDbContext>();
         services.AddScoped(_ => new Mock<IClockService>().Object);
     }
 

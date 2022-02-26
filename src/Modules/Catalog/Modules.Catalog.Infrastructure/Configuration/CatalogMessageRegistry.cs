@@ -1,3 +1,4 @@
+using VShop.Modules.Sales.Integration.Events;
 using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
@@ -17,7 +18,8 @@ internal static class CatalogMessageRegistry
 
     private static void RegisterMessages(this MessageRegistry registry)
     {
-        
+        // Configure integration events - remote
+        registry.Add<OrderStatusSetToPaidIntegrationEvent>(nameof(OrderStatusSetToPaidIntegrationEvent));
     }
 
     private static void RegisterTransformations(this MessageRegistry registry)

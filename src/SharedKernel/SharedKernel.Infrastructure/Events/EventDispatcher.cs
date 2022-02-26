@@ -7,13 +7,11 @@ using MediatR;
 
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Events
 {
     internal class EventDispatcher : IEventDispatcher
     {
-        private readonly IMessageContextRegistry _messageContextRegistry;
         private readonly IContextAdapter _contextAdapter;
         private readonly IDictionary<EventDispatchStrategy, IMediator> _publishStrategies = 
             new Dictionary<EventDispatchStrategy, IMediator>();
@@ -21,11 +19,9 @@ namespace VShop.SharedKernel.Infrastructure.Events
         public EventDispatcher
         (
             ServiceFactory serviceFactory,
-            IMessageContextRegistry messageContextRegistry,
             IContextAdapter contextAdapter
         )
         {
-            _messageContextRegistry = messageContextRegistry;
             _contextAdapter = contextAdapter;
             
             _publishStrategies[EventDispatchStrategy.Async] = 
@@ -64,7 +60,7 @@ namespace VShop.SharedKernel.Infrastructure.Events
             if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))
                 throw new ArgumentException($"Unknown strategy: {strategy}");
             
-            _contextAdapter.ChangeContext(_messageContextRegistry.Get(@event), @event.GetType());
+            _contextAdapter.ChangeContext(@event);
             return mediator.Publish(@event, cancellationToken);
         }
         

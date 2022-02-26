@@ -23,6 +23,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="VShop.Modules.Sales.Tests" />
         <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
+        <InternalsVisibleTo Include="VShop.Modules.Sales.API" />
     </ItemGroup>
 
 </Project>

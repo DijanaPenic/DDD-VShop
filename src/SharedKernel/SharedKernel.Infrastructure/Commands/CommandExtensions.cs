@@ -8,7 +8,7 @@ internal static class CommandExtensions
 {
     public static IServiceCollection AddCommands(this IServiceCollection services)
     {
-        services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
+        services.AddScoped<ICommandDispatcher, CommandDispatcher>();
         
         return services;
     }

@@ -2,41 +2,59 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication;
 
+using VShop.SharedKernel.Infrastructure.Auth.Constants;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Contexts;
 
 public class IdentityContext : IIdentityContext
 {
-    public Guid Id { get; }
+    public Guid UserId { get; }
+    public Guid ClientId { get; }
     public bool IsAuthenticated { get; }
-    public string Role { get; }
+    public IList<string> Roles { get; }
     public IDictionary<string, IEnumerable<string>> Claims { get; }
 
-    private IdentityContext()
+    private IdentityContext() { }
+
+    public IdentityContext(Guid? userId)
     {
+        UserId = userId ?? Guid.Empty;
+        IsAuthenticated = userId.HasValue;
     }
 
-    public IdentityContext(Guid? id)
+    public IdentityContext(ClaimsPrincipal principal, AuthenticationProperties authProperties)
     {
-        Id = id ?? Guid.Empty;
-        IsAuthenticated = id.HasValue;
-    }
+        if (principal?.Identity is null) return;
 
-    public IdentityContext(ClaimsPrincipal principal)
-    {
-        if (principal?.Identity is null || string.IsNullOrWhiteSpace(principal.Identity.Name)) return;
+        IsAuthenticated = principal.Identity.IsAuthenticated;
+        
+        if(IsAuthenticated)
+        {
+            Claim userClaim = principal.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            UserId = Guid.TryParse(userClaim?.Value, out Guid userId) ? userId : Guid.Empty;
+            
+            Claim clientClaim = principal.Claims.SingleOrDefault(c => c.Type == ApplicationClaimTypes.ClientIdentifier);
+            ClientId = Guid.TryParse(clientClaim?.Value ?? authProperties?.Items["Client"], out Guid clientId) ? clientId : Guid.Empty;
+        }
 
-        IsAuthenticated = principal.Identity?.IsAuthenticated is true;
-        Id = IsAuthenticated ? Guid.Parse(principal.Identity.Name) : Guid.Empty;
-        Role = principal.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        Roles = principal.Claims
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(c => c.Value.ToLowerInvariant())
+            .ToList();
+        
         Claims = principal.Claims
             .GroupBy(c => c.Type)
             .ToDictionary(g => g.Key, g => g.Select(c => c.Value.ToString()));
     }
-        
-    public bool IsUser() => Role is "user";
-    public bool IsAdmin() => Role is "admin";
+
     public static IIdentityContext Empty => new IdentityContext();
+    public bool IsCurrentUser(Guid userId) => UserId == userId;
+    public bool IsAuthorized(string policy)
+        => Claims
+            .Where(c => c.Key == "permission")
+            .SelectMany(c => c.Value)
+            .Any(c => Equals(c, policy));
 }

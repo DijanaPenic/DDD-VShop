@@ -8,13 +8,9 @@ namespace VShop.SharedKernel.Domain.ValueObjects
     public class Address : ValueObject
     {
         public string City { get; }
-
         public string CountryCode { get; }
-
         public string PostalCode { get; }
-
         public string StateProvince { get; }
-
         public string StreetAddress { get; }
 
         [JsonConstructor]

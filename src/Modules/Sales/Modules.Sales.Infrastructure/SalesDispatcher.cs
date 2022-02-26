@@ -5,12 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using VShop.Modules.Sales.Infrastructure.Configuration;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 
 namespace VShop.Modules.Sales.Infrastructure;
 
 public class SalesDispatcher : ISalesDispatcher
 {
-    public async Task<object> ExecuteCommandAsync<TCommand>
+    public async Task<object> SendAsync<TCommand>
     (
         TCommand command,
         CancellationToken cancellationToken = default
@@ -21,8 +22,21 @@ public class SalesDispatcher : ISalesDispatcher
 
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
+    
+    public async Task<object> QueryAsync<TQuery>
+    (
+        TQuery query,
+        CancellationToken cancellationToken = default
+    ) where TQuery : IBaseQuery
+    {
+        using IServiceScope scope = SalesCompositionRoot.CreateScope();
+        IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();
+        
+        return await queryDispatcher.QueryAsync(query, cancellationToken);
+    }
 
-    public Task PublishEventAsync<TEvent>
+
+    public async Task PublishAsync<TEvent>
     (
         TEvent @event,
         CancellationToken cancellationToken = default
@@ -31,6 +45,6 @@ public class SalesDispatcher : ISalesDispatcher
         using IServiceScope scope = SalesCompositionRoot.CreateScope();
         IEventDispatcher eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
 
-        return eventDispatcher.PublishAsync(@event, cancellationToken);
+        await eventDispatcher.PublishAsync(@event, cancellationToken);
     }
 }

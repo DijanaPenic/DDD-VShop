@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Application;
@@ -23,8 +24,10 @@ namespace VShop.Modules.Catalog.API.Controllers
 {
     [ApiController]
     [Route("api/catalog/products")]
+    [Authorize(Policy)]
     internal class ProductController : ApplicationControllerBase
     {
+        private const string Policy = "products";
         private readonly IMapper _mapper;
         private readonly CatalogDbContext _catalogDbContext;
         
@@ -35,7 +38,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         }
         
         [HttpPost]
-        [Route("")]
         [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -67,7 +69,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             _mapper.Map(request, product);
@@ -80,7 +82,6 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpDelete]
         [Route("{productId:guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -89,7 +90,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             CatalogProduct product = await _catalogDbContext.Products.FindAsync(productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             product.IsDeleted = true;
@@ -102,11 +103,10 @@ namespace VShop.Modules.Catalog.API.Controllers
         
         [HttpGet]
         [Route("{productId:Guid}")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(CatalogProduct), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetProductAsync
         (
             [FromRoute] Guid productId,
@@ -117,19 +117,17 @@ namespace VShop.Modules.Catalog.API.Controllers
                 .Include(OptionsFactory.Create(include))
                 .SingleOrDefaultAsync(c => c.Id == productId);
             
-            if (product is null || product.IsDeleted is true)
+            if (product is null || product.IsDeleted)
                 return NotFound("Requested product cannot be found.");
 
             return Ok(product);
         }
         
         [HttpGet]
-        [Route("")]
-        [Consumes("application/json")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedItemsResponse<CatalogProduct>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetProductsAsync
         (
@@ -174,7 +172,6 @@ namespace VShop.Modules.Catalog.API.Controllers
                 return Result.ValidationError("ids value invalid. Must be comma-separated list of guids.");
 
             IEnumerable<Guid> idsToSelect = guidIds.Select(id => id.Value);
-
             Expression<Func<CatalogProduct, bool>> filterExpression = ci => idsToSelect.Contains(ci.Id);
             
             return filterExpression;

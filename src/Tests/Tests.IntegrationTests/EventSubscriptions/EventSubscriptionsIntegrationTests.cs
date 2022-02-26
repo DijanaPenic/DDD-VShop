@@ -24,49 +24,6 @@ namespace VShop.Tests.IntegrationTests.EventSubscriptions
     {
         private const int TimeoutInMillis = 4000;
 
-        [Theory(Skip = "The 'Ordering' process manager doesn't issue any integration events, so can't test.")]
-        [CustomAutoData]
-        internal async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
-        (
-            EntityId orderId,
-            ShoppingCart shoppingCart
-        )
-        {
-            // Arrange
-            IClockService clockService = new ClockService();
-        
-            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
-            OrderingProcessManager processManager = await ProcessManagerHelper.GetOrderingProcessManagerAsync(orderId);
-
-            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
-
-            // Act
-            // await IntegrationTestsFixture.ExecuteServiceAsync<CustomEventStoreClient>
-            // (
-            //     eventStoreClient => eventStoreClient.AppendToStreamAsync
-            //     (
-            //         ProcessManagerStore<OrderingProcessManager>.GetOutboxStreamName(processManager.Id),
-            //         processManager.Outbox.Version,
-            //         new List<IMessage> { paymentSucceededIntegrationEvent },
-            //         CancellationToken.None
-            //     )
-            // );
-            
-            // Assert
-            // async Task<IReadOnlyList<IIntegrationEvent>> Sampling(IIntegrationEventStore store) 
-            //     => (await store.LoadAsync(CancellationToken.None)).ToMessages();
-            //
-            // void Validation(IReadOnlyList<IIntegrationEvent> integrationEvents)
-            //     => integrationEvents.OfType<PaymentSucceededIntegrationEvent>().SingleOrDefault().Should().NotBeNull();
-            //
-            // await IntegrationTestsFixture.AssertEventuallyAsync
-            // (
-            //     clockService,
-            //     new PostgresDatabaseProbe<IIntegrationEventStore, IReadOnlyList<IIntegrationEvent>>(Sampling, Validation),
-            //     TimeoutInMillis
-            // );
-        }
-        
         [Theory, CustomAutoData]
         internal async Task Publishing_integration_event_from_the_integration_stream
         (
@@ -112,6 +69,49 @@ namespace VShop.Tests.IntegrationTests.EventSubscriptions
                     (ProcessManagerModule, Sampling, Validation),
                 TimeoutInMillis
             );
+        }
+
+        [Theory(Skip = "The 'Ordering' process manager doesn't issue any integration events, so can't test.")]
+        [CustomAutoData]
+        internal async Task Projecting_integration_event_from_process_manager_stream_into_the_integration_stream
+        (
+            EntityId orderId,
+            ShoppingCart shoppingCart
+        )
+        {
+            // Arrange
+            IClockService clockService = new ClockService();
+        
+            await OrderHelper.PlaceOrderAsync(shoppingCart, orderId, clockService.Now);
+            OrderingProcessManager processManager = await ProcessManagerHelper.GetOrderingProcessManagerAsync(orderId);
+
+            PaymentSucceededIntegrationEvent paymentSucceededIntegrationEvent = new(orderId);
+
+            // Act
+            // await IntegrationTestsFixture.ExecuteServiceAsync<CustomEventStoreClient>
+            // (
+            //     eventStoreClient => eventStoreClient.AppendToStreamAsync
+            //     (
+            //         ProcessManagerStore<OrderingProcessManager>.GetOutboxStreamName(processManager.Id),
+            //         processManager.Outbox.Version,
+            //         new List<IMessage> { paymentSucceededIntegrationEvent },
+            //         CancellationToken.None
+            //     )
+            // );
+            
+            // Assert
+            // async Task<IReadOnlyList<IIntegrationEvent>> Sampling(IIntegrationEventStore store) 
+            //     => (await store.LoadAsync(CancellationToken.None)).ToMessages();
+            //
+            // void Validation(IReadOnlyList<IIntegrationEvent> integrationEvents)
+            //     => integrationEvents.OfType<PaymentSucceededIntegrationEvent>().SingleOrDefault().Should().NotBeNull();
+            //
+            // await IntegrationTestsFixture.AssertEventuallyAsync
+            // (
+            //     clockService,
+            //     new PostgresDatabaseProbe<IIntegrationEventStore, IReadOnlyList<IIntegrationEvent>>(Sampling, Validation),
+            //     TimeoutInMillis
+            // );
         }
     }
 }

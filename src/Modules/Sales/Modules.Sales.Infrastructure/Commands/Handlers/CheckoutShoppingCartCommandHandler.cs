@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Domain.ValueObjects;
@@ -18,21 +16,15 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
     {
         private readonly IClockService _clockService;
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
-        private readonly IEventDispatcher _eventDispatcher;
-        private readonly IMediator _mediator;
 
         public CheckoutShoppingCartCommandHandler
         (
-            IMediator mediator,
             IClockService clockService,
-            IAggregateStore<ShoppingCart> shoppingCartStore,
-            IEventDispatcher eventDispatcher
+            IAggregateStore<ShoppingCart> shoppingCartStore
         )
         {
             _clockService = clockService;
             _shoppingCartStore = shoppingCartStore;
-            _eventDispatcher = eventDispatcher;
-            _mediator = mediator;
         }
         
         public async Task<Result<CheckoutResponse>> Handle

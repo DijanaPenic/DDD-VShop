@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -33,7 +34,7 @@ namespace VShop.SharedKernel.Infrastructure.Parameters.Sorting
                 SortingPair sortingPair = new
                 (
                     orderBy: sortParams[0],
-                    ascending: sortParams.Count is 1 || (sortParams[1].ToLowerInvariant().StartsWith(AscendingDirection))
+                    ascending: sortParams.Count is 1 || (sortParams[1].StartsWith(AscendingDirection, StringComparison.OrdinalIgnoreCase))
                 );
 
                 _sorters.Add(sortingPair);

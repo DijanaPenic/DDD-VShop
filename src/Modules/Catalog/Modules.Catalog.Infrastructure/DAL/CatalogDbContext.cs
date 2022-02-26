@@ -1,10 +1,10 @@
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 
-using VShop.Modules.Catalog.Infrastructure.DAL.Entities;
-using VShop.SharedKernel.Infrastructure.Services.Contracts;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.PostgresDb.Contracts;
+using VShop.SharedKernel.Infrastructure.Services.Contracts;
+using VShop.Modules.Catalog.Infrastructure.DAL.Entities;
 
 [assembly: InternalsVisibleTo("Database.DatabaseMigrator")]
 namespace VShop.Modules.Catalog.Infrastructure.DAL

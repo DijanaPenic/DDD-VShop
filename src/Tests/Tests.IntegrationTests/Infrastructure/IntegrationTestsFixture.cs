@@ -1,17 +1,17 @@
 using Serilog;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Infrastructure.Contexts;
+using VShop.SharedKernel.Infrastructure.Messaging;
+using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Tests.IntegrationTests;
+using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration;
 using VShop.Modules.Sales.Infrastructure.Configuration;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
-using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
-using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Tests.IntegrationTests;
-using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
+using VShop.SharedKernel.Infrastructure.Extensions;
 
 namespace VShop.Tests.IntegrationTests.Infrastructure
 {
@@ -28,19 +28,20 @@ namespace VShop.Tests.IntegrationTests.Infrastructure
                 .AddJsonFile("tests.json")
                 .Build();
 
-            IContextAccessor contextAccessor = new MockContextAccessor();
-            
             ILogger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
+
+            Module[] modules = ModuleLoader.LoadModules(configuration).ToArray();
             
-            IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
-            IMessageContextRegistry messageContextRegistry = new MessageContextRegistry(memoryCache);
-            
-            IList<Module> modules = ModuleLoader.LoadModules(configuration).ToList();
+            IServiceCollection services = new ServiceCollection();
+            services.AddSingleton(configuration);
+            services.AddContext(new MockContextAccessor());
+            services.AddMessaging();
+
             foreach (Module module in modules)
-                module.ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+                module.ConfigureContainer(logger, configuration, services.Clone());
 
             SalesModule = new ModuleFixture
             (

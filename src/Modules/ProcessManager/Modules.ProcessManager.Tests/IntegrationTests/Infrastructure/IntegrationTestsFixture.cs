@@ -1,15 +1,13 @@
 using Serilog;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.ProcessManager.Infrastructure.Configuration;
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts;
 using VShop.SharedKernel.Infrastructure.Messaging;
-using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
-using VShop.SharedKernel.Infrastructure.Modules.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
+using VShop.Modules.ProcessManager.Infrastructure.Configuration;
 
 namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
 {
@@ -23,18 +21,19 @@ namespace VShop.Modules.ProcessManager.Tests.IntegrationTests.Infrastructure
                 .AddJsonFile("module.process_manager.tests.json")
                 .Build();
 
-            IContextAccessor contextAccessor = new MockContextAccessor();
-            
             ILogger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
             
-            IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
-            IMessageContextRegistry messageContextRegistry = new MessageContextRegistry(memoryCache);
-            
             Module module = ModuleLoader.LoadModules(configuration).Single();
-            module.ConfigureContainer(configuration, logger, contextAccessor, messageContextRegistry);
+            
+            IServiceCollection services = new ServiceCollection();
+            services.AddSingleton(configuration);
+            services.AddContext(new MockContextAccessor());
+            services.AddMessaging();
+
+            module.ConfigureContainer(logger, configuration, services);
 
             ProcessManagerModule = new ModuleFixture
             (

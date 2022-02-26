@@ -28,13 +28,17 @@ public static class ModuleLoader
     private static IList<Assembly> LoadAssemblies(IConfiguration configuration)
     {
         IList<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-        string[] locations = assemblies.Where(a => !a.IsDynamic).Select(a => a.Location).ToArray();
+        
+        string[] locations = assemblies
+            .Where(a => !a.IsDynamic)
+            .Select(a => a.Location)
+            .ToArray();
 
         List<string> files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
             .Where(f => !locations.Contains(f, StringComparer.InvariantCultureIgnoreCase))
             .ToList();
         
-        List<string> disabledModules = new();
+        IList<string> disabledModules = new List<string>();
         
         foreach (string file in files)
         {
@@ -47,7 +51,7 @@ public static class ModuleLoader
         
         foreach (string disabledModule in disabledModules) files.Remove(disabledModule);
 
-        files.ForEach(f => assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(f))));
+        files.ForEach(f => assemblies.Add(Assembly.LoadFrom(f)));
 
         return assemblies;
     }

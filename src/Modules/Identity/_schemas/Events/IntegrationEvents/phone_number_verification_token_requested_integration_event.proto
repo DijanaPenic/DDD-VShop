@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+option csharp_namespace = "VShop.Modules.Identity.Integration.Events";
+
+import "SharedKernel/SharedKernel.Infrastructure/_schemas/uuid.proto";
+
+message PhoneNumberVerificationTokenRequestedIntegrationEvent 
+{
+	Uuid user_id = 1;
+	string token = 2;
+	string phone_number = 3;
+	bool is_voice_call = 4;
+}

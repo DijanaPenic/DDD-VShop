@@ -82,8 +82,7 @@ public class CustomEventStoreClient
         return messages.Select(m => _eventStoreMessageConverter.ToMessage<TMessage>(m)).ToList();
     }
 
-    private string GetStreamName(string value)
-        => $"{_eventStoreClient.ConnectionName}/{value}".ToSnakeCase();
+    private string GetStreamName(string value) => $"{_eventStoreClient.ConnectionName}/{value}".ToSnakeCase();
     
     private IReadOnlyList<EventData> GetEventData<TMessage>(IEnumerable<TMessage> messages) 
         where TMessage : IMessage

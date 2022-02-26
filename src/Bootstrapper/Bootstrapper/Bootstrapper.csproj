@@ -19,6 +19,7 @@
       <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.API\Modules.Catalog.API.csproj" />
       <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj" />
       <ProjectReference Include="..\..\Modules\ProcessManager\Modules.ProcessManager.API\Modules.ProcessManager.API.csproj" />
+      <ProjectReference Include="..\..\Modules\Identity\Modules.Identity.API\Modules.Identity.API.csproj" />
       <ProjectReference Include="..\..\SharedKernel\SharedKernel.Application\SharedKernel.Application.csproj" />
       <ProjectReference Include="..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>

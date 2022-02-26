@@ -7,8 +7,6 @@ namespace VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 
 public interface IEventStoreMessageConverter
 {
-    MessageEnvelope<TMessage> ToMessage<TMessage>(ResolvedEvent resolvedEvent)
-        where TMessage : IMessage;
-
+    MessageEnvelope<TMessage> ToMessage<TMessage>(ResolvedEvent resolvedEvent) where TMessage : IMessage;
     EventData FromMessage(MessageEnvelope<IMessage> messageEnvelope);
 }

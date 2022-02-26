@@ -2,9 +2,11 @@ using System;
 using NodaTime;
 using NodaTime.Serialization.Protobuf;
 
+using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+
 namespace VShop.SharedKernel.EventStoreDb.Messaging
 {
-    public partial class MessageMetadata
+    public partial class MessageMetadata : IMessage
     {
         private MessageMetadata(Guid messageId, Guid causationId, Guid correlationId)
         {

@@ -29,8 +29,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             );
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
 
-            Result<FullName> fullNameResult = FullName.Create(command.FirstName, command.MiddleName,
-                command.LastName);
+            Result<FullName> fullNameResult = FullName.Create(command.FirstName, command.MiddleName, command.LastName);
             if (fullNameResult.IsError) return fullNameResult.Error;
             
             Result setContactInformationResult = shoppingCart.Customer.SetContactInformation

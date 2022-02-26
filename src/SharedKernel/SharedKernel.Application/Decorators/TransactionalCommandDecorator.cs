@@ -3,6 +3,7 @@ using Serilog;
 
 using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 using VShop.SharedKernel.PostgresDb.Contracts;
 using VShop.SharedKernel.Integration.Services.Contracts;
 
@@ -35,31 +36,23 @@ namespace VShop.SharedKernel.Application.Decorators
             RequestHandlerDelegate<TResponse> next
         )
         {
+            // TODO - Temp. fix
+            if (command is IBaseQuery) return await next();
+            
             string commandTypeName = command.GetType().Name;
+        
+            (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() 
+                => next(), cancellationToken);
+            
+            await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
+            
+            _logger.Information
+            (
+                "Commit transaction {TransactionId} for {CommandName}",
+                transactionId, commandTypeName
+            );
 
-            try
-            {
-                (Guid transactionId, TResponse response) = await _unitOfWork.ExecuteAsync(() => next(), cancellationToken);
-                await _integrationEventService.PublishEventsAsync(transactionId, cancellationToken);
-                
-                _logger.Information
-                (
-                    "Commit transaction {TransactionId} for {CommandName}",
-                    transactionId, commandTypeName
-                );
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error
-                (
-                    ex, "Error Handling transaction for {CommandName} ({@Command})",
-                    commandTypeName, command
-                );
-
-                throw;
-            }
+            return response;
         }
     }
 }

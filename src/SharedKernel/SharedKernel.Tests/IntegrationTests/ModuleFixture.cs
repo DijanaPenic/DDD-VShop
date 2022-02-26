@@ -1,6 +1,5 @@
 using Force.DeepCloner;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure;
@@ -12,7 +11,6 @@ using VShop.SharedKernel.Infrastructure.Messaging;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Services.Contracts;
-using VShop.SharedKernel.Infrastructure.Types;
 using VShop.SharedKernel.Tests.IntegrationTests.Contracts;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing;
 using VShop.SharedKernel.Tests.IntegrationTests.Probing.Contracts;
@@ -40,23 +38,6 @@ public class ModuleFixture : IModuleFixture
     
     public Task AssertEventuallyAsync(IClockService clockService, IProbe probe, int timeout) 
         => new Poller(clockService, timeout).CheckAsync(probe);
-
-    public Task ExecuteHostedServiceAsync(Func<IHostedService, Task> action, string hostedServiceName)
-        => ExecuteScopeAsync(sp =>
-        {
-            IHostedService service = sp.GetServices<IHostedService>()
-                .First(s => s.GetType().Name == hostedServiceName);
-
-            return action(service);
-        });
-        
-    public Task ExecuteHostedServiceAsync<TService>(Func<TService, Task> action)
-        where TService : IHostedService
-        => ExecuteScopeAsync(sp =>
-        {
-            TService service = sp.GetServices<IHostedService>().OfType<TService>().Single();
-            return action(service);
-        });
 
     public Task ExecuteServiceAsync<TService>(Func<TService, Task> action)
         => ExecuteScopeAsync(sp =>
@@ -88,7 +69,7 @@ public class ModuleFixture : IModuleFixture
 
     public Task PublishAsync(IIntegrationEvent @event, IContext context = default)
     {
-        context ??= new Context(SequentialGuid.Create(), SequentialGuid.Create());
+        context ??= new Context();
         
         return ExecuteScopeAsync(sp =>
         {
