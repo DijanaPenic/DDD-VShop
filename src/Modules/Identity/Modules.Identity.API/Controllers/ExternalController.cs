@@ -15,7 +15,7 @@ internal partial class AccountController
 {
     [HttpGet]
     [Route("external/providers")]
-    [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<LoginProvider>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -23,7 +23,7 @@ internal partial class AccountController
     [ClientAuthorization]
     public async Task<IActionResult> GetProvidersAsync()
     {
-        Result<List<string>> result = await _queryDispatcher.QueryAsync(new GetExternalProvidersQuery());
+        Result<List<LoginProvider>> result = await _queryDispatcher.QueryAsync(new GetExternalProvidersQuery());
         
         if (result.IsError) return HandleError(result.Error);
         if (result.Data.Count is 0) return NoContent();
