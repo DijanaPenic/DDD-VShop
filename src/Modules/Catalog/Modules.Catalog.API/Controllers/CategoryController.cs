@@ -125,7 +125,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(PagedItemsResponse<CatalogProduct>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedItemsResponse<CatalogCategory>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCategoriesAsync
         (
             [FromQuery] string include = DefaultParameters.Include,
