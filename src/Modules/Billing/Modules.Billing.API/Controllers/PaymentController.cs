@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
@@ -13,8 +14,10 @@ namespace VShop.Modules.Billing.API.Controllers
 {
     [ApiController]
     [Route("api/payment")]
+    [Authorize(Policy)]
     internal class PaymentController : ApplicationControllerBase
     {
+        private const string Policy = "payments";
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
         

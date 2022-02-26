@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 using VShop.SharedKernel.Application;
@@ -23,8 +24,10 @@ namespace VShop.Modules.Catalog.API.Controllers
 {
     [ApiController]
     [Route("api/catalog/products")]
+    [Authorize(Policy)]
     internal class ProductController : ApplicationControllerBase
     {
+        private const string Policy = "products";
         private readonly IMapper _mapper;
         private readonly CatalogDbContext _catalogDbContext;
         

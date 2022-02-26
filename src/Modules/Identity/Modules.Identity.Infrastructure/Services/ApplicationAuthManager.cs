@@ -73,7 +73,7 @@ internal sealed class ApplicationAuthManager
         {
             new Claim(ApplicationClaimTypes.ClientIdentifier, clientId.ToString()),
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.NormalizedUserName), // TODO - change to id.
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.NormalizedUserName),
             new Claim(JwtRegisteredClaimNames.Jti, SequentialGuid.Create().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeMilliseconds().ToString())
         };

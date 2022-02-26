@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
@@ -18,8 +19,10 @@ namespace VShop.Modules.Sales.API.Controllers
 {
     [ApiController]
     [Route("api/shopping-carts")]
+    [Authorize(Policy)]
     internal class ShoppingCartController : ApplicationControllerBase
     {
+        private const string Policy = "shopping_carts";
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IMapper _mapper;
         private readonly IShoppingCartReadService _readService;
