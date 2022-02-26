@@ -21,6 +21,7 @@ using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Application.Providers;
 using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
+
 namespace VShop.SharedKernel.Application.Extensions;
 
 public static class ApplicationExtensions
@@ -74,17 +75,7 @@ public static class ApplicationExtensions
 
             manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
         });
-        
-        // TODO - resolve Swagger.
-        // services.AddSwaggerGen(swagger =>
-        // {
-        //     swagger.CustomSchemaIds(t => t.FullName);
-        //     swagger.SwaggerDoc("v1", new OpenApiInfo
-        //     {
-        //         Title = "Modular API",
-        //         Version = "v1"
-        //     });
-        // });
+        services.AddSwaggerDocumentation();
 
         return services;
     }
@@ -129,17 +120,9 @@ public static class ApplicationExtensions
         {
             ForwardedHeaders = ForwardedHeaders.All
         });
-        
-        // app.UseSwagger();
-        //
-        // app.UseReDoc(reDoc =>
-        // {
-        //     reDoc.RoutePrefix = "docs";
-        //     reDoc.SpecUrl("/swagger/v1/swagger.json");
-        //     reDoc.DocumentTitle = "Modular API";
-        // });
-        //
+
         app.UseMiddleware<ErrorHandlerMiddleware>();
+        app.UseSwaggerDocumentation();
         app.UseRouting();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
@@ -147,7 +130,6 @@ public static class ApplicationExtensions
             endpoints.MapControllers();
             endpoints.MapGet("/", context => context.Response.WriteAsync("Modular API"));
         });
-        
         app.UseSerilogRequestLogging();
 
         return app;
