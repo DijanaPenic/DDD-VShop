@@ -140,7 +140,7 @@ internal partial class AccountController
         [FromQuery] string token
     )
     {
-        VerifyExternalCommand command = new(userId, token); // TODO - validation.
+        VerifyExternalCommand command = new(userId, token);
         Result result = await _commandDispatcher.SendAsync(command);
         
         return HandleResult(result, NoContent);
