@@ -1,4 +1,3 @@
-using MediatR;
 using Serilog;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
@@ -8,9 +7,10 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Application.Decorators;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.Modules.ProcessManager.Infrastructure;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration;
 using VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
@@ -54,11 +54,7 @@ internal class ProcessManagerModule : Module
         services.AddSingleton(ProcessManagerMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, ProcessManagerDispatcher>();
         
-        services.Decorate
-        (
-            typeof(INotificationHandler<>),
-            typeof(LoggingEventDecorator<>)
-        );
+        services.TryDecorate(typeof(IEventHandler<>), typeof(LoggingEventHandlerDecorator<>));
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         ProcessManagerCompositionRoot.SetServiceProvider(serviceProvider, FullName);

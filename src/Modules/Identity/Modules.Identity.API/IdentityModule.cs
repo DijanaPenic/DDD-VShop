@@ -1,4 +1,3 @@
-using MediatR;
 using Serilog;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
@@ -8,9 +7,10 @@ using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Application.Extensions;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure;
 using VShop.Modules.Identity.Infrastructure.Configuration;
 using VShop.Modules.Identity.Infrastructure.Configuration.Extensions;
@@ -60,21 +60,12 @@ internal class IdentityModule : Module
         services.AddSingleton(IdentityMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, IdentityDispatcher>();
 
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(LoggingCommandDecorator<,>)
-        );
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(ValidationCommandDecorator<,>)
-        );
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(TransactionalCommandDecorator<,>)
-        );
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(LoggingCommandHandlerDecorator<,>));
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(ValidationCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(ValidationCommandHandlerDecorator<,>));
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(TransactionalCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(TransactionalCommandHandlerDecorator<,>));
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         IdentityCompositionRoot.SetServiceProvider(serviceProvider, FullName);

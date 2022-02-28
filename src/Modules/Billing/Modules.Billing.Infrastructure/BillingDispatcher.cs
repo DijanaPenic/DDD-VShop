@@ -1,19 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Billing.Infrastructure.Configuration;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
+using VShop.Modules.Billing.Infrastructure.Configuration;
 
 namespace VShop.Modules.Billing.Infrastructure;
 
 public class BillingDispatcher : IBillingDispatcher
 {
-    public async Task<object> SendAsync<TCommand>
+    public async Task<Result> SendAsync
     (
-        TCommand command,
+        ICommand command,
         CancellationToken cancellationToken = default
-    ) where TCommand : IBaseCommand
+    )
     {
         using IServiceScope scope = BillingCompositionRoot.CreateScope();
         ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
@@ -21,11 +22,11 @@ public class BillingDispatcher : IBillingDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public async Task<object> QueryAsync<TQuery>
+    public async Task<Result<TResult>> QueryAsync<TResult>
     (
-        TQuery query,
+        IQuery<TResult> query,
         CancellationToken cancellationToken = default
-    ) where TQuery : IBaseQuery
+    )
     {
         using IServiceScope scope = BillingCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();

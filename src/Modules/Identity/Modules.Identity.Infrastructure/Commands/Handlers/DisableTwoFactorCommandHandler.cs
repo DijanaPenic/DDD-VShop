@@ -14,7 +14,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         public DisableTwoFactorCommandHandler(ApplicationUserManager userManager) 
             => _userManager = userManager;
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             DisableTwoFactorCommand command,
             CancellationToken cancellationToken

@@ -78,7 +78,7 @@ public class ModuleFixture : IModuleFixture
 
             messageContextRegistry.Set(@event, new MessageContext(context));
 
-            return eventDispatcher.PublishAsync(@event);
+            return eventDispatcher.PublishAsync(@event, CancellationToken.None);
         }, context);
     }
     

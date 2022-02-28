@@ -11,7 +11,7 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
         public IsClientAuthenticatedQueryHandler(ApplicationAuthManager authManager)
             => _authManager = authManager;
 
-        public async Task<Result<bool>> Handle
+        public async Task<Result<bool>> HandleAsync
         (
             IsClientAuthenticatedQuery query,
             CancellationToken cancellationToken

@@ -2,122 +2,112 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
 using System.Collections.Generic;
-using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Events
 {
     internal class EventDispatcher : IEventDispatcher
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly IContextAdapter _contextAdapter;
-        private readonly IDictionary<EventDispatchStrategy, IMediator> _publishStrategies = 
-            new Dictionary<EventDispatchStrategy, IMediator>();
+        private readonly IDictionary<EventDispatchStrategy, EventMediator> _publishStrategies = 
+            new Dictionary<EventDispatchStrategy, EventMediator>();
 
         public EventDispatcher
         (
-            ServiceFactory serviceFactory,
+            IServiceProvider serviceProvider,
             IContextAdapter contextAdapter
         )
         {
+            _serviceProvider = serviceProvider;
             _contextAdapter = contextAdapter;
             
             _publishStrategies[EventDispatchStrategy.Async] = 
-                new EventMediator(serviceFactory, AsyncContinueOnExceptionAsync);
+                new EventMediator(AsyncContinueOnExceptionAsync);
             
             _publishStrategies[EventDispatchStrategy.ParallelNoWait] =
-                new EventMediator(serviceFactory, ParallelNoWaitAsync);
+                new EventMediator(ParallelNoWaitAsync);
             
             _publishStrategies[EventDispatchStrategy.ParallelWhenAll] = 
-                new EventMediator(serviceFactory, ParallelWhenAllAsync);
+                new EventMediator(ParallelWhenAllAsync);
             
             _publishStrategies[EventDispatchStrategy.ParallelWhenAny] = 
-                new EventMediator(serviceFactory, ParallelWhenAnyAsync);
+                new EventMediator(ParallelWhenAnyAsync);
             
             _publishStrategies[EventDispatchStrategy.SyncContinueOnException] = 
-                new EventMediator(serviceFactory, SyncContinueOnExceptionAsync);
+                new EventMediator(SyncContinueOnExceptionAsync);
             
             _publishStrategies[EventDispatchStrategy.SyncStopOnException] = 
-                new EventMediator(serviceFactory, SyncStopOnExceptionAsync);
+                new EventMediator(SyncStopOnExceptionAsync);
         }
 
-        public Task PublishAsync<TEvent>
+        public Task PublishAsync
         (
-            TEvent @event,
-            CancellationToken cancellationToken = default
-        ) where TEvent : IBaseEvent
-            => PublishAsync(@event, EventDispatchStrategy.SyncStopOnException, cancellationToken);
+            IBaseEvent @event,
+            CancellationToken cancellationToken
+        ) => PublishAsync(@event, EventDispatchStrategy.SyncStopOnException, cancellationToken);
 
-        public Task PublishAsync<TEvent>
+        public async Task PublishAsync
         (
-            TEvent @event,
+            IBaseEvent @event,
             EventDispatchStrategy strategy,
-            CancellationToken cancellationToken = default
-        ) where TEvent : IBaseEvent
+            CancellationToken cancellationToken
+        ) 
         {
-            if (!_publishStrategies.TryGetValue(strategy, out IMediator mediator))
+            if (!_publishStrategies.TryGetValue(strategy, out EventMediator mediator))
                 throw new ArgumentException($"Unknown strategy: {strategy}");
             
             _contextAdapter.ChangeContext(@event);
-            return mediator.Publish(@event, cancellationToken);
-        }
-        
-        private static Task ParallelWhenAllAsync<TEvent>
-        (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
-            CancellationToken cancellationToken
-        ) where TEvent : INotification
-        {
-            List<Task> tasks = handlers.Select(handler 
-                => Task.Run(() => handler(@event, cancellationToken), cancellationToken)).ToList();
+            
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            
+            Type handlerType = typeof(IEventHandler<>).MakeGenericType(@event.GetType());
+            IEnumerable<object> handlers =  scope.ServiceProvider.GetServices(handlerType);
+            MethodInfo method = handlerType.GetMethod(nameof(IEventHandler<IBaseEvent>.HandleAsync));
 
-            return Task.WhenAll(tasks);
-        }
+            if (method is null) throw new InvalidOperationException("Command handler is invalid.");
 
-        private static Task ParallelWhenAnyAsync<TEvent>
-        (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
-            CancellationToken cancellationToken
-        )
-        {
-            List<Task> tasks = handlers.Select(handler =>
-                Task.Run(() => handler(@event, cancellationToken), cancellationToken)).ToList();
-
-            return Task.WhenAny(tasks);
+            IEnumerable<Func<Task>> tasks = handlers
+                .Select(handler => GetHandlerTask(@event, method, handler, cancellationToken));
+            
+            await mediator.Publish(tasks);
         }
 
-        private static Task ParallelNoWaitAsync<TEvent>
+        private static Func<Task> GetHandlerTask
         (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
+            IBaseEvent @event,
+            MethodBase method,
+            object handler,
             CancellationToken cancellationToken
-        )
-        {
-            foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
-                Task.Run(() => handler(@event, cancellationToken), cancellationToken);
+        ) => () => (Task) method.Invoke(handler, new object[] {@event, cancellationToken});
 
+        private static Task ParallelWhenAllAsync(IEnumerable<Func<Task>> handlers)
+            => Task.WhenAll(handlers.Select(handler => handler()));
+
+        private static Task ParallelWhenAnyAsync(IEnumerable<Func<Task>> handlers) 
+            => Task.WhenAny(handlers.Select(handler => handler()));
+
+        private static Task ParallelNoWaitAsync(IEnumerable<Func<Task>> handlers)
+        {
+            foreach (Func<Task> handler in handlers) handler();
             return Task.CompletedTask;
         }
 
-        private static async Task AsyncContinueOnExceptionAsync<TEvent>
-        (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
-            CancellationToken cancellationToken
-        )
+        private static async Task AsyncContinueOnExceptionAsync(IEnumerable<Func<Task>> handlers)
         {
             List<Task> tasks = new();
             List<Exception> exceptions = new();
 
-            foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
+            foreach (Func<Task> handler in handlers)
             {
                 try
                 {
-                    tasks.Add(handler(@event, cancellationToken));
+                    tasks.Add(handler());
                 }
                 catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
                 {
@@ -142,31 +132,21 @@ namespace VShop.SharedKernel.Infrastructure.Events
                 throw new AggregateException(exceptions);
         }
 
-        private static async Task SyncStopOnExceptionAsync<TEvent>
-        (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
-            CancellationToken cancellationToken
-        )
+        private static async Task SyncStopOnExceptionAsync(IEnumerable<Func<Task>> handlers)
         {
-            foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
-                await handler(@event, cancellationToken).ConfigureAwait(false);
+            foreach (Func<Task> handler in handlers)
+                await handler().ConfigureAwait(false);
         }
 
-        private static async Task SyncContinueOnExceptionAsync<TEvent>
-        (
-            IEnumerable<Func<TEvent, CancellationToken, Task>> handlers,
-            TEvent @event,
-            CancellationToken cancellationToken
-        )
+        private static async Task SyncContinueOnExceptionAsync(IEnumerable<Func<Task>> handlers)
         {
             List<Exception> exceptions = new();
 
-            foreach (Func<TEvent, CancellationToken, Task> handler in handlers)
+            foreach (Func<Task> handler in handlers)
             {
                 try
                 {
-                    await handler(@event, cancellationToken).ConfigureAwait(false);
+                    await handler().ConfigureAwait(false);
                 }
                 catch (AggregateException ex)
                 {

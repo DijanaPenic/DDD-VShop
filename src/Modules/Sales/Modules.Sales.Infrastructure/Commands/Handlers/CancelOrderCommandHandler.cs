@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
         public CancelOrderCommandHandler(IAggregateStore<Order> orderStore)
             => _orderStore = orderStore;
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             CancelOrderCommand command,
             CancellationToken cancellationToken

@@ -32,37 +32,37 @@ namespace VShop.Modules.ProcessManager.Infrastructure.Handlers
             IProcessManagerStore<OrderingProcessManager> processManagerStore
         ) : base(clockService, logger, processManagerStore) { }
         
-        public Task Handle(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(ShoppingCartCheckoutRequestedDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderPlacedDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderPlacedDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(PaymentGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(PaymentGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(PaymentSucceededIntegrationEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(PaymentSucceededIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(PaymentFailedIntegrationEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(PaymentFailedIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderStatusSetToPaidDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderStatusSetToPaidDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderStockProcessingGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderStockProcessingGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderStockProcessedIntegrationEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderStockProcessedIntegrationEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(OrderStatusSetToPendingShippingDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderStatusSetToPendingShippingDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
         
-        public Task Handle(ShippingGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(ShippingGracePeriodExpiredDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
 
-        public Task Handle(OrderStatusSetToCancelledDomainEvent @event, CancellationToken cancellationToken)
+        public Task HandleAsync(OrderStatusSetToCancelledDomainEvent @event, CancellationToken cancellationToken)
             => TransitionAsync(@event.OrderId, @event, cancellationToken);
     }
 }

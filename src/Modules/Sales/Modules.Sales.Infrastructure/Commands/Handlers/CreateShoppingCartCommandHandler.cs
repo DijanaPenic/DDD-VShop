@@ -26,7 +26,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             _readService = readService;
         }
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             CreateShoppingCartCommand command,
             CancellationToken cancellationToken

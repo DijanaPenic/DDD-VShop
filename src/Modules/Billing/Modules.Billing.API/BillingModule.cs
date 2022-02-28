@@ -1,4 +1,3 @@
-using MediatR;
 using Serilog;
 using System.Reflection;
 using System.Collections.Generic;
@@ -13,6 +12,8 @@ using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Application.Extensions;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Billing.API.Automapper;
 using VShop.Modules.Billing.Infrastructure;
 using VShop.Modules.Billing.Infrastructure.Services;
@@ -69,22 +70,12 @@ internal class BillingModule : Module
         services.AddSingleton(BillingMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, BillingDispatcher>();
 
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(LoggingCommandDecorator<,>)
-        );
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(TransactionalCommandDecorator<,>)
-        );
-        services.Decorate
-        (
-            typeof(INotificationHandler<>),
-            typeof(LoggingEventDecorator<>)
-        );
-
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(LoggingCommandHandlerDecorator<,>));
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(TransactionalCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(TransactionalCommandHandlerDecorator<,>));
+        services.TryDecorate(typeof(IEventHandler<>), typeof(LoggingEventHandlerDecorator<>));
+        
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         BillingCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         

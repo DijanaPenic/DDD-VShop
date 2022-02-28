@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using System.Collections.Generic;
 
 namespace VShop.SharedKernel.Infrastructure.Events
 {
-    internal class EventMediator : Mediator
+    internal class EventMediator
     {
-        private readonly Func<IEnumerable<Func<INotification, CancellationToken, Task>>, INotification, CancellationToken, Task> _publish;
+        public readonly Func<IEnumerable<Func<Task>>, Task> Publish;
 
-        public EventMediator
-        (
-            ServiceFactory serviceFactory,
-            Func<IEnumerable<Func<INotification, CancellationToken, Task>>, INotification, CancellationToken, Task>
-                publish
-        ) : base(serviceFactory) => _publish = publish;
-
-        protected override Task PublishCore
-        (
-            IEnumerable<Func<INotification, CancellationToken, Task>> allHandlers,
-            INotification notification,
-            CancellationToken cancellationToken
-        ) => _publish(allHandlers, notification, cancellationToken);
+        public EventMediator(Func<IEnumerable<Func<Task>>, Task> publish) 
+            => Publish = publish;
     }
 }

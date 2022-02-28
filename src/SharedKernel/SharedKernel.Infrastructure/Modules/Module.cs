@@ -23,7 +23,7 @@ public abstract class Module
 
     public virtual bool AutomaticValidationEnabled => false;
 
-    public Assembly[] Assemblies { get; }
+    public IList<Assembly> Assemblies { get; }
 
     protected Module(string name, IEnumerable<Assembly> assemblies)
     {
@@ -50,7 +50,7 @@ public abstract class Module
         return Task.WhenAll(hostedServices.Select(s => s.StopAsync(CancellationToken.None)));
     }
     
-    private Assembly[] GetModuleAssemblies(IEnumerable<Assembly> assemblies) 
+    private IList<Assembly> GetModuleAssemblies(IEnumerable<Assembly> assemblies) 
         => assemblies.Where(a => a.FullName is not null && a.FullName.StartsWith(FullName))
-                     .ToArray();
+            .ToList();
 }

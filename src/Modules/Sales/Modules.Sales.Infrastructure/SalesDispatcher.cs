@@ -2,20 +2,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Sales.Infrastructure.Configuration;
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.Modules.Sales.Infrastructure.Configuration;
 
 namespace VShop.Modules.Sales.Infrastructure;
 
 public class SalesDispatcher : ISalesDispatcher
 {
-    public async Task<object> SendAsync<TCommand>
+    public async Task<Result> SendAsync
     (
-        TCommand command,
+        ICommand command,
         CancellationToken cancellationToken = default
-    ) where TCommand : IBaseCommand
+    )
     {
         using IServiceScope scope = SalesCompositionRoot.CreateScope();
         ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
@@ -23,18 +24,17 @@ public class SalesDispatcher : ISalesDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
     
-    public async Task<object> QueryAsync<TQuery>
+    public async Task<Result<TResult>> QueryAsync<TResult>
     (
-        TQuery query,
+        IQuery<TResult> query,
         CancellationToken cancellationToken = default
-    ) where TQuery : IBaseQuery
+    )
     {
         using IServiceScope scope = SalesCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();
         
         return await queryDispatcher.QueryAsync(query, cancellationToken);
     }
-
 
     public async Task PublishAsync<TEvent>
     (

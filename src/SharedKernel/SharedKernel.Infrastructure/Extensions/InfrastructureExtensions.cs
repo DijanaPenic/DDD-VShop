@@ -1,4 +1,3 @@
-using MediatR;
 using Serilog;
 using System.Reflection;
 using System.Collections.Generic;
@@ -21,15 +20,14 @@ public static class InfrastructureExtensions
     public static IServiceCollection AddInfrastructure
     (
         this IServiceCollection services,
-        Assembly[] assemblies,
+        IList<Assembly> assemblies,
         string moduleName,
         ILogger logger
     )
     {
-        services.AddCommands();
-        services.AddQueries();
-        services.AddEvents();
-        services.AddMediatR(assemblies);
+        services.AddCommands(assemblies);
+        services.AddQueries(assemblies);
+        services.AddEvents(assemblies);
         services.AddLogging(logger, moduleName);
         services.AddValidation(assemblies);
         services.AddSingleton<IClockService, ClockService>();

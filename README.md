@@ -212,7 +212,6 @@ List of technologies, frameworks and libraries used for implementation:
 - [EventStoreDB](https://hub.docker.com/r/eventstore/eventstore/) database
 - [Quartz.NET](https://www.quartz-scheduler.net/) (scheduler for Process Manager)
 - [FluentValidation](https://fluentvalidation.net/) (data validation)
-- [MediatR](https://github.com/jbogard/MediatR) (mediator implementation)
 - [Postman](https://www.getpostman.com/) (API tests)
 - [XUnit](https://xunit.net/) (testing framework)
 - [Polly](https://github.com/App-vNext/Polly) (resilience and transient-fault-handling library)

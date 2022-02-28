@@ -31,7 +31,7 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
             _integrationEventService = integrationEventService;
         }
 
-        public async Task<Result> Handle(TransferCommand command, CancellationToken cancellationToken)
+        public async Task<Result> HandleAsync(TransferCommand command, CancellationToken cancellationToken)
         {
             bool isTransferSuccess = await _paymentRepository.IsPaymentSuccessAsync
             (

@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using Serilog;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,8 +11,9 @@ using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Application.Extensions;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Sales.API.Automapper;
 using VShop.Modules.Sales.Domain.Services;
 using VShop.Modules.Sales.Infrastructure;
@@ -35,7 +35,7 @@ internal class SalesModule : Module
         "shopping_carts"
     };
     
-    public SalesModule(IEnumerable<Assembly> assemblies) 
+    public SalesModule(IEnumerable<Assembly> assemblies)
         : base("Sales", assemblies) { }
 
     public override void Initialize
@@ -71,16 +71,8 @@ internal class SalesModule : Module
         services.AddSingleton(SalesMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, SalesDispatcher>();
 
-        services.AddTransient
-        (
-            typeof(IPipelineBehavior<,>),
-            typeof(LoggingCommandDecorator<,>)
-        );
-        // services.Decorate // Note: right now, there are no event handlers in the Sales module.
-        // (
-        //     typeof(INotificationHandler<>),
-        //     typeof(LoggingEventDecorator<>)
-        // );
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(LoggingCommandHandlerDecorator<,>));
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         SalesCompositionRoot.SetServiceProvider(serviceProvider, FullName);

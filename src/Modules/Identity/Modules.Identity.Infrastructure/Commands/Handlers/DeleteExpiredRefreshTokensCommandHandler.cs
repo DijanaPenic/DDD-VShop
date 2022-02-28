@@ -11,7 +11,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         public DeleteExpiredRefreshTokensCommandHandler(ApplicationAuthManager authManager) 
             => _authManager = authManager;
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             DeleteExpiredRefreshTokensCommand command,
             CancellationToken cancellationToken

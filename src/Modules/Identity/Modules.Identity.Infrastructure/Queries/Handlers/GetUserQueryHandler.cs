@@ -12,7 +12,7 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
         public GetUserQueryHandler(IdentityDbContext dbContext)
             => _dbContext = dbContext;
 
-        public async Task<Result<User>> Handle
+        public async Task<Result<User>> HandleAsync
         (
             GetUserQuery query,
             CancellationToken cancellationToken

@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
         public DeleteShoppingCartCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
             => _shoppingCartStore = shoppingCartStore;
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             DeleteShoppingCartCommand command,
             CancellationToken cancellationToken

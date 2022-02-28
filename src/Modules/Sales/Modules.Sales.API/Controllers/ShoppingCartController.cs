@@ -82,7 +82,7 @@ namespace VShop.Modules.Sales.API.Controllers
             return HandleResult(result, NoContent);
         }
         
-        [HttpPut]
+        [HttpPost]
         [Route("{shoppingCartId:guid}/checkout")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]

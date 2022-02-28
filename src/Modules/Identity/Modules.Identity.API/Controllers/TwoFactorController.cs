@@ -82,7 +82,7 @@ internal partial class AccountController
         return HandleResult(result, Ok);
     }
     
-    [HttpPatch]
+    [HttpPut]
     [Route("{userId:guid}/two-factor/enable")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -101,7 +101,7 @@ internal partial class AccountController
         return HandleResult(result, NoContent);
     }
     
-    [HttpPatch]
+    [HttpPut]
     [Route("{userId:guid}/two-factor/disable")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]

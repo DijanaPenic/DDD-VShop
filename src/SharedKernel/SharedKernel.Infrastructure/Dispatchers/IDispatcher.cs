@@ -9,17 +9,17 @@ namespace VShop.SharedKernel.Infrastructure.Dispatchers;
 
 public interface IDispatcher
 {
-    Task<object> SendAsync<TCommand>
+    Task<Result> SendAsync
     (
-        TCommand command,
+        ICommand command,
         CancellationToken cancellationToken = default
-    ) where TCommand : IBaseCommand;
+    );
 
-    Task<object> QueryAsync<TQuery>
+    Task<Result<TResult>> QueryAsync<TResult>
     (
-        TQuery query,
+        IQuery<TResult> query,
         CancellationToken cancellationToken = default
-    ) where TQuery : IBaseQuery;
+    );
     
     Task PublishAsync<TEvent>
     (

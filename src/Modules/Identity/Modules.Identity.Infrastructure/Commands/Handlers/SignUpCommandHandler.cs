@@ -27,7 +27,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _integrationEventService = integrationEventService;
         }
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             SignUpCommand command,
             CancellationToken cancellationToken

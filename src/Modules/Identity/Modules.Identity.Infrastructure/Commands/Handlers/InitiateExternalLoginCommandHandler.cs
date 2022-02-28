@@ -18,7 +18,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _identityContext = context.Identity;
         }
 
-        public async Task<Result<AuthenticationProperties>> Handle
+        public async Task<Result<AuthenticationProperties>> HandleAsync
         (
             InitiateExternalLoginCommand command,
             CancellationToken cancellationToken

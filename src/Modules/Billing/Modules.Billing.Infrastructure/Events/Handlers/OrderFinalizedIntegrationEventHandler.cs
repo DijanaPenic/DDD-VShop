@@ -24,7 +24,7 @@ namespace VShop.Modules.Billing.Infrastructure.Events.Handlers
             _paymentRepository = paymentRepository;
         }
 
-        public async Task Handle(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
         {
             if (@event.RefundAmount.DecimalValue == 0) return;
             

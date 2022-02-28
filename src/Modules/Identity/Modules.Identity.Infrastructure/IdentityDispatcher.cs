@@ -4,16 +4,17 @@ using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Configuration;
+using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.Modules.Identity.Infrastructure;
 
 public class IdentityDispatcher : IIdentityDispatcher
 {
-    public async Task<object> SendAsync<TCommand>
+    public async Task<Result> SendAsync
     (
-        TCommand command,
+        ICommand command,
         CancellationToken cancellationToken = default
-    ) where TCommand : IBaseCommand
+    )
     {
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
@@ -21,11 +22,11 @@ public class IdentityDispatcher : IIdentityDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public async Task<object> QueryAsync<TQuery>
+    public async Task<Result<TResult>> QueryAsync<TResult>
     (
-        TQuery query,
+        IQuery<TResult> query,
         CancellationToken cancellationToken = default
-    ) where TQuery : IBaseQuery
+    )
     {
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();

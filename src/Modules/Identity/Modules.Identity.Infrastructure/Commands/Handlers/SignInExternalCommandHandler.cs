@@ -33,7 +33,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
             _authService = authService;
         }
 
-        public async Task<Result<SignInInfo>> Handle
+        public async Task<Result<SignInInfo>> HandleAsync
         (
             SignInExternalCommand command,
             CancellationToken cancellationToken

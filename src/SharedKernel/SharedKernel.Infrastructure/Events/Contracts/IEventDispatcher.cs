@@ -5,16 +5,16 @@ namespace VShop.SharedKernel.Infrastructure.Events.Contracts;
 
 public interface IEventDispatcher
 {
-    Task PublishAsync<TEvent>
+    Task PublishAsync
     (
-        TEvent notification,
+        IBaseEvent @event,
         EventDispatchStrategy strategy,
-        CancellationToken cancellationToken = default
-    ) where TEvent : IBaseEvent;
+        CancellationToken cancellationToken
+    );
     
-    Task PublishAsync<TEvent>
+    Task PublishAsync
     (
-        TEvent notification,
-        CancellationToken cancellationToken = default
-    ) where TEvent : IBaseEvent;
+        IBaseEvent @event,
+        CancellationToken cancellationToken
+    );
 }

@@ -1,19 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.Modules.Catalog.Infrastructure.Configuration;
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.Modules.Catalog.Infrastructure.Configuration;
 
 namespace VShop.Modules.Catalog.Infrastructure;
 
 public class CatalogDispatcher : ICatalogDispatcher
 {
-    public async Task<object> SendAsync<TCommand>
+    public async Task<Result> SendAsync
     (
-        TCommand command,
+        ICommand command,
         CancellationToken cancellationToken = default
-    ) where TCommand : IBaseCommand
+    )
     {
         using IServiceScope scope = CatalogCompositionRoot.CreateScope();
         ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
@@ -21,11 +22,11 @@ public class CatalogDispatcher : ICatalogDispatcher
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
 
-    public async Task<object> QueryAsync<TQuery>
+    public async Task<Result<TResult>> QueryAsync<TResult>
     (
-        TQuery query,
+        IQuery<TResult> query,
         CancellationToken cancellationToken = default
-    ) where TQuery : IBaseQuery
+    )
     {
         using IServiceScope scope = CatalogCompositionRoot.CreateScope();
         IQueryDispatcher queryDispatcher = scope.ServiceProvider.GetRequiredService<IQueryDispatcher>();

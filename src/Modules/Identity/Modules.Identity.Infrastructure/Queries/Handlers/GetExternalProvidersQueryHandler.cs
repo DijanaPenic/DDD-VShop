@@ -14,7 +14,7 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
         public GetExternalProvidersQueryHandler(ApplicationSignInManager signInManager)
             => _signInManager = signInManager;
 
-        public async Task<Result<List<LoginProvider>>> Handle
+        public async Task<Result<List<LoginProvider>>> HandleAsync
         (
             GetExternalProvidersQuery query,
             CancellationToken cancellationToken

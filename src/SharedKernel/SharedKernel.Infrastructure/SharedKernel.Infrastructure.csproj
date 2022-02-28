@@ -13,8 +13,6 @@
       <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.6" />
       <PackageReference Include="Google.Api.CommonProtos" Version="2.1.0" />
       <PackageReference Include="Google.Protobuf" Version="3.19.3" />
-      <PackageReference Include="MediatR" Version="10.0.1" />
-      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

@@ -16,7 +16,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
         public SetDeliveryAddressCommandHandler(IAggregateStore<ShoppingCart> shoppingCartStore)
             => _shoppingCartStore = shoppingCartStore;
         
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             SetDeliveryAddressCommand command,
             CancellationToken cancellationToken

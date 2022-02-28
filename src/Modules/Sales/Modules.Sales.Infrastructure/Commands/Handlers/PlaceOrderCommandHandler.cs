@@ -24,7 +24,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             _shoppingCartOrderingService = shoppingCartOrderingService;
         }
 
-        public async Task<Result<Order>> Handle
+        public async Task<Result<Order>> HandleAsync
         (
             PlaceOrderCommand command,
             CancellationToken cancellationToken

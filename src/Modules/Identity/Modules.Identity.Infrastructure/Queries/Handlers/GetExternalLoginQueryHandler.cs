@@ -16,7 +16,7 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
         public GetExternalLoginQueryHandler(IdentityDbContext dbContext)
             => _dbContext = dbContext;
 
-        public async Task<Result<List<ExternalLoginInfo>>> Handle
+        public async Task<Result<List<ExternalLoginInfo>>> HandleAsync
         (
             GetExternalLoginQuery query,
             CancellationToken cancellationToken

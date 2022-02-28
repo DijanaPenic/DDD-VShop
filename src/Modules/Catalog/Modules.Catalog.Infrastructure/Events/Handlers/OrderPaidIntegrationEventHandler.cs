@@ -25,7 +25,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Events.Handlers
             _integrationEventService = integrationEventService;
         }
 
-        public async Task Handle(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(OrderStatusSetToPaidIntegrationEvent @event, CancellationToken cancellationToken)
         {
             IList<OrderStockProcessedIntegrationEvent.Types.OrderLine> confirmedOrderLines = 
                 new List<OrderStockProcessedIntegrationEvent.Types.OrderLine>();

@@ -1,4 +1,3 @@
-using MediatR;
 using Serilog;
 using System.Reflection;
 using System.Collections.Generic;
@@ -10,9 +9,10 @@ using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Application.Decorators;
 using VShop.SharedKernel.Application.Extensions;
-using VShop.SharedKernel.Infrastructure.Dispatchers;
-using VShop.SharedKernel.Infrastructure.Extensions;
 using VShop.SharedKernel.Infrastructure.Modules;
+using VShop.SharedKernel.Infrastructure.Extensions;
+using VShop.SharedKernel.Infrastructure.Dispatchers;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.Modules.Catalog.API.Automapper;
 using VShop.Modules.Catalog.Infrastructure;
 using VShop.Modules.Catalog.Infrastructure.Configuration;
@@ -66,17 +66,9 @@ internal class CatalogModule : Module
         services.AddSingleton(CatalogMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, CatalogDispatcher>();
 
-        services.Decorate
-        (
-            typeof(INotificationHandler<>),
-            typeof(LoggingEventDecorator<>)
-        );
-        services.Decorate
-        (
-            typeof(INotificationHandler<>),
-            typeof(TransactionalEventDecorator<>)
-        );
-
+        services.TryDecorate(typeof(IEventHandler<>), typeof(LoggingEventHandlerDecorator<>));
+        services.TryDecorate(typeof(IEventHandler<>), typeof(TransactionalEventHandlerDecorator<>));
+        
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         CatalogCompositionRoot.SetServiceProvider(serviceProvider, FullName);
         

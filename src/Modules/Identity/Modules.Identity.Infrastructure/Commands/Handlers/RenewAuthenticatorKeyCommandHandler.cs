@@ -13,7 +13,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         public RenewAuthenticatorKeyCommandHandler(ApplicationUserManager userManager) 
             => _userManager = userManager;
 
-        public async Task<Result<AuthenticatorKey>> Handle
+        public async Task<Result<AuthenticatorKey>> HandleAsync
         (
             RenewAuthenticatorKeyCommand command,
             CancellationToken cancellationToken

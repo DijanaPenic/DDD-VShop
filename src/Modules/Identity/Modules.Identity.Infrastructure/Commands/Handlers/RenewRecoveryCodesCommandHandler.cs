@@ -12,7 +12,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         public RenewRecoveryCodesCommandHandler(ApplicationUserManager userManager)
             => _userManager = userManager;
 
-        public async Task<Result<RecoveryCodes>> Handle
+        public async Task<Result<RecoveryCodes>> HandleAsync
         (
             RenewRecoveryCodesCommand command,
             CancellationToken cancellationToken

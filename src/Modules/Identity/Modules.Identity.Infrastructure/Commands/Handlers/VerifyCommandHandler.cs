@@ -16,7 +16,7 @@ namespace VShop.Modules.Identity.Infrastructure.Commands.Handlers
         public VerifyCommandHandler(ApplicationUserManager userManager) 
             => _userManager = userManager;
 
-        public async Task<Result> Handle
+        public async Task<Result> HandleAsync
         (
             VerifyCommand command,
             CancellationToken cancellationToken

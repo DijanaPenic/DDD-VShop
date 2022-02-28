@@ -13,7 +13,7 @@ namespace VShop.Modules.Identity.Infrastructure.Queries.Handlers
         public GetAuthenticatorKeyQueryHandler(ApplicationUserManager userManager)
             => _userManager = userManager;
 
-        public async Task<Result<AuthenticatorKey>> Handle
+        public async Task<Result<AuthenticatorKey>> HandleAsync
         (
             GetAuthenticatorKeyQuery query,
             CancellationToken cancellationToken

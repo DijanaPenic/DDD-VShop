@@ -135,13 +135,17 @@ public static class ApplicationExtensions
         return app;
     }
     
-    public static IServiceCollection AddApplication(this IServiceCollection services, Assembly[] assemblies)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services.AddControllersAsServices(assemblies);
         return services;
     }
 
-    private static IServiceCollection AddControllersAsServices(this IServiceCollection services, Assembly[] assemblies)
+    private static IServiceCollection AddControllersAsServices
+    (
+        this IServiceCollection services,
+        IEnumerable<Assembly> assemblies
+    )
     {
         services.Scan(s => s.FromAssemblies(assemblies)
             .AddClasses(f => f.AssignableTo(typeof(ControllerBase)))

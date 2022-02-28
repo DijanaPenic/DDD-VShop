@@ -27,7 +27,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             _shoppingCartStore = shoppingCartStore;
         }
         
-        public async Task<Result<CheckoutResponse>> Handle
+        public async Task<Result<CheckoutResponse>> HandleAsync
         (
             CheckoutShoppingCartCommand command,
             CancellationToken cancellationToken
