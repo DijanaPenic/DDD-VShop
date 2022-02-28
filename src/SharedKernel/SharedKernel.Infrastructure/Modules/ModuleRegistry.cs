@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
@@ -17,11 +17,11 @@ public static class ModuleRegistry
     private static readonly List<ModuleBroadcastRegistration> BroadcastRegistrations = new();
 
     public static IEnumerable<ModuleBroadcastRegistration> GetBroadcastRegistrations(string key)
-        => BroadcastRegistrations.Where(r => r.Key == key).ToList();
+        => BroadcastRegistrations.Where(r => r.Key == key);
 
     public static void AddBroadcastActions(IServiceProvider serviceProvider, IEnumerable<Assembly> assemblies)
     {
-        Type[] types = assemblies.SelectMany(x => x.GetTypes()).ToArray();
+        Type[] types = assemblies.SelectMany(a => a.GetTypes()).ToArray();
         Type[] commandTypes = types
             .Where(t => t.IsClass && typeof(IBaseCommand).IsAssignableFrom(t))
             .ToArray();
@@ -48,12 +48,12 @@ public static class ModuleRegistry
         }
     }
     
-    private static void AddBroadcastAction(Type requestType, Func<object, CancellationToken, Task> action)
+    private static void AddBroadcastAction(Type actionType, Func<object, CancellationToken, Task> action)
     {
-        if (string.IsNullOrWhiteSpace(requestType.Namespace))
+        if (string.IsNullOrWhiteSpace(actionType.Namespace))
             throw new InvalidOperationException("Missing namespace.");
 
-        ModuleBroadcastRegistration registration = new(requestType, action);
+        ModuleBroadcastRegistration registration = new(actionType, action);
         BroadcastRegistrations.Add(registration);
     }
 }

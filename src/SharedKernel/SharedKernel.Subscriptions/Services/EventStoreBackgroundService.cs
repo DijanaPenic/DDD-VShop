@@ -3,12 +3,12 @@ using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.Subscriptions.DAL;
 using VShop.SharedKernel.Subscriptions.DAL.Entities;
 using VShop.SharedKernel.Subscriptions.Services.Contracts;
 using VShop.SharedKernel.Infrastructure.Threading;
 using VShop.SharedKernel.Infrastructure.Messaging.Contracts;
+using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 
 namespace VShop.SharedKernel.Subscriptions.Services
 {
@@ -60,16 +60,13 @@ namespace VShop.SharedKernel.Subscriptions.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            // Stop called without start.
             if (_executingTask is null) return;
 
-            // Signal cancellation to the executing method.
             _cancellationTokenSource.Cancel();
 
-            // Wait until the issue completes or the stop token triggers.
+            // Wait until the task completes or the cancellation finishes.
             await Task.WhenAny(_executingTask, Task.Delay(-1, cancellationToken));
 
-            // Throw if cancellation triggered.
             cancellationToken.ThrowIfCancellationRequested();
 
             _logger.Information("Subscription to all '{SubscriptionId}' stopped", _subscriptionName);
