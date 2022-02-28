@@ -12,7 +12,7 @@ using VShop.Modules.Sales.Domain.Models.ShoppingCart;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 {
-    internal class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, CheckoutResponse>
+    internal class CheckoutShoppingCartCommandHandler : ICommandHandler<CheckoutShoppingCartCommand, OrderInfo>
     {
         private readonly IClockService _clockService;
         private readonly IAggregateStore<ShoppingCart> _shoppingCartStore;
@@ -27,7 +27,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             _shoppingCartStore = shoppingCartStore;
         }
         
-        public async Task<Result<CheckoutResponse>> HandleAsync
+        public async Task<Result<OrderInfo>> HandleAsync
         (
             CheckoutShoppingCartCommand command,
             CancellationToken cancellationToken
@@ -40,7 +40,7 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
             );
             
             if (shoppingCart is null) return Result.NotFoundError("Shopping cart not found.");
-            if (shoppingCart.IsRestored) return new CheckoutResponse(shoppingCart.OrderId);
+            if (shoppingCart.IsRestored) return new OrderInfo(shoppingCart.OrderId);
             
             Result checkoutResult = shoppingCart.Checkout
             (
@@ -51,9 +51,9 @@ namespace VShop.Modules.Sales.Infrastructure.Commands.Handlers
 
             await _shoppingCartStore.SaveAndPublishAsync(shoppingCart, cancellationToken);
 
-            return new CheckoutResponse(shoppingCart.OrderId);
+            return new OrderInfo(shoppingCart.OrderId);
         }
     }
 
-    public record CheckoutResponse(Guid OrderId);
+    public record OrderInfo(Guid OrderId);
 }

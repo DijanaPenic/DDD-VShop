@@ -34,7 +34,7 @@ public abstract class Module
     public abstract void Initialize(ILogger logger, IConfiguration configuration, IServiceCollection services);
     public abstract void ConfigureContainer(ILogger logger, IConfiguration configuration, IServiceCollection services);
     
-    public static Task StartHostedServicesAsync(IServiceProvider serviceProvider)
+    public static Task StartHostedServicesAsync(IServiceProvider serviceProvider) // TODO - add cancellationToken param.
     {
         using IServiceScope scope = serviceProvider.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();

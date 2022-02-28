@@ -27,7 +27,7 @@ public class CheckoutShoppingCartIntegrationTests : TestBase
         CheckoutShoppingCartCommand command = new(shoppingCart.Id);
         
         // Act
-        Result<CheckoutResponse> result = await SalesModule.SendAsync(command);
+        Result<OrderInfo> result = await SalesModule.SendAsync(command);
         
         // Assert
         result.IsError.Should().BeFalse();
@@ -59,7 +59,7 @@ public class CheckoutShoppingCartIntegrationTests : TestBase
         await SalesModule.SendAsync(command, context);
              
         // Act
-        Result<CheckoutResponse> result = await SalesModule.SendAsync(command, context);
+        Result<OrderInfo> result = await SalesModule.SendAsync(command, context);
              
         // Assert
         result.IsError.Should().BeFalse();

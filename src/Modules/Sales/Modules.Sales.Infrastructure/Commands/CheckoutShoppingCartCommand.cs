@@ -5,7 +5,7 @@ using VShop.Modules.Sales.Infrastructure.Commands.Handlers;
 
 namespace VShop.Modules.Sales.Infrastructure.Commands
 {
-    internal partial class CheckoutShoppingCartCommand : ICommand<CheckoutResponse>
+    internal partial class CheckoutShoppingCartCommand : ICommand<OrderInfo>
     {
         public CheckoutShoppingCartCommand(Guid shoppingCartId)
         {

@@ -87,11 +87,11 @@ namespace VShop.Modules.Sales.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(CheckoutResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OrderInfo), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CheckoutShoppingCartAsync([FromRoute] Guid shoppingCartId)
         {
             CheckoutShoppingCartCommand command = new(shoppingCartId);
-            Result<CheckoutResponse> result = await _commandDispatcher.SendAsync(command);
+            Result<OrderInfo> result = await _commandDispatcher.SendAsync(command);
         
             return HandleResult(result, Ok);
         }
