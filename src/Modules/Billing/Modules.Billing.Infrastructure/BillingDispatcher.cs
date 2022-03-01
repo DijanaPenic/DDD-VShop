@@ -21,6 +21,18 @@ public class BillingDispatcher : IBillingDispatcher
 
         return await commandDispatcher.SendAsync(command, cancellationToken);
     }
+    
+    public async Task<Result<TResult>> SendAsync<TResult>
+    (
+        ICommand<TResult> command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using IServiceScope scope = BillingCompositionRoot.CreateScope();
+        ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
+
+        return await commandDispatcher.SendAsync(command, cancellationToken);
+    }
 
     public async Task<Result<TResult>> QueryAsync<TResult>
     (
@@ -34,11 +46,11 @@ public class BillingDispatcher : IBillingDispatcher
         return await queryDispatcher.QueryAsync(query, cancellationToken);
     }
     
-    public async Task PublishAsync<TEvent>
+    public async Task PublishAsync
     (
-        TEvent @event,
+        IBaseEvent @event,
         CancellationToken cancellationToken = default
-    ) where TEvent : IBaseEvent
+    )
     {
         using IServiceScope scope = BillingCompositionRoot.CreateScope();
         IEventDispatcher eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();

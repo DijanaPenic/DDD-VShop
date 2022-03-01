@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
-using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 
 namespace VShop.SharedKernel.Infrastructure.Modules;
 
@@ -33,18 +33,26 @@ public static class ModuleRegistry
         IDispatcher dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
         foreach (Type type in commandTypes)
         {
-            AddBroadcastAction(type, (command, cancellationToken) =>
-                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.SendAsync))
-                    ?.MakeGenericMethod(type)
-                    .Invoke(dispatcher, new[] { command, cancellationToken }));
+            if (typeof(ICommand).IsAssignableFrom(type))
+            {
+                AddBroadcastAction(type, (command, cancellationToken) =>
+                    dispatcher.SendAsync((ICommand) command, cancellationToken));
+            }
+            else
+            {
+                AddBroadcastAction(type, (command, cancellationToken) =>
+                    (Task)dispatcher.GetType()
+                        .GetMethods()
+                        .Single(m => m.IsGenericMethod && m.Name == nameof(dispatcher.SendAsync))
+                        .MakeGenericMethod(GetCommandResponseType(type))
+                        .Invoke(dispatcher, new[] { command, cancellationToken }));
+            }
         }
         
         foreach (Type type in eventTypes)
         {
             AddBroadcastAction(type, (@event, cancellationToken) =>
-                (Task)dispatcher.GetType().GetMethod(nameof(dispatcher.PublishAsync))
-                    ?.MakeGenericMethod(type)
-                    .Invoke(dispatcher, new[] { @event, cancellationToken }));
+                dispatcher.PublishAsync((IBaseEvent) @event, cancellationToken));
         }
     }
     
@@ -55,5 +63,19 @@ public static class ModuleRegistry
 
         ModuleBroadcastRegistration registration = new(actionType, action);
         BroadcastRegistrations.Add(registration);
+    }
+    
+    private static Type GetCommandResponseType(Type commandType)
+    {
+        Type commandInterfaceType = commandType
+            .GetInterfaces()
+            .FirstOrDefault(static t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ICommand<>));
+
+        if (commandInterfaceType is null)
+            throw new ArgumentException($"{commandType.Name} does not implement ICommand<>", nameof(commandType));
+
+        Type responseType = commandInterfaceType.GetGenericArguments()[0];
+
+        return responseType;
     }
 }

@@ -1,7 +1,7 @@
 using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
@@ -14,21 +14,36 @@ internal class QueryDispatcher : IQueryDispatcher
 
     public QueryDispatcher(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-    public async Task<Result<TResponse>> QueryAsync<TResponse>
+    public Task<Result<TResponse>> QueryAsync<TResponse>
     (
         IQuery<TResponse> query,
         CancellationToken cancellationToken
     )
     {
+        if (query is null) throw new ArgumentNullException(nameof(query));
+
+        Type handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResponse));
+        
+        return InvokeHandlerAsync<Result<TResponse>>(query, handlerType, cancellationToken);
+    }
+
+    private async Task<T> InvokeHandlerAsync<T>
+    (
+        object query,
+        Type handlerType,
+        CancellationToken cancellationToken
+    )
+    {
+        if (query is null) throw new ArgumentNullException(nameof(query));
+
         using IServiceScope scope = _serviceProvider.CreateScope();
             
-        Type handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResponse));
         object handler = scope.ServiceProvider.GetRequiredService(handlerType);
-        MethodInfo method = handlerType.GetMethod(nameof(IQueryHandler<IQuery<TResponse>, TResponse>.HandleAsync));
+        MethodInfo method = handlerType.GetMethod("HandleAsync");
         
         if (method is null) throw new InvalidOperationException("Query handler is invalid.");
         
         // ReSharper disable once PossibleNullReferenceException
-        return await (Task<Result<TResponse>>)method.Invoke(handler, new object[] {query, cancellationToken});
+        return await (Task<T>)method.Invoke(handler, new[] {query, cancellationToken});;
     }
 }

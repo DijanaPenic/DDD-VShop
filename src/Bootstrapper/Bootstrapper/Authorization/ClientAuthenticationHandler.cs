@@ -54,7 +54,7 @@ internal class ClientAuthenticationHandler : AuthenticationHandler<Authenticatio
         if (!Guid.TryParse(authClientId, out Guid clientId) || SequentialGuid.IsNullOrEmpty(clientId))
             return AuthenticateResult.Fail($"Client '{clientId}' format is invalid.");
 
-        Result<bool> authResult = (Result<bool>)await _identityDispatcher
+        Result<bool> authResult = await _identityDispatcher
             .QueryAsync(new IsClientAuthenticatedQuery(clientId, authClientSecret));
         
         if (authResult.IsError) return AuthenticateResult.Fail(authResult.Error.ToString());

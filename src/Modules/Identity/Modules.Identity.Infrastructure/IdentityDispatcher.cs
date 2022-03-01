@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Queries.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Identity.Infrastructure.Configuration;
-using VShop.SharedKernel.Infrastructure;
 
 namespace VShop.Modules.Identity.Infrastructure;
 
@@ -13,6 +13,18 @@ public class IdentityDispatcher : IIdentityDispatcher
     public async Task<Result> SendAsync
     (
         ICommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using IServiceScope scope = IdentityCompositionRoot.CreateScope();
+        ICommandDispatcher commandDispatcher = scope.ServiceProvider.GetRequiredService<ICommandDispatcher>();
+
+        return await commandDispatcher.SendAsync(command, cancellationToken);
+    }
+    
+    public async Task<Result<TResult>> SendAsync<TResult>
+    (
+        ICommand<TResult> command,
         CancellationToken cancellationToken = default
     )
     {
@@ -34,11 +46,11 @@ public class IdentityDispatcher : IIdentityDispatcher
         return await queryDispatcher.QueryAsync(query, cancellationToken);
     }
 
-    public async Task PublishAsync<TEvent>
+    public async Task PublishAsync
     (
-        TEvent @event,
+        IBaseEvent @event,
         CancellationToken cancellationToken = default
-    ) where TEvent : IBaseEvent
+    )
     {
         using IServiceScope scope = IdentityCompositionRoot.CreateScope();
         IEventDispatcher eventDispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();

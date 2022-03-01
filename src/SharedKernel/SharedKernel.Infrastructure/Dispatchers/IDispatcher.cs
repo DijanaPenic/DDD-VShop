@@ -14,6 +14,12 @@ public interface IDispatcher
         ICommand command,
         CancellationToken cancellationToken = default
     );
+    
+    Task<Result<TResult>> SendAsync<TResult>
+    (
+        ICommand<TResult> command,
+        CancellationToken cancellationToken = default
+    );
 
     Task<Result<TResult>> QueryAsync<TResult>
     (
@@ -21,9 +27,9 @@ public interface IDispatcher
         CancellationToken cancellationToken = default
     );
     
-    Task PublishAsync<TEvent>
+    Task PublishAsync
     (
-        TEvent @event,
+        IBaseEvent @event,
         CancellationToken cancellationToken = default
-    ) where TEvent : IBaseEvent;
+    );
 }
