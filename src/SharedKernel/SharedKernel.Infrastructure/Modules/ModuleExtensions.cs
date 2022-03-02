@@ -13,6 +13,8 @@ public static class ModuleExtensions
     public static IHostBuilder ConfigureModules(this IHostBuilder builder)
         => builder.ConfigureAppConfiguration((ctx, cfg) =>
         {
+            cfg.AddEnvironmentVariables("VShopApp_");
+            
             foreach (string settings in GetSettings("*"))
                 cfg.AddJsonFile(settings);
 
