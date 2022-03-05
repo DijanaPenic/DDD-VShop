@@ -14,11 +14,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "37913a12-28b2-49e6-86d9-103affe27575",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "205ea77e-a9ef-4600-badf-d5d7d0c2f7a8",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"37913a12-28b2-49e6-86d9-103affe27575\",\r\n    \"correlation_id\": \"205ea77e-a9ef-4600-badf-d5d7d0c2f7a8\",\r\n    \"order_id\": \"e1aa23cd-ec34-4de9-58f9-08d9c0181e5d\",\r\n    \"card_type_id\": \"1\",\r\n    \"card_number\": \"8171 9999 2766 0000\",\r\n    \"card_security_number\": \"737\",\r\n    \"cardholder_name\": \"John Doe\",\r\n    \"card_expiration\": \"2023-07-26T16:45:20.1234567Z\"\r\n}"
+					"raw": "{\r\n    \"order_id\": \"39ac4bff-a873-4ddb-6f7b-08d9ca0f6dc7\",\r\n    \"amount\": \"200\",\r\n    \"card_type_id\": \"1\",\r\n    \"card_number\": \"8171 9999 2766 0000\",\r\n    \"card_security_number\": \"737\",\r\n    \"cardholder_name\": \"John Doe\",\r\n    \"card_expiration\": \"2023-07-26T16:45:20.1234567Z\"\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/payment",

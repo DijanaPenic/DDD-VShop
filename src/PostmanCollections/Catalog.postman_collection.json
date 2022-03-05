@@ -119,7 +119,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/catalog/categories?include=products&search_string=updated&page_index=1&page_size=3&sort_order=date_created|desc",
+							"raw": "{{base_url}}/api/catalog/categories?include=products&search_phrase=updated&page_index=1&page_size=3&sort_order=date_created|desc",
 							"host": [
 								"{{base_url}}"
 							],
@@ -134,7 +134,7 @@
 									"value": "products"
 								},
 								{
-									"key": "search_string",
+									"key": "search_phrase",
 									"value": "updated"
 								},
 								{
@@ -160,7 +160,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}/products?include=&search_string=&page_index=1&page_size=3&sort_order=date_created|desc",
+							"raw": "{{base_url}}/api/catalog/categories/{{category_id}}/products?include=&search_phrase=&page_index=1&page_size=3&sort_order=date_created|desc",
 							"host": [
 								"{{base_url}}"
 							],
@@ -177,7 +177,7 @@
 									"value": ""
 								},
 								{
-									"key": "search_string",
+									"key": "search_phrase",
 									"value": ""
 								},
 								{
@@ -313,7 +313,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/catalog/products?include=category&search_string=updated&page_index=1&page_size=3&sort_order=date_created|desc",
+							"raw": "{{base_url}}/api/catalog/products?include=category&search_phrase=updated&page_index=1&page_size=3&sort_order=date_created|desc&ids=1e21c71c-a39e-4616-8a57-08d9c93e413c,5055bcdb-b2b2-483f-68ae-08d9d1f50f87",
 							"host": [
 								"{{base_url}}"
 							],
@@ -328,7 +328,7 @@
 									"value": "category"
 								},
 								{
-									"key": "search_string",
+									"key": "search_phrase",
 									"value": "updated"
 								},
 								{
@@ -342,6 +342,10 @@
 								{
 									"key": "sort_order",
 									"value": "date_created|desc"
+								},
+								{
+									"key": "ids",
+									"value": "1e21c71c-a39e-4616-8a57-08d9c93e413c,5055bcdb-b2b2-483f-68ae-08d9d1f50f87"
 								}
 							]
 						}
@@ -374,11 +378,11 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:5258"
+			"value": "https://localhost:7090"
 		},
 		{
 			"key": "category_id",
-			"value": "49c9f6d0-9064-4f69-f23f-08d9c92ed355"
+			"value": "3f6f84c8-3086-4059-46ba-08d9c931cecd"
 		},
 		{
 			"key": "product_id",

@@ -1,0 +1,731 @@
+{
+	"info": {
+		"_postman_id": "39d40803-23da-465a-aaf8-74ac0bb7fbf0",
+		"name": "Identity",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Get (by id)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_name\": \"dpenic\",\r\n    \"email\": \"penic.dijana@gmail.com\",\r\n    \"password\": \"12345678aA,\",\r\n    \"confirm_password\": \"12345678aA,\",\r\n    \"activation_url\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/sign-up",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign in",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_name\": \"dpenic\",\r\n    \"password\": \"12345678aA,\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/sign-in",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Out",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/sign-out",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"sign-out"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"type\": \"PhoneNumber\",\r\n    \"token\": \"627990\",\r\n    \"phone_number\": \"+385919440067\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/verify",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"type\": \"PhoneNumber\",\r\n    \"country_code_number\": \"+385\",\r\n    \"phone_number\": \"919440067\",\r\n    \"is_voice_call\": false\r\n    //\"confirmation_url\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/send-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"send-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"12345678aA,\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/set-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"set-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Two-Factor",
+			"item": [
+				{
+					"name": "Get Authenticator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/two-factor/authenticator",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"two-factor",
+								"authenticator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew Authenticator",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/two-factor/authenticator/renew",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"two-factor",
+								"authenticator",
+								"renew"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign in",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"592624\",\r\n    \"use_recovery_code\": false\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/two-factor/sign-in",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"two-factor",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew Recovery Codes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/two-factor/recovery-codes/renew?number=6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"two-factor",
+								"recovery-codes",
+								"renew"
+							],
+							"query": [
+								{
+									"key": "number",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enable Two-Factor",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/two-factor/enable?code=870787",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"two-factor",
+								"enable"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "870787"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Disable Two-Factor",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/two-factor/disable",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"two-factor",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Password Recovery",
+			"item": [
+				{
+					"name": "Initiate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"penic.dijana@gmail.com\",\r\n    \"confirmation_url\": \"url\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/password-recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"password-recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"12345678aA,\",\r\n    \"confirm_password\": \"12345678aA,\",\r\n    \"token\": \"CfDJ8J+4430x0jxInJZ5A4Ne8FF9Vq3A8U4Bz5AuAKJcOmK5IOLHtutTCsi1rpLPcXDymlB04r44N/oOc7jRKicg1I7Cb7ckZ3wzDExbSKv4jF7/GPUEDpCRb/05tyGqwDqqnh7ASeqW3MlNkKqvwZU358nKnAbpL71aygAzB6ms7yT/1tBD6qDdwKn+7AkaJ8xzfUO2eYo85dZW2e2xk+IDGnRy+8wapDroye/P/hfyPZas\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/password-recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"password-recovery"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "External Login",
+			"item": [
+				{
+					"name": "Get Providers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/account/external/providers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"external",
+								"providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get External Callback",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/account/external/callback?provider=Google&return_url=http%3A%2F%2Flocalhost%3A5090%2F",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"external",
+								"callback"
+							],
+							"query": [
+								{
+									"key": "provider",
+									"value": "Google"
+								},
+								{
+									"key": "return_url",
+									"value": "http%3A%2F%2Flocalhost%3A5090%2F"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": ".AspNetCore.Identity.External={{google_cookie}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/account/external/sign-in?confirmation_url=url",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"external",
+								"sign-in"
+							],
+							"query": [
+								{
+									"key": "confirmation_url",
+									"value": "url"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": ".AspNetCore.Identity.External={{google_cookie}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_name\": \"dpenic\",\r\n    \"associate_to_account\": false,\r\n    \"associate_email\": \"\",\r\n    \"confirmation_url\": \"confirmation_url\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/account/external/sign-up",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"external",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get External Logins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/external",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"external"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete External Login",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/external?login_provider=Google&provider_key=109973977642590529535",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"external"
+							],
+							"query": [
+								{
+									"key": "login_provider",
+									"value": "Google"
+								},
+								{
+									"key": "provider_key",
+									"value": "109973977642590529535"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify External Login",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{client_authentication}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/account/{{user_id}}/external/verify?token=CfDJ8J%2B4430x0jxInJZ5A4Ne8FG%2BwF4u6SmIyQfh5OF5wJ2qO2tUYDTfm4luEboFHc5uqnjh6YaUfEGfh4ghtB%2FTFiWmg9ohGcevTl9e3mYHspO2d%2BQDU1mr9e0v4TZvXSiC5uolRRLqJEji4vGoJofM2xSWpVXNgb4nuJaxCnWof32P9mUc8BF%2FSMhawOMqEgjvWjkfvo9cI0Z7Rnx7ThOq6FR5jW%2FtvzhyDTffswLThGydahvVP4Xkgfk8kLdx7pEoBA%3D%3D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"{{user_id}}",
+								"external",
+								"verify"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "CfDJ8J%2B4430x0jxInJZ5A4Ne8FG%2BwF4u6SmIyQfh5OF5wJ2qO2tUYDTfm4luEboFHc5uqnjh6YaUfEGfh4ghtB%2FTFiWmg9ohGcevTl9e3mYHspO2d%2BQDU1mr9e0v4TZvXSiC5uolRRLqJEji4vGoJofM2xSWpVXNgb4nuJaxCnWof32P9mUc8BF%2FSMhawOMqEgjvWjkfvo9cI0Z7Rnx7ThOq6FR5jW%2FtvzhyDTffswLThGydahvVP4Xkgfk8kLdx7pEoBA%3D%3D"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Refresh Tokens",
+			"item": [
+				{
+					"name": "Delete Expired",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/account/refresh-tokens/expired",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"refresh-tokens",
+								"expired"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost:7090"
+		},
+		{
+			"key": "client_authentication",
+			"value": "NWM1MjE2MGEtNGFiNC00OWM2LWJhNWYtNTZkZjljNTczMGI2OjJhYTI5ZTVkLTViZGMtNGE5MS05Nzk0LTc0ODE3Njk3MmRhYw==",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "a51ff877-4924-478d-acff-dd734d9e52eb",
+			"type": "string"
+		},
+		{
+			"key": "google_cookie",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

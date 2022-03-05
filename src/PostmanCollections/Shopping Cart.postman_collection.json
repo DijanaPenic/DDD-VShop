@@ -14,11 +14,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "30a6e9be-6e96-4b72-90f9-78b5cf8c5b7d",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "2b594418-dd9e-40c2-bd87-64be3bd8e954",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"30a6e9be-6e96-4b72-90f9-78b5cf8c5b7d\",\r\n    \"correlation_id\": \"2b594418-dd9e-40c2-bd87-64be3bd8e954\",\r\n    \"shopping_cart_id\": \"e5a77647-c9f2-4473-b753-5240c19d1f52\",\r\n    \"customer_id\": \"a506f631-aa84-4bd8-922b-cc366da86c88\",\r\n    \"customer_discount\": 5,\r\n    \"shopping_cart_items\":\r\n    [\r\n        {\r\n            \"product_id\": \"5fa482fe-c876-4e7f-8365-07d0e739bd74\",\r\n            \"quantity\": 4,\r\n            \"unit_price\": 100.00\r\n        },\r\n        {\r\n            \"product_id\": \"e9a3e243-69e5-4d85-b851-5c2140368fd6\",\r\n            \"quantity\": 1,\r\n            \"unit_price\": 20.00\r\n        }\r\n    ]\r\n}"
+					"raw": "{\r\n    \"shopping_cart_id\": \"e5a77647-c9f2-4473-b753-5240c19d1f52\",\r\n    \"customer_id\": \"a506f631-aa84-4bd8-922b-cc366da86c88\",\r\n    \"customer_discount\": 5,\r\n    \"shopping_cart_items\":\r\n    [\r\n        {\r\n            \"product_id\": \"5fa482fe-c876-4e7f-8365-07d0e739bd74\",\r\n            \"quantity\": 4,\r\n            \"unit_price\": 100.00\r\n        },\r\n        {\r\n            \"product_id\": \"e9a3e243-69e5-4d85-b851-5c2140368fd6\",\r\n            \"quantity\": 1,\r\n            \"unit_price\": 20.00\r\n        }\r\n    ]\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/shopping-carts",
@@ -66,11 +76,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "99a11e6a-7a4e-41e9-8544-4439f83fe636",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "11ee4740-7552-4630-96fd-4717e8704f72",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"99a11e6a-7a4e-41e9-8544-4439f83fe636\",\r\n    \"correlation_id\": \"11ee4740-7552-4630-96fd-4717e8704f72\",\r\n    \"unit_price\": 100.00,\r\n    \"quantity\": 1\r\n}"
+					"raw": "{\r\n    \"unit_price\": 100.00,\r\n    \"quantity\": 1\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/products/5fa482fe-c876-4e7f-8365-07d0e739bd74",
@@ -97,11 +117,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "2440c96d-67e8-42a2-897c-b081f582864b",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "faac5cca-b485-4d3d-a307-7e4083d99104",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"2440c96d-67e8-42a2-897c-b081f582864b\",\r\n    \"correlation_id\": \"faac5cca-b485-4d3d-a307-7e4083d99104\",\r\n    \"Quantity\": 1\r\n}"
+					"raw": "{\r\n    \"Quantity\": 1\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/products/e9a3e243-69e5-4d85-b851-5c2140368fd6",
@@ -128,11 +158,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "91249f1d-0983-49a7-929d-60308219c7c4",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "4bfdfd6a-cbc5-48cc-9c33-7cdd97e5fb20",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"91249f1d-0983-49a7-929d-60308219c7c4\",\r\n    \"correlation_id\": \"4bfdfd6a-cbc5-48cc-9c33-7cdd97e5fb20\",\r\n    \"first_name\": \"Dijana\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Penic\",\r\n    \"email_address\": \"penic.dijana@gmail.com\",\r\n    \"phone_number\": \"+385919440067\",\r\n    \"gender\": \"Female\"\r\n}"
+					"raw": "{\r\n    \"first_name\": \"Dijana\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Penic\",\r\n    \"email_address\": \"penic.dijana@gmail.com\",\r\n    \"phone_number\": \"+385919440067\",\r\n    \"gender\": \"Female\"\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/customer/contact-information",
@@ -159,11 +199,21 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "x-request-id",
+						"value": "c7386f4b-2819-49fd-ad02-fd172637dc18",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "295dda88-648d-49c1-9123-6e1997ce0964",
+						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"c7386f4b-2819-49fd-ad02-fd172637dc18\",\r\n    \"correlation_id\": \"295dda88-648d-49c1-9123-6e1997ce0964\",\r\n    \"city\": \"Osijek\",\r\n    \"country_code\": \"HR\",\r\n    \"postal_code\": \"31000\",\r\n    \"state_province\": \"Croatia\",\r\n    \"street_address\": \"Stonska 4\"\r\n}"
+					"raw": "{\r\n    \"city\": \"Osijek\",\r\n    \"country_code\": \"HR\",\r\n    \"postal_code\": \"31000\",\r\n    \"state_province\": \"Croatia\",\r\n    \"street_address\": \"Stonska 4\"\r\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/customer/delivery-address",
@@ -184,20 +234,21 @@
 		{
 			"name": "Checkout",
 			"request": {
-				"method": "PUT",
+				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"key": "x-request-id",
+						"value": "9099367f-95e0-40b7-be3c-79e6089a3a02",
+						"type": "default"
+					},
+					{
+						"key": "x-correlation-id",
+						"value": "aff3daf5-0851-4c3e-8072-284c3de9fcf7",
+						"type": "default"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"message_id\": \"9099367f-95e0-40b7-be3c-79e6089a3a02\",\r\n    \"correlation_id\": \"aff3daf5-0851-4c3e-8072-284c3de9fcf7\"\r\n}"
-				},
 				"url": {
-					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/actions/checkout",
+					"raw": "{{base_url}}/api/shopping-carts/{{shopping_cart_id}}/checkout",
 					"host": [
 						"{{base_url}}"
 					],
@@ -205,7 +256,6 @@
 						"api",
 						"shopping-carts",
 						"{{shopping_cart_id}}",
-						"actions",
 						"checkout"
 					]
 				}
