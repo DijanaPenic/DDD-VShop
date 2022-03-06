@@ -16,17 +16,16 @@ internal class ClientEntityTypeConfiguration : IEntityTypeConfiguration<Client>
         // Primary key
         builder.HasKey(c => c.Id);
 
-        // Limit the size of columns
+        // Requirements
         builder.Property(c => c.Name).IsRequired().HasMaxLength(50);
         builder.Property(c => c.Description).HasMaxLength(100);
-        builder.Property(c => c.Secret).IsRequired();
         builder.Property(c => c.AllowedOrigin).HasMaxLength(100);
+        builder.Property(c => c.Secret).IsRequired();
+        builder.Property(c => c.DateCreated).IsRequired();
+        builder.Property(c => c.DateUpdated).IsRequired();
 
         // Set indices
-        builder.HasIndex(c => c.Name).HasDatabaseName("NameIndex").IsUnique();
-        
-        // TODO - change index names to snake case.
-        // TODO - missing DateCreated and DateUpdated fields.
+        builder.HasIndex(c => c.Name).HasDatabaseName("client_name_index").IsUnique();
         
         // A concurrency token for use with the optimistic concurrency checking
         builder.UseXminAsConcurrencyToken();

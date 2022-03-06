@@ -16,14 +16,16 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
 
         // Indexes for "normalized" username and email, to allow efficient lookups
-        builder.HasIndex(u => u.NormalizedUserName).HasDatabaseName("UserNameIndex").IsUnique();
-        builder.HasIndex(u => u.NormalizedEmail).HasDatabaseName("EmailIndex");
+        builder.HasIndex(u => u.NormalizedUserName).HasDatabaseName("user_name_index").IsUnique();
+        builder.HasIndex(u => u.NormalizedEmail).HasDatabaseName("user_email_index");
 
-        // Limit the size of columns to use efficient database types
+        // Requirements
         builder.Property(u => u.UserName).IsRequired().HasMaxLength(256);
         builder.Property(u => u.NormalizedUserName).IsRequired().HasMaxLength(256);
         builder.Property(u => u.Email).IsRequired().HasMaxLength(256);
         builder.Property(u => u.NormalizedEmail).IsRequired().HasMaxLength(256);
+        builder.Property(u => u.DateCreated).IsRequired();
+        builder.Property(u => u.DateUpdated).IsRequired();
 
         // The relationship between User and Role
         builder.HasMany(u => u.Roles)

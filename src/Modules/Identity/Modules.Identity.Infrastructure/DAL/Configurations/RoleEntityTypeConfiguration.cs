@@ -17,11 +17,13 @@ internal class RoleEntityTypeConfiguration : IEntityTypeConfiguration<Role>
             builder.HasKey(r => r.Id);
 
             // Index for "normalized" role name to allow efficient lookups
-            builder.HasIndex(r => r.NormalizedName).HasDatabaseName("RoleNameIndex").IsUnique();
+            builder.HasIndex(r => r.NormalizedName).HasDatabaseName("role_name_index").IsUnique();
 
-            // Limit the size of columns
+            // Requirements
             builder.Property(r => r.Name).IsRequired().HasMaxLength(256);
             builder.Property(r => r.NormalizedName).IsRequired().HasMaxLength(256);
+            builder.Property(r => r.DateCreated).IsRequired();
+            builder.Property(r => r.DateUpdated).IsRequired();
 
             // A concurrency token for use with the optimistic concurrency checking
             builder.UseXminAsConcurrencyToken();

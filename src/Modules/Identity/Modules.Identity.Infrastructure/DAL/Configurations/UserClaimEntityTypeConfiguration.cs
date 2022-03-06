@@ -18,6 +18,8 @@ internal class UserClaimEntityTypeConfiguration : IEntityTypeConfiguration<UserC
         // Requirements
         builder.Property(uc => uc.ClaimType).IsRequired();
         builder.Property(uc => uc.ClaimValue).IsRequired();
+        builder.Property(uc => uc.DateCreated).IsRequired();
+        builder.Property(uc => uc.DateUpdated).IsRequired();
 
         // The relationship between User and UserClaim
         builder.HasOne(uc => uc.User)

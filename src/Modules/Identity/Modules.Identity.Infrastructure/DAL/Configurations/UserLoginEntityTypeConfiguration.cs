@@ -15,12 +15,14 @@ internal class UserLoginEntityTypeConfiguration : IEntityTypeConfiguration<UserL
         // Composite primary key consisting of the LoginProvider and the key to use with that provider
         builder.HasKey(ul => new { ul.LoginProvider, ul.ProviderKey });
 
-        // Limit the size of database columns
+        // Requirements
         builder.Property(ul => ul.LoginProvider).IsRequired().HasMaxLength(128);
         builder.Property(ul => ul.ProviderKey).IsRequired().HasMaxLength(128);
         builder.Property(ul => ul.Token).IsRequired(false).HasMaxLength(300);
         builder.Property(ul => ul.ProviderDisplayName).IsRequired();
         builder.Property(ul => ul.IsConfirmed).IsRequired();
+        builder.Property(ul => ul.DateCreated).IsRequired();
+        builder.Property(ul => ul.DateUpdated).IsRequired();
 
         // The relationship between User and UserLogin
         builder.HasOne(ul => ul.User)

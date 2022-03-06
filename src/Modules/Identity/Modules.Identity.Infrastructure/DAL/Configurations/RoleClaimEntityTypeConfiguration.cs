@@ -20,6 +20,8 @@ internal class RoleClaimEntityTypeConfiguration : IEntityTypeConfiguration<RoleC
         // Requirements
         builder.Property(rc => rc.ClaimType).IsRequired();
         builder.Property(rc => rc.ClaimValue).IsRequired();
+        builder.Property(rc => rc.DateCreated).IsRequired();
+        builder.Property(rc => rc.DateUpdated).IsRequired();
 
         // The relationship between Role and RoleClaim
         builder.HasOne(rc => rc.Role)

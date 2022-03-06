@@ -15,9 +15,11 @@ internal class UserRefreshTokenEntityTypeConfiguration : IEntityTypeConfiguratio
         // Primary key
         builder.HasKey(urt => new { urt.UserId, urt.ClientId });
 
-        // Limit the size of database columns
+        // Requirements
         builder.Property(urt => urt.Value).IsRequired().HasMaxLength(256);
         builder.Property(urt => urt.DateExpires).IsRequired();
+        builder.Property(urt => urt.DateCreated).IsRequired();
+        builder.Property(urt => urt.DateUpdated).IsRequired();
 
         // The relationship between User and UserRefreshToken
         builder.HasOne(urt => urt.User)
