@@ -34,20 +34,20 @@ public abstract class Module
     public abstract void Initialize(ILogger logger, IConfiguration configuration, IServiceCollection services);
     public abstract void ConfigureContainer(ILogger logger, IConfiguration configuration, IServiceCollection services);
     
-    public static Task StartHostedServicesAsync(IServiceProvider serviceProvider) // TODO - add cancellationToken param.
+    public static Task StartHostedServicesAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
         
-        return Task.WhenAll(hostedServices.Select(s => s.StartAsync(CancellationToken.None)));
+        return Task.WhenAll(hostedServices.Select(s => s.StartAsync(cancellationToken)));
     }
     
-    public static Task StopHostedServicesAsync(IServiceProvider serviceProvider)
+    public static Task StopHostedServicesAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
         IEnumerable<IHostedService> hostedServices = scope.ServiceProvider.GetServices<IHostedService>();
         
-        return Task.WhenAll(hostedServices.Select(s => s.StopAsync(CancellationToken.None)));
+        return Task.WhenAll(hostedServices.Select(s => s.StopAsync(cancellationToken)));
     }
     
     private IList<Assembly> GetModuleAssemblies(IEnumerable<Assembly> assemblies) 
