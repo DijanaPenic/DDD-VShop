@@ -55,8 +55,7 @@ namespace VShop.SharedKernel.PostgresDb
 
             return CurrentTransaction;
         }
-
-
+        
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (CurrentTransaction is null) return;
@@ -75,7 +74,7 @@ namespace VShop.SharedKernel.PostgresDb
             }
         }
         
-        public async Task DisposeTransactionAsync()
+        private async Task DisposeTransactionAsync()
         {
             if (CurrentTransaction is null) return;
             
