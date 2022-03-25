@@ -23,7 +23,7 @@
       <None Update="module.process_manager.development.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="module.process_manager.production.json">
+      <None Update="module.process_manager.test.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

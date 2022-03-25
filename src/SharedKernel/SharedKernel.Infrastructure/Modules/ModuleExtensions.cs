@@ -18,7 +18,7 @@ public static class ModuleExtensions
             foreach (string settings in GetSettings("*"))
                 cfg.AddJsonFile(settings);
 
-            foreach (string settings in GetSettings($"*.{ctx.HostingEnvironment.EnvironmentName}"))
+            foreach (string settings in GetSettings($"*.{ctx.HostingEnvironment.EnvironmentName.ToLowerInvariant()}"))
                 cfg.AddJsonFile(settings);
 
             IEnumerable<string> GetSettings(string pattern)
