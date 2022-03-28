@@ -7,8 +7,14 @@ pool:
 variables:
   projects: '**/*.sln'
   buildConfiguration: 'Debug'
+  environment: 'test'
 
 steps:
+- task: DownloadSecureFile@1
+  displayName: 'Download environment variables file'
+  inputs:
+    secureFile: '$(environment).env'
+    retryCount: 3
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 6.x'
   inputs:
