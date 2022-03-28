@@ -1,7 +1,7 @@
 {
   "Sales": {
     "Postgres": {
-      "ConnectionString": "server=localhost;userid=postgres;password=0k6aamsucNq57XV7aOHC;port=5438;database=VShop_Sales;application name=VShop_Sales;"
+      "ConnectionString": "server=localhost;userid=postgres;password=xXyx5umxCk6nLrbAvsdY;port=5438;database=VShop_Sales;application name=VShop_Sales;"
     }
   }
 }
