@@ -38,7 +38,15 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseKestrel((context, serverOptions) =>
+                {
+                    serverOptions.Configure(context.Configuration.GetSection("Kestrel"));
+                });
+
+                webBuilder.UseStartup<Startup>();
+            })
             .UseSerilog((context, services, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(services)

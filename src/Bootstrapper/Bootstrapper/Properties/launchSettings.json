@@ -14,19 +14,9 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7090;http://localhost:5090",
+      "applicationUrl": "https://local.penic-solutions.com:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "Bootstrapper.Test": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://vshop.penic-solutions.com:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Test"
       }
     }
   }
