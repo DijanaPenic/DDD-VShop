@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  web-api:
+    build:
+      context: ../src/Bootstrapper/Bootstrapper
+      dockerfile: ./test.dockerfile
+    restart: always
+    ports:
+      - 5000:443
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: Test
+      ASPNETCORE_URLS: https://+:443
+      STOREAPP_KESTREL__CERTIFICATES__DEFAULT__PATH: /https/self-signed-cert.pfx

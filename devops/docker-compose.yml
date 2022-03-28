@@ -43,8 +43,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Sales
-      POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SALES}
+
   postgres.db.sales.tests:
     image: postgres
     ports: 
@@ -53,8 +53,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_SalesTests
-      POSTGRES_PASSWORD: 0k6aamsucNq57XV7aOHC
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SALES}
+
   postgres.db.billing:
     image: postgres
     ports: 
@@ -63,8 +63,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Billing
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-     
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_BILLING}
+
   postgres.db.billing.tests:
     image: postgres
     ports: 
@@ -73,8 +73,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_BillingTests
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_BILLING}   
+
   postgres.db.catalog:
     image: postgres
     ports: 
@@ -83,8 +83,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Catalog
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CATALOG}
+
   postgres.db.catalog.tests:
     image: postgres
     ports: 
@@ -93,8 +93,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_CatalogTests
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CATALOG}
+
   postgres.db.process_manager:
     image: postgres
     ports: 
@@ -105,8 +105,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_ProcessManager
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROCESS_MANAGER}
+
   postgres.db.process_manager.tests:
     image: postgres
     ports: 
@@ -117,8 +117,7 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_ProcessManagerTests
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g  
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROCESS_MANAGER}
   postgres.db.identity:
     image: postgres
     ports: 
@@ -127,9 +126,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_Identity
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
-      
-      
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_IDENTITY}
+
   postgres.db.identity.tests:
     image: postgres
     ports: 
@@ -138,4 +136,4 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_IdentityTests
-      POSTGRES_PASSWORD: 46ftZwvHwkStZzzQtz6g
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_IDENTITY}
