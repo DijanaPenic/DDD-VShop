@@ -18,16 +18,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
-    "Sales.API.Test": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://vshop.penic-solutions.com:4443",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Test"
-      }
     }
   }
 }
