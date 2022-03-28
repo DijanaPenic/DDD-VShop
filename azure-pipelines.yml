@@ -1,0 +1,52 @@
+trigger:
+- deployment
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  projects: '**/*.sln'
+  buildConfiguration: 'Debug'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK 6.x'
+  inputs:
+    packageType: sdk
+    version: 6.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+- task: DotNetCoreCLI@2
+  displayName: Restore nuget packages
+  inputs:
+    command: restore
+    feedsToUse: 'select'
+    projects: $(projects)
+    workingDirectory: $(System.DefaultWorkingDirectory)
+- task: DotNetCoreCLI@2
+  displayName: 'Build application - $(buildConfiguration)'
+  inputs:
+    command: build
+    projects: $(projects)
+    arguments: '--configuration $(buildConfiguration)'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+- task: DotNetCoreCLI@2
+  displayName: 'Publish application - $(buildConfiguration)'
+  inputs:
+    command: publish
+    nobuild: true
+    projects: $(projects)
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+    modifyOutputPath: true
+    workingDirectory: $(System.DefaultWorkingDirectory)
+- task: CopyFiles@2
+  displayName: 'Prepare docker'
+  inputs:
+    contents: '$(System.DefaultWorkingDirectory)/devops/**'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/devops/'
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish pipeline artifact - $(buildConfiguration)'
+  inputs:
+    targetPath: $(Build.ArtifactStagingDirectory)
+    artifact: 'publish-$(buildConfiguration)'
+    publishLocation: 'pipeline'
