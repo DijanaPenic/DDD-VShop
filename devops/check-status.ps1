@@ -22,10 +22,6 @@ function Check-DockerContainer {
 Set-Variable -Name "DockerComposeUpFilePath" -Value "$LogsPath/docker-compose-up.txt"
 Set-Variable -Name "DockerComposeBuildFilePath" -Value "$LogsPath/docker-compose-build.txt"
 
-# Output docker-compose logs
-cd $DockerFolderPath
-docker-compose ps
-
 # Check id docker-compose output contains errors
 
 Write-Output "Checking log output..."
@@ -57,6 +53,8 @@ $RunningContainers =
     'postgres.db.catalog', 
     'postgres.db.catalog.tests'
 )
+
+cd $DockerFolderPath
 foreach ($Container in $RunningContainers)
 {
     Check-DockerContainer -ContainerName $Container -ExpectedStatus "running"
