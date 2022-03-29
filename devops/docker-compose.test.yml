@@ -3,8 +3,7 @@ version: "3.7"
 services:
   web-api:
     build:
-      context: ../src/Bootstrapper/Bootstrapper
-      dockerfile: ./test.dockerfile
+      dockerfile: ../app/bootstrapper.test.dockerfile
     restart: always
     ports:
       - 5000:443
