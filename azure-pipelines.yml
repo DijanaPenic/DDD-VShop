@@ -6,7 +6,7 @@ pool:
 
 variables:
   projects: '**/*.sln'
-  buildConfiguration: 'Debug'
+  buildConfiguration: 'debug'
   environment: 'test'
 
 steps:
