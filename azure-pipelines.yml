@@ -6,7 +6,7 @@ pool:
 
 variables:
   projects: '**/*.sln'
-  buildConfiguration: 'Debug'
+  buildConfiguration: 'debug'
   environment: 'test'
 
 steps:
@@ -47,7 +47,8 @@ steps:
     command: publish
     nobuild: true
     projects: $(projects)
-    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    arguments: '--output $(Build.ArtifactStagingDirectory)/output'
+    publishWebProjects: false
     zipAfterPublish: true
     modifyOutputPath: true
     workingDirectory: $(System.DefaultWorkingDirectory)
@@ -55,7 +56,7 @@ steps:
   displayName: 'Prepare docker'
   inputs:
     contents: '$(System.DefaultWorkingDirectory)/devops/**'
-    targetFolder: '$(Build.ArtifactStagingDirectory)/devops/'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishPipelineArtifact@1
   displayName: 'Publish pipeline artifact - $(buildConfiguration)'
   inputs:
