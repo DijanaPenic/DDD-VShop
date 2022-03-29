@@ -17,19 +17,6 @@ public static class ModuleExtensions
     public static IHostBuilder ConfigureModules(this IHostBuilder builder)
         => builder.ConfigureAppConfiguration((ctx, cfg) =>
         {
-            IConfigurationRoot configuration = cfg.Build();
-
-            if (!ctx.HostingEnvironment.IsDevelopment())
-            {
-                SecretClient secretClient = new
-                (
-                    new Uri($"https://{configuration["KeyVault"]}.vault.azure.net/"),
-                    new DefaultAzureCredential()
-                );
-                cfg.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
-            }
-            else cfg.AddEnvironmentVariables($"{configuration["App:Name"]}App_");
-
             foreach (string settings in GetSettings("*"))
                 cfg.AddJsonFile(settings);
 
@@ -44,6 +31,19 @@ public static class ModuleExtensions
                     $"module.{pattern}.json",
                     SearchOption.AllDirectories
                 );
+            
+            IConfigurationRoot configuration = cfg.Build();
+
+            if (!ctx.HostingEnvironment.IsDevelopment())
+            {
+                SecretClient secretClient = new
+                (
+                    new Uri($"https://{configuration["KeyVault"]}.vault.azure.net/"),
+                    new DefaultAzureCredential()
+                );
+                cfg.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+            }
+            else cfg.AddEnvironmentVariables($"{configuration["App:Name"]}App_");
         });
     
     public static IServiceCollection AddModuleRequests(this IServiceCollection services)
