@@ -56,7 +56,7 @@ steps:
   displayName: 'Prepare docker'
   inputs:
     contents: '$(System.DefaultWorkingDirectory)/devops/**'
-    targetFolder: '$(Build.ArtifactStagingDirectory)/devops/'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishPipelineArtifact@1
   displayName: 'Publish pipeline artifact - $(buildConfiguration)'
   inputs:
