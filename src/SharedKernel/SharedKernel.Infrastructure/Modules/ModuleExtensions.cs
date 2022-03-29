@@ -17,20 +17,20 @@ public static class ModuleExtensions
     public static IHostBuilder ConfigureModules(this IHostBuilder builder)
         => builder.ConfigureAppConfiguration((ctx, cfg) =>
         {
+            string environment = ctx.HostingEnvironment.EnvironmentName.ToLowerInvariant();
+
             foreach (string settings in GetSettings("*"))
                 cfg.AddJsonFile(settings);
 
-            string environment = ctx.HostingEnvironment.EnvironmentName.ToLowerInvariant();
-            foreach (string settings in GetSettings($"*.{environment}"))
+            foreach (string settings in GetSettings("module.*"))
                 cfg.AddJsonFile(settings);
 
-            IEnumerable<string> GetSettings(string pattern)
-                => Directory.EnumerateFiles
-                (
-                    ctx.HostingEnvironment.ContentRootPath,
-                    $"module.{pattern}.json",
-                    SearchOption.AllDirectories
-                );
+            IEnumerable<string> GetSettings(string pattern) => Directory.EnumerateFiles
+            (
+                ctx.HostingEnvironment.ContentRootPath,
+                $"{pattern}.{environment}.json",
+                SearchOption.AllDirectories
+            );
             
             IConfigurationRoot configuration = cfg.Build();
 
