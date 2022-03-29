@@ -47,7 +47,8 @@ steps:
     command: publish
     nobuild: true
     projects: $(projects)
-    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    arguments: '--output $(Build.ArtifactStagingDirectory)/output'
+    publishWebProjects: false
     zipAfterPublish: true
     modifyOutputPath: true
     workingDirectory: $(System.DefaultWorkingDirectory)
