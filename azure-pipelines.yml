@@ -7,20 +7,8 @@ pool:
 variables:
   projects: '**/*.sln'
   buildConfiguration: 'debug'
-  environment: 'test'
 
 steps:
-- task: DownloadSecureFile@1
-  displayName: 'Download environment variables file'
-  inputs:
-    secureFile: '$(environment).env'
-    retryCount: 3
-- task: CopyFiles@2
-  displayName: 'Copy environment variable files into the devops folder'
-  inputs:
-    SourceFolder: '$(Agent.TempDirectory)'
-    Contents: '*.env'
-    TargetFolder: '$(System.DefaultWorkingDirectory)/devops'
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 6.x'
   inputs:
