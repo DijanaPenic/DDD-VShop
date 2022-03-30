@@ -9,7 +9,7 @@ services:
     ports:
       - 5000:443
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - /etc/ssl/certs:/https:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Test
       ASPNETCORE_URLS: https://+:443
