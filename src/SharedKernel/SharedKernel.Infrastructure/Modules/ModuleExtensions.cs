@@ -34,7 +34,7 @@ public static class ModuleExtensions
             
             IConfigurationRoot configuration = cfg.Build();
 
-            if (!ctx.HostingEnvironment.IsDevelopment())
+            if (ctx.HostingEnvironment.IsProduction())
             {
                 SecretClient secretClient = new
                 (

@@ -13,4 +13,4 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Test
       ASPNETCORE_URLS: https://+:443
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/self-signed-cert.pfx
+      VSHOPAPP_Kestrel__Certificates__Default__Path: /https/self-signed-cert.pfx
