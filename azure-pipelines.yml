@@ -23,19 +23,21 @@ steps:
     projects: $(projects)
     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: DotNetCoreCLI@2
-  displayName: 'Build application - $(buildConfiguration)'
+  displayName: 'Build application'
   inputs:
     command: build
     projects: $(projects)
     arguments: '--configuration $(buildConfiguration)'
     workingDirectory: $(System.DefaultWorkingDirectory)
+# - task: DotNetCoreCLI@2
+#   displayName: 'Test application'
+#   inputs:
+#     command: test
+#     projects: $(projects)
+#     arguments: '--configuration $(buildConfiguration)'
+#     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: DotNetCoreCLI@2
-  inputs:
-    command: test
-    projects: $(projects)
-    arguments: '--configuration $(buildConfiguration)'
-- task: DotNetCoreCLI@2
-  displayName: 'Publish application - $(buildConfiguration)'
+  displayName: 'Publish application)'
   inputs:
     command: publish
     nobuild: true
@@ -51,7 +53,7 @@ steps:
     contents: '$(System.DefaultWorkingDirectory)/devops/**'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishPipelineArtifact@1
-  displayName: 'Publish pipeline artifact - $(buildConfiguration)'
+  displayName: 'Publish pipeline artifact'
   inputs:
     targetPath: $(Build.ArtifactStagingDirectory)
     artifact: 'publish-$(buildConfiguration)'
