@@ -11,6 +11,5 @@ public static class ModuleEventStoreSubscriptionRegistry
     public static IEnumerable<IEventStoreBackgroundService> Services => Registrations;
     
     public static void Add(IServiceProvider serviceProvider) 
-        => Registrations.AddRange(serviceProvider
-            .GetServices<IEventStoreBackgroundService>());
+        => Registrations.AddRange(serviceProvider.GetServices<IEventStoreBackgroundService>());
 }
