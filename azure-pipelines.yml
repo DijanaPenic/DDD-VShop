@@ -7,8 +7,19 @@ pool:
 variables:
   projects: '**/*.sln'
   buildConfiguration: 'debug'
+  envFile: 'test.env'
 
 steps:
+- task: DownloadSecureFile@1
+  displayName: 'Download .env file'
+  inputs:
+    secureFile: $(envFile)
+- task: DockerCompose@0
+  displayName: Start dependencies (docker-compose)
+  inputs:
+    containerregistrytype: Container Registry
+    dockerComposeFile: '**/docker-compose.yml'
+    dockerComposeCommand: '--env-file=$(envFile) up -d'
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 6.x'
   inputs:
@@ -27,17 +38,17 @@ steps:
   inputs:
     command: build
     projects: $(projects)
+    arguments: '--configuration $(buildConfiguration) --no-restore'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+- task: DotNetCoreCLI@2
+  displayName: 'Test application'
+  inputs:
+    command: test
+    projects: $(projects)
     arguments: '--configuration $(buildConfiguration)'
     workingDirectory: $(System.DefaultWorkingDirectory)
-# - task: DotNetCoreCLI@2
-#   displayName: 'Test application'
-#   inputs:
-#     command: test
-#     projects: $(projects)
-#     arguments: '--configuration $(buildConfiguration)'
-#     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: DotNetCoreCLI@2
-  displayName: 'Publish application)'
+  displayName: 'Publish application'
   inputs:
     command: publish
     nobuild: true
