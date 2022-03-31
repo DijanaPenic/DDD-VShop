@@ -53,7 +53,7 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_SalesTests
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SALES}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_SALES_TESTS}
 
   postgres.db.billing:
     image: postgres
@@ -73,7 +73,7 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_BillingTests
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_BILLING}   
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_BILLING_TESTS}   
 
   postgres.db.catalog:
     image: postgres
@@ -93,7 +93,7 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_CatalogTests
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CATALOG}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CATALOG_TESTS}
 
   postgres.db.process_manager:
     image: postgres
@@ -117,7 +117,8 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_ProcessManagerTests
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROCESS_MANAGER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PROCESS_MANAGER_TESTS}
+      
   postgres.db.identity:
     image: postgres
     ports: 
@@ -136,4 +137,4 @@ services:
     environment: 
       POSTGRES_USER: postgres
       POSTGRES_DB: VShop_IdentityTests
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_IDENTITY}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_IDENTITY_TESTS}

@@ -23,7 +23,7 @@
     },
     "ProcessManager": {
         "Postgres": {
-            "ConnectionString": "server=localhost;userid=postgres;password=46ftZwvHwkStZzzQtz6g;port=5445;database=VShop_ProcessManagerTests;application name=VShop_ProcessManagerTests;"
+            "ConnectionString": "server=localhost;userid=postgres;password=AvghhpUs8gB5AyBc287a;port=5445;database=VShop_ProcessManagerTests;application name=VShop_ProcessManagerTests;"
         },
         "Module": {
             "Name": "ProcessManager",
