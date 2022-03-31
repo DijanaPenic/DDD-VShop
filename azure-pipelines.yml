@@ -19,7 +19,7 @@ steps:
   inputs:
     containerregistrytype: Container Registry
     dockerComposeFile: '**/docker-compose.yml'
-    dockerComposeCommand: '--env-file=$(envFile.secureFilePath) up -d'
+    dockerComposeCommand: '--env-file=$(envFile.secureFilePath) up -d 2>nul' #suppressing false environment variable errors.
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 6.x'
   inputs:
