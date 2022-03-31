@@ -1,5 +1,5 @@
 trigger:
-- test-pipeline-task
+- deployment
 
 pool:
   vmImage: 'ubuntu-latest'
