@@ -8,19 +8,19 @@ variables:
   projects: '**/*.sln'
   buildConfiguration: 'debug'
   envFile: 'test.env'
-  envFilePath: '$(Agent.TempDirectory)/$(envFile)'
 
 steps:
 - task: DownloadSecureFile@1
+  name: envFile
   displayName: 'Download .env file'
   inputs:
-    secureFile: $(envFile)
+    secureFile: 'test.env'
 - task: DockerCompose@0
   displayName: Start dependencies (docker-compose)
   inputs:
     containerregistrytype: Container Registry
     dockerComposeFile: '**/docker-compose.yml'
-    dockerComposeCommand: '--env-file=$(envFilePath) up -d'
+    dockerComposeCommand: '--env-file=$(envFile.secureFilePath) up -d'
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 6.x'
   inputs:
