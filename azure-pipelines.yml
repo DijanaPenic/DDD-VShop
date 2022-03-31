@@ -7,7 +7,6 @@ pool:
 variables:
   projects: '**/*.sln'
   buildConfiguration: 'debug'
-  envFile: 'test.env'
 
 steps:
 - task: DownloadSecureFile@1
