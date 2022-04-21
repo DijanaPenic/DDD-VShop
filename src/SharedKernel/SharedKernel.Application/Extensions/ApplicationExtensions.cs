@@ -2,10 +2,10 @@ using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Net;
 using System.Reflection;
 using EventStore.Client;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,12 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using NodaTime.Serialization.JsonNet;
 
-using VShop.SharedKernel.Application.Exceptions;
 using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Subscriptions;
 using VShop.SharedKernel.Subscriptions.Extensions;
-using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.Application.Providers;
+using VShop.SharedKernel.Application.Exceptions;
+using VShop.SharedKernel.Application.Projections;
 using VShop.SharedKernel.EventStoreDb.Messaging.Contracts;
 using VShop.SharedKernel.EventStoreDb.Serialization.Contracts;
 
@@ -128,7 +128,6 @@ public static class ApplicationExtensions
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGet("/", context => context.Response.WriteAsync("Modular API"));
         });
         app.UseSerilogRequestLogging();
 

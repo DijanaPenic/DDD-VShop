@@ -1,0 +1,7 @@
+{
+  "Identity": {
+    "Postgres": {
+      "ConnectionString": "server=localhost;userid=postgres;password=fnp9Cm7XCSsqKRAUEYKv;port=5446;database=VShop_Identity;application name=VShop_Identity;"
+    }
+  }
+}

@@ -137,7 +137,7 @@ namespace VShop.Modules.Catalog.API.Controllers
         {
             IList<CatalogCategory> categories = await _catalogDbContext.Categories
                 .OrderBy(SortingFactory.Create(sortOrder))
-                .Filter(p => p.IsDeleted == false)
+                .Filter(p => p.IsDeleted == false) // TODO - false check :D
                 .Filter(searchPhrase, nameof(CatalogCategory.Name))
                 .Include(OptionsFactory.Create(include))
                 .SkipAndTake(PagingFactory.Create(pageIndex, pageSize))
@@ -145,6 +145,7 @@ namespace VShop.Modules.Catalog.API.Controllers
 
             if (categories.Count is 0) return NoContent();
 
+            // TODO - count is not correct.
             PagedItemsResponse<CatalogCategory> pagedList = new(pageIndex, pageSize, categories.Count, categories);
             
             return Ok(pagedList);

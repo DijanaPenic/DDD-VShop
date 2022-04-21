@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  web-api:
+    build:
+      context: ../app
+      dockerfile: ./bootstrapper.test.dockerfile
+    restart: always
+    ports:
+      - 5000:443
+    volumes:
+      - /etc/ssl/certs:/https:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: Test
+      ASPNETCORE_URLS: https://+:443
+      VSHOPAPP_KESTREL__CERTIFICATES__DEFAULT__PASSWORD: ${CERTIFICATE_PASSWORD}
+      VSHOPAPP_KESTREL__CERTIFICATES__DEFAULT__PATH: /https/self-signed-cert.pfx
+      VSHOPAPP_EXTERNALLOGIN__GOOGLE__CLIENTSECRET: ${EXTERNALLOGIN_GOOGLE_CLIENTSECRET}

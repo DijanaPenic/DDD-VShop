@@ -23,7 +23,7 @@
     },
     "Sales": {
         "Postgres": {
-            "ConnectionString": "server=localhost;userid=postgres;password=0k6aamsucNq57XV7aOHC;port=5440;database=VShop_SalesTests;application name=VShop_SalesTests;"
+            "ConnectionString": "server=localhost;userid=postgres;password=HxUDjWetWggybcVb5xfZ;port=5440;database=VShop_SalesTests;application name=VShop_SalesTests;"
         },
         "Module": {
             "Name": "Sales",
@@ -32,7 +32,7 @@
     },
     "Billing": {
         "Postgres": {
-            "ConnectionString": "server=localhost;userid=postgres;password=46ftZwvHwkStZzzQtz6g;port=5441;database=VShop_BillingTests;application name=VShop_BillingTests;"
+            "ConnectionString": "server=localhost;userid=postgres;password=ktd7yfDHHzAGL77Za7Eq;port=5441;database=VShop_BillingTests;application name=VShop_BillingTests;"
         },
         "Module": {
             "Name": "Billing",
@@ -41,7 +41,7 @@
     },
     "Catalog": {
         "Postgres": {
-            "ConnectionString": "server=localhost;userid=postgres;password=46ftZwvHwkStZzzQtz6g;port=5443;database=VShop_CatalogTests;application name=VShop_CatalogTests;"
+            "ConnectionString": "server=localhost;userid=postgres;password=cB4F4d9JUNerhbrQVZsr;port=5443;database=VShop_CatalogTests;application name=VShop_CatalogTests;"
         },
         "Module": {
             "Name": "Catalog",
@@ -50,7 +50,7 @@
     },
     "ProcessManager": {
         "Postgres": {
-            "ConnectionString": "server=localhost;userid=postgres;password=46ftZwvHwkStZzzQtz6g;port=5445;database=VShop_ProcessManagerTests;application name=VShop_ProcessManagerTests;"
+            "ConnectionString": "server=localhost;userid=postgres;password=AvghhpUs8gB5AyBc287a;port=5445;database=VShop_ProcessManagerTests;application name=VShop_ProcessManagerTests;"
         },
         "Module": {
             "Name": "ProcessManager",

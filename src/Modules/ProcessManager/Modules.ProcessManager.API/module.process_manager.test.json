@@ -1,0 +1,7 @@
+{
+    "ProcessManager": {
+        "Postgres": {
+            "ConnectionString": "server=localhost;userid=postgres;password=n6J8ncFShgYacSRHGc2Q;port=5444;database=VShop_ProcessManager;application name=VShop_ProcessManager;"
+        }
+    }
+}

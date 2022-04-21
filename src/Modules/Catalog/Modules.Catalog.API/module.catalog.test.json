@@ -1,0 +1,7 @@
+{
+  "Catalog": {
+    "Postgres": {
+      "ConnectionString": "server=localhost;userid=postgres;password=DeBcdQbvkSHChKq2Ekvw;port=5442;database=VShop_Catalog;application name=VShop_Catalog;"
+    }
+  }
+}

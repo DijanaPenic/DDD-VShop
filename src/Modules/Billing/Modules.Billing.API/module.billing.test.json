@@ -1,0 +1,7 @@
+{
+  "Billing": {
+    "Postgres": {
+      "ConnectionString": "server=localhost;userid=postgres;password=ARNk2dqHwV5n9wbUEU8s;port=5439;database=VShop_Billing;application name=VShop_Billing;"
+    }
+  }
+}
