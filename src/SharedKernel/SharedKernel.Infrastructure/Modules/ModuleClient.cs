@@ -37,8 +37,8 @@ public class ModuleClient : IModuleClient
         
         foreach (ModuleBroadcastRegistration registration in registrations)
         {
-            object receiverMessage = TranslateType(message, registration.ReceiverType);
-            _messageContextRegistry.Set((IMessage)receiverMessage, messageContext);
+            IMessage receiverMessage = TranslateType(message, registration.ReceiverType);
+            _messageContextRegistry.Set(receiverMessage, messageContext);
             
             tasks.Add(registration.Action(receiverMessage, cancellationToken));
         }
@@ -46,6 +46,6 @@ public class ModuleClient : IModuleClient
         await Task.WhenAll(tasks);
     }
     
-    private object TranslateType(object message, Type type)
-        => _moduleSerializer.Deserialize(_moduleSerializer.Serialize(message), type);
+    private IMessage TranslateType(object message, Type type)
+        => (IMessage)_moduleSerializer.Deserialize(_moduleSerializer.Serialize(message), type);
 }

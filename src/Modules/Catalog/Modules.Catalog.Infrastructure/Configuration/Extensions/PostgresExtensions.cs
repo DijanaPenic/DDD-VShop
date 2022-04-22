@@ -12,7 +12,7 @@ namespace VShop.Modules.Catalog.Infrastructure.Configuration.Extensions
     {
         public static void AddPostgres(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextBuilder<CatalogDbContext>(connectionString);
+            services.AddDbContextBuilder(connectionString, typeof(CatalogDbContext).Assembly);
             services.AddDbContext<CatalogDbContext>();
             services.AddDbContext<IntegrationDbContext>();
             services.AddDbContext<SubscriptionDbContext>();

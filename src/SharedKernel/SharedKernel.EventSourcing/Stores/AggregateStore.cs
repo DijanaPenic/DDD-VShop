@@ -99,8 +99,7 @@ namespace VShop.SharedKernel.EventSourcing.Stores
 
             if (!processed.Any()) return aggregate;
             
-            foreach ((IBaseEvent @event, IMessageContext messageContext) in processed)
-                _messageContextRegistry.Set(@event, messageContext);
+            _messageContextRegistry.Set(processed);
             
             await PublishAsync(processed.ToMessages(), cancellationToken); 
             aggregate.Restore();

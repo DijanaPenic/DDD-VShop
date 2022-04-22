@@ -129,9 +129,8 @@ namespace VShop.SharedKernel.EventSourcing.Stores
                 .Where(e => e.MessageContext.Context.RequestId == _context.RequestId).ToList();
 
             if (!processed.Any()) return processManager;
-            
-            foreach ((IMessage message, IMessageContext messageContext) in processed)
-                _messageContextRegistry.Set(message, messageContext);
+
+            _messageContextRegistry.Set(processed);
             
             await PublishAsync(processed, cancellationToken); 
             processManager.Restore();
@@ -148,7 +147,6 @@ namespace VShop.SharedKernel.EventSourcing.Stores
         private static string GetStreamPrefix(Guid processManagerId)
         {
             string processManagerName = typeof(TProcess).Name.Replace("ProcessManager", string.Empty);
-            
             return $"{processManagerName}/{processManagerId}";
         }
     }

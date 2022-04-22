@@ -11,7 +11,7 @@ namespace VShop.Modules.Billing.Infrastructure.Configuration.Extensions
     {
         public static void AddPostgres(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextBuilder<BillingDbContext>(connectionString);
+            services.AddDbContextBuilder(connectionString, typeof(BillingDbContext).Assembly);
             services.AddDbContext<BillingDbContext>();
             services.AddDbContext<IntegrationDbContext>();
             services.AddDbContext<SubscriptionDbContext>();

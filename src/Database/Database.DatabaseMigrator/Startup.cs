@@ -29,7 +29,6 @@ public class Startup
             "sales" => typeof(SalesDbContext).Assembly,
             "billing" => typeof(BillingDbContext).Assembly,
             "catalog" => typeof(CatalogDbContext).Assembly,
-            "processmanager" => typeof(ProcessManagerDbContext).Assembly,
             "identity" => typeof(IdentityDbContext).Assembly,
             _ => throw new Exception("Missing migration assembly.")
         };
@@ -38,7 +37,6 @@ public class Startup
         services.AddDbContext<SalesDbContext>();
         services.AddDbContext<BillingDbContext>();
         services.AddDbContext<CatalogDbContext>();
-        services.AddDbContext<ProcessManagerDbContext>();
         services.AddDbContext<SchedulerDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddDbContext<IntegrationDbContext>();

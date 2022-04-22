@@ -51,6 +51,7 @@ public static class ContextExtensions
     )
     {
         contextAccessor ??= new ContextAccessor();
+        
         services.AddSingleton(contextAccessor);
         services.AddTransient(_ => contextAccessor.Context);
         

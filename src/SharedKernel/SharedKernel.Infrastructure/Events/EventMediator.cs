@@ -8,7 +8,6 @@ namespace VShop.SharedKernel.Infrastructure.Events
     {
         public readonly Func<IEnumerable<Func<Task>>, Task> Publish;
 
-        public EventMediator(Func<IEnumerable<Func<Task>>, Task> publish) 
-            => Publish = publish;
+        public EventMediator(Func<IEnumerable<Func<Task>>, Task> publish) => Publish = publish;
     }
 }

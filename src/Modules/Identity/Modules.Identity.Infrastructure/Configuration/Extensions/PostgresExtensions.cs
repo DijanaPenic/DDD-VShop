@@ -10,7 +10,7 @@ internal static class PostgresExtensions
 {
     public static void AddPostgres(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContextBuilder<IdentityDbContext>(connectionString);
+        services.AddDbContextBuilder(connectionString, typeof(IdentityDbContext).Assembly);
         services.AddDbContext<IdentityDbContext>();
         services.AddDbContext<IntegrationDbContext>();
         services.AddUnitOfWork<IdentityUnitOfWork>();

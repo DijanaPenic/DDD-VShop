@@ -19,15 +19,10 @@ public static class PostgresExtensions
     (
         this IServiceCollection services,
         string connectionString,
-        Assembly assemblyType
+        Assembly migrationAssembly
     )
     {
-        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder(connectionString, assemblyType));
-
+        services.AddScoped<IDbContextBuilder>(_ => new DbContextBuilder(connectionString, migrationAssembly));
         return services;
     }
-
-    public static IServiceCollection AddDbContextBuilder<T>(this IServiceCollection services, string connectionString)
-        where T : DbContextBase
-        => services.AddDbContextBuilder(connectionString, typeof(T).Assembly);
 }
