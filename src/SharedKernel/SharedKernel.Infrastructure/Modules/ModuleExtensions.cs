@@ -19,16 +19,19 @@ public static class ModuleExtensions
         {
             string environment = ctx.HostingEnvironment.EnvironmentName.ToLowerInvariant();
 
-            foreach (string settings in GetSettings("*"))
+            cfg.AddJsonFile("appsettings.json");
+            cfg.AddJsonFile($"appsettings.{environment}.json");
+            
+            foreach (string settings in GetSettings("module.*"))
                 cfg.AddJsonFile(settings);
 
-            foreach (string settings in GetSettings("module.*"))
+            foreach (string settings in GetSettings($"module.*.{environment}"))
                 cfg.AddJsonFile(settings);
 
             IEnumerable<string> GetSettings(string pattern) => Directory.EnumerateFiles
             (
                 ctx.HostingEnvironment.ContentRootPath,
-                $"{pattern}.{environment}.json",
+                $"{pattern}.json",
                 SearchOption.AllDirectories
             );
             
