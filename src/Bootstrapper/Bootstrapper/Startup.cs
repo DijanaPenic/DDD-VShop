@@ -37,9 +37,11 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        DotNetEnv.Env.Load();
+        services.AddSingleton(_configuration);
+
         services.AddContext();
         services.AddMessaging();
-        services.AddSingleton(_configuration);
         services.AddSingleton<ISalesDispatcher, SalesDispatcher>();
         services.AddSingleton<IBillingDispatcher, BillingDispatcher>();
         services.AddSingleton<ICatalogDispatcher, CatalogDispatcher>();

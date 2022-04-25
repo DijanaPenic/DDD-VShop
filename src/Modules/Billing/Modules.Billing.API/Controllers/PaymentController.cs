@@ -1,43 +1,45 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 using VShop.SharedKernel.Application;
 using VShop.SharedKernel.Infrastructure;
-using VShop.Modules.Billing.API.Models;
-using VShop.Modules.Billing.Infrastructure.Commands;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
+using VShop.Modules.Billing.Infrastructure.Models;
+using VShop.Modules.Billing.Infrastructure.Commands;
 
 namespace VShop.Modules.Billing.API.Controllers
 {
     [ApiController]
     [Route("api/payment")]
-    [Authorize(Policy)]
     internal class PaymentController : ApplicationControllerBase
     {
-        private const string Policy = "payments";
         private readonly ICommandDispatcher _commandDispatcher;
-        private readonly IMapper _mapper;
-        
-        public PaymentController(ICommandDispatcher commandDispatcher, IMapper mapper)
-        {
-            _commandDispatcher = commandDispatcher;
-            _mapper = mapper;
-        }
+
+        public PaymentController(ICommandDispatcher commandDispatcher) => _commandDispatcher = commandDispatcher;
 
         [HttpPost]
+        [Route("intent")]
         [Consumes("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PaymentIntentInfo), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> TransferAsync([FromBody] TransferRequest request)
+        [AllowAnonymous] // TODO - check.
+        public async Task<IActionResult> CreatePaymentIntentAsync([FromBody] CreatePaymentIntentCommand command)
         {
-            TransferCommand command = _mapper.Map<TransferCommand>(request);
-            Result result = await _commandDispatcher.SendAsync(command);
+            Result<PaymentIntentInfo> result = await _commandDispatcher.SendAsync(command);
+            return HandleResult(result, Ok);
+        }
 
+        [HttpPost("webhook")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProcessPaymentIntentAsync()
+        {
+            Result result = await _commandDispatcher.SendAsync(new ProcessPaymentIntentCommand());
             return HandleResult(result, NoContent);
         }
     }
