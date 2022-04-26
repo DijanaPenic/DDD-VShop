@@ -19,8 +19,8 @@ public static class ModuleExtensions
         {
             string environment = ctx.HostingEnvironment.EnvironmentName.ToLowerInvariant();
 
-            cfg.AddJsonFile("appsettings.json");
-            cfg.AddJsonFile($"appsettings.{environment}.json");
+            cfg.AddJsonFile("appsettings.json", true);
+            cfg.AddJsonFile($"appsettings.{environment}.json", true);
             
             foreach (string settings in GetSettings("module.*"))
                 cfg.AddJsonFile(settings);
