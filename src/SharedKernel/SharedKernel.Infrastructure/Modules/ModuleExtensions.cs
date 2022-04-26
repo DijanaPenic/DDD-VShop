@@ -47,6 +47,8 @@ public static class ModuleExtensions
                 cfg.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
             }
             else cfg.AddEnvironmentVariables($"{configuration["App:Name"]}App_");
+            
+            DotNetEnv.Env.Load();
         });
     
     public static IServiceCollection AddModuleRequests(this IServiceCollection services)
