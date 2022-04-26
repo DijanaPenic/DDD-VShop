@@ -5,9 +5,9 @@ using VShop.Modules.Billing.Infrastructure.DAL.Entities;
 
 namespace VShop.Modules.Billing.Infrastructure.DAL.Configurations
 {
-    internal class PaymentEntityTypeConfiguration : IEntityTypeConfiguration<Payment>
+    internal class TransferEntityTypeConfiguration : IEntityTypeConfiguration<Transfer>
     {
-        public void Configure(EntityTypeBuilder<Payment> builder)
+        public void Configure(EntityTypeBuilder<Transfer> builder)
         {
             builder.ToTable("payment", BillingDbContext.PaymentSchema);
             
@@ -15,7 +15,6 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Configurations
             builder.Property(pt => pt.OrderId).IsRequired();
             builder.Property(pt => pt.Type).IsRequired();
             builder.Property(pt => pt.Status).IsRequired();
-            builder.Property(pt => pt.Error);
             builder.Property(pt => pt.DateCreated).IsRequired();
             builder.Property(pt => pt.DateUpdated).IsRequired();
             

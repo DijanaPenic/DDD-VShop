@@ -4,6 +4,9 @@ using VShop.SharedKernel.Infrastructure;
 using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
 using VShop.Modules.Billing.Infrastructure.Models;
+using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
+
+using Transfer = VShop.Modules.Billing.Infrastructure.DAL.Entities.Transfer;
 
 namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
 {
@@ -12,15 +15,18 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
     {
         private readonly IContext _context;
         private readonly IStripeClient _stripeClient;
+        private readonly IPaymentRepository _paymentRepository;
 
         public CreatePaymentIntentCommandHandler
         (
             IContext context,
-            IStripeClient stripeClient
+            IStripeClient stripeClient,
+            IPaymentRepository paymentRepository
         )
         {
             _context = context;
             _stripeClient = stripeClient;
+            _paymentRepository = paymentRepository;
         }
 
         public async Task<Result<PaymentIntentInfo>> HandleAsync
@@ -29,6 +35,9 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
             CancellationToken cancellationToken
         )
         {
+            Transfer paidPayment = await _paymentRepository.GetPaidPaymentAsync(command.OrderId, cancellationToken);
+            if (paidPayment is not null) return Result.ValidationError("The order is already paid.");
+            
             PaymentIntentCreateOptions paymentIntentCreateOptions = new()
             {
                 Amount = Convert.ToInt32(command.Amount * 100),

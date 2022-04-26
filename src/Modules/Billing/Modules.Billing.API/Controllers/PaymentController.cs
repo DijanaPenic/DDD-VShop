@@ -37,9 +37,9 @@ namespace VShop.Modules.Billing.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [AllowAnonymous]
-        public async Task<IActionResult> ProcessPaymentIntentAsync()
+        public async Task<IActionResult> ProcessTransferAsync()
         {
-            Result result = await _commandDispatcher.SendAsync(new ProcessPaymentIntentCommand());
+            Result result = await _commandDispatcher.SendAsync(new ProcessTransferCommand());
             return HandleResult(result, NoContent);
         }
     }
