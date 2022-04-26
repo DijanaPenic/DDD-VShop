@@ -126,6 +126,7 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
             {
                 Id = SequentialGuid.Create(),
                 OrderId = Guid.Parse(paymentIntent.Metadata["OrderId"]),
+                Amount = paymentIntent.Amount,
                 Type = TransferType.Payment,
                 Status = status,
                 Error = paymentIntent.LastPaymentError?.ToJson(),
@@ -137,6 +138,7 @@ namespace VShop.Modules.Billing.Infrastructure.Commands.Handlers
             {
                 Id = SequentialGuid.Create(),
                 OrderId = Guid.Parse(charge.Metadata["OrderId"]),
+                Amount = charge.AmountRefunded,
                 Type = TransferType.Refund,
                 Status = status,
                 Error = charge.FailureMessage,

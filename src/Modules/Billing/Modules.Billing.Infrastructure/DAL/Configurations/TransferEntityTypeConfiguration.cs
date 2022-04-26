@@ -13,6 +13,7 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Configurations
             
             builder.HasKey(pt => pt.Id);
             builder.Property(pt => pt.OrderId).IsRequired();
+            builder.Property(pt => pt.Amount).IsRequired();
             builder.Property(pt => pt.Type).IsRequired();
             builder.Property(pt => pt.Status).IsRequired();
             builder.Property(pt => pt.DateCreated).IsRequired();
