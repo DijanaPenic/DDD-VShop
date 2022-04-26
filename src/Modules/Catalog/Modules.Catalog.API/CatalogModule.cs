@@ -60,8 +60,8 @@ internal class CatalogModule : Module
         
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
+        services.AddPostgres(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddAutoMapper(typeof(CatalogAutomapperProfile));
         services.AddSingleton(CatalogMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, CatalogDispatcher>();

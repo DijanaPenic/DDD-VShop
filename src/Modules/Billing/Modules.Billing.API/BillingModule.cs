@@ -56,12 +56,14 @@ internal class BillingModule : Module
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>(EventStoreOptions.Section);
+        StripeOptions stripeOptions = configuration
+            .GetOptions<StripeOptions>($"{Name}:{StripeOptions.Section}");
         
-        services.AddStripe(configuration, Name);
+        services.AddStripe(stripeOptions);
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
+        services.AddPostgres(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddTransient<IPaymentRepository, PaymentRepository>();
         services.AddSingleton(BillingMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, BillingDispatcher>();

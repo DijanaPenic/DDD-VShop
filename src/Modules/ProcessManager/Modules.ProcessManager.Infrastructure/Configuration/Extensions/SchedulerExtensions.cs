@@ -1,6 +1,7 @@
 using Quartz;
 using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.Scheduler.Jobs;
 using VShop.SharedKernel.Scheduler.Services;
 using VShop.SharedKernel.Scheduler.Services.Contracts;
@@ -9,7 +10,7 @@ namespace VShop.Modules.ProcessManager.Infrastructure.Configuration.Extensions;
 
 internal static class SchedulerExtensions
 {
-    public static void AddScheduler(this IServiceCollection services, string connectionString)
+    public static void AddScheduler(this IServiceCollection services, PostgresOptions postgresOptions)
     {
         services.Configure<QuartzOptions>(options =>
         {
@@ -28,7 +29,7 @@ internal static class SchedulerExtensions
                 storeOptions.RetryInterval = TimeSpan.FromSeconds(15);
                 storeOptions.UsePostgres(adoProviderOptions =>
                 {
-                    adoProviderOptions.ConnectionString = connectionString;
+                    adoProviderOptions.ConnectionString = postgresOptions.ConnectionString;
                     adoProviderOptions.TablePrefix = "scheduler.QRTZ_";
                 });
                 storeOptions.UseJsonSerializer();

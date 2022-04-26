@@ -10,9 +10,9 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 
 internal static class PostgresExtensions
 {
-    public static void AddPostgres(this IServiceCollection services, string connectionString)
+    public static void AddPostgres(this IServiceCollection services, PostgresOptions postgresOptions)
     {
-        services.AddDbContextBuilder(connectionString, typeof(SalesDbContext).Assembly);
+        services.AddDbContextBuilder(postgresOptions.ConnectionString, typeof(SalesDbContext).Assembly);
         services.AddDbContext<SalesDbContext>();
         services.AddDbContext<SubscriptionDbContext>();
         services.AddUnitOfWork<SalesUnitOfWork>();

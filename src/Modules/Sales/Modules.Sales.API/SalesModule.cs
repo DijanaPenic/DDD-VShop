@@ -63,8 +63,8 @@ internal class SalesModule : Module
         
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
+        services.AddPostgres(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddTransient<IShoppingCartReadService, ShoppingCartReadService>();
         services.AddTransient<IShoppingCartOrderingService, ShoppingCartOrderingService>();
         services.AddAutoMapper(typeof(ShoppingCartAutomapperProfile));

@@ -55,8 +55,8 @@ internal class IdentityModule : Module
         services.AddIdentity();
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
+        services.AddPostgres(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddSingleton(IdentityMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, IdentityDispatcher>();
 
