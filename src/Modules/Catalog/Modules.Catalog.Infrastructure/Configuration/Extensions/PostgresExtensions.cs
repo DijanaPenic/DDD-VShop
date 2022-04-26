@@ -2,7 +2,6 @@
 
 using VShop.Modules.Catalog.Infrastructure.DAL;
 using VShop.SharedKernel.Integration.DAL;
-using VShop.SharedKernel.PostgresDb;
 using VShop.SharedKernel.PostgresDb.Extensions;
 using VShop.SharedKernel.Subscriptions.DAL;
 

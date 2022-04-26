@@ -23,8 +23,6 @@
       <ProjectReference Include="..\..\Modules\Catalog\Modules.Catalog.Infrastructure\Modules.Catalog.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.API\Modules.Sales.API.csproj" />
       <ProjectReference Include="..\..\Modules\Sales\Modules.Sales.Infrastructure\Modules.Sales.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Modules\ProcessManager\Modules.ProcessManager.API\Modules.ProcessManager.API.csproj" />
-      <ProjectReference Include="..\..\Modules\ProcessManager\Modules.ProcessManager.Infrastructure\Modules.ProcessManager.Infrastructure.csproj" />
       <ProjectReference Include="..\..\SharedKernel\SharedKernel.Infrastructure\SharedKernel.Infrastructure.csproj" />
     </ItemGroup>
 
