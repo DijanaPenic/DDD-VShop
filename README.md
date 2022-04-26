@@ -180,7 +180,7 @@ List of features:
 
 | Name                     | Status |
 | ------------------------ | -------- |
-| Billing Module |In Progress |
+| Billing Module |Completed |
 | Sales Module |  Completed |
 | Catalog Module |  Completed |
 | Process Manager Module |  Completed |
@@ -220,3 +220,5 @@ List of technologies, frameworks and libraries used for implementation:
 - [Nodatime](https://nodatime.org/) clock
 - [OneOf](https://github.com/mcintyre321/OneOf) (F# style unions for C#)
 - [AutoMapper](https://automapper.org/)
+- [Stripe](https://stripe.com/docs/api) (payment gateway)
+- [DotnetEnv](https://github.com/tonerdo/dotnet-env) library for loading environment variables from .env files
