@@ -24,5 +24,9 @@
         <InternalsVisibleTo Include="VShop.Tests.IntegrationTests" />
         <InternalsVisibleTo Include="VShop.Modules.Billing.API" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Stripe.net" Version="39.107.0" />
+    </ItemGroup>
     
 </Project>

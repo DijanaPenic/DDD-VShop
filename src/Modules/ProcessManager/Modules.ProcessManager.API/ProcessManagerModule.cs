@@ -48,9 +48,9 @@ internal class ProcessManagerModule : Module
             .GetOptions<EventStoreOptions>(EventStoreOptions.Section);
         
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddScheduler(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
+        services.AddPostgres(postgresOptions);
+        services.AddScheduler(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddSingleton(ProcessManagerMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, ProcessManagerDispatcher>();
         

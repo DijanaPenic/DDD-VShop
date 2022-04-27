@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Integration.Extensions;
 using VShop.SharedKernel.Integration.Services;
@@ -11,11 +12,11 @@ namespace VShop.Modules.Identity.Infrastructure.Configuration.Extensions
 {
     internal static class EventStoreExtensions
     {
-        public static void AddEventStore(this IServiceCollection services, string connectionString)
+        public static void AddEventStore(this IServiceCollection services, EventStoreOptions eventStoreOptions)
         {
             services.AddTransient<IIntegrationEventOutbox, IntegrationEventOutbox>();
             services.AddTransient<IIntegrationEventService, IntegrationEventService>();
-            services.AddEventStoreInfrastructure(connectionString, "Identity");
+            services.AddEventStoreInfrastructure(eventStoreOptions.ConnectionString, "Identity");
 
             services.AddSingleton
             (

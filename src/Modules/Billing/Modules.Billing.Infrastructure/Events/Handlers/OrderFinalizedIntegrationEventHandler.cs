@@ -1,57 +1,57 @@
-using VShop.SharedKernel.Infrastructure;
-using VShop.SharedKernel.Infrastructure.Types;
-using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using Stripe;
+
 using VShop.Modules.Sales.Integration.Events;
-using VShop.Modules.Billing.Infrastructure.Services;
-using VShop.Modules.Billing.Infrastructure.DAL.Entities;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts;
-using VShop.Modules.Billing.Infrastructure.Services.Contracts;
+using VShop.SharedKernel.Infrastructure.Events.Contracts;
+using VShop.SharedKernel.Infrastructure.Contexts.Contracts;
+
+using Transfer = VShop.Modules.Billing.Infrastructure.DAL.Entities.Transfer;
 
 namespace VShop.Modules.Billing.Infrastructure.Events.Handlers
 {
     internal class OrderFinalizedIntegrationEventHandler : IEventHandler<OrderFinalizedIntegrationEvent>
     {
-        private readonly IPaymentService _paymentService;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IStripeClient _stripeClient;
+        private readonly IContext _context;
 
         public OrderFinalizedIntegrationEventHandler
         (
-            IPaymentService paymentService,
-            IPaymentRepository paymentRepository
+            IPaymentRepository paymentRepository,
+            IStripeClient stripeClient,
+            IContext context
         )
         {
-            _paymentService = paymentService;
             _paymentRepository = paymentRepository;
+            _stripeClient = stripeClient;
+            _context = context;
         }
 
         public async Task HandleAsync(OrderFinalizedIntegrationEvent @event, CancellationToken cancellationToken)
         {
-            if (@event.RefundAmount.DecimalValue == 0) return;
-            
-            bool isRefundSuccess = await _paymentRepository.IsPaymentSuccessAsync
-            (
-                @event.OrderId,
-                PaymentType.Transfer,
-                cancellationToken
-            );
-            if (isRefundSuccess) return;
-            
-            Result refundResult = await _paymentService.RefundAsync
-            (
-                @event.OrderId,
-                @event.RefundAmount.DecimalValue,
-                cancellationToken
-            );
+            decimal refundAmount = @event.RefundAmount.DecimalValue;
+            if (refundAmount is 0) return;
 
-            Payment refund = new()
+            // TODO - need a better error handling.
+            Transfer paidPayment = await _paymentRepository.GetPaidPaymentAsync(@event.OrderId, cancellationToken);
+            if (paidPayment is null) throw new Exception("Cannot refund as order has not been paid.");
+
+            RefundCreateOptions refundCreateOptions = new()
             {
-                Id = SequentialGuid.Create(),
-                OrderId = @event.OrderId,
-                Status = refundResult.IsError ? PaymentStatus.Failed : PaymentStatus.Success,
-                Error = refundResult.IsError ? refundResult.Error.ToString() : string.Empty,
-                Type = PaymentType.Refund
+                PaymentIntent = paidPayment.IntentId,
+                Amount = Convert.ToInt32(refundAmount * 100),
+                Metadata = new Dictionary<string, string>
+                {
+                    {"OrderId", @event.OrderId.ToString()}
+                }
             };
-            await _paymentRepository.SaveAsync(refund, cancellationToken);
+            RequestOptions requestOptions = new()
+            {
+                IdempotencyKey = _context.RequestId.ToString()
+            };
+            
+            RefundService service = new(_stripeClient);
+            await service.CreateAsync(refundCreateOptions, requestOptions, cancellationToken);
         }
     }
 }

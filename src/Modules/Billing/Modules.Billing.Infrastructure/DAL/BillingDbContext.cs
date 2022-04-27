@@ -13,7 +13,7 @@ namespace VShop.Modules.Billing.Infrastructure.DAL
     {
         public const string PaymentSchema = "payment";
 
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
 
         public BillingDbContext(IClockService clockService, IDbContextBuilder contextBuilder) 
             : base(clockService, contextBuilder) { }

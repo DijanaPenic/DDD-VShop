@@ -1,8 +1,8 @@
 ﻿namespace VShop.Modules.Billing.Infrastructure.DAL.Entities
 {
-    internal enum PaymentType
+    internal enum TransferStatus
     {
-        Transfer = 1,
-        Refund = 2
+        Failed = 1,
+        Success = 2
     }
 }

@@ -4,14 +4,7 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Repositories.Contracts
 {
     internal interface IPaymentRepository
     {
-        Task SaveAsync(Payment paymentTransfer, CancellationToken cancellationToken);
-        Task<IReadOnlyList<Payment>> GetByOrderIdAsync
-        (
-            Guid orderId,
-            PaymentStatus status,
-            CancellationToken cancellationToken
-        );
-
-        Task<bool> IsPaymentSuccessAsync(Guid orderId, PaymentType type, CancellationToken cancellationToken);
+        Task SaveAsync(Transfer transfer, CancellationToken cancellationToken);
+        Task<Transfer> GetPaidPaymentAsync(Guid orderId, CancellationToken cancellationToken);
     }
 }

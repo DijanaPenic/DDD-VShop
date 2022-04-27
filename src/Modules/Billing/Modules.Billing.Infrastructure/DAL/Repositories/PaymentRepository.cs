@@ -11,26 +11,20 @@ namespace VShop.Modules.Billing.Infrastructure.DAL.Repositories
 
         public PaymentRepository(BillingDbContext dbDbContext) => _dbDbContext = dbDbContext;
 
-        public async Task SaveAsync(Payment paymentTransfer, CancellationToken cancellationToken)
+        public async Task SaveAsync(Transfer transfer, CancellationToken cancellationToken)
         {
-            await _dbDbContext.Payments.AddAsync(paymentTransfer, cancellationToken);
+            await _dbDbContext.Transfers.AddAsync(transfer, cancellationToken);
             await _dbDbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<Payment>> GetByOrderIdAsync
+        public async Task<Transfer> GetPaidPaymentAsync
         (
             Guid orderId,
-            PaymentStatus status,
             CancellationToken cancellationToken
-        ) => await _dbDbContext.Payments
-            .Where(p => p.OrderId == orderId && p.Status == status)
-            .ToListAsync(cancellationToken);
-
-        public Task<bool> IsPaymentSuccessAsync(Guid orderId, PaymentType type, CancellationToken cancellationToken)
-            =>  _dbDbContext.Payments.AnyAsync
-            (
-                p => p.OrderId == orderId && p.Status == PaymentStatus.Success && p.Type == type,
-                cancellationToken
-            ); 
+        ) => await _dbDbContext.Transfers.SingleOrDefaultAsync(p => 
+                    p.OrderId == orderId &&
+                    p.Status == TransferStatus.Success &&
+                    p.Type == TransferType.Payment,
+                cancellationToken);
     }
 }

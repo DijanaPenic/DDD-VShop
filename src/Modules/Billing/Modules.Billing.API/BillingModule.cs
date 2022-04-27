@@ -14,10 +14,7 @@ using VShop.SharedKernel.Infrastructure.Dispatchers;
 using VShop.SharedKernel.Infrastructure.Modules;
 using VShop.SharedKernel.Infrastructure.Events.Contracts;
 using VShop.SharedKernel.Infrastructure.Commands.Contracts;
-using VShop.Modules.Billing.API.Automapper;
 using VShop.Modules.Billing.Infrastructure;
-using VShop.Modules.Billing.Infrastructure.Services;
-using VShop.Modules.Billing.Infrastructure.Services.Contracts;
 using VShop.Modules.Billing.Infrastructure.Configuration;
 using VShop.Modules.Billing.Infrastructure.Configuration.Extensions;
 using VShop.Modules.Billing.Infrastructure.DAL.Repositories;
@@ -59,14 +56,15 @@ internal class BillingModule : Module
             .GetOptions<PostgresOptions>($"{Name}:Postgres");
         EventStoreOptions eventStoreOptions = configuration
             .GetOptions<EventStoreOptions>(EventStoreOptions.Section);
-
+        StripeOptions stripeOptions = configuration
+            .GetOptions<StripeOptions>($"{Name}:{StripeOptions.Section}");
+        
+        services.AddStripe(stripeOptions);
         services.AddApplication(Assemblies);
         services.AddInfrastructure(Assemblies, Name, logger);
-        services.AddPostgres(postgresOptions.ConnectionString);
-        services.AddEventStore(eventStoreOptions.ConnectionString);
-        services.AddTransient<IPaymentService, FakePaymentService>();
+        services.AddPostgres(postgresOptions);
+        services.AddEventStore(eventStoreOptions);
         services.AddTransient<IPaymentRepository, PaymentRepository>();
-        services.AddAutoMapper(typeof(PaymentAutomapperProfile));
         services.AddSingleton(BillingMessageRegistry.Initialize());
         services.AddSingleton<IDispatcher, BillingDispatcher>();
 

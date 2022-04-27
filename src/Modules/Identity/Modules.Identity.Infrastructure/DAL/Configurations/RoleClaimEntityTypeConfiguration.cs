@@ -45,6 +45,8 @@ internal class RoleClaimEntityTypeConfiguration : IEntityTypeConfiguration<RoleC
                 "d92ef5e5-f08a-4173-b83a-74618893891b",
                 new[] {"categories", "products"}
             }
+            
+            // TODO - finish permission configuration for other roles.
         };
 
         IEnumerable<RoleClaim> claims = permissions.SelectMany(permission =>

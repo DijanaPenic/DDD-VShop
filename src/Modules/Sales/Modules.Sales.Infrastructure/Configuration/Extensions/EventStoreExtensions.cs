@@ -7,6 +7,7 @@ using VShop.SharedKernel.EventSourcing.Stores.Contracts;
 using VShop.Modules.Sales.Infrastructure.DAL;
 using VShop.Modules.Sales.Infrastructure.Projections;
 using VShop.SharedKernel.Application.Extensions;
+using VShop.SharedKernel.EventStoreDb;
 using VShop.SharedKernel.EventStoreDb.Extensions;
 using VShop.SharedKernel.Integration.Extensions;
 
@@ -14,9 +15,9 @@ namespace VShop.Modules.Sales.Infrastructure.Configuration.Extensions;
 
 internal static class EventStoreExtensions
 {
-    public static void AddEventStore(this IServiceCollection services, string connectionString)
+    public static void AddEventStore(this IServiceCollection services, EventStoreOptions eventStoreOptions)
     {
-        services.AddEventStoreInfrastructure(connectionString, "Sales");
+        services.AddEventStoreInfrastructure(eventStoreOptions.ConnectionString, "Sales");
 
         services.AddTransient
         (
